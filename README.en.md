@@ -14,7 +14,7 @@ MaaKEDR is a Cedar game automation assistant built with [MaaFramework](https://g
 - **Framework**: [MaaFramework](https://github.com/MaaXYZ/MaaFramework) - Image recognition automation framework
 - **Toolchain**: 
   - [create-maa-project](https://github.com/neko-para/maa-support-extension) - Project scaffolding
-  - [maa-mcp](https://github.com/neko-para/maa-mcp) - MaaFramework MCP server
+  - [maa-mcp](https://github.com/MAA-AI/MaaMCP) - MaaFramework MCP server
 
 ## License
 

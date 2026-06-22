@@ -14,7 +14,7 @@ MaaKEDR 是一个基于 [MaaFramework](https://github.com/MaaXYZ/MaaFramework) �
 - **框架**: [MaaFramework](https://github.com/MaaXYZ/MaaFramework) - 图像识别自动化框架
 - **工具链**: 
   - [create-maa-project](https://github.com/neko-para/maa-support-extension) - 项目脚手架
-  - [maa-mcp](https://github.com/neko-para/maa-mcp) - MaaFramework MCP 服务器
+  - [maa-mcp](https://github.com/MAA-AI/MaaMCP) - MaaFramework MCP 服务器
 
 ## 许可证
 
