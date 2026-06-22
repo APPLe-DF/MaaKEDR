@@ -38,8 +38,10 @@ libs/
 *.dll
 *.pdb
 *.exe
-!DependencySetup_*.bat
 plugins/*/
+
+# 依赖安装脚本（自动生成）
+DependencySetup_*.bat
 
 # 系统文件
 .DS_Store
