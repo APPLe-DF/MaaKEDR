@@ -30,6 +30,10 @@ MFAAvalonia.*
 libs/MFAAvalonia.Core.dll
 libs/locales/*/MFAAvalonia.Core.resources.dll
 
+# 运行时依赖库（通过 release 分发）
+runtimes/
+libs/
+
 # 系统文件
 .DS_Store
 Thumbs.db
