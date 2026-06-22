@@ -25,6 +25,11 @@ dist/
 cache/
 debug/
 
+# MFAAvalonia UI 二进制文件（通过 release 分发）
+MFAAvalonia.*
+libs/MFAAvalonia.Core.dll
+libs/locales/*/MFAAvalonia.Core.resources.dll
+
 # 系统文件
 .DS_Store
 Thumbs.db
