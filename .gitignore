@@ -34,6 +34,13 @@ libs/locales/*/MFAAvalonia.Core.resources.dll
 runtimes/
 libs/
 
+# 二进制文件
+*.dll
+*.pdb
+*.exe
+!DependencySetup_*.bat
+plugins/*/
+
 # 系统文件
 .DS_Store
 Thumbs.db
