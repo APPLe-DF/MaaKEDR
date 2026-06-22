@@ -1,0 +1,29 @@
+{
+    "interface_version": 2,
+    "name": "MaaKEDR",
+    "label": "MaaKEDR",
+    "version": "v0.1.0",
+    "icon": "logo.ico",
+    "description": "MaaKEDR MaaFW project",
+    "controller": [
+        {
+            "name": "Android",
+            "label": "Android / Emulator",
+            "type": "Adb",
+            "display_short_side": 720
+        }
+    ],
+    "resource": [
+        {
+            "name": "base",
+            "label": "Base",
+            "path": [
+                "./resource/base"
+            ]
+        }
+    ],
+    "import": [
+        "./tasks/startup.json",
+        "./tasks/claim_rewards.json"
+    ]
+}

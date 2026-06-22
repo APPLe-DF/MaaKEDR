@@ -1,0 +1,223 @@
+{
+    "_comment": "领取奖励任务 - 每日/每周/军旅成就奖励系统",
+
+    "ClaimRewards.Start": {
+        "_comment": "步骤1: 检测主界面是否有奖励标记，有则点击进入，无则跳到战令检查",
+        "recognition": "TemplateMatch",
+        "template": "reward_badge.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["ClaimRewards.ConfirmInterface"],
+        "on_error": ["BattlePass.Start"]
+    },
+    "ClaimRewards.ConfirmInterface": {
+        "_comment": "步骤2: 确认已进入奖励界面，未进入则停止",
+        "recognition": "TemplateMatch",
+        "template": "reward_interface.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["ClaimRewards.CheckDaily"]
+    },
+    "ClaimRewards.CheckDaily": {
+        "_comment": "步骤3: 检查是否有每日奖励待领取，有则进入领取，无则检查每周奖励",
+        "recognition": "TemplateMatch",
+        "template": "daily_reward_badge.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["ClaimRewards.ClaimButton"],
+        "on_error": ["ClaimRewards.CheckWeekly"]
+    },
+    "ClaimRewards.CheckWeekly": {
+        "_comment": "步骤4: 检查是否有每周奖励待领取，有则进入领取，无则检查军旅成就",
+        "recognition": "TemplateMatch",
+        "template": "weekly_reward_badge.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["ClaimRewards.ClaimButton"],
+        "on_error": ["ClaimRewards.CheckMilitary"]
+    },
+    "ClaimRewards.CheckMilitary": {
+        "_comment": "步骤5: 检查是否有军旅成就奖励待领取，有则进入领取，无则结束",
+        "recognition": "TemplateMatch",
+        "template": "military_reward_badge.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["ClaimRewards.ClaimButton"]
+    },
+    "ClaimRewards.ClaimButton": {
+        "_comment": "步骤6: 公用领取按钮节点，点击领取后回到每日奖励检查，循环领取所有奖励",
+        "recognition": "TemplateMatch",
+        "template": "claim_button.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["ClaimRewards.CheckDaily"]
+    },
+
+    "_comment_battlepass": "=== 战令通行证奖励系统 ===",
+
+    "BattlePass.Start": {
+        "_comment": "步骤1: 检测战令通行证标记，有奖励则显示，无奖励则跳到邮箱检查",
+        "recognition": "TemplateMatch",
+        "template": "battlepass_badge.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["BattlePass.ClickEntry"],
+        "on_error": ["Mailbox.Start"]
+    },
+
+    "BattlePass.ClickEntry": {
+        "_comment": "步骤2: 点击战令标记进入战令界面",
+        "recognition": "TemplateMatch",
+        "template": "battlepass_badge.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["BattlePass.ConfirmInterface"]
+    },
+
+    "BattlePass.ConfirmInterface": {
+        "_comment": "步骤3: 确认已进入战令界面，未进入则停止",
+        "recognition": "TemplateMatch",
+        "template": "battlepass_interface.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["BattlePass.CheckTaskComplete"]
+    },
+
+    "BattlePass.CheckTaskComplete": {
+        "_comment": "步骤4: 检查是否有战令任务完成可领取，有则点击领取，无则检查奖励列表",
+        "recognition": "TemplateMatch",
+        "template": "battlepass_task_complete.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["BattlePass.ClaimRewardButton"],
+        "on_error": ["BattlePass.CheckRewardList"]
+    },
+
+    "BattlePass.CheckRewardList": {
+        "_comment": "步骤5: 检查奖励列表是否有可领取的奖励",
+        "recognition": "TemplateMatch",
+        "template": "battlepass_reward_available.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["BattlePass.ClickReward"],
+        "on_error": ["Common.BackButton"]
+    },
+
+    "BattlePass.ClickReward": {
+        "_comment": "步骤6: 点击进入可领取的奖励",
+        "recognition": "TemplateMatch",
+        "template": "battlepass_reward_available.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["BattlePass.ClaimRewardButton"]
+    },
+
+    "BattlePass.ClaimRewardButton": {
+        "_comment": "步骤7: 点击领取奖励按钮，领完后回到主页",
+        "recognition": "TemplateMatch",
+        "template": "battlepass_claim_button.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["Common.BackButton"]
+    },
+
+    "_comment_common": "=== 通用节点 ===",
+
+    "Common.BackButton": {
+        "_comment": "通用返回按钮，点击返回主页后流程结束",
+        "recognition": "TemplateMatch",
+        "template": "back_button.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        }
+    },
+
+    "_comment_mailbox": "=== 邮箱奖励系统 ===",
+
+    "Mailbox.Start": {
+        "_comment": "步骤1: 检测邮箱图标，识别到就进入",
+        "recognition": "TemplateMatch",
+        "roi": [1140, 25, 64, 45],
+        "template": "claim_rewards/mailbox.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["Mailbox.ClickEntry"]
+    },
+
+    "Mailbox.ClickEntry": {
+        "_comment": "步骤2: 点击邮箱图标进入邮箱界面",
+        "recognition": "TemplateMatch",
+        "roi": [1140, 25, 64, 45],
+        "template": "claim_rewards/mailbox.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["Mailbox.ConfirmInterface"]
+    },
+
+    "Mailbox.ConfirmInterface": {
+        "_comment": "步骤3: 确认已进入邮箱界面",
+        "recognition": "TemplateMatch",
+        "roi": [155, 68, 74, 42],
+        "template": "claim_rewards/mailbox_interface.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["Mailbox.ClaimButton"]
+    },
+
+    "Mailbox.ClaimButton": {
+        "_comment": "步骤4: 尝试领取邮箱奖励，无论成功失败都返回",
+        "recognition": "TemplateMatch",
+        "roi": [145, 587, 133, 42],
+        "template": "claim_rewards/mailbox_claim_button.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["Mailbox.BackButton"],
+        "on_error": ["Mailbox.BackButton"]
+    },
+
+    "Mailbox.BackButton": {
+        "_comment": "步骤5: 邮箱专用返回按钮，点击返回主页后流程结束",
+        "recognition": "TemplateMatch",
+        "roi": [1120, 64, 53, 51],
+        "template": "claim_rewards/mailbox_back_button.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        }
+    }
+}

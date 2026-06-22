@@ -1,0 +1,29 @@
+{
+    "assets": [
+        {
+            "path": "det.onnx",
+            "sha256": "8c3b7ee97913a7942b8565669dc9acbe8846fbbaf4b63e1d7fdb339005574a33",
+            "size": 4748769,
+            "source": "https://download.maafw.xyz/MaaCommonAssets/OCR/ppocr_v5/ppocr_v5-zh_cn.zip#det.onnx"
+        },
+        {
+            "path": "rec.onnx",
+            "sha256": "31fb844ce3a4aaf13e4bea62ae35f43bd9a509966061980c30db9b248c542a6b",
+            "size": 16517247,
+            "source": "https://download.maafw.xyz/MaaCommonAssets/OCR/ppocr_v5/ppocr_v5-zh_cn.zip#rec.onnx"
+        },
+        {
+            "path": "keys.txt",
+            "sha256": "d1979e9f794c464c0d2e0b70a7fe14dd978e9dc644c0e71f14158cdf8342af1b",
+            "size": 74012,
+            "source": "https://download.maafw.xyz/MaaCommonAssets/OCR/ppocr_v5/ppocr_v5-zh_cn.zip#keys.txt"
+        },
+        {
+            "path": "README.md",
+            "sha256": "6e235b3a1b62084c976c3ff0aa39ff8ad8c62e145f51431c3e545ce4115ba1f2",
+            "size": 1086,
+            "source": "https://download.maafw.xyz/MaaCommonAssets/OCR/ppocr_v5/ppocr_v5-zh_cn.zip#README.md"
+        }
+    ],
+    "schemaVersion": 1
+}

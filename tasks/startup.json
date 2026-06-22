@@ -1,0 +1,8 @@
+{
+    "task": [
+        {
+            "name": "启动游戏",
+            "entry": "LaunchGame"
+        }
+    ]
+}

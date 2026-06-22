@@ -1,0 +1,32 @@
+{
+    "LaunchGame": {
+        "recognition": "DirectHit",
+        "action": {
+            "type": "StartApp",
+            "param": {
+                "package": "com.phxh.official.nld"
+            }
+        },
+        "next": ["ClickToStart"]
+    },
+    "ClickToStart": {
+        "recognition": "TemplateMatch",
+        "template": "startgame1.png",
+        "threshold": 0.8,
+        "times": 3,
+        "action": {
+            "type": "Click",
+            "target_offset": [120, 0]
+        },
+        "next": ["CheckHomePage"]
+    },
+    "CheckHomePage": {
+        "recognition": "TemplateMatch",
+        "roi": [1199, 6, 77, 83],
+        "template": "main_option.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        }
+    }
+}

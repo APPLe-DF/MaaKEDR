@@ -1,0 +1,85 @@
+{
+    "createdFiles": {
+        ".gitignore": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        },
+        "LICENSE": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        },
+        "README.en.md": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        },
+        "README.md": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        },
+        "interface.json": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        },
+        "maa-project.json": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        },
+        "maatools.config.mts": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        },
+        "resource/base/default_pipeline.json": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        },
+        "resource/base/image/empty.png": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        },
+        "resource/base/model/ocr/README.md": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        },
+        "resource/base/model/ocr/det.onnx": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        },
+        "resource/base/model/ocr/keys.txt": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        },
+        "resource/base/model/ocr/manifest.json": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        },
+        "resource/base/model/ocr/rec.onnx": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        },
+        "resource/base/pipeline/tutorial.json": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        },
+        "tasks/tutorial.json": {
+            "createdAt": "2026-06-22T09:05:47.056Z",
+            "managed": false
+        }
+    },
+    "managedFiles": {
+        ".editorconfig": {
+            "hash": "fa205e6456c1010c9f57efebdfdb8f8062024a629f06a163fd3508d3153c5782",
+            "templateHash": "fa205e6456c1010c9f57efebdfdb8f8062024a629f06a163fd3508d3153c5782"
+        },
+        ".gitattributes": {
+            "hash": "7a4b8e4c2efa2036473526e0e4de5c09327ff3df189c62b1a1f320a1f23c7692",
+            "templateHash": "7a4b8e4c2efa2036473526e0e4de5c09327ff3df189c62b1a1f320a1f23c7692"
+        }
+    },
+    "pending": [],
+    "schemaVersion": 1,
+    "template": {
+        "createdBy": "create-maa-project",
+        "lastUpdatedBy": "create-maa-project",
+        "templateVersion": "0.1.0"
+    }
+}

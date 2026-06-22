@@ -1,0 +1,20 @@
+{
+    "resource": "base",
+    "controller": "Android",
+    "adb": {
+        "adb_path": "G:/Program Files/Netease/MuMu/nx_main/adb.exe",
+        "address": "127.0.0.1:16384",
+        "screencap": "64",
+        "input": "18446744073709551607",
+        "config": {
+            "extras": {
+                "mumu": {
+                    "enable": true,
+                    "index": 0,
+                    "path": "G:/Program Files/Netease/MuMu"
+                }
+            }
+        }
+    },
+    "task": []
+}

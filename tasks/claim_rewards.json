@@ -1,0 +1,8 @@
+{
+    "task": [
+        {
+            "name": "领取奖励",
+            "entry": "ClaimRewards.Start"
+        }
+    ]
+}

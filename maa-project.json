@@ -1,0 +1,52 @@
+{
+    "addons": {},
+    "controller": {
+        "kinds": [
+            "Adb"
+        ]
+    },
+    "features": {
+        "ci": {
+            "enabled": false
+        },
+        "quality": {
+            "enabled": false
+        },
+        "release": {
+            "enabled": false
+        },
+        "vscode": {
+            "enabled": false
+        }
+    },
+    "license": {
+        "spdx": "AGPL-3.0-or-later"
+    },
+    "maafw": {
+        "channel": "latest"
+    },
+    "network": {
+        "mode": "auto"
+    },
+    "project": {
+        "displayName": "MaaKEDR",
+        "initialTemplate": "pipeline",
+        "slug": "MaaKEDR",
+        "version": "0.1.0"
+    },
+    "resources": [
+        {
+            "enabled": true,
+            "label": "Base",
+            "path": "resource/base",
+            "slug": "base"
+        }
+    ],
+    "runtime": {
+        "mfa": {
+            "channel": "latest",
+            "enabled": false
+        }
+    },
+    "schemaVersion": 1
+}
