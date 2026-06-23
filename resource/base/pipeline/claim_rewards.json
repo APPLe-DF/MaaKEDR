@@ -1,66 +1,100 @@
 {
     "ClaimRewards.Start": {
+        "desc": "检测并点击奖励徽章图标",
         "recognition": "TemplateMatch",
-        "template": "reward_badge.png",
-        "threshold": 0.75,
+        "roi": [ 894, 190, 48, 43],
+        "template": "claim_rewards/reward_badge.png",
+        "threshold": 0.8,
         "action": {
-            "type": "Click"
+            "type": "Click",
+            "target_count": 2
         },
         "next": ["ClaimRewards.ConfirmInterface"],
         "on_error": ["BattlePass.Start"]
     },
     "ClaimRewards.ConfirmInterface": {
+        "desc": "确认进入奖励界面",
         "recognition": "TemplateMatch",
-        "template": "reward_interface.png",
+        "roi": [1,91,86,83],
+        "template": "claim_rewards/reward_interface.png",
         "threshold": 0.75,
         "action": {
             "type": "DoNothing"
         },
-        "next": ["ClaimRewards.CheckDaily"]
+        "next": [
+            "ClaimRewards.CheckDaily", 
+            "ClaimRewards.CheckWeekly", 
+            "ClaimRewards.CheckMilitary",
+            "Common.BackButton"
+        ]
     },
     "ClaimRewards.CheckDaily": {
+        "desc": "检查每日奖励徽章",
         "recognition": "TemplateMatch",
-        "template": "daily_reward_badge.png",
-        "threshold": 0.75,
-        "action": {
-            "type": "DoNothing"
-        },
-        "next": ["ClaimRewards.ClaimButton"],
-        "on_error": ["ClaimRewards.CheckWeekly"]
-    },
-    "ClaimRewards.CheckWeekly": {
-        "recognition": "TemplateMatch",
-        "template": "weekly_reward_badge.png",
-        "threshold": 0.75,
-        "action": {
-            "type": "DoNothing"
-        },
-        "next": ["ClaimRewards.ClaimButton"],
-        "on_error": ["ClaimRewards.CheckMilitary"]
-    },
-    "ClaimRewards.CheckMilitary": {
-        "recognition": "TemplateMatch",
-        "template": "military_reward_badge.png",
-        "threshold": 0.75,
-        "action": {
-            "type": "DoNothing"
-        },
-        "next": ["ClaimRewards.ClaimButton"]
-    },
-    "ClaimRewards.ClaimButton": {
-        "recognition": "TemplateMatch",
-        "template": "claim_button.png",
+        "roi": [498, 101, 60, 38],
+        "max_times": 5,
+        "template": "claim_rewards/common_reward_badge.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
         },
-        "next": ["ClaimRewards.CheckDaily"]
+        "next": [
+            "ClaimRewards.ClaimButton"]
+    },
+    "ClaimRewards.CheckWeekly": {
+        "desc": "检查每周奖励徽章",
+        "recognition": "TemplateMatch",
+        "roi": [841, 103, 60, 39],
+        "max_times": 5,
+        "template": "claim_rewards/common_reward_badge.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["ClaimRewards.ClaimButton"]
+    },
+    "ClaimRewards.CheckMilitary": {
+        "desc": "检查军旅成就奖励徽章",
+        "recognition": "TemplateMatch",
+        "roi": [1176, 105, 60, 39],
+        "max_times": 5,
+        "template": "claim_rewards/common_reward_badge.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["ClaimRewards.ClaimButton"]
+    },
+    "ClaimRewards.ClaimButton": {
+        "desc": "点击领取奖励按钮",
+        "recognition": "TemplateMatch",
+        "roi": [1062,656,197,36],
+        "template": "claim_rewards/claim_button.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["ClaimRewards.CheckItemObtained", "ClaimRewards.ConfirmInterface"]
+    },
+
+    "ClaimRewards.CheckItemObtained": {
+        "desc": "检查并点击获得物品提示（领取奖励专用）",
+        "recognition": "TemplateMatch",
+        "roi": [573, 237, 136, 40],
+        "template": "item_obtained_dialog.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["ClaimRewards.ConfirmInterface"]
     },
 
 
     "BattlePass.Start": {
+        "desc": "检查战令通行证徽章",
         "recognition": "TemplateMatch",
-        "template": "battlepass_badge.png",
+        "roi": [902,245,33,36],
+        "template": "claim_rewards/battlepass_badge.png",
         "threshold": 0.75,
         "action": {
             "type": "DoNothing"
@@ -70,8 +104,10 @@
     },
 
     "BattlePass.ClickEntry": {
+        "desc": "点击战令通行证入口",
         "recognition": "TemplateMatch",
-        "template": "battlepass_badge.png",
+        "template": "claim_rewards/battlepass_badge.png",
+        "roi": [902,245,33,36],
         "threshold": 0.75,
         "action": {
             "type": "Click"
@@ -80,61 +116,106 @@
     },
 
     "BattlePass.ConfirmInterface": {
+        "desc": "确认进入战令通行证界面",
         "recognition": "TemplateMatch",
-        "template": "battlepass_interface.png",
+        "roi": [313,15,76,86],
+        "template": "claim_rewards/battlepass_interface.png",
         "threshold": 0.75,
         "action": {
             "type": "DoNothing"
         },
-        "next": ["BattlePass.CheckTaskComplete"]
+        "next": ["BattlePass.CheckTaskComplete","BattlePass.CheckRewardList"]
     },
 
     "BattlePass.CheckTaskComplete": {
+        "desc": "检查战令任务是否有可领取项",
         "recognition": "TemplateMatch",
-        "template": "battlepass_task_complete.png",
+        "roi": [731,75,62,51],
+        "template": "claim_rewards/battlepass_task_complete.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["BattlePass.ClaimTaskReward"],
+        "on_error": ["BattlePass.CheckRewardList"]
+    },
+
+    "BattlePass.ClaimTaskReward": {
+        "desc": "点击领取战令任务奖励",
+        "recognition": "TemplateMatch",
+        "roi": [1147,612,87,54],
+        "template": "claim_rewards/battlepass_claim_button.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["BattlePass.CheckItemObtainedTask"]
+    },
+
+    "BattlePass.CheckItemObtainedTask": {
+        "desc": "检查并点击获得物品提示（战令任务专用）",
+        "recognition": "TemplateMatch",
+        "roi": [573, 237, 136, 40],
+        "template": "item_obtained_dialog.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["BattlePass.ConfirmInterface"]
+    },
+
+    "BattlePass.CheckRewardList": {
+        "desc": "检查奖励列表是否有可领取项",
+        "recognition": "TemplateMatch",
+        "template": "claim_rewards/battlepass_reward_available.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
         },
         "next": ["BattlePass.ClaimRewardButton"],
-        "on_error": ["BattlePass.CheckRewardList"]
-    },
-
-    "BattlePass.CheckRewardList": {
-        "recognition": "TemplateMatch",
-        "template": "battlepass_reward_available.png",
-        "threshold": 0.75,
-        "action": {
-            "type": "DoNothing"
-        },
-        "next": ["BattlePass.ClickReward"],
         "on_error": ["Common.BackButton"]
     },
 
-    "BattlePass.ClickReward": {
+    "BattlePass.ClaimRewardButton": {
+        "desc": "点击战令奖励领取按钮",
         "recognition": "TemplateMatch",
-        "template": "battlepass_reward_available.png",
+        "template": "claim_rewards/battlepass_claim_button.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
         },
-        "next": ["BattlePass.ClaimRewardButton"]
+        "next": ["BattlePass.CheckItemObtainedReward", "BattlePass.CheckRewardList"]
     },
 
-    "BattlePass.ClaimRewardButton": {
+    "BattlePass.CheckItemObtainedReward": {
+        "desc": "检查并点击获得物品提示（战令奖励专用）",
         "recognition": "TemplateMatch",
-        "template": "battlepass_claim_button.png",
+        "roi": [573, 237, 136, 40],
+        "template": "item_obtained_dialog.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
         },
-        "next": ["Common.BackButton"]
+        "next": ["BattlePass.CheckRewardList"]
     },
 
 
     "Common.BackButton": {
+        "desc": "点击返回按钮",
         "recognition": "TemplateMatch",
+        "roi": [15,30,86,43],
         "template": "back_button.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        }
+    },
+
+    "Common.CheckItemObtained": {
+        "desc": "模板匹配获得物品提示并点击（通用）",
+        "recognition": "TemplateMatch",
+        "roi": [546,221,183,73],
+        "template": "item_obtained_dialog.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
@@ -143,6 +224,7 @@
 
 
     "Mailbox.Start": {
+        "desc": "检测邮箱图标",
         "recognition": "TemplateMatch",
         "roi": [1140, 25, 64, 45],
         "template": "claim_rewards/mailbox.png",
@@ -154,6 +236,7 @@
     },
 
     "Mailbox.ClickEntry": {
+        "desc": "点击邮箱图标",
         "recognition": "TemplateMatch",
         "roi": [1140, 25, 64, 45],
         "template": "claim_rewards/mailbox.png",
@@ -165,6 +248,7 @@
     },
 
     "Mailbox.ConfirmInterface": {
+        "desc": "确认进入邮箱界面",
         "recognition": "TemplateMatch",
         "roi": [155, 68, 74, 42],
         "template": "claim_rewards/mailbox_interface.png",
@@ -176,18 +260,20 @@
     },
 
     "Mailbox.ClaimButton": {
-        "recognition": "TemplateMatch",
+        "desc": "OCR识别并点击一键领取按钮",
+        "recognition": "OCR",
+        "expected": "一键领取",
         "roi": [145, 587, 133, 42],
-        "template": "claim_rewards/mailbox_claim_button.png",
-        "threshold": 0.75,
+        "max_times": 1,
         "action": {
             "type": "Click"
         },
-        "next": ["Mailbox.BackButton"],
+        "next": ["Common.CheckItemObtained", "Mailbox.BackButton"],
         "on_error": ["Mailbox.BackButton"]
     },
 
     "Mailbox.BackButton": {
+        "desc": "点击邮箱界面返回按钮",
         "recognition": "TemplateMatch",
         "roi": [1120, 64, 53, 51],
         "template": "claim_rewards/mailbox_back_button.png",
