@@ -222,7 +222,6 @@
         }
     },
 
-
     "Mailbox.Start": {
         "desc": "检测邮箱图标",
         "recognition": "TemplateMatch",
