@@ -7,15 +7,16 @@
                 "package": "com.phxh.official.nld"
             }
         },
-        "next": ["ClickToStart"]
+        "post_delay": 5000,
+        "next": ["ClickToStart", "CheckHomePage"]
     },
     "ClickToStart": {
         "recognition": "TemplateMatch",
         "template": "startgame1.png",
         "threshold": 0.8,
-        "times": 3,
         "action": {
             "type": "Click",
+            "target": true,
             "target_offset": [120, 0]
         },
         "next": ["CheckHomePage"]
