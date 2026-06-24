@@ -22,10 +22,10 @@
             "type": "DoNothing"
         },
         "next": [
-            "ClaimRewards.CheckDaily", 
-            "ClaimRewards.CheckWeekly", 
+            "ClaimRewards.CheckDaily",
+            "ClaimRewards.CheckWeekly",
             "ClaimRewards.CheckMilitary",
-            "Common.BackButton"
+            "BattlePass.Start"
         ]
     },
     "ClaimRewards.CheckDaily": {
@@ -38,8 +38,8 @@
         "action": {
             "type": "Click"
         },
-        "next": [
-            "ClaimRewards.ClaimButton"]
+        "next": ["ClaimRewards.ClaimButton"],
+        "on_error": ["ClaimRewards.CheckWeekly"]
     },
     "ClaimRewards.CheckWeekly": {
         "desc": "检查每周奖励徽章",
@@ -51,7 +51,8 @@
         "action": {
             "type": "Click"
         },
-        "next": ["ClaimRewards.ClaimButton"]
+        "next": ["ClaimRewards.ClaimButton"],
+        "on_error": ["ClaimRewards.CheckMilitary"]
     },
     "ClaimRewards.CheckMilitary": {
         "desc": "检查军旅成就奖励徽章",
@@ -63,7 +64,8 @@
         "action": {
             "type": "Click"
         },
-        "next": ["ClaimRewards.ClaimButton"]
+        "next": ["ClaimRewards.ClaimButton"],
+        "on_error": ["BattlePass.Start"]
     },
     "ClaimRewards.ClaimButton": {
         "desc": "点击领取奖励按钮",
@@ -167,10 +169,12 @@
     "BattlePass.CheckRewardList": {
         "desc": "检查奖励列表是否有可领取项",
         "recognition": "TemplateMatch",
+        "roi": [600,73,36,39],
         "template": "claim_rewards/battlepass_reward_available.png",
         "threshold": 0.75,
         "action": {
-            "type": "Click"
+            "type": "Click",
+            "target": [-50, 0]
         },
         "next": ["BattlePass.ClaimRewardButton"],
         "on_error": ["Common.BackButton"]
@@ -181,6 +185,7 @@
         "recognition": "TemplateMatch",
         "template": "claim_rewards/battlepass_claim_button.png",
         "threshold": 0.75,
+        "post_wait_freezes": 500,
         "action": {
             "type": "Click"
         },
@@ -193,6 +198,7 @@
         "roi": [573, 237, 136, 40],
         "template": "item_obtained_dialog.png",
         "threshold": 0.75,
+        "post_wait_freezes": 500,
         "action": {
             "type": "Click"
         },

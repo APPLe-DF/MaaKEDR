@@ -22,8 +22,14 @@
             ]
         }
     ],
+    "agent": {
+        "child_exec": "python",
+        "child_args": ["-u", "./agent/main.py"],
+        "identifier": "maakedr_agent"
+    },
     "import": [
         "./tasks/startup.json",
-        "./tasks/claim_rewards.json"
+        "./tasks/claim_rewards.json",
+        "./tasks/farm_resources.json"
     ]
 }

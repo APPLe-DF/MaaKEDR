@@ -16,5 +16,15 @@
             }
         }
     },
-    "task": []
+    "task": [
+        {
+            "name": "资源刷取",
+            "option": {
+                "farm_category": "资源收集",
+                "farm_resource_type": "特别军费行动",
+                "farm_resource_stage_1": "1-4"
+            },
+            "__key": "ddef992b-cc28-4200-b1ba-299434a139de"
+        }
+    ]
 }

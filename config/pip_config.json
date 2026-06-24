@@ -1,5 +1,0 @@
-{
-    "enable_pip_install": true,
-    "mirror": "https://pypi.tuna.tsinghua.edu.cn/simple",
-    "backup_mirror": "https://mirrors.ustc.edu.cn/pypi/simple"
-}

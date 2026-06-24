@@ -1,0 +1,30 @@
+{
+    "TestCustomReco": {
+        "recognition": "Custom",
+        "custom_recognition": "CheckResourceStage",
+        "custom_recognition_param": "{\"stage_name\": \"1-4\", \"stage_index\": 4}",
+        "timeout": 10000,
+        "action": {
+            "type": "DoNothing"
+        },
+        "on_error": [
+            "FarmResources.StageLocked"
+        ]
+    },
+    "FarmResources.StageLocked": {
+        "desc": "关卡未解锁提示",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "focus": {
+            "Node.Action.Starting": {
+                "content": "关卡未解锁，请先解锁后再尝试",
+                "display": [
+                    "log",
+                    "toast"
+                ]
+            }
+        }
+    }
+}

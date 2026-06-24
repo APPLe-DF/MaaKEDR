@@ -1,0 +1,465 @@
+{
+    "task": [
+        {
+            "name": "资源刷取",
+            "entry": "FarmResources.Start",
+            "option": ["farm_category"]
+        }
+    ],
+    "option": {
+        "farm_category": {
+            "type": "select",
+            "label": "刷取板块",
+            "default_case": "资源收集",
+            "cases": [
+                {
+                    "name": "资源收集",
+                    "label": "资源收集",
+                    "option": ["farm_resource_type"]
+                },
+                {
+                    "name": "技能演练",
+                    "label": "技能演练",
+                    "option": ["farm_skill_type"]
+                }
+            ]
+        },
+        "farm_resource_type": {
+            "type": "select",
+            "label": "资源类型",
+            "default_case": "特别军费行动",
+            "cases": [
+                {
+                    "name": "特别军费行动",
+                    "label": "特别军费行动",
+                    "option": ["farm_resource_stage_1"],
+                    "pipeline_override": {
+                        "FarmResources.SelectResourceType": {
+                            "next": ["FarmResources.SelectSpecialFunds"]
+                        }
+                    }
+                },
+                {
+                    "name": "作战体能训练",
+                    "label": "作战体能训练",
+                    "option": ["farm_resource_stage_2"],
+                    "pipeline_override": {
+                        "FarmResources.SelectResourceType": {
+                            "next": ["FarmResources.SelectPhysicalTraining"]
+                        }
+                    }
+                },
+                {
+                    "name": "兵种能力评级",
+                    "label": "兵种能力评级",
+                    "option": ["farm_resource_stage_3"],
+                    "pipeline_override": {
+                        "FarmResources.SelectResourceType": {
+                            "next": ["FarmResources.SelectUnitRating"]
+                        }
+                    }
+                },
+                {
+                    "name": "载具对抗演练",
+                    "label": "载具对抗演练",
+                    "option": ["farm_resource_stage_4"],
+                    "pipeline_override": {
+                        "FarmResources.SelectResourceType": {
+                            "next": ["FarmResources.SelectVehicleDrill"]
+                        }
+                    }
+                }
+            ]
+        },
+        "farm_skill_type": {
+            "type": "select",
+            "label": "技能类型",
+            "default_case": "基础技能演练",
+            "cases": [
+                {
+                    "name": "基础技能演练",
+                    "label": "基础技能演练",
+                    "option": ["farm_skill_stage_1"],
+                    "pipeline_override": {
+                        "FarmResources.SelectSkillType": {
+                            "next": ["FarmResources.SelectBasicSkill"]
+                        }
+                    }
+                },
+                {
+                    "name": "专业技能演练",
+                    "label": "专业技能演练",
+                    "option": ["farm_skill_stage_2"],
+                    "pipeline_override": {
+                        "FarmResources.SelectSkillType": {
+                            "next": ["FarmResources.SelectAdvancedSkill"]
+                        }
+                    }
+                }
+            ]
+        },
+        "farm_resource_stage_1": {
+            "type": "select",
+            "label": "关卡选择",
+            "default_case": "1-1",
+            "cases": [
+                {
+                    "name": "1-1",
+                    "label": "1-1",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"1-1\", \"stage_index\": 1}"
+                        }
+                    }
+                },
+                {
+                    "name": "1-2",
+                    "label": "1-2",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"1-2\", \"stage_index\": 2}"
+                        }
+                    }
+                },
+                {
+                    "name": "1-3",
+                    "label": "1-3",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"1-3\", \"stage_index\": 3}"
+                        }
+                    }
+                },
+                {
+                    "name": "1-4",
+                    "label": "1-4",
+                    "pipeline_override": {
+                        "FarmResources.SelectStage": {
+                            "next": ["FarmResources.SwipeToRight"]
+                        },
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"1-4\", \"stage_index\": 4}"
+                        }
+                    }
+                },
+                {
+                    "name": "1-5",
+                    "label": "1-5",
+                    "pipeline_override": {
+                        "FarmResources.SelectStage": {
+                            "next": ["FarmResources.SwipeToRight"]
+                        },
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"1-5\", \"stage_index\": 5}"
+                        }
+                    }
+                }
+            ]
+        },
+        "farm_resource_stage_2": {
+            "type": "select",
+            "label": "关卡选择",
+            "default_case": "2-1",
+            "cases": [
+                {
+                    "name": "2-1",
+                    "label": "2-1",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": {
+                                "stage_name": "2-1",
+                                "stage_index": 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "2-2",
+                    "label": "2-2",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": {
+                                "stage_name": "2-2",
+                                "stage_index": 2
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "2-3",
+                    "label": "2-3",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": {
+                                "stage_name": "2-3",
+                                "stage_index": 3
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "2-4",
+                    "label": "2-4",
+                    "pipeline_override": {
+                        "FarmResources.SelectStage": {
+                            "next": ["FarmResources.SwipeToRight"]
+                        },
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": {
+                                "stage_name": "2-4",
+                                "stage_index": 4
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "2-5",
+                    "label": "2-5",
+                    "pipeline_override": {
+                        "FarmResources.SelectStage": {
+                            "next": ["FarmResources.SwipeToRight"]
+                        },
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": {
+                                "stage_name": "2-5",
+                                "stage_index": 5
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "farm_resource_stage_3": {
+            "type": "select",
+            "label": "关卡选择",
+            "default_case": "3-1",
+            "cases": [
+                {
+                    "name": "3-1",
+                    "label": "3-1",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": {
+                                "stage_name": "3-1",
+                                "stage_index": 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "3-2",
+                    "label": "3-2",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": {
+                                "stage_name": "3-2",
+                                "stage_index": 2
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "3-3",
+                    "label": "3-3",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": {
+                                "stage_name": "3-3",
+                                "stage_index": 3
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "3-4",
+                    "label": "3-4",
+                    "pipeline_override": {
+                        "FarmResources.SelectStage": {
+                            "next": ["FarmResources.SwipeToRight"]
+                        },
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": {
+                                "stage_name": "3-4",
+                                "stage_index": 4
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "3-5",
+                    "label": "3-5",
+                    "pipeline_override": {
+                        "FarmResources.SelectStage": {
+                            "next": ["FarmResources.SwipeToRight"]
+                        },
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": {
+                                "stage_name": "3-5",
+                                "stage_index": 5
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "farm_resource_stage_4": {
+            "type": "select",
+            "label": "关卡选择",
+            "default_case": "4-1",
+            "cases": [
+                {
+                    "name": "4-1",
+                    "label": "4-1",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": {
+                                "stage_name": "4-1",
+                                "stage_index": 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "4-2",
+                    "label": "4-2",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": {
+                                "stage_name": "4-2",
+                                "stage_index": 2
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "4-3",
+                    "label": "4-3",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": {
+                                "stage_name": "4-3",
+                                "stage_index": 3
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "4-4",
+                    "label": "4-4",
+                    "pipeline_override": {
+                        "FarmResources.SelectStage": {
+                            "next": ["FarmResources.SwipeToRight"]
+                        },
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": {
+                                "stage_name": "4-4",
+                                "stage_index": 4
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "4-5",
+                    "label": "4-5",
+                    "pipeline_override": {
+                        "FarmResources.SelectStage": {
+                            "next": ["FarmResources.SwipeToRight"]
+                        },
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": {
+                                "stage_name": "4-5",
+                                "stage_index": 5
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        "farm_skill_stage_1": {
+            "type": "select",
+            "label": "关卡选择",
+            "default_case": "基础训练1",
+            "cases": [
+                {
+                    "name": "基础训练1",
+                    "label": "基础训练1",
+                    "pipeline_override": {
+                        "FarmResources.ClickSkillStage": {
+                            "expected": "基础训练1",
+                            "roi": [130, 381, 126, 28]
+                        }
+                    }
+                },
+                {
+                    "name": "基础训练2",
+                    "label": "基础训练2",
+                    "pipeline_override": {
+                        "FarmResources.ClickSkillStage": {
+                            "expected": "基础训练2",
+                            "roi": [437, 381, 126, 28]
+                        },
+                        "FarmResources.CheckSkillLocked": {
+                            "roi": [454, 248, 80, 81]
+                        }
+                    }
+                },
+                {
+                    "name": "基础训练3",
+                    "label": "基础训练3",
+                    "pipeline_override": {
+                        "FarmResources.ClickSkillStage": {
+                            "expected": "基础训练3",
+                            "roi": [742, 381, 126, 28]
+                        },
+                        "FarmResources.CheckSkillLocked": {
+                            "roi": [760, 249, 80, 81]
+                        }
+                    }
+                }
+            ]
+        },
+        "farm_skill_stage_2": {
+            "type": "select",
+            "label": "关卡选择",
+            "default_case": "专业训练1",
+            "cases": [
+                {
+                    "name": "专业训练1",
+                    "label": "专业训练1",
+                    "pipeline_override": {
+                        "FarmResources.ClickSkillStage": {
+                            "expected": "专业训练1",
+                            "roi": [130, 381, 126, 28]
+                        }
+                    }
+                },
+                {
+                    "name": "专业训练2",
+                    "label": "专业训练2",
+                    "pipeline_override": {
+                        "FarmResources.ClickSkillStage": {
+                            "expected": "专业训练2",
+                            "roi": [437, 381, 126, 28]
+                        },
+                        "FarmResources.CheckSkillLocked": {
+                            "roi": [454, 248, 80, 81]
+                        }
+                    }
+                },
+                {
+                    "name": "专业训练3",
+                    "label": "专业训练3",
+                    "pipeline_override": {
+                        "FarmResources.ClickSkillStage": {
+                            "expected": "专业训练3",
+                            "roi": [742, 381, 126, 28]
+                        },
+                        "FarmResources.CheckSkillLocked": {
+                            "roi": [760, 249, 80, 81]
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

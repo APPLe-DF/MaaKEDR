@@ -17,18 +17,16 @@
             "default_case": "Yes",
             "cases": [
                 {
-                    "name": "Yes",
-                    "pipeline_override": {
-                        "ClaimRewards.Start": {
-                            "enabled": true
-                        }
-                    }
+                    "name": "Yes"
                 },
                 {
                     "name": "No",
                     "pipeline_override": {
                         "ClaimRewards.Start": {
-                            "enabled": false
+                            "recognition": "DirectHit",
+                            "action": {"type": "DoNothing"},
+                            "next": ["BattlePass.Start"],
+                            "on_error": ["BattlePass.Start"]
                         }
                     }
                 }
@@ -40,18 +38,16 @@
             "default_case": "Yes",
             "cases": [
                 {
-                    "name": "Yes",
-                    "pipeline_override": {
-                        "BattlePass.Start": {
-                            "enabled": true
-                        }
-                    }
+                    "name": "Yes"
                 },
                 {
                     "name": "No",
                     "pipeline_override": {
                         "BattlePass.Start": {
-                            "enabled": false
+                            "recognition": "DirectHit",
+                            "action": {"type": "DoNothing"},
+                            "next": ["Mailbox.Start"],
+                            "on_error": ["Mailbox.Start"]
                         }
                     }
                 }
@@ -63,18 +59,16 @@
             "default_case": "Yes",
             "cases": [
                 {
-                    "name": "Yes",
-                    "pipeline_override": {
-                        "Mailbox.Start": {
-                            "enabled": true
-                        }
-                    }
+                    "name": "Yes"
                 },
                 {
                     "name": "No",
                     "pipeline_override": {
                         "Mailbox.Start": {
-                            "enabled": false
+                            "recognition": "DirectHit",
+                            "action": {"type": "DoNothing"},
+                            "next": [],
+                            "on_error": []
                         }
                     }
                 }

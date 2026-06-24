@@ -1,0 +1,15 @@
+{
+    "TestOCR": {
+        "recognition": "OCR",
+        "expected": ".*",
+        "roi": [
+            315,
+            532,
+            57,
+            42
+        ],
+        "action": {
+            "type": "DoNothing"
+        }
+    }
+}

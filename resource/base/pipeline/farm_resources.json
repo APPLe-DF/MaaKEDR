@@ -1,0 +1,377 @@
+{
+    "ReturnMain": {
+        "desc": "返回游戏主页",
+        "recognition": "TemplateMatch",
+        "roi": [199, 26, 85, 52],
+        "template": "return_main.png",
+        "threshold": 0.8,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["ReturnMain.CheckHomePage"]
+    },
+
+    "ReturnMain.CheckHomePage": {
+        "desc": "确认是否已回到主页",
+        "recognition": "TemplateMatch",
+        "roi": [1199, 6, 77, 83],
+        "template": "main_option.png",
+        "threshold": 0.8,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["FarmResources.Start"],
+        "on_error": ["ReturnMain"]
+    },
+
+    "FarmResources.CheckHomePage": {
+        "desc": "确认当前是否在游戏主页",
+        "recognition": "TemplateMatch",
+        "roi": [1199, 6, 77, 83],
+        "template": "main_option.png",
+        "threshold": 0.8,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["FarmResources.Start"],
+        "on_error": ["ReturnMain"]
+    },
+
+    "FarmResources.Start": {
+        "desc": "从主页进入作战界面",
+        "recognition": "TemplateMatch",
+        "roi": [1052, 583, 77, 80],
+        "template": "farm_resources/battle_entry.png",
+        "threshold": 0.8,
+        "post_delay": 1000,
+        "timeout": 10000,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "FarmResources.ResourceCollect",
+            "FarmResources.SkillTraining"
+        ],
+        "on_error": ["ReturnMain"]
+    },
+
+    "FarmResources.ResourceCollect": {
+        "desc": "进入资源收集板块",
+        "recognition": "TemplateMatch",
+        "roi": [561, 635, 72, 67],
+        "template": "farm_resources/resource_collect_tab.png",
+        "threshold": 0.8,
+        "post_delay": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.SelectResourceType"]
+    },
+
+    "FarmResources.SkillTraining": {
+        "desc": "进入技能演练板块",
+        "recognition": "TemplateMatch",
+        "roi": [755, 630, 71, 68],
+        "template": "farm_resources/skill_training_tab.png",
+        "threshold": 0.8,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.SelectSkillType"]
+    },
+
+    "FarmResources.SelectResourceType": {
+        "desc": "选择资源类型(由选项控制跳转)",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["FarmResources.SelectSpecialFunds"]
+    },
+
+    "FarmResources.SelectSpecialFunds": {
+        "desc": "选择特别军费行动",
+        "recognition": "TemplateMatch",
+        "roi": [93, 531, 77, 59],
+        "template": "farm_resources/special_funds.png",
+        "threshold": 0.8,
+        "post_delay": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.SelectStage"]
+    },
+
+    "FarmResources.SelectPhysicalTraining": {
+        "desc": "选择作战体能训练",
+        "recognition": "TemplateMatch",
+        "roi": [437, 531, 88, 57],
+        "template": "farm_resources/physical_training.png",
+        "threshold": 0.8,
+        "post_delay": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.SelectStage"]
+    },
+
+    "FarmResources.SelectUnitRating": {
+        "desc": "选择兵种能力评级",
+        "recognition": "TemplateMatch",
+        "roi": [804, 529, 73, 59],
+        "template": "farm_resources/unit_rating.png",
+        "threshold": 0.8,
+        "post_delay": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.SelectStage"]
+    },
+
+    "FarmResources.SelectVehicleDrill": {
+        "desc": "选择载具对抗演练",
+        "recognition": "TemplateMatch",
+        "roi": [1145, 522, 86, 65],
+        "template": "farm_resources/vehicle_drill.png",
+        "threshold": 0.8,
+        "post_delay": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.SelectStage"]
+    },
+
+    "FarmResources.SelectSkillType": {
+        "desc": "选择技能类型(由选项控制跳转)",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["FarmResources.SelectBasicSkill"]
+    },
+
+    "FarmResources.SelectBasicSkill": {
+        "desc": "选择基础技能演练",
+        "recognition": "TemplateMatch",
+        "roi": [358, 526, 76, 40],
+        "template": "farm_resources/basic_skill.png",
+        "threshold": 0.75,
+        "post_delay": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.SelectSkillStage"]
+    },
+
+    "FarmResources.SelectAdvancedSkill": {
+        "desc": "选择专业技能演练",
+        "recognition": "TemplateMatch",
+        "roi": [722, 523, 75, 46],
+        "template": "farm_resources/advanced_skill.png",
+        "threshold": 0.75,
+        "post_delay": 1000,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.SelectSkillStage"]
+    },
+
+    "FarmResources.SelectSkillStage": {
+        "desc": "选择技能关卡(由选项控制)",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["FarmResources.ClickSkillStage"]
+    },
+
+    "FarmResources.ClickSkillStage": {
+        "desc": "点击技能关卡",
+        "recognition": "OCR",
+        "expected": "farm_stage",
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.CheckSkillLocked", "FarmResources.ClickStart"]
+    },
+
+    "FarmResources.CheckSkillLocked": {
+        "desc": "检查技能关卡是否被锁定(roi由选项动态设置)",
+        "recognition": "TemplateMatch",
+        "template": "farm_resources/skill_lock_icon.png",
+        "threshold": 0.8,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["FarmResources.ClickStart"]
+    },
+
+    "FarmResources.SelectStage": {
+        "desc": "选择关卡(由选项控制)",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["FarmResources.ClickStage"]
+    },
+
+    "FarmResources.SwipeToRight": {
+        "desc": "滑动到最右边(关卡4、5需要)",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Swipe",
+            "begin": [900, 400],
+            "end": [300, 400],
+            "duration": 500
+        },
+        "next": ["FarmResources.ClickStage"]
+    },
+
+    "FarmResources.ClickStage": {
+        "desc": "点击关卡(使用Agent动态识别)",
+        "recognition": "Custom",
+        "custom_recognition": "CheckResourceStage",
+        "custom_recognition_param": "{\"stage_name\": \"farm_stage\", \"stage_index\": 1, \"lock_template\": \"farm_resources/lock_icon.png\", \"lock_threshold\": 0.8}",
+        "timeout": 10000,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.QuickBattle"],
+        "on_error": ["FarmResources.StageLocked"]
+    },
+
+    "FarmResources.QuickBattle": {
+        "desc": "点击快速战斗按钮",
+        "recognition": "TemplateMatch",
+        "template": "farm_resources/quick_battle.png",
+        "threshold": 0.8,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.MaxCount"]
+    },
+
+    "FarmResources.MaxCount": {
+        "desc": "点击最大次数",
+        "recognition": "TemplateMatch",
+        "template": "farm_resources/max_count.png",
+        "threshold": 0.8,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.PrepareBattle"]
+    },
+
+    "FarmResources.PrepareBattle": {
+        "desc": "点击准备快速战斗",
+        "recognition": "TemplateMatch",
+        "template": "farm_resources/prepare_battle.png",
+        "threshold": 0.8,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.StartBattle"]
+    },
+
+    "FarmResources.StartBattle": {
+        "desc": "点击开始战斗",
+        "recognition": "TemplateMatch",
+        "template": "farm_resources/start_battle.png",
+        "threshold": 0.8,
+        "post_delay": 5000,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.BattleVictory"]
+    },
+
+    "FarmResources.BattleVictory": {
+        "desc": "点击战斗胜利界面",
+        "recognition": "TemplateMatch",
+        "template": "farm_resources/battle_victory.png",
+        "threshold": 0.8,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.ItemObtained"]
+    },
+
+    "FarmResources.ItemObtained": {
+        "desc": "点击获得物品界面",
+        "recognition": "TemplateMatch",
+        "template": "item_obtained_dialog.png",
+        "threshold": 0.8,
+        "action": {
+            "type": "Click"
+        }
+    },
+
+    "FarmResources.StageLocked": {
+        "desc": "关卡未解锁提示",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "focus": {
+            "Node.Action.Starting": {
+                "content": "关卡未解锁，请先解锁后再尝试",
+                "display": ["log", "toast"]
+            }
+        }
+    },
+
+    "FarmResources.SwipeRight": {
+        "desc": "向右滑动查找关卡",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Swipe",
+            "begin": [900, 400],
+            "end": [300, 400],
+            "duration": 500
+        }
+    },
+
+    "FarmResources.ClickStart": {
+        "desc": "点击开始行动",
+        "recognition": "TemplateMatch",
+        "template": "farm_resources/start_button.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.ConfirmStart"]
+    },
+
+    "FarmResources.ConfirmStart": {
+        "desc": "确认开始",
+        "recognition": "TemplateMatch",
+        "template": "farm_resources/confirm_button.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": ["FarmResources.WaitFinish"]
+    },
+
+    "FarmResources.WaitFinish": {
+        "desc": "等待战斗完成",
+        "recognition": "TemplateMatch",
+        "template": "farm_resources/battle_result.png",
+        "threshold": 0.75,
+        "post_wait_freezes": 1000,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": ["FarmResources.ClickConfirm"]
+    },
+
+    "FarmResources.ClickConfirm": {
+        "desc": "点击确认完成",
+        "recognition": "TemplateMatch",
+        "template": "farm_resources/result_confirm.png",
+        "threshold": 0.8,
+        "action": {
+            "type": "Click"
+        }
+    }
+}
