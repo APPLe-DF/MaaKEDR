@@ -24,6 +24,7 @@ dist/
 .create-maa-project/
 cache/
 debug/
+config/
 
 # MFAAvalonia UI 二进制文件（通过 release 分发）
 MFAAvalonia.*
