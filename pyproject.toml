@@ -1,0 +1,26 @@
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = [".venv", "agent/__pycache__"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
+ignore = [
+    "E402",   # module level import not at top
+    "E501",   # line too long (black handles formatting)
+    "SIM102", # nested if
+    "SIM108", # ternary operator
+    "SIM110", # all()/any()
+    "SIM117", # nested with
+    "SIM118", # key in dict
+    "B007",   # unused loop variable
+]
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "basic"
+exclude = [".venv", "**/__pycache__"]

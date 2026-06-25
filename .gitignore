@@ -1,6 +1,7 @@
 # Python 环境
 python/
 venv/
+.venv/
 env/
 *.pyc
 __pycache__/
@@ -25,6 +26,8 @@ dist/
 cache/
 debug/
 config/
+resource/base/debug/
+resource/base/image/
 
 # MFAAvalonia UI 二进制文件（通过 release 分发）
 MFAAvalonia.*

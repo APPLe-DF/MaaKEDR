@@ -21,8 +21,9 @@ if current_script_dir not in sys.path:
 from maa.agent.agent_server import AgentServer
 from maa.toolkit import Toolkit
 
-# 导入自定义识别模块（触发装饰器注册）
-import custom.recognition  # noqa: F401
+# 导入自定义识别和动作模块（触发装饰器注册）
+from custom.recognition import farm_resources  # noqa: F401
+from custom.action import ocr_logger  # noqa: F401
 from utils.logger import logger
 
 

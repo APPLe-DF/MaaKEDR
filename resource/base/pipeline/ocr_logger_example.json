@@ -1,0 +1,54 @@
+{
+    "OCR识别示例": {
+        "desc": "OCR识别节点示例",
+        "recognition": "OCR",
+        "expected": ["收集物资战", "特别军费行动"],
+        "roi": [100, 100, 200, 50],
+        "action": {
+            "type": "DoNothing"
+        }
+    },
+
+    "输出OCR结果": {
+        "desc": "输出OCR识别结果到UI日志",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Custom",
+            "custom_action": "LogOCRResult",
+            "custom_action_param": {
+                "recognition_name": "OCR识别示例",
+                "action_key": "",
+                "return_text": "当前界面识别结果"
+            }
+        }
+    },
+
+    "OCR识别并点击": {
+        "desc": "OCR识别并点击识别结果",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Custom",
+            "custom_action": "LogOCRResult",
+            "custom_action_param": {
+                "recognition_name": "OCR识别示例",
+                "action_key": "Click",
+                "return_text": "点击识别结果"
+            }
+        }
+    },
+
+    "OCR识别并点击指定位置": {
+        "desc": "OCR识别并点击指定位置",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Custom",
+            "custom_action": "LogOCRResult",
+            "custom_action_param": {
+                "recognition_name": "OCR识别示例",
+                "action_key": "Click",
+                "return_text": "点击指定位置",
+                "click_target": [100, 200, 50, 30]
+            }
+        }
+    }
+}

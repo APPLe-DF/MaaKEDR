@@ -8,6 +8,7 @@ from maa.pipeline import JRecognitionType, JOCR, JTemplateMatch, JActionType, JC
 from typing import Optional, Union
 import json
 from utils.logger import logger
+from utils.params import parse_params
 
 
 # 资源收集关卡边框配置（按资源类型分类）
@@ -60,14 +61,7 @@ class CheckResourceStage(CustomRecognition):
         self, context: Context, argv: CustomRecognition.AnalyzeArg
     ) -> Union[CustomRecognition.AnalyzeResult, Optional[RectType]]:
         # 获取参数
-        param_str = argv.custom_recognition_param or "{}"
-        current = param_str
-        while isinstance(current, str):
-            try:
-                current = json.loads(current)
-            except json.JSONDecodeError:
-                break
-        params = current if isinstance(current, dict) else {}
+        params = parse_params(argv.custom_recognition_param)
 
         stage_name = params.get("stage_name", "")
         stage_index = params.get("stage_index", 1)
@@ -145,14 +139,7 @@ class SetBattleCount(CustomAction):
         self, context: Context, argv: CustomAction.RunArg
     ) -> CustomAction.RunResult:
         # 获取参数
-        param_str = argv.custom_action_param or "{}"
-        current = param_str
-        while isinstance(current, str):
-            try:
-                current = json.loads(current)
-            except json.JSONDecodeError:
-                break
-        params = current if isinstance(current, dict) else {}
+        params = parse_params(argv.custom_action_param)
 
         target_count = params.get("target_count", 1)
         count_roi = params.get("count_roi", COUNT_ROI)
