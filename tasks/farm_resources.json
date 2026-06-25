@@ -2,11 +2,83 @@
     "task": [
         {
             "name": "资源刷取",
-            "entry": "FarmResources.Start",
-            "option": ["farm_category"]
+            "entry": "FarmResources.CheckHomePage",
+            "option": [
+                "farm_category"
+            ]
         }
     ],
     "option": {
+        "farm_battle_count": {
+            "type": "select",
+            "label": "战斗次数",
+            "default_case": "1次",
+            "cases": [
+                {
+                    "name": "1次",
+                    "label": "1次",
+                    "pipeline_override": {
+                        "FarmResources.SetBattleCount": {
+                            "custom_action_param": "{\"target_count\": 1, \"count_roi\": [903, 441, 27, 43], \"plus_button\": [1086, 470], \"max_template\": \"farm_resources/max_count.png\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "2次",
+                    "label": "2次",
+                    "pipeline_override": {
+                        "FarmResources.SetBattleCount": {
+                            "custom_action_param": "{\"target_count\": 2, \"count_roi\": [903, 441, 27, 43], \"plus_button\": [1086, 470], \"max_template\": \"farm_resources/max_count.png\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "3次",
+                    "label": "3次",
+                    "pipeline_override": {
+                        "FarmResources.SetBattleCount": {
+                            "custom_action_param": "{\"target_count\": 3, \"count_roi\": [903, 441, 27, 43], \"plus_button\": [1086, 470], \"max_template\": \"farm_resources/max_count.png\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "4次",
+                    "label": "4次",
+                    "pipeline_override": {
+                        "FarmResources.SetBattleCount": {
+                            "custom_action_param": "{\"target_count\": 4, \"count_roi\": [903, 441, 27, 43], \"plus_button\": [1086, 470], \"max_template\": \"farm_resources/max_count.png\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "5次",
+                    "label": "5次",
+                    "pipeline_override": {
+                        "FarmResources.SetBattleCount": {
+                            "custom_action_param": "{\"target_count\": 5, \"count_roi\": [903, 441, 27, 43], \"plus_button\": [1086, 470], \"max_template\": \"farm_resources/max_count.png\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "6次",
+                    "label": "6次",
+                    "pipeline_override": {
+                        "FarmResources.SetBattleCount": {
+                            "custom_action_param": "{\"target_count\": 6, \"count_roi\": [903, 441, 27, 43], \"plus_button\": [1086, 470], \"max_template\": \"farm_resources/max_count.png\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "最大",
+                    "label": "最大",
+                    "pipeline_override": {
+                        "FarmResources.SetBattleCount": {
+                            "custom_action_param": "{\"target_count\": \"max\", \"count_roi\": [903, 441, 27, 43], \"plus_button\": [1086, 470], \"max_template\": \"farm_resources/max_count.png\"}"
+                        }
+                    }
+                }
+            ]
+        },
         "farm_category": {
             "type": "select",
             "label": "刷取板块",
@@ -15,12 +87,26 @@
                 {
                     "name": "资源收集",
                     "label": "资源收集",
-                    "option": ["farm_resource_type"]
+                    "option": [
+                        "farm_resource_type"
+                    ],
+                    "pipeline_override": {
+                        "FarmResources.Start": {
+                            "next": ["FarmResources.ResourceCollect"]
+                        }
+                    }
                 },
                 {
                     "name": "技能演练",
                     "label": "技能演练",
-                    "option": ["farm_skill_type"]
+                    "option": [
+                        "farm_skill_type"
+                    ],
+                    "pipeline_override": {
+                        "FarmResources.Start": {
+                            "next": ["FarmResources.SkillTraining"]
+                        }
+                    }
                 }
             ]
         },
@@ -32,40 +118,56 @@
                 {
                     "name": "特别军费行动",
                     "label": "特别军费行动",
-                    "option": ["farm_resource_stage_1"],
+                    "option": [
+                        "farm_resource_stage_1"
+                    ],
                     "pipeline_override": {
                         "FarmResources.SelectResourceType": {
-                            "next": ["FarmResources.SelectSpecialFunds"]
+                            "next": [
+                                "FarmResources.SelectSpecialFunds"
+                            ]
                         }
                     }
                 },
                 {
                     "name": "作战体能训练",
                     "label": "作战体能训练",
-                    "option": ["farm_resource_stage_2"],
+                    "option": [
+                        "farm_resource_stage_2"
+                    ],
                     "pipeline_override": {
                         "FarmResources.SelectResourceType": {
-                            "next": ["FarmResources.SelectPhysicalTraining"]
+                            "next": [
+                                "FarmResources.SelectPhysicalTraining"
+                            ]
                         }
                     }
                 },
                 {
                     "name": "兵种能力评级",
                     "label": "兵种能力评级",
-                    "option": ["farm_resource_stage_3"],
+                    "option": [
+                        "farm_resource_stage_3"
+                    ],
                     "pipeline_override": {
                         "FarmResources.SelectResourceType": {
-                            "next": ["FarmResources.SelectUnitRating"]
+                            "next": [
+                                "FarmResources.SelectUnitRating"
+                            ]
                         }
                     }
                 },
                 {
                     "name": "载具对抗演练",
                     "label": "载具对抗演练",
-                    "option": ["farm_resource_stage_4"],
+                    "option": [
+                        "farm_resource_stage_4"
+                    ],
                     "pipeline_override": {
                         "FarmResources.SelectResourceType": {
-                            "next": ["FarmResources.SelectVehicleDrill"]
+                            "next": [
+                                "FarmResources.SelectVehicleDrill"
+                            ]
                         }
                     }
                 }
@@ -79,20 +181,28 @@
                 {
                     "name": "基础技能演练",
                     "label": "基础技能演练",
-                    "option": ["farm_skill_stage_1"],
+                    "option": [
+                        "farm_skill_stage_1"
+                    ],
                     "pipeline_override": {
                         "FarmResources.SelectSkillType": {
-                            "next": ["FarmResources.SelectBasicSkill"]
+                            "next": [
+                                "FarmResources.SelectBasicSkill"
+                            ]
                         }
                     }
                 },
                 {
                     "name": "专业技能演练",
                     "label": "专业技能演练",
-                    "option": ["farm_skill_stage_2"],
+                    "option": [
+                        "farm_skill_stage_2"
+                    ],
                     "pipeline_override": {
                         "FarmResources.SelectSkillType": {
-                            "next": ["FarmResources.SelectAdvancedSkill"]
+                            "next": [
+                                "FarmResources.SelectAdvancedSkill"
+                            ]
                         }
                     }
                 }
@@ -106,9 +216,12 @@
                 {
                     "name": "1-1",
                     "label": "1-1",
+                    "option": [
+                        "farm_battle_count"
+                    ],
                     "pipeline_override": {
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": "{\"stage_name\": \"1-1\", \"stage_index\": 1}"
+                            "custom_recognition_param": "{\"stage_name\": \"1-1\", \"stage_index\": 1, \"resource_type\": \"特别军费行动\"}"
                         }
                     }
                 },
@@ -117,42 +230,58 @@
                     "label": "1-2",
                     "pipeline_override": {
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": "{\"stage_name\": \"1-2\", \"stage_index\": 2}"
+                            "custom_recognition_param": "{\"stage_name\": \"1-2\", \"stage_index\": 2, \"resource_type\": \"特别军费行动\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "1-3",
                     "label": "1-3",
                     "pipeline_override": {
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": "{\"stage_name\": \"1-3\", \"stage_index\": 3}"
+                            "custom_recognition_param": "{\"stage_name\": \"1-3\", \"stage_index\": 3, \"resource_type\": \"特别军费行动\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "1-4",
                     "label": "1-4",
                     "pipeline_override": {
                         "FarmResources.SelectStage": {
-                            "next": ["FarmResources.SwipeToRight"]
+                            "next": [
+                                "FarmResources.SwipeToRight"
+                            ]
                         },
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": "{\"stage_name\": \"1-4\", \"stage_index\": 4}"
+                            "custom_recognition_param": "{\"stage_name\": \"1-4\", \"stage_index\": 4, \"resource_type\": \"特别军费行动\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "1-5",
                     "label": "1-5",
                     "pipeline_override": {
                         "FarmResources.SelectStage": {
-                            "next": ["FarmResources.SwipeToRight"]
+                            "next": [
+                                "FarmResources.SwipeToRight"
+                            ]
                         },
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": "{\"stage_name\": \"1-5\", \"stage_index\": 5}"
+                            "custom_recognition_param": "{\"stage_name\": \"1-5\", \"stage_index\": 5, \"resource_type\": \"特别军费行动\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 }
             ]
         },
@@ -166,66 +295,70 @@
                     "label": "2-1",
                     "pipeline_override": {
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": {
-                                "stage_name": "2-1",
-                                "stage_index": 1
-                            }
+                            "custom_recognition_param": "{\"stage_name\": \"2-1\", \"stage_index\": 1, \"resource_type\": \"作战体能训练\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "2-2",
                     "label": "2-2",
                     "pipeline_override": {
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": {
-                                "stage_name": "2-2",
-                                "stage_index": 2
-                            }
+                            "custom_recognition_param": "{\"stage_name\": \"2-2\", \"stage_index\": 2, \"resource_type\": \"作战体能训练\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "2-3",
                     "label": "2-3",
                     "pipeline_override": {
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": {
-                                "stage_name": "2-3",
-                                "stage_index": 3
-                            }
+                            "custom_recognition_param": "{\"stage_name\": \"2-3\", \"stage_index\": 3, \"resource_type\": \"作战体能训练\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "2-4",
                     "label": "2-4",
                     "pipeline_override": {
                         "FarmResources.SelectStage": {
-                            "next": ["FarmResources.SwipeToRight"]
+                            "next": [
+                                "FarmResources.SwipeToRight"
+                            ]
                         },
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": {
-                                "stage_name": "2-4",
-                                "stage_index": 4
-                            }
+                            "custom_recognition_param": "{\"stage_name\": \"2-4\", \"stage_index\": 4, \"resource_type\": \"作战体能训练\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "2-5",
                     "label": "2-5",
                     "pipeline_override": {
                         "FarmResources.SelectStage": {
-                            "next": ["FarmResources.SwipeToRight"]
+                            "next": [
+                                "FarmResources.SwipeToRight"
+                            ]
                         },
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": {
-                                "stage_name": "2-5",
-                                "stage_index": 5
-                            }
+                            "custom_recognition_param": "{\"stage_name\": \"2-5\", \"stage_index\": 5, \"resource_type\": \"作战体能训练\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 }
             ]
         },
@@ -239,66 +372,70 @@
                     "label": "3-1",
                     "pipeline_override": {
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": {
-                                "stage_name": "3-1",
-                                "stage_index": 1
-                            }
+                            "custom_recognition_param": "{\"stage_name\": \"3-1\", \"stage_index\": 1, \"resource_type\": \"兵种能力评级\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "3-2",
                     "label": "3-2",
                     "pipeline_override": {
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": {
-                                "stage_name": "3-2",
-                                "stage_index": 2
-                            }
+                            "custom_recognition_param": "{\"stage_name\": \"3-2\", \"stage_index\": 2, \"resource_type\": \"兵种能力评级\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "3-3",
                     "label": "3-3",
                     "pipeline_override": {
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": {
-                                "stage_name": "3-3",
-                                "stage_index": 3
-                            }
+                            "custom_recognition_param": "{\"stage_name\": \"3-3\", \"stage_index\": 3, \"resource_type\": \"兵种能力评级\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "3-4",
                     "label": "3-4",
                     "pipeline_override": {
                         "FarmResources.SelectStage": {
-                            "next": ["FarmResources.SwipeToRight"]
+                            "next": [
+                                "FarmResources.SwipeToRight"
+                            ]
                         },
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": {
-                                "stage_name": "3-4",
-                                "stage_index": 4
-                            }
+                            "custom_recognition_param": "{\"stage_name\": \"3-4\", \"stage_index\": 4, \"resource_type\": \"兵种能力评级\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "3-5",
                     "label": "3-5",
                     "pipeline_override": {
                         "FarmResources.SelectStage": {
-                            "next": ["FarmResources.SwipeToRight"]
+                            "next": [
+                                "FarmResources.SwipeToRight"
+                            ]
                         },
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": {
-                                "stage_name": "3-5",
-                                "stage_index": 5
-                            }
+                            "custom_recognition_param": "{\"stage_name\": \"3-5\", \"stage_index\": 5, \"resource_type\": \"兵种能力评级\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 }
             ]
         },
@@ -312,66 +449,70 @@
                     "label": "4-1",
                     "pipeline_override": {
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": {
-                                "stage_name": "4-1",
-                                "stage_index": 1
-                            }
+                            "custom_recognition_param": "{\"stage_name\": \"4-1\", \"stage_index\": 1, \"resource_type\": \"载具对抗演练\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "4-2",
                     "label": "4-2",
                     "pipeline_override": {
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": {
-                                "stage_name": "4-2",
-                                "stage_index": 2
-                            }
+                            "custom_recognition_param": "{\"stage_name\": \"4-2\", \"stage_index\": 2, \"resource_type\": \"载具对抗演练\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "4-3",
                     "label": "4-3",
                     "pipeline_override": {
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": {
-                                "stage_name": "4-3",
-                                "stage_index": 3
-                            }
+                            "custom_recognition_param": "{\"stage_name\": \"4-3\", \"stage_index\": 3, \"resource_type\": \"载具对抗演练\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "4-4",
                     "label": "4-4",
                     "pipeline_override": {
                         "FarmResources.SelectStage": {
-                            "next": ["FarmResources.SwipeToRight"]
+                            "next": [
+                                "FarmResources.SwipeToRight"
+                            ]
                         },
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": {
-                                "stage_name": "4-4",
-                                "stage_index": 4
-                            }
+                            "custom_recognition_param": "{\"stage_name\": \"4-4\", \"stage_index\": 4, \"resource_type\": \"载具对抗演练\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "4-5",
                     "label": "4-5",
                     "pipeline_override": {
                         "FarmResources.SelectStage": {
-                            "next": ["FarmResources.SwipeToRight"]
+                            "next": [
+                                "FarmResources.SwipeToRight"
+                            ]
                         },
                         "FarmResources.ClickStage": {
-                            "custom_recognition_param": {
-                                "stage_name": "4-5",
-                                "stage_index": 5
-                            }
+                            "custom_recognition_param": "{\"stage_name\": \"4-5\", \"stage_index\": 5, \"resource_type\": \"载具对抗演练\"}"
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 }
             ]
         },
@@ -386,9 +527,20 @@
                     "pipeline_override": {
                         "FarmResources.ClickSkillStage": {
                             "expected": "基础训练1",
-                            "roi": [130, 381, 126, 28]
+                            "roi": [
+                                130,
+                                381,
+                                126,
+                                28
+                            ]
+                        },
+                        "FarmResources.SelectSkillStage": {
+                            "next": ["FarmResources.ClickSkillStage"]
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "基础训练2",
@@ -396,12 +548,25 @@
                     "pipeline_override": {
                         "FarmResources.ClickSkillStage": {
                             "expected": "基础训练2",
-                            "roi": [437, 381, 126, 28]
+                            "roi": [
+                                437,
+                                381,
+                                126,
+                                28
+                            ]
                         },
                         "FarmResources.CheckSkillLocked": {
-                            "roi": [454, 248, 80, 81]
+                            "roi": [
+                                454,
+                                248,
+                                80,
+                                81
+                            ]
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "基础训练3",
@@ -409,12 +574,25 @@
                     "pipeline_override": {
                         "FarmResources.ClickSkillStage": {
                             "expected": "基础训练3",
-                            "roi": [742, 381, 126, 28]
+                            "roi": [
+                                742,
+                                381,
+                                126,
+                                28
+                            ]
                         },
                         "FarmResources.CheckSkillLocked": {
-                            "roi": [760, 249, 80, 81]
+                            "roi": [
+                                760,
+                                249,
+                                80,
+                                81
+                            ]
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 }
             ]
         },
@@ -429,9 +607,20 @@
                     "pipeline_override": {
                         "FarmResources.ClickSkillStage": {
                             "expected": "专业训练1",
-                            "roi": [130, 381, 126, 28]
+                            "roi": [
+                                130,
+                                381,
+                                126,
+                                28
+                            ]
+                        },
+                        "FarmResources.SelectSkillStage": {
+                            "next": ["FarmResources.ClickSkillStage"]
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "专业训练2",
@@ -439,12 +628,25 @@
                     "pipeline_override": {
                         "FarmResources.ClickSkillStage": {
                             "expected": "专业训练2",
-                            "roi": [437, 381, 126, 28]
+                            "roi": [
+                                437,
+                                381,
+                                126,
+                                28
+                            ]
                         },
                         "FarmResources.CheckSkillLocked": {
-                            "roi": [454, 248, 80, 81]
+                            "roi": [
+                                454,
+                                248,
+                                80,
+                                81
+                            ]
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 },
                 {
                     "name": "专业训练3",
@@ -452,12 +654,25 @@
                     "pipeline_override": {
                         "FarmResources.ClickSkillStage": {
                             "expected": "专业训练3",
-                            "roi": [742, 381, 126, 28]
+                            "roi": [
+                                742,
+                                381,
+                                126,
+                                28
+                            ]
                         },
                         "FarmResources.CheckSkillLocked": {
-                            "roi": [760, 249, 80, 81]
+                            "roi": [
+                                760,
+                                249,
+                                80,
+                                81
+                            ]
                         }
-                    }
+                    },
+                    "option": [
+                        "farm_battle_count"
+                    ]
                 }
             ]
         }
