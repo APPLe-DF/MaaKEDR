@@ -47,6 +47,9 @@ plugins/*/
 # 依赖安装脚本（自动生成）
 DependencySetup_*.bat
 
+# 测试文件
+test_*.json
+
 # 系统文件
 .DS_Store
 Thumbs.db
