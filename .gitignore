@@ -27,7 +27,8 @@ cache/
 debug/
 config/
 resource/base/debug/
-resource/base/image/
+resource/base/image/*
+!resource/base/image/maakedr-logo_512x512.png
 
 # MFAAvalonia UI 二进制文件（通过 release 分发）
 MFAAvalonia.*
