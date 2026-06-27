@@ -2,10 +2,10 @@
 
 Cedar Automation Assistant - Game automation tool based on MaaFramework
 
-> ⚠️ **Project Status: Under Development**  
+> ⚠️ **Project Status: Under Development**
 > This project is in early development stage and not yet usable.
-> 
-> **Development Team Notice**  
+>
+> **Development Team Notice**
 > This project has very few developers with limited time and energy. If you encounter any issues during use, feel free to submit an Issue, but we may not be able to respond or fix them promptly. Thank you for your understanding and support!
 
 ## Introduction
@@ -15,8 +15,8 @@ MaaKEDR is a Cedar game automation assistant built with [MaaFramework](https://g
 ## Tech Stack
 
 - **Framework**: [MaaFramework](https://github.com/MaaXYZ/MaaFramework) - Image recognition automation framework
-- **Toolchain**: 
-  - [create-maa-project](https://github.com/neko-para/maa-support-extension) - Project scaffolding
+- **Toolchain**:
+  - [create-maa-project](https://github.com/Windsland52/create-maa-project) - Project scaffolding
   - [maa-mcp](https://github.com/MAA-AI/MaaMCP) - MaaFramework MCP server
 
 ## Acknowledgments
