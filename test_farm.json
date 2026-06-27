@@ -1,0 +1,55 @@
+{
+    "FarmResources.SelectResourceType": {
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "FarmResources.SelectVehicleDrill"
+        ]
+    },
+    "FarmResources.ClickStage": {
+        "recognition": "Custom",
+        "custom_recognition": "CheckResourceStage",
+        "custom_recognition_param": "{\"stage_name\": \"4-1\", \"stage_index\": 1, \"resource_type\": \"载具对抗演练\"}",
+        "timeout": 10000,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "FarmResources.QuickBattle"
+        ],
+        "on_error": [
+            "FarmResources.StageLocked"
+        ]
+    },
+    "FarmResources.QuickBattle": {
+        "recognition": "TemplateMatch",
+        "roi": [
+            917,
+            509,
+            84,
+            49
+        ],
+        "template": "farm_resources/quick_battle.png",
+        "threshold": 0.9,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "FarmResources.SetBattleCountMax"
+        ],
+        "on_error": [
+            "FarmResources.QuickBattleLocked"
+        ]
+    },
+    "FarmResources.BattleLoop": {
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "FarmResources.BattleLoopStamina"
+        ]
+    }
+}

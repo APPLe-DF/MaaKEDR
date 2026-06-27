@@ -222,3 +222,84 @@ class SetBattleCount(CustomAction):
                 )
 
         return CustomAction.RunResult(success=True)
+
+
+# 全局变量记录当前目标次数
+_current_target_count = 6
+
+
+@AgentServer.custom_action("ReduceBattleCount")
+class ReduceBattleCount(CustomAction):
+    """
+    减少战斗次数（动态计算目标次数）
+
+    参数：
+    - minus_button: 减号按钮位置 [x, y]
+    - count_roi: 次数显示区域 [x, y, w, h]
+    """
+
+    def run(
+        self, context: Context, argv: CustomAction.RunArg
+    ) -> CustomAction.RunResult:
+        global _current_target_count
+        try:
+            # 获取参数
+            params = parse_params(argv.custom_action_param)
+
+            minus_x, minus_y = params.get("minus_button", MINUS_BUTTON)
+            count_roi = params.get("count_roi", COUNT_ROI)
+
+            # OCR识别当前次数
+            image = context.tasker.controller.cached_image
+            ocr_detail = context.run_recognition_direct(
+                JRecognitionType.OCR,
+                JOCR(expected=["1", "2", "3", "4", "5", "6"], roi=count_roi),
+                image,
+            )
+
+            current_count = -1
+            if ocr_detail and ocr_detail.hit and ocr_detail.all_results:
+                try:
+                    current_count = int(ocr_detail.all_results[0].text.strip())
+                except ValueError:
+                    current_count = -1
+
+            # 减少目标次数（每次减少1）
+            _current_target_count -= 1
+            logger.info(f"[ReduceBattleCount] 当前次数: {current_count}, 新目标次数: {_current_target_count}")
+
+            # 如果目标次数已经小于1，返回失败
+            if _current_target_count < 1:
+                logger.warning(f"[ReduceBattleCount] 目标次数已到最小，无法继续")
+                _current_target_count = 6  # 重置
+                return CustomAction.RunResult(success=False)
+
+            # 点击减号按钮1次
+            logger.info(f"[ReduceBattleCount] 点击减号按钮")
+            context.run_action_direct(
+                JActionType.Click,
+                JClick(),
+                (minus_x, minus_y, 10, 10),
+                "",
+            )
+
+            return CustomAction.RunResult(success=True)
+        except Exception as e:
+            logger.error(f"[ReduceBattleCount] 执行异常: {e}")
+            _current_target_count = 6  # 重置
+            return CustomAction.RunResult(success=False)
+
+
+@AgentServer.custom_action("ResetBattleCountTarget")
+class ResetBattleCountTarget(CustomAction):
+    """
+    重置目标次数为6（调用ReduceBattleCount前需要调用）
+    """
+
+    def run(
+        self, context: Context, argv: CustomAction.RunArg
+    ) -> CustomAction.RunResult:
+        global _current_target_count
+        _current_target_count = 6
+        logger.info(f"[ResetBattleCountTarget] 目标次数重置为: {_current_target_count}")
+        return CustomAction.RunResult(success=True)

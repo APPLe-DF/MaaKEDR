@@ -22,10 +22,24 @@
                     "name": "Yes",
                     "pipeline_override": {
                         "FarmResources.QuickBattle": {
-                            "next": ["FarmResources.SetBattleCountMax"]
+                            "next": [
+                                "FarmResources.SetBattleCountMax"
+                            ]
                         },
                         "FarmResources.BattleLoop": {
-                            "next": ["FarmResources.SetBattleCountMax"]
+                            "next": [
+                                "FarmResources.BattleLoopStamina"
+                            ]
+                        },
+                        "FarmResources.ExitStage": {
+                            "next": [
+                                "FarmResources.BattleLoopStamina"
+                            ]
+                        },
+                        "FarmResources.ExitStageConfirm": {
+                            "next": [
+                                "FarmResources.BattleLoopStamina"
+                            ]
                         }
                     }
                 }
@@ -114,7 +128,9 @@
                     ],
                     "pipeline_override": {
                         "FarmResources.Start": {
-                            "next": ["FarmResources.ResourceCollect"]
+                            "next": [
+                                "FarmResources.ResourceCollect"
+                            ]
                         }
                     }
                 },
@@ -126,7 +142,9 @@
                     ],
                     "pipeline_override": {
                         "FarmResources.Start": {
-                            "next": ["FarmResources.SkillTraining"]
+                            "next": [
+                                "FarmResources.SkillTraining"
+                            ]
                         }
                     }
                 }
@@ -557,7 +575,9 @@
                             ]
                         },
                         "FarmResources.SelectSkillStage": {
-                            "next": ["FarmResources.ClickSkillStage"]
+                            "next": [
+                                "FarmResources.ClickSkillStage"
+                            ]
                         }
                     },
                     "option": [
@@ -637,7 +657,9 @@
                             ]
                         },
                         "FarmResources.SelectSkillStage": {
-                            "next": ["FarmResources.ClickSkillStage"]
+                            "next": [
+                                "FarmResources.ClickSkillStage"
+                            ]
                         }
                     },
                     "option": [
