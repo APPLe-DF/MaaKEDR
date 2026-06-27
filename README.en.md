@@ -1,5 +1,7 @@
 # MaaKEDR
 
+![MaaKEDR Logo](resource/base/image/maakedr-logo_512x512.png)
+
 Cedar Automation Assistant - Game automation tool based on MaaFramework
 
 > ⚠️ **Project Status: Under Development**
