@@ -6,19 +6,21 @@ on:
       tag:
         default: ""
         required: false
+  repository_dispatch:
+    types: [mirrorchyan-release-note]
   release:
     types: [edited]
 
 jobs:
   mirrorchyan_mfaa:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     if: ${{ github.repository_owner == 'APPLe-DF' }}
     steps:
       - id: uploading
         uses: MirrorChyan/release-note-action@v1
         with:
           mirrorchyan_rid: MaaKEDR
-          version_name: ${{ inputs.tag }}
+          version_name: ${{ inputs.tag || github.event.client_payload.tag }}
 
           owner: APPLe-DF
           repo: MaaKEDR
@@ -26,14 +28,14 @@ jobs:
           upload_token: ${{ secrets.MirrorChyanUploadToken }}
 
   mirrorchyan_mxu:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     if: ${{ github.repository_owner == 'APPLe-DF' }}
     steps:
       - id: uploading
         uses: MirrorChyan/release-note-action@v1
         with:
           mirrorchyan_rid: MaaKEDR-MXU
-          version_name: ${{ inputs.tag }}
+          version_name: ${{ inputs.tag || github.event.client_payload.tag }}
 
           owner: APPLe-DF
           repo: MaaKEDR

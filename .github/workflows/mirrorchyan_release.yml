@@ -6,10 +6,16 @@ on:
       tag:
         default: ""
         required: false
+  repository_dispatch:
+    types: [mirrorchyan-upload]
+  release:
+    types: [released]
 
 jobs:
   mirrorchyan_mfaa:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+    # Mirror酱为第三方分发服务，请先联系开通后再使用
+    # https://mirrorchyan.com/
     if: ${{ github.repository_owner == 'APPLe-DF' }}
     strategy:
       fail-fast: false
@@ -39,7 +45,7 @@ jobs:
           filetype: latest-release
           filename: ${{ matrix.filename }}
           mirrorchyan_rid: MaaKEDR
-          tag: ${{ inputs.tag }}
+          tag: ${{ inputs.tag || github.event.client_payload.tag }}
 
           os: ${{ matrix.os }}
           arch: ${{ matrix.arch }}
@@ -50,7 +56,9 @@ jobs:
           upload_token: ${{ secrets.MirrorChyanUploadToken }}
 
   mirrorchyan_mxu:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+    # Mirror酱为第三方分发服务，请先联系开通后再使用
+    # https://mirrorchyan.com/
     if: ${{ github.repository_owner == 'APPLe-DF' }}
     strategy:
       fail-fast: false
@@ -77,7 +85,7 @@ jobs:
           filetype: latest-release
           filename: ${{ matrix.filename }}
           mirrorchyan_rid: MaaKEDR-MXU
-          tag: ${{ inputs.tag }}
+          tag: ${{ inputs.tag || github.event.client_payload.tag }}
 
           os: ${{ matrix.os }}
           arch: ${{ matrix.arch }}
