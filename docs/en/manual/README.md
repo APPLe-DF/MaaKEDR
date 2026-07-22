@@ -21,6 +21,7 @@ Welcome to the MaaKEDR user manual. Here you'll find everything from getting sta
 - [**FAQ**](./faq) — Solutions for common issues: installation, crashes, connection, task execution
 - [**Connection Settings**](./connection) — Detailed ADB connection guide with emulator port reference
 - [**Feature Introduction**](./introduction) — Task configuration details and usage instructions
+- [**Choosing a UI**](./choose-ui) — comparison between MFAA and MXU frontends
 
 Developers: see [Protocol](../protocol/) and [Development Docs](../develop/).
 

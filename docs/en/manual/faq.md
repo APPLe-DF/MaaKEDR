@@ -120,3 +120,32 @@ Check for updates will try MirrorChyan first; without a CDK or if the resource i
 **MFAAvalonia:** Configure the update source in settings, then check for updates.
 
 For manual updates: download the latest release, extract to a new directory, then copy your old `config/` folder to the new directory to keep your settings.
+
+---
+
+## MFAA Tips
+
+### Remembered Connection & Fingerprint Matching
+
+If a remembered connection gets overwritten when you launch MFAA with an unremembered emulator running, go to **Settings → Connection Settings** and disable "Use fingerprint to match device" to prevent auto-switching.
+
+### Multi-Instance Setup & Batch Launch
+
+Only one MFAA instance can run per directory. To run multiple emulators simultaneously, create additional configurations from the main config panel. Each config can connect to a different emulator with its own task set. The second icon in the left sidebar shows real-time status for all configs.
+
+::: tip
+To auto-launch multiple configs on startup, enable "Batch launch on startup" in startup settings and select the configs to run.
+:::
+
+### Auto-Launch Game
+
+MFAA can launch the game automatically when a task starts, with two methods:
+
+1. **Custom Program**: Click "Add Task" in the task list, scroll to find "Custom Program", add it to the top of the list, and enter the game path in its settings.
+2. **Connection Settings**: Enable "Launch game on connection failure", then set the game path in startup settings.
+
+When using multiple emulator instances, ensure the multi-instance ID is correctly set in the additional commands field.
+
+::: tip
+Quick setup is available next to the additional commands field in startup settings.
+:::
