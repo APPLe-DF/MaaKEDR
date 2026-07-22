@@ -19,6 +19,7 @@
   <br>
   <img alt="commit" src="https://img.shields.io/github/commit-activity/m/APPLe-DF/MaaKEDR">
   <img alt="stars" src="https://img.shields.io/github/stars/APPLe-DF/MaaKEDR?style=social">
+  <a href="https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-badge" target="_blank"><img alt="mirrorc" src="https://img.shields.io/badge/Mirror%E9%85%B1-%239af3f6?logo=countingworkspro&logoColor=4f46e5"></a>
 </p>
 
 <div align="center">
@@ -89,6 +90,8 @@
 ### 下载安装
 
 前往 [GitHub Releases](https://github.com/APPLe-DF/MaaKEDR/releases/latest) 下载最新版本压缩包，解压后运行即可。
+
+- [Mirror酱高速下载](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-readme) — 已拥有 CDK 的用户可前往高速下载与自动更新
 
 ### 安装运行
 
