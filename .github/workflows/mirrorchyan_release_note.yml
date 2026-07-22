@@ -1,0 +1,41 @@
+name: mirrorchyan_release_note
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        default: ""
+        required: false
+  release:
+    types: [edited]
+
+jobs:
+  mirrorchyan_mfaa:
+    runs-on: macos-latest
+    if: ${{ github.repository_owner == 'APPLe-DF' }}
+    steps:
+      - id: uploading
+        uses: MirrorChyan/release-note-action@v1
+        with:
+          mirrorchyan_rid: MaaKEDR
+          version_name: ${{ inputs.tag }}
+
+          owner: APPLe-DF
+          repo: MaaKEDR
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upload_token: ${{ secrets.MirrorChyanUploadToken }}
+
+  mirrorchyan_mxu:
+    runs-on: macos-latest
+    if: ${{ github.repository_owner == 'APPLe-DF' }}
+    steps:
+      - id: uploading
+        uses: MirrorChyan/release-note-action@v1
+        with:
+          mirrorchyan_rid: MaaKEDR-MXU
+          version_name: ${{ inputs.tag }}
+
+          owner: APPLe-DF
+          repo: MaaKEDR
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upload_token: ${{ secrets.MirrorChyanUploadToken }}

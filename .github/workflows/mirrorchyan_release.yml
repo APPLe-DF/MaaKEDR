@@ -1,0 +1,88 @@
+name: mirrorchyan_release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        default: ""
+        required: false
+
+jobs:
+  mirrorchyan_mfaa:
+    runs-on: macos-latest
+    if: ${{ github.repository_owner == 'APPLe-DF' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: win
+            arch: x86_64
+            filename: "MaaKEDR-win-x86_64-*-MFAA.zip"
+          - os: win
+            arch: aarch64
+            filename: "MaaKEDR-win-aarch64-*-MFAA.zip"
+          - os: macos
+            arch: x86_64
+            filename: "MaaKEDR-macos-x86_64-*-MFAA.tar.gz"
+          - os: macos
+            arch: aarch64
+            filename: "MaaKEDR-macos-aarch64-*-MFAA.tar.gz"
+          - os: linux
+            arch: x86_64
+            filename: "MaaKEDR-linux-x86_64-*-MFAA.tar.gz"
+          - os: linux
+            arch: aarch64
+            filename: "MaaKEDR-linux-aarch64-*-MFAA.tar.gz"
+    steps:
+      - uses: MirrorChyan/uploading-action@v1
+        with:
+          filetype: latest-release
+          filename: ${{ matrix.filename }}
+          mirrorchyan_rid: MaaKEDR
+          tag: ${{ inputs.tag }}
+
+          os: ${{ matrix.os }}
+          arch: ${{ matrix.arch }}
+
+          owner: APPLe-DF
+          repo: MaaKEDR
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upload_token: ${{ secrets.MirrorChyanUploadToken }}
+
+  mirrorchyan_mxu:
+    runs-on: macos-latest
+    if: ${{ github.repository_owner == 'APPLe-DF' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: win
+            arch: x86_64
+            filename: "MaaKEDR-win-x86_64-*-MXU.zip"
+          - os: win
+            arch: aarch64
+            filename: "MaaKEDR-win-aarch64-*-MXU.zip"
+          - os: macos
+            arch: x86_64
+            filename: "MaaKEDR-macos-x86_64-*-MXU.tar.gz"
+          - os: macos
+            arch: aarch64
+            filename: "MaaKEDR-macos-aarch64-*-MXU.tar.gz"
+          - os: linux
+            arch: x86_64
+            filename: "MaaKEDR-linux-x86_64-*-MXU.tar.gz"
+    steps:
+      - uses: MirrorChyan/uploading-action@v1
+        with:
+          filetype: latest-release
+          filename: ${{ matrix.filename }}
+          mirrorchyan_rid: MaaKEDR-MXU
+          tag: ${{ inputs.tag }}
+
+          os: ${{ matrix.os }}
+          arch: ${{ matrix.arch }}
+
+          owner: APPLe-DF
+          repo: MaaKEDR
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upload_token: ${{ secrets.MirrorChyanUploadToken }}
