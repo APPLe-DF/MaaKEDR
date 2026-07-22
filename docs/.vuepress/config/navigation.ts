@@ -16,7 +16,7 @@ const zh: NavigationConfig = {
       type: 'doc',
       title: '用户手册',
       dir: 'manual',
-      sidebar: ['newbie.md', 'faq.md', 'connection.md', 'introduction.md'],
+      sidebar: ['newbie.md', 'faq.md', 'connection.md', 'introduction.md', 'choose-ui.md'],
     },
     {
       type: 'doc',
@@ -59,7 +59,7 @@ const en: NavigationConfig = {
       type: 'doc',
       title: 'User Manual',
       dir: 'manual',
-      sidebar: ['newbie.md', 'faq.md', 'connection.md', 'introduction.md'],
+      sidebar: ['newbie.md', 'faq.md', 'connection.md', 'introduction.md', 'choose-ui.md'],
     },
     {
       type: 'doc',
