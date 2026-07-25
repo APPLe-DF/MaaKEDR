@@ -143,10 +143,8 @@
             "ClaimRewards.CheckDaily",
             "ClaimRewards.CheckWeekly",
             "ClaimRewards.CheckMilitary",
-            "[JumpBack]Common.CheckItemObtained"
-        ],
-        "on_error": [
-            "ClaimRewards.ExitRewardInterface"
+            "[JumpBack]Common.CheckItemObtained",
+            "[JumpBack]ClaimRewards.ExitRewardInterface"
         ]
     },
     "ClaimRewards.CheckDaily": {
@@ -166,10 +164,8 @@
         },
         "timeout": 5000,
         "next": [
-            "ClaimRewards.ClaimButton"
-        ],
-        "on_error": [
-            "ClaimRewards.CheckWeekly"
+            "ClaimRewards.ClaimButton",
+            "[JumpBack]ClaimRewards.CheckWeekly"
         ]
     },
     "ClaimRewards.CheckWeekly": {
@@ -189,10 +185,8 @@
         },
         "timeout": 5000,
         "next": [
-            "ClaimRewards.ClaimButton"
-        ],
-        "on_error": [
-            "ClaimRewards.CheckMilitary"
+            "ClaimRewards.ClaimButton",
+            "[JumpBack]ClaimRewards.CheckMilitary"
         ]
     },
     "ClaimRewards.CheckMilitary": {
@@ -211,10 +205,8 @@
             "type": "Click"
         },
         "next": [
-            "ClaimRewards.ClaimButton"
-        ],
-        "on_error": [
-            "ClaimRewards.ExitRewardInterface"
+            "ClaimRewards.ClaimButton",
+            "[JumpBack]ClaimRewards.ExitRewardInterface"
         ]
     },
     "ClaimRewards.ExitRewardInterface": {
@@ -375,8 +367,8 @@
         ]
     },
     "BattlePass.CheckTaskComplete": {
-        "desc": "检查战令任务是否有可领取项",
-        "max_hit": 5,
+        "desc": "检查战令任务是否有可领取项(识别成功才点击;识别失败则进入奖励列表检查)",
+        "max_hit": 1,
         "recognition": "TemplateMatch",
         "roi": [
             731,
@@ -399,9 +391,7 @@
         },
         "timeout": 5000,
         "next": [
-            "BattlePass.ClaimTaskReward"
-        ],
-        "on_error": [
+            "BattlePass.ClaimTaskReward",
             "BattlePass.CheckRewardList"
         ]
     },
@@ -620,7 +610,7 @@
             51
         ],
         "template": "claim_rewards/dispatch_entry.png",
-        "threshold": 0.8,
+        "threshold": 0.75,
         "action": {
             "type": "Click"
         },

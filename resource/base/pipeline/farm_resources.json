@@ -34,10 +34,8 @@
             "type": "DoNothing"
         },
         "next": [
-            "FarmResources.Start"
-        ],
-        "on_error": [
-            "ReturnMain"
+            "FarmResources.Start",
+            "[JumpBack]ReturnMain"
         ]
     },
     "FarmResources.CheckHomePage": {
@@ -67,10 +65,8 @@
         "repeat_delay": 500,
         "timeout": 5000,
         "next": [
-            "FarmResources.Start"
-        ],
-        "on_error": [
-            "ReturnMain"
+            "FarmResources.Start",
+            "[JumpBack]ReturnMain"
         ]
     },
     "FarmResources.Start": {
@@ -289,7 +285,7 @@
         ]
     },
     "FarmResources.CheckSkillLocked": {
-        "desc": "检查技能关卡是否被锁定(roi由选项动态设置)",
+        "desc": "检查技能关卡是否被锁定(roi由选项动态设置)。识别成功=锁定停止;识别失败=未锁可点",
         "recognition": "TemplateMatch",
         "template": "farm_resources/skill_lock_icon.png",
         "threshold": 0.8,
@@ -298,11 +294,17 @@
             "type": "DoNothing"
         },
         "timeout": 5000,
-        "on_error": [
+        "next": [
             "FarmResources.ClickSkillStage"
         ],
         "focus": {
-            "Node.Recognition.Succeeded": "关卡未解锁，请先解锁后再尝试"
+            "Node.Recognition.Succeeded": "关卡未解锁，请先解锁后再尝试",
+            "Node.Recognition.Failed": {
+                "content": "关卡已解锁，点击进入",
+                "display": [
+                    "log"
+                ]
+            }
         }
     },
     "FarmResources.ClickSkillStage": {
@@ -531,9 +533,7 @@
         "post_delay": 200,
         "timeout": 5000,
         "next": [
-            "FarmResources.ReturnMainFromFarm"
-        ],
-        "on_error": [
+            "FarmResources.ReturnMainFromFarm",
             "FarmResources.StartBattle"
         ],
         "focus": {
@@ -682,9 +682,7 @@
             "[JumpBack]FarmResources.ClickVictory",
             "[JumpBack]FarmResources.ClickItemDialog",
             "FarmResources.QuickBattle",
-            "FarmResources.ExitStageConfirm"
-        ],
-        "on_error": [
+            "FarmResources.ExitStageConfirm",
             "FarmResources.PrepareBattle"
         ]
     },

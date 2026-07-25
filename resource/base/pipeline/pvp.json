@@ -219,10 +219,8 @@
             "type": "DoNothing"
         },
         "next": [
-            "PVP.Speed2x"
-        ],
-        "on_error": [
-            "PVP.BeginCombat"
+            "PVP.Speed2x",
+            "[JumpBack]PVP.BeginCombat"
         ],
         "focus": {
             "Node.Recognition.Succeeded": {
@@ -260,9 +258,7 @@
         },
         "timeout": 300000,
         "next": [
-            "PVP.CheckBattleEnd"
-        ],
-        "on_error": [
+            "PVP.CheckBattleEnd",
             "PVP.ReadResult"
         ]
     },
