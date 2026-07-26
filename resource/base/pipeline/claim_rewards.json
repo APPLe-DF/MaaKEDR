@@ -432,7 +432,7 @@
         "timeout": 5000,
         "next": [
             "BattlePass.ClaimRewardButton",
-            "[JumpBack]Common.BackButton"
+            "BattlePass.ConfirmInterface"
         ]
     },
     "BattlePass.ClaimRewardButton": {
