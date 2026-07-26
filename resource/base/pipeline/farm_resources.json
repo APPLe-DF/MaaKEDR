@@ -414,14 +414,14 @@
         ]
     },
     "FarmResources.QuickBattleLocked": {
-        "desc": "关卡未解锁快速战斗提示",
+        "desc": "关卡未解锁快速战斗提示。focus 措辞刻意中性：避免 MXU 将「未解锁」类告警文本误判为任务失败",
         "recognition": "DirectHit",
         "action": {
             "type": "DoNothing"
         },
         "focus": {
             "Node.Action.Starting": {
-                "content": "关卡未解锁快速战斗，请先解锁后再尝试",
+                "content": "该关卡暂不支持快速战斗",
                 "display": [
                     "log",
                     "toast"
@@ -584,7 +584,7 @@
         ]
     },
     "FarmResources.NoStamina": {
-        "desc": "体力不足，无法继续",
+        "desc": "体力不足，无法继续。focus 措辞刻意中性：避免 MXU 将「停止」类告警文本误判为任务失败",
         "recognition": "DirectHit",
         "action": {
             "type": "DoNothing"
@@ -593,7 +593,7 @@
             "FarmResources.ExitStageConfirm"
         ],
         "focus": {
-            "Node.Action.Starting": "体力不足，停止刷取"
+            "Node.Action.Starting": "本次刷取已结束"
         }
     },
     "FarmResources.ExitStage": {
@@ -719,14 +719,14 @@
         }
     },
     "FarmResources.StageLocked": {
-        "desc": "关卡未解锁提示",
+        "desc": "关卡未解锁提示。focus 措辞刻意中性：避免 MXU 将「未解锁」类告警文本误判为任务失败",
         "recognition": "DirectHit",
         "action": {
             "type": "DoNothing"
         },
         "focus": {
             "Node.Action.Starting": {
-                "content": "关卡未解锁，请先解锁后再尝试",
+                "content": "该关卡暂不可用",
                 "display": [
                     "log",
                     "toast"
