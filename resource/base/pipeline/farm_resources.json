@@ -34,10 +34,8 @@
             "type": "DoNothing"
         },
         "next": [
-            "FarmResources.Start"
-        ],
-        "on_error": [
-            "ReturnMain"
+            "FarmResources.Start",
+            "[JumpBack]ReturnMain"
         ]
     },
     "FarmResources.CheckHomePage": {
@@ -67,14 +65,12 @@
         "repeat_delay": 500,
         "timeout": 5000,
         "next": [
-            "FarmResources.Start"
-        ],
-        "on_error": [
-            "ReturnMain"
+            "FarmResources.Start",
+            "[JumpBack]ReturnMain"
         ]
     },
     "FarmResources.Start": {
-        "desc": "从主页进入作战界面",
+        "desc": "从主页进入作战界面 [错误兜底: ReturnMain]",
         "recognition": "TemplateMatch",
         "roi": [
             1052,
@@ -289,7 +285,7 @@
         ]
     },
     "FarmResources.CheckSkillLocked": {
-        "desc": "检查技能关卡是否被锁定(roi由选项动态设置)",
+        "desc": "检查技能关卡是否被锁定(roi由选项动态设置)。识别成功=锁定停止;识别失败=未锁可点。因属于\"否定检查\"模式(成功=停,失败=进),只能用 on_error 实现流程兜底",
         "recognition": "TemplateMatch",
         "template": "farm_resources/skill_lock_icon.png",
         "threshold": 0.8,
@@ -302,7 +298,13 @@
             "FarmResources.ClickSkillStage"
         ],
         "focus": {
-            "Node.Recognition.Succeeded": "关卡未解锁，请先解锁后再尝试"
+            "Node.Recognition.Succeeded": "关卡未解锁，请先解锁后再尝试",
+            "Node.Recognition.Failed": {
+                "content": "关卡已解锁，点击进入",
+                "display": [
+                    "log"
+                ]
+            }
         }
     },
     "FarmResources.ClickSkillStage": {
@@ -373,7 +375,7 @@
         ]
     },
     "FarmResources.ClickStage": {
-        "desc": "点击关卡(使用Agent动态识别)",
+        "desc": "点击关卡(使用Agent动态识别) [错误兜底: StageLocked]",
         "recognition": "Custom",
         "custom_recognition": "CheckResourceStage",
         "custom_recognition_param": "{\"stage_name\": \"farm_stage\", \"stage_index\": 1, \"lock_template\": \"farm_resources/lock_icon.png\", \"lock_threshold\": 0.8}",
@@ -389,7 +391,7 @@
         ]
     },
     "FarmResources.QuickBattle": {
-        "desc": "点击快速战斗按钮",
+        "desc": "点击快速战斗按钮 [错误兜底: QuickBattleLocked]",
         "max_hit": 3,
         "recognition": "TemplateMatch",
         "roi": [
@@ -531,9 +533,7 @@
         "post_delay": 200,
         "timeout": 5000,
         "next": [
-            "FarmResources.ReturnMainFromFarm"
-        ],
-        "on_error": [
+            "FarmResources.ReturnMainFromFarm",
             "FarmResources.StartBattle"
         ],
         "focus": {
@@ -541,7 +541,7 @@
         }
     },
     "FarmResources.ReduceCount": {
-        "desc": "减少战斗次数",
+        "desc": "减少战斗次数 [错误兜底: NoStamina]",
         "recognition": "DirectHit",
         "action": {
             "type": "Custom",
@@ -682,9 +682,7 @@
             "[JumpBack]FarmResources.ClickVictory",
             "[JumpBack]FarmResources.ClickItemDialog",
             "FarmResources.QuickBattle",
-            "FarmResources.ExitStageConfirm"
-        ],
-        "on_error": [
+            "FarmResources.ExitStageConfirm",
             "FarmResources.PrepareBattle"
         ]
     },

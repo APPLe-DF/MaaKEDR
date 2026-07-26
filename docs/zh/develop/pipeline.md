@@ -23,8 +23,10 @@ Pipeline 节点用 JSON 定义，每个节点描述一个识别 → 动作 → �
         "template": "button.png",
         "threshold": 0.8,
         "action": {"type": "Click"},
-        "next": ["NextNode"],
-        "on_error": ["FallbackNode"]
+        "next": [
+            "NextNode",
+            "FallbackNode"
+        ]
     }
 }
 ```
@@ -189,12 +191,67 @@ Pipeline 节点用 JSON 定义，每个节点描述一个识别 → 动作 → �
 JOCR(roi=(x, y, w, h), color_filter="GoldTextFilter")
 ```
 
+## 兜底策略
+
+分为两种兜底，按节点语义区分，**禁止混用**：
+
+### 流程兜底（推荐用 next 列表）
+
+当节点的识别失败属于正常流程分支时（如"没找到每日徽章 → 检查每周徽章"），把兜底节点放在父节点的 `next` 列表中当前节点之后，利用 MaaFW 的**顺序 OR** 语义自动触达。
+
+在 MaaFW 中，父节点识别成功后，会依次尝试 `next` 列表中的每个子节点，直到有一个子节点的识别成功为止。若前面的子节点识别失败，框架自动回落到下一个子节点继续尝试。因此，将兜底节点放在 `next` 列表末尾，即可在"前面所有正常分支都识别失败"时自然触达。
+
+```json
+"ConfirmInterface": {
+    "next": [
+        "CheckDaily",        // 先尝试检查每日徽章
+        "CheckWeekly",       // CheckDaily 识别失败时，自动回落到每周徽章
+        "CheckMilitary"      // 两者都失败时，再检查军旅徽章
+    ]
+}
+```
+
+**注意**：上述"识别失败继续尝试后续节点"的行为发生在**父节点的 `next` 列表层面**。对于单个节点自身而言，其 `next` 字段仅在"该节点识别成功"后才会被进入；若该节点自身识别失败，则直接进入其 `on_error`（如有）或停止。因此，"否定检查"模式（识别成功=停止、识别失败=继续）无法通过单个节点的 `next` 实现，需保留 `on_error`（见下文）。
+
+### 真错误兜底（保留 on_error，加 `[错误兜底]` 标记）
+
+当兜底路径仅在异常/意外状态触发时（如关卡 UI 无法识别、快战按钮消失），保留 `on_error` 并加标记：
+
+```json
+"FarmResources.Start": {
+    "desc": "从主页进入作战界面 [错误兜底: ReturnMain]",
+    "recognition": "TemplateMatch",
+    "template": "battle_entry.png",
+    "on_error": ["ReturnMain"]
+}
+```
+
+这类节点触发时说明遇到了预期外的 UI 状态，`on_error` 截图对调试有价值，应保留。
+
+### 特殊情况：否定检查模式
+
+对于"识别到 X 就停止，没识别到就继续"的节点（如"检查关卡是否锁住"），MaaFW 没有 `on_failure` 路由，只能用 `on_error` 实现流程兜底：
+
+```json
+"CheckLocked": {
+    "recognition": "TemplateMatch",
+    "template": "lock_icon.png",
+    "on_error": ["ProceedNode"],  // 没找到锁 → 继续
+    "focus": {
+        "Node.Recognition.Succeeded": "已锁，停止",
+        "Node.Recognition.Failed": "未锁，继续"
+    }
+}
+```
+
+这种节点在 `desc` 中注明"否定检查"以辅助理解。
+
 ## 注意事项
 
 1. **等待时间要充足** — 导航点击后至少 1000ms，复杂界面建议 2000ms
 2. **OCR expected 是正则表达式** — `".*"` 匹配任意，`"^text$"` 精确匹配
 3. **ROI 以 1280x720 为基准** — 坐标 `[x, y, w, h]`
-4. **`on_error` 兜底** — 重要的导航节点要加 `on_error`，避免卡死
+4. **兜底策略** — 流程兜底（正常可预期的走不通）放 `next` 末尾；真错误兜底（异常状态）保留 `on_error` 并加 `[错误兜底]` 标记。详见上方"兜底策略"一节
 5. **`next` 顺序重要** — 优先匹配的放在前面，减少等待时间
 6. **截图不全时加 roi** — 缩小识别范围提升速度和准确率
 7. **`post_wait_freezes`** — 适合动画结束后再操作，比固定 `post_delay` 更可靠
