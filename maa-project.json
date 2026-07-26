@@ -48,7 +48,7 @@
         "spdx": "AGPL-3.0-or-later"
     },
     "maafw": {
-        "channel": "latest"
+        "channel": "stable"
     },
     "python": {
         "devCommand": [
@@ -92,11 +92,11 @@
     ],
     "runtime": {
         "mfa": {
-            "channel": "v2.12.2-beta.3",
+            "channel": "beta",
             "enabled": true
         },
         "mxu": {
-            "channel": "latest",
+            "channel": "stable",
             "enabled": true
         }
     },
