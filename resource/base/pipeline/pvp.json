@@ -184,7 +184,7 @@
         ]
     },
     "PVP.BeginCombat": {
-        "desc": "点击作战开始",
+        "desc": "点击作战开始。timeout: 30000ms 覆盖长加载场景（loading 画面持续动画，无法 post_wait_freezes）",
         "recognition": "TemplateMatch",
         "roi": [
             896,
@@ -199,6 +199,7 @@
             "type": "Click"
         },
         "post_delay": 2000,
+        "timeout": 30000,
         "next": [
             "PVP.CheckInBattle",
             "PVP.BeginCombat"
