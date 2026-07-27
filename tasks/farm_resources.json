@@ -38,7 +38,8 @@
                         },
                         "FarmResources.CheckStamina": {
                             "next": [
-                                "FarmResources.CheckCountOCR"
+                                "FarmResources.CheckCountOCR",
+                                "FarmResources.ReduceCount"
                             ]
                         },
                         "FarmResources.BattleStage": {

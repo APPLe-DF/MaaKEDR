@@ -605,15 +605,12 @@
             27,
             43
         ],
-        "expected": [
-            "^1$"
-        ],
+        "expected": "^1$",
         "action": {
             "type": "DoNothing"
         },
         "next": [
-            "FarmResources.ReductionDone",
-            "FarmResources.ReduceCount"
+            "FarmResources.ReductionDone"
         ]
     },
     "FarmResources.NoStamina": {
