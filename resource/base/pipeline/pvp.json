@@ -259,7 +259,9 @@
         },
         "timeout": 300000,
         "next": [
-            "PVP.CheckBattleEnd",
+            "PVP.CheckBattleEnd"
+        ],
+        "on_error": [
             "PVP.ReadResult"
         ]
     },
