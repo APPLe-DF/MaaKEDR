@@ -29,8 +29,13 @@ class CheckPVPBattleCount(CustomAction):
         global _battle_remaining
         _battle_remaining -= 1
         if _battle_remaining <= 0:
-            logger.info("[PVP] 战斗次数已用完")
-            return CustomAction.RunResult(success=False)
+            logger.info("[PVP] 战斗次数已用完，返回主界面")
+            context.override_pipeline({
+                "PVP.CheckBattleCount": {
+                    "next": ["PVP.ReturnMain"]
+                }
+            })
+            return CustomAction.RunResult(success=True)
         logger.info("[PVP] 剩余战斗次数: {}", _battle_remaining)
         return CustomAction.RunResult(success=True)
 

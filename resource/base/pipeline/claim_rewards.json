@@ -376,7 +376,7 @@
             62,
             51
         ],
-        "template": "claim_rewards/battlepass_task_complete.png",
+        "template": "claim_rewards/battlepass_reward_check.png",
         "threshold": 0.75,
         "action": {
             "type": "Click",
@@ -424,10 +424,18 @@
             36,
             39
         ],
-        "template": "claim_rewards/battlepass_reward_available.png",
+        "template": "claim_rewards/battlepass_reward_check.png",
         "threshold": 0.75,
         "action": {
-            "type": "Click"
+            "type": "Click",
+            "param": {
+                "target": [
+                    548,
+                    106,
+                    2,
+                    3
+                ]
+            }
         },
         "timeout": 5000,
         "next": [
