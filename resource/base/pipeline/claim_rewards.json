@@ -472,9 +472,9 @@
         "recognition": "TemplateMatch",
         "roi": [
             546,
-            221,
+            150,
             183,
-            73
+            144
         ],
         "template": "item_obtained_dialog.png",
         "threshold": 0.75,
