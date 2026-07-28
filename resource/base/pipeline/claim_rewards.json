@@ -447,10 +447,27 @@
         "timeout": 5000,
         "next": [
             "[JumpBack]Common.CheckItemObtained",
+            "[JumpBack]BattlePass.RewardDisplay",
             "BattlePass.CheckRewardList",
             "[JumpBack]Common.BackButton",
             "ClaimRewards.MainHub"
         ]
+    },
+    "BattlePass.RewardDisplay": {
+        "desc": "识别并点击战令奖励展示界面",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1071,
+            126,
+            180,
+            76
+        ],
+        "template": "claim_rewards/battlepass_reward_display.png",
+        "threshold": 0.75,
+        "pre_delay": 5000,
+        "action": {
+            "type": "Click"
+        }
     },
     "Common.BackButton": {
         "desc": "点击返回按钮",
