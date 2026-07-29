@@ -1,7 +1,7 @@
 import json
 
 import pytest
-from utils.params import extract_custom_param, parse_params
+from utils.params import extract_custom_param, merge_node_custom_param, parse_params
 
 
 class TestParseParamsEmpty:
@@ -75,3 +75,68 @@ class TestExtractCustomParam:
 
     def test_custom_action_param_not_dict(self) -> None:
         assert extract_custom_param({"action": {"param": {"custom_action_param": "bad"}}}) == {}
+
+
+class _MockContext:
+    """Minimal mock for maa.context.Context used by merge_node_custom_param tests."""
+
+    def __init__(self, node_data: dict[str, object] | None) -> None:
+        self._node_data = node_data
+        self.overrides: list[tuple[str, dict[str, object]]] = []
+
+    def get_node_data(self, name: str) -> dict[str, object] | None:
+        return self._node_data
+
+    def override_pipeline(self, config: dict[str, object]) -> None:
+        self.overrides.append(tuple(config.items())[0])  # type: ignore[arg-type]
+
+
+class TestMergeNodeCustomParam:
+    def test_preserves_custom_action_and_merges_field(self) -> None:
+        node = {"action": {"type": "Custom", "param": {"custom_action": "X", "custom_action_param": {"a": 1}}}}
+        ctx = _MockContext(node)
+        merge_node_custom_param(ctx, "Node", {"b": 2})
+        assert len(ctx.overrides) == 1
+        name, payload = ctx.overrides[0]
+        assert name == "Node"
+        param = payload["action"]["param"]  # type: ignore[index]
+        assert param["custom_action"] == "X"
+        assert param["custom_action_param"] == {"a": 1, "b": 2}
+
+    def test_creates_custom_action_param_when_absent(self) -> None:
+        node = {"action": {"type": "Custom", "param": {"custom_action": "X"}}}
+        ctx = _MockContext(node)
+        merge_node_custom_param(ctx, "Node", {"target": 5})
+        _, payload = ctx.overrides[0]
+        param = payload["action"]["param"]  # type: ignore[index]
+        assert param["custom_action"] == "X"
+        assert param["custom_action_param"] == {"target": 5}
+
+    def test_preserves_other_param_fields(self) -> None:
+        node = {
+            "action": {
+                "type": "Custom",
+                "param": {"custom_action": "X", "custom_action_param": {"a": 1}, "extra": True},
+            }
+        }
+        ctx = _MockContext(node)
+        merge_node_custom_param(ctx, "Node", {"b": 2})
+        _, payload = ctx.overrides[0]
+        param = payload["action"]["param"]  # type: ignore[index]
+        assert param["extra"] is True
+        assert param["custom_action_param"] == {"a": 1, "b": 2}
+
+    def test_empty_node_data(self) -> None:
+        ctx = _MockContext(None)
+        merge_node_custom_param(ctx, "Node", {"remaining": 3})
+        _, payload = ctx.overrides[0]
+        param = payload["action"]["param"]  # type: ignore[index]
+        assert param["custom_action_param"] == {"remaining": 3}
+
+    def test_overwrites_existing_key_with_update(self) -> None:
+        node = {"action": {"param": {"custom_action": "X", "custom_action_param": {"target": 1, "other": "keep"}}}}
+        ctx = _MockContext(node)
+        merge_node_custom_param(ctx, "Node", {"target": 5})
+        _, payload = ctx.overrides[0]
+        param = payload["action"]["param"]  # type: ignore[index]
+        assert param["custom_action_param"] == {"target": 5, "other": "keep"}

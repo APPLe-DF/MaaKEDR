@@ -6,19 +6,9 @@ from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_action import CustomAction
 from utils.logger import logger
-from utils.params import extract_custom_param, parse_params
+from utils.params import merge_node_custom_param, parse_params
 
 _CHECK_NODE = "PVP.CheckBattleCount"
-
-
-def _store_remaining(context: Context, remaining: int) -> None:
-    """Store the remaining battle count in the pipeline node config, preserving existing keys."""
-    node_data = context.get_node_data(_CHECK_NODE)
-    existing = extract_custom_param(node_data)
-    if not existing:
-        logger.debug("[_store_remaining] 节点 {} 无已有 custom_action_param，将创建新字段", _CHECK_NODE)
-    merged = {**existing, "remaining": remaining}
-    context.override_pipeline({_CHECK_NODE: {"action": {"param": {"custom_action_param": merged}}}})
 
 
 @AgentServer.custom_action("InitPVPBattleCount")
@@ -35,7 +25,7 @@ class InitPVPBattleCount(CustomAction):
             logger.error("InitPVPBattleCount: target_count 必须是整数，得到: {}", type(target).__name__)
             return CustomAction.RunResult(success=False)
 
-        _store_remaining(context, target)
+        merge_node_custom_param(context, _CHECK_NODE, {"remaining": target})
         logger.info("[PVP] 剩余战斗次数: {}", target)
         return CustomAction.RunResult(success=True)
 
@@ -59,6 +49,6 @@ class CheckPVPBattleCount(CustomAction):
             context.override_pipeline({_CHECK_NODE: {"next": ["PVP.ReturnMain"]}})
             return CustomAction.RunResult(success=True)
 
-        _store_remaining(context, remaining)
+        merge_node_custom_param(context, _CHECK_NODE, {"remaining": remaining})
         logger.info("[PVP] 剩余战斗次数: {}", remaining)
         return CustomAction.RunResult(success=True)

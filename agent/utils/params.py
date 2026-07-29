@@ -1,7 +1,12 @@
+from __future__ import annotations
+
 import json
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from utils.logger import logger
+
+if TYPE_CHECKING:
+    from maa.context import Context
 
 
 def parse_params(raw: str | None, *required_keys: str) -> dict[str, Any]:
@@ -68,3 +73,37 @@ def extract_custom_param(node_data: dict[str, Any] | None) -> dict[str, Any]:
     if not isinstance(cap, dict):
         return {}
     return cap
+
+
+def merge_node_custom_param(
+    context: Context,
+    node_name: str,
+    updates: dict[str, Any],
+) -> None:
+    """
+    安全地将字段合并到 pipeline 节点的 custom_action_param 中。
+
+    读取当前节点的完整 action.param 字典，将 updates 合并到 custom_action_param，
+    然后通过 override_pipeline 写回完整的 param（保留 custom_action 等其他字段）。
+
+    Args:
+        context: MaaFW Context 对象
+        node_name: pipeline 节点名称
+        updates: 要合并到 custom_action_param 中的字段
+    """
+    node_data = context.get_node_data(node_name)
+    existing_param: dict[str, Any] = {}
+    existing_cap: dict[str, Any] = {}
+    if isinstance(node_data, dict):
+        action = node_data.get("action")
+        if isinstance(action, dict):
+            param = action.get("param")
+            if isinstance(param, dict):
+                existing_param = dict(param)
+                cap = param.get("custom_action_param")
+                if isinstance(cap, dict):
+                    existing_cap = dict(cap)
+
+    merged_cap = {**existing_cap, **updates}
+    full_param = {**existing_param, "custom_action_param": merged_cap}
+    context.override_pipeline({node_name: {"action": {"param": full_param}}})

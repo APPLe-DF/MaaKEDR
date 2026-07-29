@@ -5,10 +5,11 @@ from typing import Any
 from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_action import CustomAction
+from maa.define import RecognitionDetail
 from maa.pipeline import JOCR, JActionType, JClick, JRecognitionType, JTemplateMatch
 from utils.logger import logger
 from utils.maa_types import ocr_results
-from utils.params import extract_custom_param, parse_params
+from utils.params import merge_node_custom_param, parse_params
 
 COUNT_ROI = [903, 441, 27, 43]
 PLUS_BUTTON = (1086, 470)
@@ -17,16 +18,35 @@ MAX_BUTTON_TEMPLATE = "farm_resources/max_count.png"
 
 _REDUCE_NODE = "FarmResources.ReduceCount"
 _DEFAULT_TARGET = 6
+_COUNT_EXPECTED = ["1", "2", "3", "4", "5", "6"]
 
 
-def _store_target(context: Context, target: int) -> None:
-    """Store the target battle count in the pipeline node config, preserving existing keys."""
-    node_data = context.get_node_data(_REDUCE_NODE)
-    existing = extract_custom_param(node_data)
-    if not existing:
-        logger.debug("[_store_target] 节点 {} 无已有 custom_action_param，将创建新字段", _REDUCE_NODE)
-    merged = {**existing, "target": target}
-    context.override_pipeline({_REDUCE_NODE: {"action": {"param": {"custom_action_param": merged}}}})
+def _read_battle_count(context: Context, count_roi: list[int], default: int) -> int:
+    """OCR 识别当前战斗次数，失败时返回 default。"""
+    image = context.tasker.controller.cached_image
+    ocr_detail: RecognitionDetail | None = context.run_recognition_direct(
+        JRecognitionType.OCR,
+        JOCR(expected=_COUNT_EXPECTED, roi=(count_roi[0], count_roi[1], count_roi[2], count_roi[3])),
+        image,
+    )
+    if ocr_detail and ocr_detail.hit:
+        results = ocr_results(ocr_detail)
+        if results:
+            try:
+                return int(results[0].text.strip())
+            except ValueError:
+                pass
+    return default
+
+
+def _click_button(context: Context, x: int, y: int) -> None:
+    """在指定坐标执行一次点击动作。"""
+    context.run_action_direct(
+        JActionType.Click,
+        JClick(),
+        (x, y, 10, 10),
+        "",
+    )
 
 
 @AgentServer.custom_action("SetBattleCount")
@@ -91,31 +111,12 @@ class SetBattleCount(CustomAction):
             logger.warning("[SetBattleCount] target_count > 6，已修正为 6，原始值: {}", target_count)
             target_count = 6
 
-        ocr_detail = context.run_recognition_direct(
-            JRecognitionType.OCR,
-            JOCR(expected=["1", "2", "3", "4", "5", "6"], roi=count_roi),
-            image,
-        )
-
-        current_count = 1
-        if ocr_detail and ocr_detail.hit:
-            results = ocr_results(ocr_detail)
-            if results:
-                try:
-                    current_count = int(results[0].text.strip())
-                except ValueError:
-                    current_count = 1
-
+        current_count = _read_battle_count(context, count_roi, default=1)
         clicks_needed = target_count - current_count
 
         if clicks_needed > 0:
             for _ in range(clicks_needed):
-                context.run_action_direct(
-                    JActionType.Click,
-                    JClick(),
-                    (plus_x, plus_y, 10, 10),
-                    "",
-                )
+                _click_button(context, plus_x, plus_y)
         elif clicks_needed < 0:
             minus_x, minus_y = params.get("minus_button", MINUS_BUTTON)
             logger.info(
@@ -125,12 +126,7 @@ class SetBattleCount(CustomAction):
                 abs(clicks_needed),
             )
             for _ in range(abs(clicks_needed)):
-                context.run_action_direct(
-                    JActionType.Click,
-                    JClick(),
-                    (minus_x, minus_y, 10, 10),
-                    "",
-                )
+                _click_button(context, minus_x, minus_y)
 
         return CustomAction.RunResult(success=True)
 
@@ -168,21 +164,7 @@ class ReduceBattleCount(CustomAction):
 
             target -= 1
 
-            image = context.tasker.controller.cached_image
-            ocr_detail = context.run_recognition_direct(
-                JRecognitionType.OCR,
-                JOCR(expected=["1", "2", "3", "4", "5", "6"], roi=count_roi),
-                image,
-            )
-
-            current_count = -1
-            if ocr_detail and ocr_detail.hit:
-                results = ocr_results(ocr_detail)
-                if results:
-                    try:
-                        current_count = int(results[0].text.strip())
-                    except ValueError:
-                        current_count = -1
+            current_count = _read_battle_count(context, count_roi, default=-1)
 
             logger.info(
                 "[ReduceBattleCount] 当前次数: {}, 新目标次数: {}",
@@ -191,14 +173,9 @@ class ReduceBattleCount(CustomAction):
             )
 
             logger.info("[ReduceBattleCount] 点击减号按钮")
-            context.run_action_direct(
-                JActionType.Click,
-                JClick(),
-                (minus_x, minus_y, 10, 10),
-                "",
-            )
+            _click_button(context, minus_x, minus_y)
 
-            _store_target(context, target)
+            merge_node_custom_param(context, _REDUCE_NODE, {"target": target})
             return CustomAction.RunResult(success=True)
         except Exception:
             logger.exception("[ReduceBattleCount] 执行异常")
@@ -212,6 +189,6 @@ class ResetBattleCountTarget(CustomAction):
     """
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
-        _store_target(context, _DEFAULT_TARGET)
+        merge_node_custom_param(context, _REDUCE_NODE, {"target": _DEFAULT_TARGET})
         logger.info("[ResetBattleCountTarget] 目标次数重置为: {}", _DEFAULT_TARGET)
         return CustomAction.RunResult(success=True)
