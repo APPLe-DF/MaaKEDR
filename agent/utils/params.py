@@ -94,11 +94,25 @@ def merge_node_custom_param(
     node_data = context.get_node_data(node_name)
     existing_param: dict[str, Any] = {}
     existing_cap: dict[str, Any] = {}
-    if isinstance(node_data, dict):
+    if node_data is None:
+        logger.warning("merge_node_custom_param: 节点 {} 不存在，将创建新配置", node_name)
+    else:
         action = node_data.get("action")
-        if isinstance(action, dict):
+        if not isinstance(action, dict):  # pyright: ignore[reportUnnecessaryIsInstance]
+            logger.warning(
+                "merge_node_custom_param: 节点 {} 的 action 字段非 dict，得到: {}",
+                node_name,
+                type(action).__name__ if action is not None else "None",
+            )
+        else:
             param = action.get("param")
-            if isinstance(param, dict):
+            if not isinstance(param, dict):  # pyright: ignore[reportUnnecessaryIsInstance]
+                logger.warning(
+                    "merge_node_custom_param: 节点 {} 的 action.param 字段非 dict，得到: {}",
+                    node_name,
+                    type(param).__name__ if param is not None else "None",
+                )
+            else:
                 existing_param = dict(param)
                 cap = param.get("custom_action_param")
                 if isinstance(cap, dict):

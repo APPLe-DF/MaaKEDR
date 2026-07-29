@@ -22,8 +22,12 @@ class InitPVPBattleCount(CustomAction):
 
         target: Any = params.get("target_count", 1)
         if not isinstance(target, int):
-            logger.error("InitPVPBattleCount: target_count 必须是整数，得到: {}", type(target).__name__)
-            return CustomAction.RunResult(success=False)
+            try:
+                target = int(target)  # type: ignore[arg-type]
+                logger.info("InitPVPBattleCount: target_count 由非整数值转换为整数: {}", target)
+            except (TypeError, ValueError):
+                logger.error("InitPVPBattleCount: target_count 必须是整数，得到: {}", type(target).__name__)
+                return CustomAction.RunResult(success=False)
 
         merge_node_custom_param(context, _CHECK_NODE, {"remaining": target})
         logger.info("[PVP] 剩余战斗次数: {}", target)

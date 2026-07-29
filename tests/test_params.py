@@ -140,3 +140,17 @@ class TestMergeNodeCustomParam:
         _, payload = ctx.overrides[0]
         param = payload["action"]["param"]  # type: ignore[index]
         assert param["custom_action_param"] == {"target": 5, "other": "keep"}
+
+    def test_action_not_dict_creates_empty_param(self) -> None:
+        ctx = _MockContext({"action": "bad", "recognition": "DirectHit"})
+        merge_node_custom_param(ctx, "Node", {"x": 1})
+        _, payload = ctx.overrides[0]
+        param = payload["action"]["param"]  # type: ignore[index]
+        assert param["custom_action_param"] == {"x": 1}
+
+    def test_param_not_dict_creates_empty_param(self) -> None:
+        ctx = _MockContext({"action": {"type": "Custom", "param": "bad"}})
+        merge_node_custom_param(ctx, "Node", {"y": 2})
+        _, payload = ctx.overrides[0]
+        param = payload["action"]["param"]  # type: ignore[index]
+        assert param["custom_action_param"] == {"y": 2}

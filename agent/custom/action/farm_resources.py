@@ -142,7 +142,7 @@ class ReduceBattleCount(CustomAction):
     参数：
     - minus_button: 减号按钮位置 [x, y]
     - count_roi: 次数显示区域 [x, y, w, h]
-    - target: 当前目标次数（由 pipeline override 维护，首次调用默认 6）
+    - target: 当前目标次数（由 pipeline override 维护，首次调用默认值由 _DEFAULT_TARGET 常量定义）
     """
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
@@ -188,7 +188,7 @@ class ReduceBattleCount(CustomAction):
 @AgentServer.custom_action("ResetBattleCountTarget")
 class ResetBattleCountTarget(CustomAction):
     """
-    重置目标次数为6（调用ReduceBattleCount前需要调用）
+    重置目标次数为 _DEFAULT_TARGET（调用ReduceBattleCount前需要调用）
     """
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
