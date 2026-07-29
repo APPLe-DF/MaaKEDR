@@ -8,14 +8,9 @@ from maa.custom_action import CustomAction
 from utils.logger import logger
 from utils.params import is_int_value, parse_params
 
-# session_remaining 以 context.tasker 唯一标识为 key，避免跨任务干扰。
-# 同一 tasker 实例的不同 context 共享同一状态，确保整个任务流程计数一致。
-_session_remaining: dict[int, int] = {}
-
-
-def _session_key(context: Context) -> int:
-    """获取当前 session 的唯一标识。"""
-    return id(context.tasker)
+# agent 进程由 MaaFW 按任务逐次启动，进程内仅存在单一 tasker；
+# 此模块级字典天然限定在单次任务生命周期内，无跨任务干扰风险。
+_remaining: int | None = None
 
 
 @AgentServer.custom_action("InitPVPBattleCount")
@@ -41,7 +36,8 @@ class InitPVPBattleCount(CustomAction):
                 logger.error("InitPVPBattleCount: target_count 必须是整数，得到: {}", type(target).__name__)
                 return CustomAction.RunResult(success=False)
 
-        _session_remaining[_session_key(context)] = target
+        global _remaining
+        _remaining = target
         logger.info("[PVP] 剩余战斗次数: {}", target)
         return CustomAction.RunResult(success=True)
 
@@ -49,19 +45,18 @@ class InitPVPBattleCount(CustomAction):
 @AgentServer.custom_action("CheckPVPBattleCount")
 class CheckPVPBattleCount(CustomAction):
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
-        key = _session_key(context)
-        if key not in _session_remaining:
+        global _remaining
+        if _remaining is None:
             logger.error("CheckPVPBattleCount: remaining 未初始化，请先调用 InitPVPBattleCount")
             return CustomAction.RunResult(success=False)
 
-        remaining = _session_remaining[key] - 1
+        _remaining -= 1
 
-        if remaining <= 0:
+        if _remaining <= 0:
             logger.info("[PVP] 战斗次数已用完，返回主界面")
-            _session_remaining.pop(key, None)
+            _remaining = None
             context.override_pipeline({"PVP.CheckBattleCount": {"next": ["PVP.ReturnMain"]}})
             return CustomAction.RunResult(success=True)
 
-        _session_remaining[key] = remaining
-        logger.info("[PVP] 剩余战斗次数: {}", remaining)
+        logger.info("[PVP] 剩余战斗次数: {}", _remaining)
         return CustomAction.RunResult(success=True)

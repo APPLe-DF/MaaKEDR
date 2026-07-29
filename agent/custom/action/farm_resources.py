@@ -16,8 +16,9 @@ from utils.params import (
     parse_params,
 )
 
-# session_target 以 context.tasker 唯一标识为 key，避免跨任务干扰。
-_session_target: dict[int, int] = {}
+# agent 进程由 MaaFW 按任务逐次启动，进程内仅存在单一 tasker；
+# 此模块级变量天然限定在单次任务生命周期内，无跨任务干扰风险。
+_target: int | None = None
 
 COUNT_ROI = [903, 441, 27, 43]
 PLUS_BUTTON = (1086, 470)
@@ -190,8 +191,8 @@ class ReduceBattleCount(CustomAction):
             )
             count_roi = coerce_roi(params.get("count_roi", COUNT_ROI), COUNT_ROI, "ReduceBattleCount")
 
-            key = id(context.tasker)
-            target: Any = _session_target.get(key, _DEFAULT_TARGET)
+            global _target
+            target: Any = _target if _target is not None else _DEFAULT_TARGET
             if not is_int_value(target):
                 target = _DEFAULT_TARGET
                 logger.info("[ReduceBattleCount] target 未初始化，自动设为 {}", _DEFAULT_TARGET)
@@ -205,7 +206,7 @@ class ReduceBattleCount(CustomAction):
                 return CustomAction.RunResult(success=False)
 
             target -= 1
-            _session_target[key] = target
+            _target = target
 
             current_count = _read_battle_count(context, count_roi, default=-1)
 
@@ -231,6 +232,7 @@ class ResetBattleCountTarget(CustomAction):
     """
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
-        _session_target[id(context.tasker)] = _DEFAULT_TARGET
+        global _target
+        _target = _DEFAULT_TARGET
         logger.info("[ResetBattleCountTarget] 目标次数重置为: {}", _DEFAULT_TARGET)
         return CustomAction.RunResult(success=True)
