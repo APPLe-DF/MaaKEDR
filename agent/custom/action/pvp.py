@@ -12,8 +12,19 @@ _CHECK_NODE = "PVP.CheckBattleCount"
 
 
 def _store_remaining(context: Context, remaining: int) -> None:
-    """Store the remaining battle count in the pipeline node config."""
-    context.override_pipeline({_CHECK_NODE: {"action": {"param": {"custom_action_param": {"remaining": remaining}}}}})
+    """Store the remaining battle count in the pipeline node config, preserving existing keys."""
+    node_data = context.get_node_data(_CHECK_NODE)
+    existing: dict[str, Any] = {}
+    if node_data:
+        action = node_data.get("action")
+        if isinstance(action, dict):
+            param = action.get("param")
+            if isinstance(param, dict):
+                cap = param.get("custom_action_param")
+                if isinstance(cap, dict):
+                    existing = cap
+    merged = {**existing, "remaining": remaining}
+    context.override_pipeline({_CHECK_NODE: {"action": {"param": {"custom_action_param": merged}}}})
 
 
 @AgentServer.custom_action("InitPVPBattleCount")

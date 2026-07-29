@@ -20,8 +20,19 @@ _DEFAULT_TARGET = 6
 
 
 def _store_target(context: Context, target: int) -> None:
-    """Store the target battle count in the pipeline node config."""
-    context.override_pipeline({_REDUCE_NODE: {"action": {"param": {"custom_action_param": {"target": target}}}}})
+    """Store the target battle count in the pipeline node config, preserving existing keys."""
+    node_data = context.get_node_data(_REDUCE_NODE)
+    existing: dict[str, Any] = {}
+    if node_data:
+        action = node_data.get("action")
+        if isinstance(action, dict):
+            param = action.get("param")
+            if isinstance(param, dict):
+                cap = param.get("custom_action_param")
+                if isinstance(cap, dict):
+                    existing = cap
+    merged = {**existing, "target": target}
+    context.override_pipeline({_REDUCE_NODE: {"action": {"param": {"custom_action_param": merged}}}})
 
 
 @AgentServer.custom_action("SetBattleCount")
