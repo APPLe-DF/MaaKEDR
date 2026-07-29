@@ -83,8 +83,9 @@ def merge_node_custom_param(
     """
     安全地将字段合并到 pipeline 节点的 custom_action_param 中。
 
-    读取当前节点的完整 action.param 字典，将 updates 合并到 custom_action_param，
-    然后通过 override_pipeline 写回完整的 param（保留 custom_action 等其他字段）。
+    读取当前节点的 action 和 param 字典，逐层提取已有字段（包括 action.type、
+    param.custom_action 等），将 updates 合并到 custom_action_param 后通过
+    override_pipeline 写回，保留所有已有字段。
 
     Args:
         context: MaaFW Context 对象
@@ -92,32 +93,35 @@ def merge_node_custom_param(
         updates: 要合并到 custom_action_param 中的字段
     """
     node_data = context.get_node_data(node_name)
+    existing_action: dict[str, Any] = {}
     existing_param: dict[str, Any] = {}
     existing_cap: dict[str, Any] = {}
     if node_data is None:
         logger.warning("merge_node_custom_param: 节点 {} 不存在，将创建新配置", node_name)
     else:
-        action = node_data.get("action")
-        if not isinstance(action, dict):  # pyright: ignore[reportUnnecessaryIsInstance]
+        raw_action = node_data.get("action")
+        if isinstance(raw_action, dict):
+            existing_action = dict(raw_action)
+        elif raw_action is not None:
             logger.warning(
                 "merge_node_custom_param: 节点 {} 的 action 字段非 dict，得到: {}",
                 node_name,
-                type(action).__name__ if action is not None else "None",
+                type(raw_action).__name__,
             )
-        else:
-            param = action.get("param")
-            if not isinstance(param, dict):  # pyright: ignore[reportUnnecessaryIsInstance]
-                logger.warning(
-                    "merge_node_custom_param: 节点 {} 的 action.param 字段非 dict，得到: {}",
-                    node_name,
-                    type(param).__name__ if param is not None else "None",
-                )
-            else:
-                existing_param = dict(param)
-                cap = param.get("custom_action_param")
-                if isinstance(cap, dict):
-                    existing_cap = dict(cap)
+        raw_param = existing_action.get("param")
+        if isinstance(raw_param, dict):
+            existing_param = dict(raw_param)
+        elif raw_param is not None:
+            logger.warning(
+                "merge_node_custom_param: 节点 {} 的 action.param 字段非 dict，得到: {}",
+                node_name,
+                type(raw_param).__name__,
+            )
+        cap = existing_param.get("custom_action_param")
+        if isinstance(cap, dict):
+            existing_cap = dict(cap)
 
     merged_cap = {**existing_cap, **updates}
     full_param = {**existing_param, "custom_action_param": merged_cap}
-    context.override_pipeline({node_name: {"action": {"param": full_param}}})
+    full_action = {**existing_action, "param": full_param}
+    context.override_pipeline({node_name: {"action": full_action}})

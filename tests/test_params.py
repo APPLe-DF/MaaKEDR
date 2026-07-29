@@ -155,12 +155,32 @@ class TestMergeNodeCustomParam:
         ctx = _MockContext({"action": "bad", "recognition": "DirectHit"})
         merge_node_custom_param(ctx, "Node", {"x": 1})
         _, payload = ctx.overrides[0]
-        param = payload["action"]["param"]  # type: ignore[index]
-        assert param["custom_action_param"] == {"x": 1}
+        action = payload["action"]  # type: ignore[index]
+        assert action["param"]["custom_action_param"] == {"x": 1}  # type: ignore[index]
 
-    def test_param_not_dict_creates_empty_param(self) -> None:
+    def test_param_not_dict_preserves_action_type(self) -> None:
         ctx = _MockContext({"action": {"type": "Custom", "param": "bad"}})
         merge_node_custom_param(ctx, "Node", {"y": 2})
         _, payload = ctx.overrides[0]
-        param = payload["action"]["param"]  # type: ignore[index]
-        assert param["custom_action_param"] == {"y": 2}
+        action = payload["action"]  # type: ignore[index]
+        assert action["type"] == "Custom"
+        assert action["param"]["custom_action_param"] == {"y": 2}  # type: ignore[index]
+
+    def test_preserves_action_type_and_other_action_fields(self) -> None:
+        node = {"action": {"type": "Custom", "param": {"custom_action": "X", "custom_action_param": {"a": 1}}}}
+        ctx = _MockContext(node)
+        merge_node_custom_param(ctx, "Node", {"b": 2})
+        _, payload = ctx.overrides[0]
+        action = payload["action"]  # type: ignore[index]
+        assert action["type"] == "Custom"
+        param = action["param"]  # type: ignore[index]
+        assert param["custom_action"] == "X"
+        assert param["custom_action_param"] == {"a": 1, "b": 2}
+
+    def test_param_not_dict_preserves_action_level_fields(self) -> None:
+        ctx = _MockContext({"action": {"type": "Custom", "param": "bad", "extra": "keep"}})
+        merge_node_custom_param(ctx, "Node", {"y": 2})
+        _, payload = ctx.overrides[0]
+        action = payload["action"]  # type: ignore[index]
+        assert action["type"] == "Custom"
+        assert action["extra"] == "keep"
