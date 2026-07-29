@@ -45,6 +45,6 @@ class TestParseParamsValidation:
         result = parse_params('{"a": 1, "b": 2}', "a", "b")
         assert result == {"a": 1, "b": 2}
 
-    def test_invalid_json_returns_raw_string_then_raises(self) -> None:
+    def test_invalid_json_raises_value_error(self) -> None:
         with pytest.raises(ValueError, match="参数必须是对象"):
             parse_params("not json at all")

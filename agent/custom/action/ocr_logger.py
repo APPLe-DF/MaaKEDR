@@ -55,8 +55,8 @@ class LogOCRResult(CustomAction):
             return CustomAction.RunResult(success=False)
 
         if not argv_dict:
-            logger.warning("LogOCRResult 参数为空")
-            return CustomAction.RunResult(success=False)
+            logger.warning("LogOCRResult 参数为空，跳过执行")
+            return CustomAction.RunResult(success=True)
 
         action_key = argv_dict.get("action_key", "")
         recognition_name = argv_dict.get("recognition_name", "")

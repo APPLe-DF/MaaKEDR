@@ -15,7 +15,13 @@ PLUS_BUTTON = (1086, 470)
 MINUS_BUTTON = (739, 470)
 MAX_BUTTON_TEMPLATE = "farm_resources/max_count.png"
 
-_current_target_count: int | None = None
+_REDUCE_NODE = "FarmResources.ReduceCount"
+_DEFAULT_TARGET = 6
+
+
+def _store_target(context: Context, target: int) -> None:
+    """Store the target battle count in the pipeline node config."""
+    context.override_pipeline({_REDUCE_NODE: {"action": {"param": {"custom_action_param": {"target": target}}}}})
 
 
 @AgentServer.custom_action("SetBattleCount")
@@ -117,10 +123,10 @@ class ReduceBattleCount(CustomAction):
     参数：
     - minus_button: 减号按钮位置 [x, y]
     - count_roi: 次数显示区域 [x, y, w, h]
+    - target: 当前目标次数（由 pipeline override 维护，首次调用默认 6）
     """
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
-        global _current_target_count
         try:
             params = parse_params(argv.custom_action_param)
         except ValueError as error:
@@ -131,9 +137,16 @@ class ReduceBattleCount(CustomAction):
             minus_x, minus_y = params.get("minus_button", MINUS_BUTTON)
             count_roi = params.get("count_roi", COUNT_ROI)
 
-            if _current_target_count is None:
-                _current_target_count = 6
-                logger.info("[ReduceBattleCount] 计数器未初始化，自动设为 6")
+            target: Any = params.get("target", _DEFAULT_TARGET)
+            if not isinstance(target, int):
+                target = _DEFAULT_TARGET
+                logger.info("[ReduceBattleCount] target 未初始化，自动设为 {}", _DEFAULT_TARGET)
+
+            if target <= 1:
+                logger.warning("[ReduceBattleCount] 目标次数已到最小({}≤1)，无法继续", target)
+                return CustomAction.RunResult(success=False)
+
+            target -= 1
 
             image = context.tasker.controller.cached_image
             ocr_detail = context.run_recognition_direct(
@@ -151,19 +164,10 @@ class ReduceBattleCount(CustomAction):
                     except ValueError:
                         current_count = -1
 
-            if _current_target_count <= 1:
-                logger.warning(
-                    "[ReduceBattleCount] 目标次数已到最小({}≤1)，无法继续",
-                    _current_target_count,
-                )
-                _current_target_count = None
-                return CustomAction.RunResult(success=False)
-
-            _current_target_count -= 1
             logger.info(
                 "[ReduceBattleCount] 当前次数: {}, 新目标次数: {}",
                 current_count,
-                _current_target_count,
+                target,
             )
 
             logger.info("[ReduceBattleCount] 点击减号按钮")
@@ -174,10 +178,10 @@ class ReduceBattleCount(CustomAction):
                 "",
             )
 
+            _store_target(context, target)
             return CustomAction.RunResult(success=True)
         except Exception as e:
             logger.error("[ReduceBattleCount] 执行异常: {}", e)
-            _current_target_count = None
             return CustomAction.RunResult(success=False)
 
 
@@ -188,7 +192,6 @@ class ResetBattleCountTarget(CustomAction):
     """
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
-        global _current_target_count
-        _current_target_count = 6
-        logger.info("[ResetBattleCountTarget] 目标次数重置为: {}", _current_target_count)
+        _store_target(context, _DEFAULT_TARGET)
+        logger.info("[ResetBattleCountTarget] 目标次数重置为: {}", _DEFAULT_TARGET)
         return CustomAction.RunResult(success=True)
