@@ -40,9 +40,7 @@ def _coerce_roi(raw: Any, default: Sequence[int], action_name: str) -> list[int]
     return list(default)
 
 
-def _coerce_point(
-    raw: Any, default: Sequence[int], action_name: str, label: str
-) -> tuple[int, int]:
+def _coerce_point(raw: Any, default: Sequence[int], action_name: str, label: str) -> tuple[int, int]:
     """
     校验并规范化按钮位置配置。返回 (x, y) 坐标分量，长度非 2 或元素非整数时回退到 default。
     """

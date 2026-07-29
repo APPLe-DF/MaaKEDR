@@ -33,7 +33,16 @@ class InitPVPBattleCount(CustomAction):
                 logger.error("InitPVPBattleCount: target_count 必须是整数，得到: {}", type(target).__name__)
                 return CustomAction.RunResult(success=False)
 
-        target_node: str = str(params.get("target_node", argv.node_name))
+        raw_node = params.get("target_node", argv.node_name)
+        if raw_node is not None and not isinstance(raw_node, str):
+            logger.warning(
+                "InitPVPBattleCount: target_node 配置无效: type={}, value={}，回退到当前节点 {}",
+                type(raw_node).__name__,
+                raw_node,
+                argv.node_name,
+            )
+            raw_node = argv.node_name
+        target_node: str = str(raw_node)
         merge_node_custom_param(context, target_node, {"remaining": target})
         logger.info("[PVP] 节点 {} 剩余战斗次数: {}", target_node, target)
         return CustomAction.RunResult(success=True)
@@ -55,7 +64,12 @@ class CheckPVPBattleCount(CustomAction):
 
         remaining: Any = params["remaining"]
         if not isinstance(remaining, int):
-            remaining = 0
+            logger.error(
+                "CheckPVPBattleCount: remaining 必须是整数，得到: type={}, value={}",
+                type(remaining).__name__,
+                remaining,
+            )
+            return CustomAction.RunResult(success=False)
 
         remaining -= 1
         if remaining <= 0:
