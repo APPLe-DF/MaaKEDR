@@ -92,12 +92,12 @@ class LogOCRResult(CustomAction):
         """处理点击动作"""
         if click_target:
             if len(click_target) < 4:
-                logger.warning("click_target 需要 4 个元素 [x, y, w, h]，得到: {}", len(click_target))
-            else:
-                center_x = click_target[0] + click_target[2] // 2
-                center_y = click_target[1] + click_target[3] // 2
-                logger.debug("点击位置: ({}, {})", center_x, center_y)
-                context.tasker.controller.post_click(center_x, center_y).wait()
+                logger.warning("click_target 需要 4 个元素 [x, y, w, h]，得到: {}，跳过点击", len(click_target))
+                return
+            center_x = click_target[0] + click_target[2] // 2
+            center_y = click_target[1] + click_target[3] // 2
+            logger.debug("点击位置: ({}, {})", center_x, center_y)
+            context.tasker.controller.post_click(center_x, center_y).wait()
         elif reco_result is not None and reco_result.box is not None:
             box = reco_result.box
             center_x = box[0] + box[2] // 2

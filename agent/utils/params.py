@@ -42,3 +42,29 @@ def parse_params(raw: str | None, *required_keys: str) -> dict[str, Any]:
             raise ValueError(f"缺少必填字段: {missing}")
 
     return params
+
+
+def extract_custom_param(node_data: dict[str, Any] | None) -> dict[str, Any]:
+    """
+    从 pipeline 节点定义中安全提取 custom_action_param / custom_recognition_param。
+
+    对嵌套字典结构进行逐层 isinstance 校验，任一层缺失或类型不匹配时返回空 dict。
+
+    Args:
+        node_data: context.get_node_data() 返回的节点定义，可为 None
+
+    Returns:
+        节点 action.param.custom_action_param 字段（若存在且为 dict），否则空 dict
+    """
+    if not isinstance(node_data, dict):
+        return {}
+    action = node_data.get("action")
+    if not isinstance(action, dict):
+        return {}
+    param = action.get("param")
+    if not isinstance(param, dict):
+        return {}
+    cap = param.get("custom_action_param")
+    if not isinstance(cap, dict):
+        return {}
+    return cap

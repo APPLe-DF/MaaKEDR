@@ -6,7 +6,7 @@ from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_action import CustomAction
 from utils.logger import logger
-from utils.params import parse_params
+from utils.params import extract_custom_param, parse_params
 
 _CHECK_NODE = "PVP.CheckBattleCount"
 
@@ -14,15 +14,9 @@ _CHECK_NODE = "PVP.CheckBattleCount"
 def _store_remaining(context: Context, remaining: int) -> None:
     """Store the remaining battle count in the pipeline node config, preserving existing keys."""
     node_data = context.get_node_data(_CHECK_NODE)
-    existing: dict[str, Any] = {}
-    if node_data:
-        action = node_data.get("action")
-        if isinstance(action, dict):
-            param = action.get("param")
-            if isinstance(param, dict):
-                cap = param.get("custom_action_param")
-                if isinstance(cap, dict):
-                    existing = cap
+    existing = extract_custom_param(node_data)
+    if not existing:
+        logger.debug("[_store_remaining] 节点 {} 无已有 custom_action_param，将创建新字段", _CHECK_NODE)
     merged = {**existing, "remaining": remaining}
     context.override_pipeline({_CHECK_NODE: {"action": {"param": {"custom_action_param": merged}}}})
 

@@ -8,7 +8,7 @@ from maa.custom_action import CustomAction
 from maa.pipeline import JOCR, JActionType, JClick, JRecognitionType, JTemplateMatch
 from utils.logger import logger
 from utils.maa_types import ocr_results
-from utils.params import parse_params
+from utils.params import extract_custom_param, parse_params
 
 COUNT_ROI = [903, 441, 27, 43]
 PLUS_BUTTON = (1086, 470)
@@ -22,15 +22,9 @@ _DEFAULT_TARGET = 6
 def _store_target(context: Context, target: int) -> None:
     """Store the target battle count in the pipeline node config, preserving existing keys."""
     node_data = context.get_node_data(_REDUCE_NODE)
-    existing: dict[str, Any] = {}
-    if node_data:
-        action = node_data.get("action")
-        if isinstance(action, dict):
-            param = action.get("param")
-            if isinstance(param, dict):
-                cap = param.get("custom_action_param")
-                if isinstance(cap, dict):
-                    existing = cap
+    existing = extract_custom_param(node_data)
+    if not existing:
+        logger.debug("[_store_target] 节点 {} 无已有 custom_action_param，将创建新字段", _REDUCE_NODE)
     merged = {**existing, "target": target}
     context.override_pipeline({_REDUCE_NODE: {"action": {"param": {"custom_action_param": merged}}}})
 
@@ -79,8 +73,23 @@ class SetBattleCount(CustomAction):
             return CustomAction.RunResult(success=True)
 
         if not isinstance(target_count, int):
-            logger.error("[SetBattleCount] target_count 必须是整数或 'max'，得到: {}", type(target_count))
-            return CustomAction.RunResult(success=False)
+            try:
+                target_count = int(target_count)  # type: ignore[arg-type]
+                logger.info("[SetBattleCount] target_count 由非整数值转换为整数: {}", target_count)
+            except (TypeError, ValueError):
+                logger.error(
+                    "[SetBattleCount] target_count 必须是 1-6 的整数或 'max'，得到: type={}, value={}",
+                    type(target_count).__name__,
+                    target_count,
+                )
+                return CustomAction.RunResult(success=False)
+
+        if target_count < 1:
+            logger.warning("[SetBattleCount] target_count < 1，已修正为 1，原始值: {}", target_count)
+            target_count = 1
+        elif target_count > 6:
+            logger.warning("[SetBattleCount] target_count > 6，已修正为 6，原始值: {}", target_count)
+            target_count = 6
 
         ocr_detail = context.run_recognition_direct(
             JRecognitionType.OCR,
@@ -191,8 +200,8 @@ class ReduceBattleCount(CustomAction):
 
             _store_target(context, target)
             return CustomAction.RunResult(success=True)
-        except Exception as e:
-            logger.error("[ReduceBattleCount] 执行异常: {}", e)
+        except Exception:
+            logger.exception("[ReduceBattleCount] 执行异常")
             return CustomAction.RunResult(success=False)
 
 

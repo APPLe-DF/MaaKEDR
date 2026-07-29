@@ -1,7 +1,7 @@
 import json
 
 import pytest
-from utils.params import parse_params
+from utils.params import extract_custom_param, parse_params
 
 
 class TestParseParamsEmpty:
@@ -48,3 +48,30 @@ class TestParseParamsValidation:
     def test_invalid_json_raises_value_error(self) -> None:
         with pytest.raises(ValueError, match="参数必须是对象"):
             parse_params("not json at all")
+
+
+class TestExtractCustomParam:
+    def test_none_returns_empty(self) -> None:
+        assert extract_custom_param(None) == {}
+
+    def test_well_formed_node(self) -> None:
+        node = {"action": {"type": "Custom", "param": {"custom_action": "X", "custom_action_param": {"a": 1}}}}
+        assert extract_custom_param(node) == {"a": 1}
+
+    def test_missing_action(self) -> None:
+        assert extract_custom_param({"recognition": "DirectHit"}) == {}
+
+    def test_action_not_dict(self) -> None:
+        assert extract_custom_param({"action": "bad"}) == {}
+
+    def test_missing_param(self) -> None:
+        assert extract_custom_param({"action": {"type": "Custom"}}) == {}
+
+    def test_param_not_dict(self) -> None:
+        assert extract_custom_param({"action": {"param": "bad"}}) == {}
+
+    def test_missing_custom_action_param(self) -> None:
+        assert extract_custom_param({"action": {"param": {"custom_action": "X"}}}) == {}
+
+    def test_custom_action_param_not_dict(self) -> None:
+        assert extract_custom_param({"action": {"param": {"custom_action_param": "bad"}}}) == {}
