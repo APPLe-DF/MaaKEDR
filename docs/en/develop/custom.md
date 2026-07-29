@@ -19,12 +19,13 @@ from maa.agent.agent_server import AgentServer
 from maa.custom_recognition import CustomRecognition
 from maa.context import Context
 from maa.pipeline import JOCR, JRecognitionType
+from utils.params import parse_params
 
 
 @AgentServer.custom_recognition("MyRecognizer")
 class MyRecognizer(CustomRecognition):
     def analyze(self, context: Context, argv: CustomRecognition.AnalyzeArg) -> CustomRecognition.AnalyzeResult | None:
-        params = json.loads(argv.custom_recognition_param)
+        params = parse_params(argv.custom_recognition_param)
         detail = context.run_recognition_direct(
             JRecognitionType.OCR,
             JOCR(expected=["text"], roi=(x, y, w, h)),
@@ -56,12 +57,13 @@ For stateful operations or complex logic.
 from maa.agent.agent_server import AgentServer
 from maa.custom_action import CustomAction
 from maa.context import Context
+from utils.params import parse_params
 
 
 @AgentServer.custom_action("MyAction")
 class MyAction(CustomAction):
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
-        params = json.loads(argv.custom_action_param)
+        params = parse_params(argv.custom_action_param)
         return CustomAction.RunResult(success=True)
 ```
 

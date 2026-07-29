@@ -31,6 +31,11 @@ class TestParseParamsDict:
         result = parse_params(outer)
         assert result == {"a": 1}
 
+    def test_multilayer_escaped_json_non_object(self) -> None:
+        outer = json.dumps("[1, 2, 3]")
+        with pytest.raises(ValueError, match="参数必须是对象"):
+            parse_params(outer)
+
 
 class TestParseParamsValidation:
     def test_non_object_raises(self) -> None:
@@ -53,6 +58,11 @@ class TestParseParamsValidation:
 class TestExtractCustomParam:
     def test_none_returns_empty(self) -> None:
         assert extract_custom_param(None) == {}
+
+    def test_node_data_not_dict(self) -> None:
+        assert extract_custom_param([]) == {}
+        assert extract_custom_param("string") == {}
+        assert extract_custom_param(42) == {}
 
     def test_well_formed_node(self) -> None:
         node = {"action": {"type": "Custom", "param": {"custom_action": "X", "custom_action_param": {"a": 1}}}}
