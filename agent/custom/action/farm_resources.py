@@ -18,6 +18,8 @@ MAX_BUTTON_TEMPLATE = "farm_resources/max_count.png"
 
 _DEFAULT_TARGET = 6
 _COUNT_EXPECTED = ["1", "2", "3", "4", "5", "6"]
+_COUNT_MIN = 1
+_COUNT_MAX = 6
 _MAX_TEMPLATE_THRESHOLD: list[float] = [0.8, 0.8, 0.8]
 
 
@@ -100,20 +102,32 @@ class SetBattleCount(CustomAction):
                 logger.info("[SetBattleCount] target_count 由非整数值转换为整数: {}", target_count)
             except (TypeError, ValueError):
                 logger.error(
-                    "[SetBattleCount] target_count 必须是 1-6 的整数或 'max'，得到: type={}, value={}",
+                    "[SetBattleCount] target_count 必须是 {}-{} 的整数或 'max'，得到: type={}, value={}",
+                    _COUNT_MIN,
+                    _COUNT_MAX,
                     type(target_count).__name__,
                     target_count,
                 )
                 return CustomAction.RunResult(success=False)
 
-        if target_count < 1:
-            logger.warning("[SetBattleCount] target_count < 1，已修正为 1，原始值: {}", target_count)
-            target_count = 1
-        elif target_count > 6:
-            logger.warning("[SetBattleCount] target_count > 6，已修正为 6，原始值: {}", target_count)
-            target_count = 6
+        if target_count < _COUNT_MIN:
+            logger.warning(
+                "[SetBattleCount] target_count < {}，已修正为 {}，原始值: {}",
+                _COUNT_MIN,
+                _COUNT_MIN,
+                target_count,
+            )
+            target_count = _COUNT_MIN
+        elif target_count > _COUNT_MAX:
+            logger.warning(
+                "[SetBattleCount] target_count > {}，已修正为 {}，原始值: {}",
+                _COUNT_MAX,
+                _COUNT_MAX,
+                target_count,
+            )
+            target_count = _COUNT_MAX
 
-        current_count = _read_battle_count(context, count_roi, default=1)
+        current_count = _read_battle_count(context, count_roi, default=_COUNT_MIN)
         clicks_needed = target_count - current_count
 
         if clicks_needed > 0:
@@ -160,8 +174,12 @@ class ReduceBattleCount(CustomAction):
                 target = _DEFAULT_TARGET
                 logger.info("[ReduceBattleCount] target 未初始化，自动设为 {}", _DEFAULT_TARGET)
 
-            if target <= 1:
-                logger.warning("[ReduceBattleCount] 目标次数已到最小({}≤1)，无法继续", target)
+            if target <= _COUNT_MIN:
+                logger.warning(
+                    "[ReduceBattleCount] 目标次数已到最小({}≤{})，无法继续",
+                    target,
+                    _COUNT_MIN,
+                )
                 return CustomAction.RunResult(success=False)
 
             target -= 1

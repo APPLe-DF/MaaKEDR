@@ -93,7 +93,11 @@ class LogOCRResult(CustomAction):
         """处理点击动作"""
         if click_target:
             if len(click_target) < 4:
-                logger.warning("click_target 需要 4 个元素 [x, y, w, h]，得到: {}，跳过点击", len(click_target))
+                logger.warning(
+                    "click_target 需要 4 个元素 [x, y, w, h]，得到: {} (值: {})，跳过点击",
+                    len(click_target),
+                    click_target,
+                )
                 return
             center_x = click_target[0] + click_target[2] // 2
             center_y = click_target[1] + click_target[3] // 2
