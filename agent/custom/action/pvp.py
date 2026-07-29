@@ -18,6 +18,7 @@ class InitPVPBattleCount(CustomAction):
     """
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
+        logger.info("InitPVPBattleCount: argv.custom_action_param = {}", repr(argv.custom_action_param))
         try:
             params = parse_params(argv.custom_action_param, "target_count")
         except ValueError as error:
