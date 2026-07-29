@@ -28,13 +28,13 @@ MaaKEDR/
 │   │   ├── image/               #   Template matching images
 │   │   └── model/ocr/           #   PaddleOCR models
 │   ├── bilibili/                # Bilibili server resources
-│   └── tap tap/                 # TapTap server resources
+│   └── taptap/                 # TapTap server resources
 ├── agent/                       # Python agent (custom recognitions/actions)
 │   └── custom/
 │       ├── recognition/         #   Custom recognitions
 │       └── action/              #   Custom actions
 ├── docs/                        # Developer documentation
-│   └── zh_cn/
+│   └── zh/
 │       └── develop/             #   Development guides (pipeline.md, custom.md, etc.)
 ├── tools/                       # Build, release, schema validation, CI scripts
 ├── .github/workflows/           # CI/CD configuration
@@ -78,7 +78,7 @@ MaaKEDR/
 ## Coding Style & Naming Conventions
 
 - **Python**: 120-character line limit, 4-space indentation. Linted with `ruff` (via `pnpm lint:py`) and type-checked with `pyright --strict` (via `pnpm typecheck:py`). Follow PEP 8 and PEP 484.
-- **JSON / YAML / Markdown**: 2-space indentation, formatted with Prettier.
+- **JSON**: 4-space indentation. **YAML / Markdown**: 2-space indentation. All formatted with Prettier.
 - **Resource files**: Use forward slashes for paths. Follow MaaFW 720p baseline for coordinates, ROI, and template images.
 - **Naming**: Modules use `snake_case`. Classes use `PascalCase`. Functions/variables use `snake_case`. Custom actions/recognitions match their pipeline node names.
 
@@ -127,7 +127,7 @@ When reviewing code, check for:
 - **Next coverage**: The `next` list should cover all expected post-action screens so the first inference cycle lands on the right node.
 - **720p baseline**: All coordinates, ROIs, and template images must be based on **1280x720** resolution.
 - **Code formatting**: All files must pass `pnpm check` (includes Prettier, schema, integrity, lint). Run `pnpm format` / `pnpm format:py` to auto-format.
-- **Type safety**: Python code must pass `pnpm check:py` (ruff lint + pyright type check + pytest) without errors.
+- **Type safety**: Python code must pass `pnpm check:py` (ruff lint + pyright type check) without errors.
 - **Custom registration**: New custom actions/recognitions must be registered in the corresponding `__init__.py`.
 - **Consistency**: `interface.json`, task files, and resource files must stay in sync.
 - **Edge cases**: Pipelines should handle interruptions (pop-ups, unexpected dialogs). Every action should be followed by a recognition step.

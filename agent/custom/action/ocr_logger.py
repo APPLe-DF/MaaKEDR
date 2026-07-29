@@ -24,13 +24,15 @@ OCR 结果日志输出模块
 - click_target: 点击坐标 [x, y, w, h]（可选，仅在 action_key=Click 时使用）
 """
 
-import json
-from typing import Any
+from __future__ import annotations
 
 from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_action import CustomAction
+from maa.define import RecognitionDetail
 from utils.logger import logger
+from utils.maa_types import ocr_text
+from utils.params import parse_params
 
 
 @AgentServer.custom_action("LogOCRResult")
@@ -46,62 +48,58 @@ class LogOCRResult(CustomAction):
         context: Context,
         argv: CustomAction.RunArg,
     ) -> CustomAction.RunResult:
-        # 解析自定义参数
         try:
-            argv_dict: dict[str, Any] = json.loads(argv.custom_action_param)
-        except json.JSONDecodeError as e:
-            logger.error(f"LogOCRResult 参数解析失败: {e}")
+            argv_dict = parse_params(argv.custom_action_param)
+        except ValueError as error:
+            logger.error("LogOCRResult: {}", error)
             return CustomAction.RunResult(success=False)
 
         if not argv_dict:
             logger.warning("LogOCRResult 参数为空")
-            return CustomAction.RunResult(success=True)
+            return CustomAction.RunResult(success=False)
 
-        # 获取自定义参数
         action_key = argv_dict.get("action_key", "")
         recognition_name = argv_dict.get("recognition_name", "")
         return_text = argv_dict.get("return_text", "")
         click_target = argv_dict.get("click_target", [])
 
-        # 获取 OCR 识别结果
         image = context.tasker.controller.post_screencap().wait().get()
         reco_result = context.run_recognition(recognition_name, image)
 
-        # 处理 OCR 识别结果
         if reco_result and reco_result.hit:
-            best_result = reco_result.best_result
-            if best_result is None:
+            text = ocr_text(reco_result)
+            if not text:
                 return CustomAction.RunResult(success=True)
-            # 输出到 UI 界面
-            logger.info(f"{return_text}: {best_result.text}")  # pyright: ignore[reportAttributeAccessIssue]
+            logger.info("{}: {}", return_text, text)
 
-            # 根据 action_key 执行不同的动作
             if action_key == "Click":
-                self._handle_click(context, best_result, click_target)
+                self._handle_click(context, reco_result, click_target)
             elif action_key == "":
                 logger.debug("仅返回 OCR 数据，不执行动作")
             else:
-                logger.warning(f"未知的 action_key: {action_key}")
+                logger.warning("未知的 action_key: {}", action_key)
         else:
-            logger.warning(f"OCR 识别失败 - 任务名称: {recognition_name}")
+            logger.warning("OCR 识别失败 - 任务名称: {}", recognition_name)
 
         return CustomAction.RunResult(success=True)
 
-    def _handle_click(self, context: Context, best_result: Any, click_target: list[int]):
+    def _handle_click(
+        self,
+        context: Context,
+        reco_result: RecognitionDetail | None,
+        click_target: list[int],
+    ) -> None:
         """处理点击动作"""
         if click_target:
-            # 点击传入参数中的坐标位置
-            box = click_target
-            center_x = box[0] + box[2] // 2
-            center_y = box[1] + box[3] // 2
-            logger.debug(f"点击位置: ({center_x}, {center_y})")
+            center_x = click_target[0] + click_target[2] // 2
+            center_y = click_target[1] + click_target[3] // 2
+            logger.debug("点击位置: ({}, {})", center_x, center_y)
             context.tasker.controller.post_click(center_x, center_y).wait()
-        elif best_result:
-            # 点击最佳识别结果的中心位置
-            box = best_result.box
+        elif reco_result is not None and reco_result.box is not None:
+            box = reco_result.box
             center_x = box[0] + box[2] // 2
             center_y = box[1] + box[3] // 2
-            logger.debug(f"点击位置: ({center_x}, {center_y})")
+            logger.debug("点击位置: ({}, {})", center_x, center_y)
             context.tasker.controller.post_click(center_x, center_y).wait()
         else:
             logger.warning("没有识别到结果，无法执行点击")

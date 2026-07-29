@@ -45,6 +45,7 @@
         "release:dry-run": "node tools/build-release.mjs --dry-run",
         "sync:runtime": "node tools/sync-runtime.mjs",
         "sync:schema": "node tools/sync-schema.mjs",
+        "test:py": "uv run --frozen pytest",
         "typecheck:py": "uv run --frozen pyright",
         "vp-update": "pnpm dlx vp-update"
     },

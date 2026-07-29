@@ -20,11 +20,10 @@ from maa.custom_recognition import CustomRecognition
 from maa.context import Context
 from maa.pipeline import JOCR, JRecognitionType
 
+
 @AgentServer.custom_recognition("MyRecognizer")
 class MyRecognizer(CustomRecognition):
-    def analyze(
-        self, context: Context, argv: CustomRecognition.AnalyzeArg
-    ) -> CustomRecognition.AnalyzeResult | None:
+    def analyze(self, context: Context, argv: CustomRecognition.AnalyzeArg) -> CustomRecognition.AnalyzeResult | None:
         params = json.loads(argv.custom_recognition_param)
         # OCR 识别
         detail = context.run_recognition_direct(
@@ -34,10 +33,7 @@ class MyRecognizer(CustomRecognition):
         )
         if not detail or not detail.box:
             return None  # 未命中
-        return CustomRecognition.AnalyzeResult(
-            box=detail.box,
-            detail={"status": "found"}
-        )
+        return CustomRecognition.AnalyzeResult(box=detail.box, detail={"status": "found"})
 ```
 
 Pipeline 中调用：
@@ -62,11 +58,10 @@ from maa.agent.agent_server import AgentServer
 from maa.custom_action import CustomAction
 from maa.context import Context
 
+
 @AgentServer.custom_action("MyAction")
 class MyAction(CustomAction):
-    def run(
-        self, context: Context, argv: CustomAction.RunArg
-    ) -> CustomAction.RunResult:
+    def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
         params = json.loads(argv.custom_action_param)
         target = params.get("target_count", 1)
         # ... 业务逻辑
@@ -97,6 +92,7 @@ Sink 用于监听任务事件（开始、完成、错误等），适合做前置
 ```python
 from maa.agent.agent_server import AgentServer
 from maa.event import TaskerEventSink, TaskerEvent
+
 
 @AgentServer.tasker_sink()
 class MySink(TaskerEventSink):
@@ -148,11 +144,7 @@ context.tasker.controller.post_click(x, y).wait()
 context.override_next(argv.node_name, ["NextNodeA", "NextNodeB"])
 
 # 动态覆盖 pipeline 配置
-context.override_pipeline({
-    "SomeNode": {
-        "next": ["CustomNext"]
-    }
-})
+context.override_pipeline({"SomeNode": {"next": ["CustomNext"]}})
 ```
 
 ## 注册模块

@@ -10,8 +10,6 @@ from maa.define import (
     Rect,
 )
 
-T = TypeVar("T")
-
 ResultT = TypeVar("ResultT")
 
 

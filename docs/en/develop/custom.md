@@ -20,11 +20,10 @@ from maa.custom_recognition import CustomRecognition
 from maa.context import Context
 from maa.pipeline import JOCR, JRecognitionType
 
+
 @AgentServer.custom_recognition("MyRecognizer")
 class MyRecognizer(CustomRecognition):
-    def analyze(
-        self, context: Context, argv: CustomRecognition.AnalyzeArg
-    ) -> CustomRecognition.AnalyzeResult | None:
+    def analyze(self, context: Context, argv: CustomRecognition.AnalyzeArg) -> CustomRecognition.AnalyzeResult | None:
         params = json.loads(argv.custom_recognition_param)
         detail = context.run_recognition_direct(
             JRecognitionType.OCR,
@@ -33,10 +32,7 @@ class MyRecognizer(CustomRecognition):
         )
         if not detail or not detail.box:
             return None
-        return CustomRecognition.AnalyzeResult(
-            box=detail.box,
-            detail={"status": "found"}
-        )
+        return CustomRecognition.AnalyzeResult(box=detail.box, detail={"status": "found"})
 ```
 
 Pipeline usage:
@@ -61,11 +57,10 @@ from maa.agent.agent_server import AgentServer
 from maa.custom_action import CustomAction
 from maa.context import Context
 
+
 @AgentServer.custom_action("MyAction")
 class MyAction(CustomAction):
-    def run(
-        self, context: Context, argv: CustomAction.RunArg
-    ) -> CustomAction.RunResult:
+    def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
         params = json.loads(argv.custom_action_param)
         return CustomAction.RunResult(success=True)
 ```
@@ -94,6 +89,7 @@ Sinks listen to task events (start, complete, error) for pre-checks, logging, or
 ```python
 from maa.agent.agent_server import AgentServer
 from maa.event import TaskerEventSink, TaskerEvent
+
 
 @AgentServer.tasker_sink()
 class MySink(TaskerEventSink):
@@ -144,11 +140,7 @@ context.tasker.controller.post_click(x, y).wait()
 context.override_next(argv.node_name, ["NextNodeA", "NextNodeB"])
 
 # Override pipeline config dynamically
-context.override_pipeline({
-    "SomeNode": {
-        "next": ["CustomNext"]
-    }
-})
+context.override_pipeline({"SomeNode": {"next": ["CustomNext"]}})
 ```
 
 ## Registration
