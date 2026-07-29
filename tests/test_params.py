@@ -5,6 +5,7 @@ from utils.params import (
     coerce_point,
     coerce_roi,
     extract_custom_param,
+    is_int_value,
     merge_node_custom_param,
     parse_params,
 )
@@ -260,3 +261,32 @@ class TestCoercePoint:
 
     def test_non_numeric_falls_back(self) -> None:
         assert coerce_point([1, "x"], (10, 20), "X", "y") == (10, 20)
+
+
+class TestIsIntValue:
+    def test_int_true(self) -> None:
+        assert is_int_value(1) is True
+
+    def test_int_zero(self) -> None:
+        assert is_int_value(0) is True
+
+    def test_int_negative(self) -> None:
+        assert is_int_value(-5) is True
+
+    def test_bool_true_rejected(self) -> None:
+        assert is_int_value(True) is False
+
+    def test_bool_false_rejected(self) -> None:
+        assert is_int_value(False) is False
+
+    def test_float_rejected(self) -> None:
+        assert is_int_value(1.5) is False
+
+    def test_str_rejected(self) -> None:
+        assert is_int_value("1") is False
+
+    def test_none_rejected(self) -> None:
+        assert is_int_value(None) is False
+
+    def test_list_rejected(self) -> None:
+        assert is_int_value([1]) is False

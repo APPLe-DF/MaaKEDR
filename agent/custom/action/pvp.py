@@ -6,7 +6,7 @@ from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_action import CustomAction
 from utils.logger import logger
-from utils.params import merge_node_custom_param, parse_params
+from utils.params import is_int_value, merge_node_custom_param, parse_params
 
 
 @AgentServer.custom_action("InitPVPBattleCount")
@@ -25,7 +25,7 @@ class InitPVPBattleCount(CustomAction):
             return CustomAction.RunResult(success=False)
 
         target: Any = params["target_count"]
-        if not isinstance(target, int):
+        if not is_int_value(target):
             try:
                 target = int(target)  # type: ignore[arg-type]
                 logger.info("InitPVPBattleCount: target_count 由非整数值转换为整数: {}", target)
@@ -63,7 +63,7 @@ class CheckPVPBattleCount(CustomAction):
             return CustomAction.RunResult(success=False)
 
         remaining: Any = params["remaining"]
-        if not isinstance(remaining, int):
+        if not is_int_value(remaining):
             logger.error(
                 "CheckPVPBattleCount: remaining 必须是整数，得到: type={}, value={}",
                 type(remaining).__name__,

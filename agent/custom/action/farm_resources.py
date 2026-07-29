@@ -9,7 +9,13 @@ from maa.define import RecognitionDetail
 from maa.pipeline import JOCR, JActionType, JClick, JRecognitionType, JTemplateMatch
 from utils.logger import logger
 from utils.maa_types import ocr_results
-from utils.params import coerce_point, coerce_roi, merge_node_custom_param, parse_params
+from utils.params import (
+    coerce_point,
+    coerce_roi,
+    is_int_value,
+    merge_node_custom_param,
+    parse_params,
+)
 
 COUNT_ROI = [903, 441, 27, 43]
 PLUS_BUTTON = (1086, 470)
@@ -106,7 +112,7 @@ class SetBattleCount(CustomAction):
                 )
             return CustomAction.RunResult(success=True)
 
-        if not isinstance(target_count, int):
+        if not is_int_value(target_count):
             try:
                 target_count = int(target_count)  # type: ignore[arg-type]
                 logger.info("[SetBattleCount] target_count 由非整数值转换为整数: {}", target_count)
@@ -184,7 +190,7 @@ class ReduceBattleCount(CustomAction):
             count_roi = coerce_roi(params.get("count_roi", COUNT_ROI), COUNT_ROI, "ReduceBattleCount")
 
             target: Any = params.get("target", _DEFAULT_TARGET)
-            if not isinstance(target, int):
+            if not is_int_value(target):
                 target = _DEFAULT_TARGET
                 logger.info("[ReduceBattleCount] target 未初始化，自动设为 {}", _DEFAULT_TARGET)
 

@@ -9,7 +9,7 @@ from maa.define import RectType
 from maa.pipeline import JOCR, JRecognitionType, JTemplateMatch
 from utils.logger import logger
 from utils.maa_types import ocr_text
-from utils.params import parse_params
+from utils.params import coerce_roi, parse_params
 
 RESOURCE_STAGES = {
     "特别军费行动": {
@@ -41,17 +41,17 @@ RESOURCE_STAGES = {
 }
 
 
-def _stage_roi_tuple(roi: list[int]) -> tuple[int, int, int, int] | None:
-    """将 stage_roi 列表转换为 (x, y, w, h) 元组，长度不足时返回 None。"""
-    if len(roi) >= 4:
-        return roi[0], roi[1], roi[2], roi[3]
-    logger.warning("CheckResourceStage: stage_roi 长度不足 4: {}", roi)
-    return None
-
-
 @AgentServer.custom_recognition("CheckResourceStage")
 class CheckResourceStage(CustomRecognition):
     """检测资源收集关卡"""
+
+    @staticmethod
+    def _stage_roi_or_none(stage_roi: list[int]) -> tuple[int, int, int, int] | None:
+        """将 stage_roi 转换为 (x, y, w, h)；长度或元素无效时返回 None。"""
+        result = coerce_roi(stage_roi, [-1, -1, -1, -1], "CheckResourceStage")
+        if result == [-1, -1, -1, -1]:
+            return None
+        return result[0], result[1], result[2], result[3]
 
     def _check_locked(
         self,
@@ -64,7 +64,7 @@ class CheckResourceStage(CustomRecognition):
         """在关卡识别区域内检测锁定图标"""
         if not lock_template:
             return False
-        roi_tuple = _stage_roi_tuple(stage_roi)
+        roi_tuple = self._stage_roi_or_none(stage_roi)
         if roi_tuple is None:
             return False
         try:
@@ -107,7 +107,7 @@ class CheckResourceStage(CustomRecognition):
             logger.warning("关卡 {} 不在 {} 中", stage_index, resource_type)
             return None
         stage_roi = type_stages[stage_index]
-        roi_tuple = _stage_roi_tuple(stage_roi)
+        roi_tuple = self._stage_roi_or_none(stage_roi)
         if roi_tuple is None:
             return None
 

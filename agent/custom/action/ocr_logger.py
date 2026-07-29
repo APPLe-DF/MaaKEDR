@@ -22,6 +22,8 @@ OCR 结果日志输出模块
 - action_key: 动作类型（Click/""）
 - return_text: 输出描述
 - click_target: 点击坐标 [x, y, w, h]（可选，仅在 action_key=Click 时使用）
+- fail_on_invalid_target: click_target 长度不足 4 时是否返回失败
+  （True 返 success=False，False 仅 warning 跳过，默认 False）
 """
 
 from __future__ import annotations
@@ -62,6 +64,7 @@ class LogOCRResult(CustomAction):
         recognition_name = argv_dict.get("recognition_name", "")
         return_text = argv_dict.get("return_text", "")
         click_target = argv_dict.get("click_target", [])
+        fail_on_invalid_target = bool(argv_dict.get("fail_on_invalid_target", False))
 
         image = context.tasker.controller.post_screencap().wait().get()
         reco_result = context.run_recognition(recognition_name, image)
@@ -74,7 +77,9 @@ class LogOCRResult(CustomAction):
 
             best_result = reco_result.best_result
             if action_key == "Click":
-                self._handle_click(context, best_result, click_target)
+                click_ok = self._handle_click(context, best_result, click_target, fail_on_invalid_target)
+                if not click_ok:
+                    return CustomAction.RunResult(success=False)
             elif action_key == "":
                 logger.debug("仅返回 OCR 数据，不执行动作")
             else:
@@ -89,8 +94,19 @@ class LogOCRResult(CustomAction):
         context: Context,
         best_result: RecognitionResult | None,
         click_target: list[int],
-    ) -> None:
-        """处理点击动作"""
+        fail_on_invalid_target: bool = False,
+    ) -> bool:
+        """
+        处理点击动作。
+
+        Args:
+            fail_on_invalid_target: click_target 元素不足 4 个时，
+                True 返回 False（让 run 返回 success=False），
+                False 仅 warning 并跳过点击（默认行为）。
+
+        Returns:
+            是否成功执行了点击动作。
+        """
         if click_target:
             if len(click_target) < 4:
                 logger.warning(
@@ -98,16 +114,19 @@ class LogOCRResult(CustomAction):
                     len(click_target),
                     click_target,
                 )
-                return
+                return not fail_on_invalid_target
             center_x = click_target[0] + click_target[2] // 2
             center_y = click_target[1] + click_target[3] // 2
             logger.debug("点击位置: ({}, {})", center_x, center_y)
             context.tasker.controller.post_click(center_x, center_y).wait()
+            return True
         elif has_box_result(best_result):
             box = best_result.box
             center_x = box[0] + box[2] // 2
             center_y = box[1] + box[3] // 2
             logger.debug("点击位置: ({}, {})", center_x, center_y)
             context.tasker.controller.post_click(center_x, center_y).wait()
+            return True
         else:
             logger.warning("没有识别到结果，无法执行点击")
+            return False

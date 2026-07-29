@@ -57,6 +57,11 @@ def _is_numeric(v: Any) -> bool:
     return isinstance(v, (int, float)) and not isinstance(v, bool)
 
 
+def is_int_value(v: Any) -> bool:
+    """判断是否为 int（排除 bool）。"""
+    return isinstance(v, int) and not isinstance(v, bool)
+
+
 def coerce_roi(raw: Any, default: Sequence[int], action_name: str) -> list[int]:
     """
     校验并规范化 ROI/坐标配置。长度非 4 或元素非数值时记录 warning 并回退到 default。
