@@ -51,7 +51,7 @@ def parse_params(raw: str | None, *required_keys: str) -> dict[str, Any]:
 
 def extract_custom_param(node_data: dict[str, Any] | None) -> dict[str, Any]:
     """
-    从 pipeline 节点定义中安全提取 custom_action_param / custom_recognition_param。
+    从 pipeline 节点定义中安全提取 action.param.custom_action_param。
 
     对嵌套字典结构进行逐层 isinstance 校验，任一层缺失或类型不匹配时返回空 dict。
 

@@ -19,14 +19,17 @@ MAX_BUTTON_TEMPLATE = "farm_resources/max_count.png"
 _REDUCE_NODE = "FarmResources.ReduceCount"
 _DEFAULT_TARGET = 6
 _COUNT_EXPECTED = ["1", "2", "3", "4", "5", "6"]
+_MAX_TEMPLATE_THRESHOLD: list[float] = [0.8, 0.8, 0.8]
 
 
 def _read_battle_count(context: Context, count_roi: list[int], default: int) -> int:
     """OCR 识别当前战斗次数，失败时返回 default。"""
     image = context.tasker.controller.cached_image
+    effective_roi = COUNT_ROI if len(count_roi) < 4 else count_roi
+    x, y, w, h = effective_roi[0], effective_roi[1], effective_roi[2], effective_roi[3]
     ocr_detail: RecognitionDetail | None = context.run_recognition_direct(
         JRecognitionType.OCR,
-        JOCR(expected=_COUNT_EXPECTED, roi=(count_roi[0], count_roi[1], count_roi[2], count_roi[3])),
+        JOCR(expected=_COUNT_EXPECTED, roi=(x, y, w, h)),
         image,
     )
     if ocr_detail and ocr_detail.hit:
@@ -80,7 +83,7 @@ class SetBattleCount(CustomAction):
         if target_count == "max":
             max_detail = context.run_recognition_direct(
                 JRecognitionType.TemplateMatch,
-                JTemplateMatch(template=[max_template], threshold=[0.8, 0.8, 0.8]),
+                JTemplateMatch(template=[max_template], threshold=_MAX_TEMPLATE_THRESHOLD),
                 image,
             )
             if max_detail and max_detail.box:

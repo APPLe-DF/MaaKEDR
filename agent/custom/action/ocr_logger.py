@@ -29,9 +29,9 @@ from __future__ import annotations
 from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_action import CustomAction
-from maa.define import RecognitionDetail
+from maa.define import RecognitionResult
 from utils.logger import logger
-from utils.maa_types import ocr_text
+from utils.maa_types import has_box_result, ocr_text
 from utils.params import parse_params
 
 
@@ -72,8 +72,9 @@ class LogOCRResult(CustomAction):
                 return CustomAction.RunResult(success=True)
             logger.info("{}: {}", return_text, text)
 
+            best_result = reco_result.best_result
             if action_key == "Click":
-                self._handle_click(context, reco_result, click_target)
+                self._handle_click(context, best_result, click_target)
             elif action_key == "":
                 logger.debug("仅返回 OCR 数据，不执行动作")
             else:
@@ -86,7 +87,7 @@ class LogOCRResult(CustomAction):
     def _handle_click(
         self,
         context: Context,
-        reco_result: RecognitionDetail | None,
+        best_result: RecognitionResult | None,
         click_target: list[int],
     ) -> None:
         """处理点击动作"""
@@ -98,8 +99,8 @@ class LogOCRResult(CustomAction):
             center_y = click_target[1] + click_target[3] // 2
             logger.debug("点击位置: ({}, {})", center_x, center_y)
             context.tasker.controller.post_click(center_x, center_y).wait()
-        elif reco_result is not None and reco_result.box is not None:
-            box = reco_result.box
+        elif has_box_result(best_result):
+            box = best_result.box
             center_x = box[0] + box[2] // 2
             center_y = box[1] + box[3] // 2
             logger.debug("点击位置: ({}, {})", center_x, center_y)
