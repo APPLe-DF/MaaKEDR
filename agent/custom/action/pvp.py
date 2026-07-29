@@ -13,18 +13,18 @@ from utils.params import merge_node_custom_param, parse_params
 class InitPVPBattleCount(CustomAction):
     """
     参数：
-    - target_count: 剩余战斗次数
+    - target_count: 剩余战斗次数（必填，整数或可转换为整数的字符串）
     - target_node: 存储剩余次数的 pipeline 节点名称（默认当前节点）
     """
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
         try:
-            params = parse_params(argv.custom_action_param)
+            params = parse_params(argv.custom_action_param, "target_count")
         except ValueError as error:
             logger.error("InitPVPBattleCount: {}", error)
             return CustomAction.RunResult(success=False)
 
-        target: Any = params.get("target_count", 1)
+        target: Any = params["target_count"]
         if not isinstance(target, int):
             try:
                 target = int(target)  # type: ignore[arg-type]
@@ -41,14 +41,19 @@ class InitPVPBattleCount(CustomAction):
 
 @AgentServer.custom_action("CheckPVPBattleCount")
 class CheckPVPBattleCount(CustomAction):
+    """
+    参数：
+    - remaining: 当前剩余战斗次数（必填）
+    """
+
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
         try:
-            params = parse_params(argv.custom_action_param)
+            params = parse_params(argv.custom_action_param, "remaining")
         except ValueError as error:
             logger.error("CheckPVPBattleCount: {}", error)
             return CustomAction.RunResult(success=False)
 
-        remaining: Any = params.get("remaining", 0)
+        remaining: Any = params["remaining"]
         if not isinstance(remaining, int):
             remaining = 0
 

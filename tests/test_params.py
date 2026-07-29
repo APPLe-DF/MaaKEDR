@@ -184,3 +184,18 @@ class TestMergeNodeCustomParam:
         action = payload["action"]  # type: ignore[index]
         assert action["type"] == "Custom"
         assert action["extra"] == "keep"
+
+    def test_strict_raises_when_node_missing(self) -> None:
+        ctx = _MockContext(None)
+        with pytest.raises(ValueError, match="节点 Missing 不存在"):
+            merge_node_custom_param(ctx, "Missing", {"x": 1}, strict=True)
+
+    def test_strict_raises_when_action_not_dict(self) -> None:
+        ctx = _MockContext({"action": "bad"})
+        with pytest.raises(ValueError, match="action 字段非 dict"):
+            merge_node_custom_param(ctx, "Node", {"x": 1}, strict=True)
+
+    def test_strict_raises_when_param_not_dict(self) -> None:
+        ctx = _MockContext({"action": {"type": "Custom", "param": "bad"}})
+        with pytest.raises(ValueError, match="action.param 字段非 dict"):
+            merge_node_custom_param(ctx, "Node", {"x": 1}, strict=True)

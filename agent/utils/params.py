@@ -79,6 +79,7 @@ def merge_node_custom_param(
     context: Context,
     node_name: str,
     updates: dict[str, Any],
+    strict: bool = False,
 ) -> None:
     """
     安全地将字段合并到 pipeline 节点的 custom_action_param 中。
@@ -91,32 +92,38 @@ def merge_node_custom_param(
         context: MaaFW Context 对象
         node_name: pipeline 节点名称
         updates: 要合并到 custom_action_param 中的字段
+        strict: 严格模式。True 时节点不存在或 action/param 结构异常会抛出
+            ValueError；False（默认）仅记录 warning 并重建最小配置。
     """
     node_data = context.get_node_data(node_name)
     existing_action: dict[str, Any] = {}
     existing_param: dict[str, Any] = {}
     existing_cap: dict[str, Any] = {}
     if node_data is None:
-        logger.warning("merge_node_custom_param: 节点 {} 不存在，将创建新配置", node_name)
+        msg = f"merge_node_custom_param: 节点 {node_name} 不存在"
+        if strict:
+            raise ValueError(msg)
+        logger.warning("{}，将创建新配置", msg)
     else:
         raw_action = node_data.get("action")
         if isinstance(raw_action, dict):
             existing_action = dict(raw_action)
         elif raw_action is not None:
-            logger.warning(
-                "merge_node_custom_param: 节点 {} 的 action 字段非 dict，得到: {}",
-                node_name,
-                type(raw_action).__name__,
-            )
+            msg = f"merge_node_custom_param: 节点 {node_name} 的 action 字段非 dict，得到: {type(raw_action).__name__}"
+            if strict:
+                raise ValueError(msg)
+            logger.warning("{}", msg)
         raw_param = existing_action.get("param")
         if isinstance(raw_param, dict):
             existing_param = dict(raw_param)
         elif raw_param is not None:
-            logger.warning(
-                "merge_node_custom_param: 节点 {} 的 action.param 字段非 dict，得到: {}",
-                node_name,
-                type(raw_param).__name__,
+            msg = (
+                f"merge_node_custom_param: 节点 {node_name} 的 action.param 字段非 dict，"
+                f"得到: {type(raw_param).__name__}"
             )
+            if strict:
+                raise ValueError(msg)
+            logger.warning("{}", msg)
         cap = existing_param.get("custom_action_param")
         if isinstance(cap, dict):
             existing_cap = dict(cap)
