@@ -13,9 +13,11 @@ from utils.params import (
     coerce_point,
     coerce_roi,
     is_int_value,
-    merge_node_custom_param,
     parse_params,
 )
+
+# session_target 以 context.tasker 唯一标识为 key，避免跨任务干扰。
+_session_target: dict[int, int] = {}
 
 COUNT_ROI = [903, 441, 27, 43]
 PLUS_BUTTON = (1086, 470)
@@ -173,7 +175,6 @@ class ReduceBattleCount(CustomAction):
     参数：
     - minus_button: 减号按钮位置 [x, y]
     - count_roi: 次数显示区域 [x, y, w, h]
-    - target: 当前目标次数（由 pipeline override 维护，首次调用默认值由 _DEFAULT_TARGET 常量定义）
     """
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
@@ -189,7 +190,8 @@ class ReduceBattleCount(CustomAction):
             )
             count_roi = coerce_roi(params.get("count_roi", COUNT_ROI), COUNT_ROI, "ReduceBattleCount")
 
-            target: Any = params.get("target", _DEFAULT_TARGET)
+            key = id(context.tasker)
+            target: Any = _session_target.get(key, _DEFAULT_TARGET)
             if not is_int_value(target):
                 target = _DEFAULT_TARGET
                 logger.info("[ReduceBattleCount] target 未初始化，自动设为 {}", _DEFAULT_TARGET)
@@ -203,6 +205,7 @@ class ReduceBattleCount(CustomAction):
                 return CustomAction.RunResult(success=False)
 
             target -= 1
+            _session_target[key] = target
 
             current_count = _read_battle_count(context, count_roi, default=-1)
 
@@ -215,7 +218,6 @@ class ReduceBattleCount(CustomAction):
             logger.info("[ReduceBattleCount] 点击减号按钮")
             _click_button(context, minus_x, minus_y)
 
-            merge_node_custom_param(context, argv.node_name, {"target": target})
             return CustomAction.RunResult(success=True)
         except Exception:
             logger.exception("[ReduceBattleCount] 执行异常")
@@ -226,28 +228,9 @@ class ReduceBattleCount(CustomAction):
 class ResetBattleCountTarget(CustomAction):
     """
     重置目标次数为 _DEFAULT_TARGET（调用 ReduceBattleCount 前需要调用）
-
-    参数：
-    - target_node: 存储目标次数的 pipeline 节点名称（默认当前节点）
     """
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
-        try:
-            params = parse_params(argv.custom_action_param)
-        except ValueError as error:
-            logger.error("ResetBattleCountTarget: {}", error)
-            return CustomAction.RunResult(success=False)
-
-        raw_node = params.get("target_node", argv.node_name)
-        if raw_node is not None and not isinstance(raw_node, str):
-            logger.warning(
-                "ResetBattleCountTarget: target_node 配置无效: type={}, value={}，回退到当前节点 {}",
-                type(raw_node).__name__,
-                raw_node,
-                argv.node_name,
-            )
-            raw_node = argv.node_name
-        target_node: str = str(raw_node)
-        merge_node_custom_param(context, target_node, {"target": _DEFAULT_TARGET})
-        logger.info("[ResetBattleCountTarget] 节点 {} 目标次数重置为: {}", target_node, _DEFAULT_TARGET)
+        _session_target[id(context.tasker)] = _DEFAULT_TARGET
+        logger.info("[ResetBattleCountTarget] 目标次数重置为: {}", _DEFAULT_TARGET)
         return CustomAction.RunResult(success=True)

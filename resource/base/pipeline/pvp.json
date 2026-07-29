@@ -107,8 +107,7 @@
             "param": {
                 "custom_action": "InitPVPBattleCount",
                 "custom_action_param": {
-                    "target_count": 1,
-                    "target_node": "PVP.CheckBattleCount"
+                    "target_count": 1
                 }
             }
         },
