@@ -16,7 +16,6 @@ PLUS_BUTTON = (1086, 470)
 MINUS_BUTTON = (739, 470)
 MAX_BUTTON_TEMPLATE = "farm_resources/max_count.png"
 
-_REDUCE_NODE = "FarmResources.ReduceCount"
 _DEFAULT_TARGET = 6
 _COUNT_EXPECTED = ["1", "2", "3", "4", "5", "6"]
 _MAX_TEMPLATE_THRESHOLD: list[float] = [0.8, 0.8, 0.8]
@@ -178,7 +177,7 @@ class ReduceBattleCount(CustomAction):
             logger.info("[ReduceBattleCount] 点击减号按钮")
             _click_button(context, minus_x, minus_y)
 
-            merge_node_custom_param(context, _REDUCE_NODE, {"target": target})
+            merge_node_custom_param(context, argv.node_name, {"target": target})
             return CustomAction.RunResult(success=True)
         except Exception:
             logger.exception("[ReduceBattleCount] 执行异常")
@@ -188,10 +187,20 @@ class ReduceBattleCount(CustomAction):
 @AgentServer.custom_action("ResetBattleCountTarget")
 class ResetBattleCountTarget(CustomAction):
     """
-    重置目标次数为 _DEFAULT_TARGET（调用ReduceBattleCount前需要调用）
+    重置目标次数为 _DEFAULT_TARGET（调用 ReduceBattleCount 前需要调用）
+
+    参数：
+    - target_node: 存储目标次数的 pipeline 节点名称（默认当前节点）
     """
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
-        merge_node_custom_param(context, _REDUCE_NODE, {"target": _DEFAULT_TARGET})
-        logger.info("[ResetBattleCountTarget] 目标次数重置为: {}", _DEFAULT_TARGET)
+        try:
+            params = parse_params(argv.custom_action_param)
+        except ValueError as error:
+            logger.error("ResetBattleCountTarget: {}", error)
+            return CustomAction.RunResult(success=False)
+
+        target_node: str = str(params.get("target_node", argv.node_name))
+        merge_node_custom_param(context, target_node, {"target": _DEFAULT_TARGET})
+        logger.info("[ResetBattleCountTarget] 节点 {} 目标次数重置为: {}", target_node, _DEFAULT_TARGET)
         return CustomAction.RunResult(success=True)

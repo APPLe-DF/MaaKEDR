@@ -8,11 +8,15 @@ from maa.custom_action import CustomAction
 from utils.logger import logger
 from utils.params import merge_node_custom_param, parse_params
 
-_CHECK_NODE = "PVP.CheckBattleCount"
-
 
 @AgentServer.custom_action("InitPVPBattleCount")
 class InitPVPBattleCount(CustomAction):
+    """
+    参数：
+    - target_count: 剩余战斗次数
+    - target_node: 存储剩余次数的 pipeline 节点名称（默认当前节点）
+    """
+
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
         try:
             params = parse_params(argv.custom_action_param)
@@ -29,8 +33,9 @@ class InitPVPBattleCount(CustomAction):
                 logger.error("InitPVPBattleCount: target_count 必须是整数，得到: {}", type(target).__name__)
                 return CustomAction.RunResult(success=False)
 
-        merge_node_custom_param(context, _CHECK_NODE, {"remaining": target})
-        logger.info("[PVP] 剩余战斗次数: {}", target)
+        target_node: str = str(params.get("target_node", argv.node_name))
+        merge_node_custom_param(context, target_node, {"remaining": target})
+        logger.info("[PVP] 节点 {} 剩余战斗次数: {}", target_node, target)
         return CustomAction.RunResult(success=True)
 
 
@@ -49,10 +54,10 @@ class CheckPVPBattleCount(CustomAction):
 
         remaining -= 1
         if remaining <= 0:
-            logger.info("[PVP] 战斗次数已用完，返回主界面")
-            context.override_pipeline({_CHECK_NODE: {"next": ["PVP.ReturnMain"]}})
+            logger.info("[PVP] 节点 {} 战斗次数已用完，返回主界面", argv.node_name)
+            context.override_pipeline({argv.node_name: {"next": ["PVP.ReturnMain"]}})
             return CustomAction.RunResult(success=True)
 
-        merge_node_custom_param(context, _CHECK_NODE, {"remaining": remaining})
-        logger.info("[PVP] 剩余战斗次数: {}", remaining)
+        merge_node_custom_param(context, argv.node_name, {"remaining": remaining})
+        logger.info("[PVP] 节点 {} 剩余战斗次数: {}", argv.node_name, remaining)
         return CustomAction.RunResult(success=True)
