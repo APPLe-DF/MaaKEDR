@@ -1,7 +1,13 @@
 import json
 
 import pytest
-from utils.params import extract_custom_param, merge_node_custom_param, parse_params
+from utils.params import (
+    coerce_point,
+    coerce_roi,
+    extract_custom_param,
+    merge_node_custom_param,
+    parse_params,
+)
 
 
 class TestParseParamsEmpty:
@@ -199,3 +205,58 @@ class TestMergeNodeCustomParam:
         ctx = _MockContext({"action": {"type": "Custom", "param": "bad"}})
         with pytest.raises(ValueError, match="action.param 字段非 dict"):
             merge_node_custom_param(ctx, "Node", {"x": 1}, strict=True)
+
+
+class TestCoerceRoi:
+    def test_valid_4_int_list(self) -> None:
+        assert coerce_roi([1, 2, 3, 4], [9, 9, 9, 9], "X") == [1, 2, 3, 4]
+
+    def test_valid_4_float_list(self) -> None:
+        assert coerce_roi([1.0, 2.5, 3.0, 4.0], [9, 9, 9, 9], "X") == [1, 2, 3, 4]
+
+    def test_valid_tuple(self) -> None:
+        assert coerce_roi((1, 2, 3, 4), [9, 9, 9, 9], "X") == [1, 2, 3, 4]
+
+    def test_bool_rejected(self) -> None:
+        assert coerce_roi([True, False, True, False], [9, 9, 9, 9], "X") == [9, 9, 9, 9]
+
+    def test_short_list_falls_back(self) -> None:
+        assert coerce_roi([1, 2, 3], [9, 9, 9, 9], "X") == [9, 9, 9, 9]
+
+    def test_long_list_falls_back(self) -> None:
+        assert coerce_roi([1, 2, 3, 4, 5], [9, 9, 9, 9], "X") == [9, 9, 9, 9]
+
+    def test_none_falls_back(self) -> None:
+        assert coerce_roi(None, [9, 9, 9, 9], "X") == [9, 9, 9, 9]
+
+    def test_str_falls_back(self) -> None:
+        assert coerce_roi("1,2,3,4", [9, 9, 9, 9], "X") == [9, 9, 9, 9]
+
+    def test_non_numeric_falls_back(self) -> None:
+        assert coerce_roi([1, 2, "3", 4], [9, 9, 9, 9], "X") == [9, 9, 9, 9]
+
+
+class TestCoercePoint:
+    def test_valid_2_int_tuple(self) -> None:
+        assert coerce_point((1086, 470), (0, 0), "X", "y") == (1086, 470)
+
+    def test_valid_2_int_list(self) -> None:
+        assert coerce_point([100, 200], (0, 0), "X", "y") == (100, 200)
+
+    def test_valid_2_float(self) -> None:
+        assert coerce_point([1.5, 2.5], (0, 0), "X", "y") == (1, 2)
+
+    def test_bool_rejected(self) -> None:
+        assert coerce_point([True, False], (0, 0), "X", "y") == (0, 0)
+
+    def test_wrong_length_falls_back(self) -> None:
+        assert coerce_point([1, 2, 3], (10, 20), "X", "y") == (10, 20)
+
+    def test_short_list_falls_back(self) -> None:
+        assert coerce_point([1], (10, 20), "X", "y") == (10, 20)
+
+    def test_none_falls_back(self) -> None:
+        assert coerce_point(None, (10, 20), "X", "y") == (10, 20)
+
+    def test_non_numeric_falls_back(self) -> None:
+        assert coerce_point([1, "x"], (10, 20), "X", "y") == (10, 20)

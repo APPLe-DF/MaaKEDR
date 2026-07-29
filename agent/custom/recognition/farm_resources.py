@@ -41,6 +41,14 @@ RESOURCE_STAGES = {
 }
 
 
+def _stage_roi_tuple(roi: list[int]) -> tuple[int, int, int, int] | None:
+    """将 stage_roi 列表转换为 (x, y, w, h) 元组，长度不足时返回 None。"""
+    if len(roi) >= 4:
+        return roi[0], roi[1], roi[2], roi[3]
+    logger.warning("CheckResourceStage: stage_roi 长度不足 4: {}", roi)
+    return None
+
+
 @AgentServer.custom_recognition("CheckResourceStage")
 class CheckResourceStage(CustomRecognition):
     """检测资源收集关卡"""
@@ -56,12 +64,15 @@ class CheckResourceStage(CustomRecognition):
         """在关卡识别区域内检测锁定图标"""
         if not lock_template:
             return False
+        roi_tuple = _stage_roi_tuple(stage_roi)
+        if roi_tuple is None:
+            return False
         try:
             lock_detail = context.run_recognition_direct(
                 JRecognitionType.TemplateMatch,
                 JTemplateMatch(
                     template=[lock_template],
-                    roi=(stage_roi[0], stage_roi[1], stage_roi[2], stage_roi[3]),
+                    roi=roi_tuple,
                     threshold=[lock_threshold],
                 ),
                 image,
@@ -96,6 +107,9 @@ class CheckResourceStage(CustomRecognition):
             logger.warning("关卡 {} 不在 {} 中", stage_index, resource_type)
             return None
         stage_roi = type_stages[stage_index]
+        roi_tuple = _stage_roi_tuple(stage_roi)
+        if roi_tuple is None:
+            return None
 
         image = argv.image
 
@@ -109,7 +123,7 @@ class CheckResourceStage(CustomRecognition):
             JRecognitionType.OCR,
             JOCR(
                 expected=[stage_name, stage_name_no_dash],
-                roi=(stage_roi[0], stage_roi[1], stage_roi[2], stage_roi[3]),
+                roi=roi_tuple,
             ),
             image,
         )
@@ -118,13 +132,13 @@ class CheckResourceStage(CustomRecognition):
             return None
 
         if "奖励" in ocr_text(ocr_detail):
-            x, y, w, h = stage_roi
-            adjusted_roi = [x, y, int(w * 0.7), h]
+            x, y, w, h = roi_tuple
+            adjusted_roi = (x, y, int(w * 0.7), h)
             ocr_detail = context.run_recognition_direct(
                 JRecognitionType.OCR,
                 JOCR(
                     expected=[stage_name, stage_name_no_dash],
-                    roi=(adjusted_roi[0], adjusted_roi[1], adjusted_roi[2], adjusted_roi[3]),
+                    roi=adjusted_roi,
                 ),
                 image,
             )

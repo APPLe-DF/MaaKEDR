@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
 from typing import Any
 
 from maa.agent.agent_server import AgentServer
@@ -10,7 +9,7 @@ from maa.define import RecognitionDetail
 from maa.pipeline import JOCR, JActionType, JClick, JRecognitionType, JTemplateMatch
 from utils.logger import logger
 from utils.maa_types import ocr_results
-from utils.params import merge_node_custom_param, parse_params
+from utils.params import coerce_point, coerce_roi, merge_node_custom_param, parse_params
 
 COUNT_ROI = [903, 441, 27, 43]
 PLUS_BUTTON = (1086, 470)
@@ -22,39 +21,6 @@ _COUNT_EXPECTED = ["1", "2", "3", "4", "5", "6"]
 _COUNT_MIN = 1
 _COUNT_MAX = 6
 _MAX_TEMPLATE_THRESHOLD: list[float] = [0.8, 0.8, 0.8]
-
-
-def _coerce_roi(raw: Any, default: Sequence[int], action_name: str) -> list[int]:
-    """
-    校验并规范化 ROI/坐标配置。长度非 4 或元素非整数时记录 warning 并回退到 default。
-    """
-    if isinstance(raw, (list, tuple)) and len(raw) == 4 and all(isinstance(v, (int, float)) for v in raw):
-        return [int(v) for v in raw]
-    logger.warning(
-        "{}: ROI 配置无效，得到: type={}, value={}，回退到默认值 {}",
-        action_name,
-        type(raw).__name__,
-        raw,
-        default,
-    )
-    return list(default)
-
-
-def _coerce_point(raw: Any, default: Sequence[int], action_name: str, label: str) -> tuple[int, int]:
-    """
-    校验并规范化按钮位置配置。返回 (x, y) 坐标分量，长度非 2 或元素非整数时回退到 default。
-    """
-    if isinstance(raw, (list, tuple)) and len(raw) == 2 and all(isinstance(v, (int, float)) for v in raw):
-        return int(raw[0]), int(raw[1])
-    logger.warning(
-        "{}: {} 配置无效，得到: type={}, value={}，回退到默认值 {}",
-        action_name,
-        label,
-        type(raw).__name__,
-        raw,
-        default,
-    )
-    return int(default[0]), int(default[1])
 
 
 def _read_battle_count(context: Context, count_roi: list[int], default: int) -> int:
@@ -107,8 +73,8 @@ class SetBattleCount(CustomAction):
             return CustomAction.RunResult(success=False)
 
         target_count: Any = params["target_count"]
-        count_roi = _coerce_roi(params.get("count_roi", COUNT_ROI), COUNT_ROI, "SetBattleCount")
-        plus_x, plus_y = _coerce_point(
+        count_roi = coerce_roi(params.get("count_roi", COUNT_ROI), COUNT_ROI, "SetBattleCount")
+        plus_x, plus_y = coerce_point(
             params.get("plus_button", PLUS_BUTTON), PLUS_BUTTON, "SetBattleCount", "plus_button"
         )
         max_template = params.get("max_template", MAX_BUTTON_TEMPLATE)
@@ -178,7 +144,7 @@ class SetBattleCount(CustomAction):
             for _ in range(clicks_needed):
                 _click_button(context, plus_x, plus_y)
         elif clicks_needed < 0:
-            minus_x, minus_y = _coerce_point(
+            minus_x, minus_y = coerce_point(
                 params.get("minus_button", MINUS_BUTTON), MINUS_BUTTON, "SetBattleCount", "minus_button"
             )
             logger.info(
@@ -212,10 +178,10 @@ class ReduceBattleCount(CustomAction):
             return CustomAction.RunResult(success=False)
 
         try:
-            minus_x, minus_y = _coerce_point(
+            minus_x, minus_y = coerce_point(
                 params.get("minus_button", MINUS_BUTTON), MINUS_BUTTON, "ReduceBattleCount", "minus_button"
             )
-            count_roi = _coerce_roi(params.get("count_roi", COUNT_ROI), COUNT_ROI, "ReduceBattleCount")
+            count_roi = coerce_roi(params.get("count_roi", COUNT_ROI), COUNT_ROI, "ReduceBattleCount")
 
             target: Any = params.get("target", _DEFAULT_TARGET)
             if not isinstance(target, int):

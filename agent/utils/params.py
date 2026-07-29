@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any
 
 from utils.logger import logger
@@ -29,7 +30,9 @@ def parse_params(raw: str | None, *required_keys: str) -> dict[str, Any]:
             raise ValueError(f"参数为空，需要字段: {list(required_keys)}")
         return {}
 
-    # 处理多层转义的 JSON 字符串
+    # 处理多层转义的 JSON 字符串。
+    # 若 raw 已是 dict（MaaFW 内部已反序列化），首次 json.loads 会抛 TypeError，
+    # 被 except 捕获并 break 退出循环，保持 dict 不变——这是正确行为。
     params = raw
     while isinstance(params, str):
         try:
@@ -47,6 +50,44 @@ def parse_params(raw: str | None, *required_keys: str) -> dict[str, Any]:
             raise ValueError(f"缺少必填字段: {missing}")
 
     return params
+
+
+def _is_numeric(v: Any) -> bool:
+    """判断是否为数值（非 bool 的 int 或 float）。"""
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def coerce_roi(raw: Any, default: Sequence[int], action_name: str) -> list[int]:
+    """
+    校验并规范化 ROI/坐标配置。长度非 4 或元素非数值时记录 warning 并回退到 default。
+    """
+    if isinstance(raw, (list, tuple)) and len(raw) == 4 and all(_is_numeric(v) for v in raw):
+        return [int(v) for v in raw]
+    logger.warning(
+        "{}: ROI 配置无效，得到: type={}, value={}，回退到默认值 {}",
+        action_name,
+        type(raw).__name__,
+        raw,
+        default,
+    )
+    return list(default)
+
+
+def coerce_point(raw: Any, default: Sequence[int], action_name: str, label: str) -> tuple[int, int]:
+    """
+    校验并规范化按钮位置配置。返回 (x, y) 坐标分量，长度非 2 或元素非数值时回退到 default。
+    """
+    if isinstance(raw, (list, tuple)) and len(raw) == 2 and all(_is_numeric(v) for v in raw):
+        return int(raw[0]), int(raw[1])
+    logger.warning(
+        "{}: {} 配置无效，得到: type={}, value={}，回退到默认值 {}",
+        action_name,
+        label,
+        type(raw).__name__,
+        raw,
+        default,
+    )
+    return int(default[0]), int(default[1])
 
 
 def extract_custom_param(node_data: dict[str, Any] | None) -> dict[str, Any]:
