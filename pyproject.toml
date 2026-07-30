@@ -11,23 +11,20 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pyright>=1.1.400",
+    "pytest>=8.0",
     "ruff>=0.11.0",
 ]
 
-[tool.black]
-line-length = 100
-target-version = ["py314"]
-
 [tool.ruff]
-line-length = 100
-target-version = "py314"
+line-length = 120
+target-version = "py313"
 exclude = [".venv", "agent/__pycache__"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "SIM"]
 ignore = [
     "E402",   # module level import not at top
-    "E501",   # line too long (black handles formatting)
+    "E501",   # line too long (ruff format handles formatting)
     "SIM102", # nested if
     "SIM108", # ternary operator
     "SIM110", # all()/any()
@@ -39,7 +36,7 @@ ignore = [
 ]
 
 [tool.pyright]
-pythonVersion = "3.14"
+pythonVersion = "3.13"
 typeCheckingMode = "strict"
 exclude = [".venv", "**/__pycache__"]
 extraPaths = ["agent"]
@@ -51,10 +48,9 @@ reportUnknownVariableType = "none"
 reportUnknownParameterType = "none"
 reportUnknownLambdaType = "none"
 
-[[tool.uv.index]]
-name = "tuna"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-default = true
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["agent"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["agent"]

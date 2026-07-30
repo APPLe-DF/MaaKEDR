@@ -19,14 +19,13 @@ from maa.agent.agent_server import AgentServer
 from maa.custom_recognition import CustomRecognition
 from maa.context import Context
 from maa.pipeline import JOCR, JRecognitionType
+from utils.params import parse_params
 
 
 @AgentServer.custom_recognition("MyRecognizer")
 class MyRecognizer(CustomRecognition):
-    def analyze(
-        self, context: Context, argv: CustomRecognition.AnalyzeArg
-    ) -> CustomRecognition.AnalyzeResult | None:
-        params = json.loads(argv.custom_recognition_param)
+    def analyze(self, context: Context, argv: CustomRecognition.AnalyzeArg) -> CustomRecognition.AnalyzeResult | None:
+        params = parse_params(argv.custom_recognition_param)
         # OCR 识别
         detail = context.run_recognition_direct(
             JRecognitionType.OCR,
@@ -59,12 +58,13 @@ Pipeline 中调用：
 from maa.agent.agent_server import AgentServer
 from maa.custom_action import CustomAction
 from maa.context import Context
+from utils.params import parse_params
 
 
 @AgentServer.custom_action("MyAction")
 class MyAction(CustomAction):
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
-        params = json.loads(argv.custom_action_param)
+        params = parse_params(argv.custom_action_param)
         target = params.get("target_count", 1)
         # ... 业务逻辑
         return CustomAction.RunResult(success=True)

@@ -167,11 +167,11 @@
             "templateHash": "2cb187d1bc4a6a2ad18145adc161dc58c61545208e2e407087aa2570a4e01646"
         },
         "tools/build-release.mjs": {
-            "hash": "19b18b23d8b019e4f66a45bd22b367b5b9b75de3bf2a2d7456f6a0c44faef006",
+            "hash": "fb449162a0c0dc42f5952fba36598ebee915174fdcc66d780ee9430dacc7c2ab",
             "templateHash": "7fd7683a60d650f1a3625faaa8a71010a18eba226a28ee6c4ccbbeab64a4b8a2"
         },
         "tools/check-project.mjs": {
-            "hash": "38d0273a43d1726c109f2874cb9593bd0424f116d7ada7e061172a4c8d9c727b",
+            "hash": "c29920543de54b5a5de37315722837eb062ea7c53ee01ec963541112a396ffdb",
             "templateHash": "064d87915d7b877ca6ccfadb143f3e3d77a4cfcf29cf65952fb031f12a4cbe6d"
         },
         "tools/optimize-images.mjs": {
@@ -179,7 +179,7 @@
             "templateHash": "5c158bda7393675ec21f0fe0239400a8683cfbc7a509410dc3fd06cc556a766c"
         },
         "tools/schema/interface.schema.json": {
-            "hash": "f398c5215a6a63edf45a5b8c5198557986ccafe52828598a8a46d428c8228e35",
+            "hash": "702e62c5e37e59f2e23230f3ae9d314dd60a83e70f5d94e8ca352fe4219aca95",
             "templateHash": "4305d4cb804c1598feef224457d428a9b8acde58b868845c850eb124930d9ef5"
         },
         "tools/schema/interface_config.schema.json": {
@@ -195,7 +195,7 @@
             "templateHash": "022dbdb5b8030d8aa5802a40d59c46255546be13bda781d3fd1baba7a90f1bf8"
         },
         "tools/schema/schema-manifest.json": {
-            "hash": "1ab63677ce3093d35e3d70d3354aa440a62ff7e89b2b05ddd38eb846ff0e5ae3",
+            "hash": "3ae96c6bfd35b7ebf49f607e893f85581fba52b41c0278296b0146daacc12ed9",
             "templateHash": "3d74d39a564dec1648a0aa1b945bc48ca5607e4a73e3ce7af433b362c7f63493"
         },
         "tools/sync-schema.mjs": {

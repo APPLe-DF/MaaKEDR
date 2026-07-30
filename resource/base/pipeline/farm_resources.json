@@ -569,20 +569,6 @@
             "FarmResources.NoStamina"
         ]
     },
-    "FarmResources.ResetCountTarget": {
-        "desc": "重置目标次数",
-        "recognition": "DirectHit",
-        "action": {
-            "type": "Custom",
-            "param": {
-                "custom_action": "ResetBattleCountTarget"
-            }
-        },
-        "next": [
-            "FarmResources.QuickBattle",
-            "FarmResources.PrepareBattle"
-        ]
-    },
     "FarmResources.ReductionDone": {
         "desc": "清空体力模式：次数已减至最小，刷取正常结束（M9A 风格：循环终止走显式判断节点，不触发 on_error 误报）",
         "recognition": "DirectHit",
@@ -625,27 +611,6 @@
         "focus": {
             "Node.Action.Starting": "本次刷取已结束"
         }
-    },
-    "FarmResources.ExitStage": {
-        "desc": "点击退出键",
-        "max_hit": 5,
-        "recognition": "TemplateMatch",
-        "roi": [
-            325,
-            614,
-            112,
-            63
-        ],
-        "template": "farm_resources/exit_button.png",
-        "threshold": 0.8,
-        "pre_delay": 500,
-        "action": {
-            "type": "Click"
-        },
-        "post_delay": 1000,
-        "next": [
-            "FarmResources.ExitStageConfirm"
-        ]
     },
     "FarmResources.ExitStageConfirm": {
         "desc": "点击关卡界面退出键",

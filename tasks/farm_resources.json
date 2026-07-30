@@ -51,11 +51,6 @@
                                 "FarmResources.PrepareBattle"
                             ]
                         },
-                        "FarmResources.ExitStage": {
-                            "next": [
-                                "FarmResources.ExitStageConfirm"
-                            ]
-                        },
                         "FarmResources.ExitStageConfirm": {
                             "next": [
                                 "FarmResources.ReturnMainFromFarm"

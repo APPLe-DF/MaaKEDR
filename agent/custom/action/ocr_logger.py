@@ -22,15 +22,19 @@ OCR 结果日志输出模块
 - action_key: 动作类型（Click/""）
 - return_text: 输出描述
 - click_target: 点击坐标 [x, y, w, h]（可选，仅在 action_key=Click 时使用）
+- fail_on_invalid_target: click_target 长度不足 4 时是否返回失败
+  （True 返 success=False，False 仅 warning 跳过，默认 False）
 """
 
-import json
-from typing import Any
+from __future__ import annotations
 
 from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_action import CustomAction
+from maa.define import RecognitionResult
 from utils.logger import logger
+from utils.maa_types import has_box_result, ocr_text
+from utils.params import parse_params
 
 
 @AgentServer.custom_action("LogOCRResult")
@@ -46,62 +50,83 @@ class LogOCRResult(CustomAction):
         context: Context,
         argv: CustomAction.RunArg,
     ) -> CustomAction.RunResult:
-        # 解析自定义参数
         try:
-            argv_dict: dict[str, Any] = json.loads(argv.custom_action_param)
-        except json.JSONDecodeError as e:
-            logger.error(f"LogOCRResult 参数解析失败: {e}")
+            argv_dict = parse_params(argv.custom_action_param)
+        except ValueError as error:
+            logger.error("LogOCRResult: {}", error)
             return CustomAction.RunResult(success=False)
 
         if not argv_dict:
-            logger.warning("LogOCRResult 参数为空")
+            logger.warning("LogOCRResult 参数为空，跳过执行")
             return CustomAction.RunResult(success=True)
 
-        # 获取自定义参数
         action_key = argv_dict.get("action_key", "")
         recognition_name = argv_dict.get("recognition_name", "")
         return_text = argv_dict.get("return_text", "")
         click_target = argv_dict.get("click_target", [])
+        fail_on_invalid_target = bool(argv_dict.get("fail_on_invalid_target", False))
 
-        # 获取 OCR 识别结果
         image = context.tasker.controller.post_screencap().wait().get()
         reco_result = context.run_recognition(recognition_name, image)
 
-        # 处理 OCR 识别结果
         if reco_result and reco_result.hit:
-            best_result = reco_result.best_result
-            if best_result is None:
+            text = ocr_text(reco_result)
+            if not text:
                 return CustomAction.RunResult(success=True)
-            # 输出到 UI 界面
-            logger.info(f"{return_text}: {best_result.text}")  # pyright: ignore[reportAttributeAccessIssue]
+            logger.info("{}: {}", return_text, text)
 
-            # 根据 action_key 执行不同的动作
+            best_result = reco_result.best_result
             if action_key == "Click":
-                self._handle_click(context, best_result, click_target)
+                click_ok = self._handle_click(context, best_result, click_target, fail_on_invalid_target)
+                if not click_ok:
+                    return CustomAction.RunResult(success=False)
             elif action_key == "":
                 logger.debug("仅返回 OCR 数据，不执行动作")
             else:
-                logger.warning(f"未知的 action_key: {action_key}")
+                logger.warning("未知的 action_key: {}", action_key)
         else:
-            logger.warning(f"OCR 识别失败 - 任务名称: {recognition_name}")
+            logger.warning("OCR 识别失败 - 任务名称: {}", recognition_name)
 
         return CustomAction.RunResult(success=True)
 
-    def _handle_click(self, context: Context, best_result: Any, click_target: list[int]):
-        """处理点击动作"""
+    def _handle_click(
+        self,
+        context: Context,
+        best_result: RecognitionResult | None,
+        click_target: list[int],
+        fail_on_invalid_target: bool = False,
+    ) -> bool:
+        """
+        处理点击动作。
+
+        Args:
+            fail_on_invalid_target: click_target 元素不足 4 个时，
+                True 返回 False（让 run 返回 success=False），
+                False 仅 warning 并跳过点击（默认行为）。
+
+        Returns:
+            是否成功执行了点击动作。
+        """
         if click_target:
-            # 点击传入参数中的坐标位置
-            box = click_target
-            center_x = box[0] + box[2] // 2
-            center_y = box[1] + box[3] // 2
-            logger.debug(f"点击位置: ({center_x}, {center_y})")
+            if len(click_target) < 4:
+                logger.warning(
+                    "click_target 需要 4 个元素 [x, y, w, h]，得到: {} (值: {})，跳过点击",
+                    len(click_target),
+                    click_target,
+                )
+                return not fail_on_invalid_target
+            center_x = click_target[0] + click_target[2] // 2
+            center_y = click_target[1] + click_target[3] // 2
+            logger.debug("点击位置: ({}, {})", center_x, center_y)
             context.tasker.controller.post_click(center_x, center_y).wait()
-        elif best_result:
-            # 点击最佳识别结果的中心位置
+            return True
+        elif has_box_result(best_result):
             box = best_result.box
             center_x = box[0] + box[2] // 2
             center_y = box[1] + box[3] // 2
-            logger.debug(f"点击位置: ({center_x}, {center_y})")
+            logger.debug("点击位置: ({}, {})", center_x, center_y)
             context.tasker.controller.post_click(center_x, center_y).wait()
+            return True
         else:
             logger.warning("没有识别到结果，无法执行点击")
+            return False

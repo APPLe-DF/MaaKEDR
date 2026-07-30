@@ -1,6 +1,6 @@
 from importlib import import_module
 
-ACTION_MODULES = ("general", "ocr_logger")
+ACTION_MODULES = ("general", "ocr_logger", "farm_resources", "pvp")
 
 
 def register_all() -> None:
