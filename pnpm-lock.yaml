@@ -42,8 +42,8 @@ importers:
         specifier: 3.9.6
         version: 3.9.6
       prettier-plugin-multiline-arrays:
-        specifier: 4.1.9
-        version: 4.1.9(prettier@3.9.6)
+        specifier: 4.1.11
+        version: 4.1.11(prettier@3.9.6)
       pyright:
         specifier: ^1.1.400
         version: 1.1.411
@@ -91,6 +91,10 @@ packages:
     resolution: {integrity: sha512-BXd0O9R9D6Jj89RGUhYulOmxivvcsMo7vM3oCL3ZQyXQWhp0t61ggm+izKBmwYYAVkKGOUOw3peRtR/ZWLHqDA==}
     engines: {node: '>=22'}
 
+  '@augment-vir/assert@32.2.1':
+    resolution: {integrity: sha512-8a5Uk8exIhqhJKbz8DZWs9k41woIjkSoDKZ11QYjX5g40yA3mAEQloG3l2INBHbj9Kks+sruAwJhmcvIXK362g==}
+    engines: {node: '>=22'}
+
   '@augment-vir/common@31.73.5':
     resolution: {integrity: sha512-qvc8H4h0ZGhOgyEjBmqeEu7/cxr28ByKsrwRHZiBEFFX1n1cNCGQKEzW0OcrfT0Bg5gYyEkblpgcN/vlvg8Xmg==}
     engines: {node: '>=22'}
@@ -99,12 +103,20 @@ packages:
     resolution: {integrity: sha512-41XN89K1d3uCwyfaK/A5Dh0yHCi7cCwmDwwPSoQZ2pS81E1fOxiJJ4V/TLlmRbLzDR4n3lR26SRMt8YC2JZWIA==}
     engines: {node: '>=22'}
 
+  '@augment-vir/common@32.2.1':
+    resolution: {integrity: sha512-416j6ABUeK/12R66Z9yfJsVMtEF6c/9AhjBNDUjqrcQT7X17amBWIC5MSNIs15koxwCC9liDOTFv5RVaxkYsiA==}
+    engines: {node: '>=22'}
+
   '@augment-vir/core@31.73.5':
     resolution: {integrity: sha512-AV3MkEXDBwHscRYQD2dPGE9CMa+eMvxpy0e/Cwr1WAl2xeXlfadbqfgyFHm4C4l5/YWBuaFwwadsbSfOsvAmEg==}
     engines: {node: '>=22'}
 
   '@augment-vir/core@32.0.0':
     resolution: {integrity: sha512-iepaSksYsnEprtF7ISytwpjbwYwNIy7eRQrRkjRu/+BIKpAllZ095tpTvRjM0j7VOcLJL0i7ozlKPjh8Y7wntw==}
+    engines: {node: '>=22'}
+
+  '@augment-vir/core@32.2.1':
+    resolution: {integrity: sha512-bnCSKzKBLDX0g0YylSAYdrmVPT88gI10RJ8JwtsNQwjJ5qDX+7pg7a+gRCktcqSpaj2DeSmVs4XgAlChU9Vvkg==}
     engines: {node: '>=22'}
 
   '@babel/generator@8.0.0':
@@ -2615,8 +2627,8 @@ packages:
     resolution: {integrity: sha512-lW616l85ucIQL+FocMmL7pQFPqBmwejrCMg+iPxyImlrANNJG9NHq/RkyCZopDhd8C3LA03PHRJDjkbGu8vvug==}
     engines: {node: ^10 || ^12 || >=14}
 
-  prettier-plugin-multiline-arrays@4.1.9:
-    resolution: {integrity: sha512-rI4HdfJAFkXkvmh0LSE0ItPrRwJrR6TBaNWamrwOOnHzRLGoVuuuBhljU1pnsf9K/oU/ZsZpjQcuAle471yZ8A==}
+  prettier-plugin-multiline-arrays@4.1.11:
+    resolution: {integrity: sha512-HZU/1PfNrS1BruYbNGIiIyEcZ9TKAl+88vAmpqWj8d8ywW1jkxttSy4e2+5oTG4/0J+MQajydA0/MUJnivHeIw==}
     engines: {node: '>=20'}
     peerDependencies:
       prettier: '>=3.0.0 <4.0.0'
@@ -3452,6 +3464,13 @@ snapshots:
       expect-type: 1.4.0
       type-fest: 5.8.0
 
+  '@augment-vir/assert@32.2.1':
+    dependencies:
+      '@augment-vir/core': 32.2.1
+      '@date-vir/duration': 8.6.2
+      deep-eql: 5.0.2
+      expect-type: 1.4.0
+
   '@augment-vir/common@31.73.5':
     dependencies:
       '@augment-vir/assert': 31.73.5
@@ -3476,6 +3495,17 @@ snapshots:
       type-fest: 5.8.0
       typed-event-target: 4.3.2
 
+  '@augment-vir/common@32.2.1':
+    dependencies:
+      '@augment-vir/assert': 32.2.1
+      '@augment-vir/core': 32.2.1
+      '@date-vir/duration': 8.6.2
+      '@paralleldrive/cuid2': 3.3.0
+      ansi-styles: 6.2.3
+      deepcopy-esm: 2.1.2
+      json5: 2.2.3
+      typed-event-target: 4.3.2
+
   '@augment-vir/core@31.73.5':
     dependencies:
       '@date-vir/duration': 8.6.2
@@ -3491,6 +3521,13 @@ snapshots:
       diff: 9.0.0
       json5: 2.2.3
       type-fest: 5.8.0
+
+  '@augment-vir/core@32.2.1':
+    dependencies:
+      '@date-vir/duration': 8.6.2
+      browser-or-node: 3.0.0
+      diff: 9.0.0
+      json5: 2.2.3
 
   '@babel/generator@8.0.0':
     dependencies:
@@ -6188,10 +6225,10 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  prettier-plugin-multiline-arrays@4.1.9(prettier@3.9.6):
+  prettier-plugin-multiline-arrays@4.1.11(prettier@3.9.6):
     dependencies:
-      '@augment-vir/assert': 31.73.5
-      '@augment-vir/common': 31.73.5
+      '@augment-vir/assert': 32.2.1
+      '@augment-vir/common': 32.2.1
       prettier: 3.9.6
       proxy-vir: 2.0.3
 
