@@ -260,7 +260,7 @@
         ],
         "template": "claim_rewards/medal_display.png",
         "threshold": 0.75,
-        "pre_delay": 5000,
+        "pre_delay": 300,
         "action": {
             "type": "Click"
         }
