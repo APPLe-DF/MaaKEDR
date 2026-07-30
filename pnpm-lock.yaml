@@ -39,11 +39,11 @@ importers:
         specifier: 0.18.1
         version: 0.18.1
       prettier:
-        specifier: 3.8.4
-        version: 3.8.4
+        specifier: 3.9.6
+        version: 3.9.6
       prettier-plugin-multiline-arrays:
         specifier: 4.1.9
-        version: 4.1.9(prettier@3.8.4)
+        version: 4.1.9(prettier@3.9.6)
       pyright:
         specifier: ^1.1.400
         version: 1.1.411
@@ -2621,8 +2621,8 @@ packages:
     peerDependencies:
       prettier: '>=3.0.0 <4.0.0'
 
-  prettier@3.8.4:
-    resolution: {integrity: sha512-N2MylSdi48+5N/6S5j+maeHbUSIzzZ5uOcX5Hm4QpV8Dkb1HFjfAKTKX6yNPJQD9AhcT3ifHNB66tWTTJDi11Q==}
+  prettier@3.9.6:
+    resolution: {integrity: sha512-OpN0zzVdiaiAhxpuuj5efpIS4sY9j7bY6uR5mnj5yPzGkdkjNKSJeUThPb60Jw29QuAZgA4o+/iB49kFiaBX6g==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -6188,14 +6188,14 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  prettier-plugin-multiline-arrays@4.1.9(prettier@3.8.4):
+  prettier-plugin-multiline-arrays@4.1.9(prettier@3.9.6):
     dependencies:
       '@augment-vir/assert': 31.73.5
       '@augment-vir/common': 31.73.5
-      prettier: 3.8.4
+      prettier: 3.9.6
       proxy-vir: 2.0.3
 
-  prettier@3.8.4: {}
+  prettier@3.9.6: {}
 
   proc-log@6.1.0: {}
 
