@@ -1,7 +1,7 @@
 {
     "devDependencies": {
         "@nekosu/maa-tools": "1.0.25",
-        "@nekosu/prettier-plugin-maafw-sort": "1.0.5",
+        "@nekosu/prettier-plugin-maafw-sort": "1.0.6",
         "@vue/runtime-core": "^3.5.39",
         "@vuepress/bundler-vite": "2.0.0-rc.30",
         "ajv": "8.20.0",
