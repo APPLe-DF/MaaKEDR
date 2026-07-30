@@ -35,11 +35,10 @@ _MAX_TEMPLATE_THRESHOLD: list[float] = [0.8, 0.8, 0.8]
 def _read_battle_count(context: Context, count_roi: list[int], default: int) -> int:
     """OCR 识别当前战斗次数，失败时返回 default。"""
     image = context.tasker.controller.cached_image
-    effective_roi = COUNT_ROI if len(count_roi) < 4 else count_roi
-    x, y, w, h = effective_roi[0], effective_roi[1], effective_roi[2], effective_roi[3]
+    roi = coerce_roi(count_roi, COUNT_ROI, "ReadBattleCount")
     ocr_detail: RecognitionDetail | None = context.run_recognition_direct(
         JRecognitionType.OCR,
-        JOCR(expected=_COUNT_EXPECTED, roi=(x, y, w, h)),
+        JOCR(expected=_COUNT_EXPECTED, roi=(roi[0], roi[1], roi[2], roi[3])),
         image,
     )
     if ocr_detail and ocr_detail.hit:
