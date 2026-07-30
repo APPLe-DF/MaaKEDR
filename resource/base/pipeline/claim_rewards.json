@@ -245,8 +245,25 @@
         },
         "next": [
             "[JumpBack]Common.CheckItemObtained",
+            "[JumpBack]ClaimRewards.MedalDisplay",
             "ClaimRewards.ConfirmInterface"
         ]
+    },
+    "ClaimRewards.MedalDisplay": {
+        "desc": "识别并点击获得勋章界面",
+        "recognition": "TemplateMatch",
+        "roi": [
+            561,
+            9,
+            176,
+            69
+        ],
+        "template": "claim_rewards/medal_display.png",
+        "threshold": 0.75,
+        "pre_delay": 5000,
+        "action": {
+            "type": "Click"
+        }
     },
     "BattlePass.Start": {
         "desc": "检查战令通行证徽章",
