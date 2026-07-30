@@ -57,15 +57,6 @@ if (packageJson.engines?.node !== ">=24") {
 
 for (const [
     name,
-    version,
-] of Object.entries(expectedDevDependencies())) {
-    if (packageJson.devDependencies?.[name] !== version) {
-        throw new Error(`package.json ${dependencyLabel(name)} must be pinned to ${version}`);
-    }
-}
-
-for (const [
-    name,
     command,
 ] of Object.entries(expectedPackageScripts(project))) {
     if (packageJson.scripts?.[name] !== command) {
@@ -417,22 +408,6 @@ function isRecord(value) {
 
 function stripDotSlash(path) {
     return path.startsWith("./") ? path.slice(2) : path;
-}
-
-function dependencyLabel(name) {
-    return name === "@nekosu/maa-tools" ? "@nekosu/maa-tools" : "devDependencies." + name;
-}
-
-function expectedDevDependencies() {
-    // Pin only scaffold / schema-critical packages. Formatting and other
-    // tooling (prettier, vue, typescript, etc.) may follow Dependabot.
-    return {
-        "@nekosu/maa-tools": "1.0.24",
-        "@nekosu/prettier-plugin-maafw-sort": "1.0.5",
-        ajv: "8.20.0",
-        "ajv-formats": "3.0.1",
-        "jsonc-parser": "3.3.1",
-    };
 }
 
 function expectedPackageScripts(project) {

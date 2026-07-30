@@ -171,7 +171,7 @@
             "templateHash": "7fd7683a60d650f1a3625faaa8a71010a18eba226a28ee6c4ccbbeab64a4b8a2"
         },
         "tools/check-project.mjs": {
-            "hash": "c29920543de54b5a5de37315722837eb062ea7c53ee01ec963541112a396ffdb",
+            "hash": "7b597295b6bdd2726e40d0baf7015c21ecc44d1b2cb3897df1a2bf3f549ee91b",
             "templateHash": "064d87915d7b877ca6ccfadb143f3e3d77a4cfcf29cf65952fb031f12a4cbe6d"
         },
         "tools/optimize-images.mjs": {

@@ -9,11 +9,11 @@ importers:
   .:
     devDependencies:
       '@nekosu/maa-tools':
-        specifier: 1.0.24
-        version: 1.0.24
+        specifier: 1.0.25
+        version: 1.0.25
       '@nekosu/prettier-plugin-maafw-sort':
-        specifier: 1.0.5
-        version: 1.0.5
+        specifier: 1.0.6
+        version: 1.0.6
       '@vue/runtime-core':
         specifier: ^3.5.39
         version: 3.5.39
@@ -632,24 +632,24 @@ packages:
       '@emnapi/core': ^1.7.1
       '@emnapi/runtime': ^1.7.1
 
-  '@nekosu/maa-locale@1.0.2':
-    resolution: {integrity: sha512-h09IQIN6iKt3OmwiCD7O36QOkmfL8lFO4nAAj+cXOuQfXYbWv4kLDzApzfURhGezjpm4+9gPaksYY9xK9LLkOA==}
+  '@nekosu/maa-locale@1.0.3':
+    resolution: {integrity: sha512-7HNGbhhuKky8kumBxAJXrezSzIPmP1en+DlqENx5r5DZHwJRCDSjzbW7Wi7Zogbo8lpBZNq631kEDspdTbFKIA==}
 
-  '@nekosu/maa-pipeline-manager@1.0.11':
-    resolution: {integrity: sha512-5OzCMO5w7ohaLBlgpcuKeidUN+tU49e2EFpY5MveKXDPpyVkwKkqtrcug52nfJgJP57v+8Eta1ZU9/8aGyL9tA==}
+  '@nekosu/maa-pipeline-manager@1.0.12':
+    resolution: {integrity: sha512-xIw6xYbAZwcNl6NmpriqwZS2KrMLAA2ZGvOYij87rtTX+tp3749dyvTySBQ+2MqFg4kvMPm1M2L/zigmtt1vCQ==}
 
   '@nekosu/maa-tasker@1.0.0':
     resolution: {integrity: sha512-p5SaBJGvAMr5J2uk6imoiK7eIF7yA67HndWyfxddAHHdoyliai2dkHqBhTmDDuRmmAJ/ly4INg5Hnx8CI7Po3A==}
 
-  '@nekosu/maa-tools@1.0.24':
-    resolution: {integrity: sha512-bahWm52Qfzex25mO1DhOTYtiec4qIHe6YIJnvj7VNZTMrwFpL8J3bSN6zJypUc6ai5SV1v54EyN4Wm7XTfCLZg==}
+  '@nekosu/maa-tools@1.0.25':
+    resolution: {integrity: sha512-5A+t2ZYTD7D1LnQmVB93yP3tN/rt7qTR7oXGRwKL1ocYbca2LqjnTo2u4Iwu2DPgvKIhvq8hZ/0qQ3kAT1iXNg==}
     hasBin: true
 
   '@nekosu/maa-version-manager@1.0.2':
     resolution: {integrity: sha512-jQ4wTJKNAkjzf7MIFzKMlyRx3PjHyEWMD+M8Yjh8pCLAB+LyZKDHcDojczWQKeYmGL93uxtTDhyKB12UEo7TkQ==}
 
-  '@nekosu/prettier-plugin-maafw-sort@1.0.5':
-    resolution: {integrity: sha512-UdPoJaQOVX0hodoY/Tl2aR2WxXMEZfcZ1H00lzps3gUnuMzTxAqsY17J3JKfTBBWHTvewMM8BUwfxKZ5l9eedg==}
+  '@nekosu/prettier-plugin-maafw-sort@1.0.6':
+    resolution: {integrity: sha512-KuWR3y4pyFx5/3tPryDWyLS9DWiplTZLOhOco/7qxjFWtfvg/eNFwMUr88nrqMfFK6GMh8aw34LDewhG9aGrkw==}
 
   '@nekosu/simple-parser@1.0.0':
     resolution: {integrity: sha512-Jf3tGs3/0D8XJtjRguInFh8ofGdCk6PcDK2V7HEZTXA4RN/9kk527I6pAX4zqPEUU8ISNu8dCR9F+KAn1U6tdg==}
@@ -3926,11 +3926,11 @@ snapshots:
       '@tybys/wasm-util': 0.10.3
     optional: true
 
-  '@nekosu/maa-locale@1.0.2': {}
+  '@nekosu/maa-locale@1.0.3': {}
 
-  '@nekosu/maa-pipeline-manager@1.0.11':
+  '@nekosu/maa-pipeline-manager@1.0.12':
     dependencies:
-      '@nekosu/maa-locale': 1.0.2
+      '@nekosu/maa-locale': 1.0.3
       '@nekosu/maa-tasker': 1.0.0
       chokidar: 5.0.0
       jsonc-parser: 3.3.1
@@ -3939,11 +3939,11 @@ snapshots:
     dependencies:
       '@nekosu/simple-parser': 1.0.0
 
-  '@nekosu/maa-tools@1.0.24':
+  '@nekosu/maa-tools@1.0.25':
     dependencies:
       '@actions/core': 3.0.1
-      '@nekosu/maa-locale': 1.0.2
-      '@nekosu/maa-pipeline-manager': 1.0.11
+      '@nekosu/maa-locale': 1.0.3
+      '@nekosu/maa-pipeline-manager': 1.0.12
       '@nekosu/maa-version-manager': 1.0.2
       chalk: 5.6.2
       jiti: 2.7.0
@@ -3960,7 +3960,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@nekosu/prettier-plugin-maafw-sort@1.0.5':
+  '@nekosu/prettier-plugin-maafw-sort@1.0.6':
     dependencies:
       '@babel/types': 7.29.7
 
