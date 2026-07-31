@@ -28,17 +28,19 @@ MaaKEDR/
 │   │   ├── image/               #   Template matching images
 │   │   └── model/ocr/           #   PaddleOCR models
 │   ├── bilibili/                # Bilibili server resources
-│   └── taptap/                 # TapTap server resources
+│   └── taptap/                  # TapTap server resources
 ├── agent/                       # Python agent (custom recognitions/actions)
 │   └── custom/
 │       ├── recognition/         #   Custom recognitions
 │       └── action/              #   Custom actions
-├── docs/                        # Developer documentation
-│   └── zh/
-│       └── develop/             #   Development guides (pipeline.md, custom.md, etc.)
+├── docs/                        # Developer documentation (zh / en)
+│   ├── zh/                      #   Chinese documentation
+│   │   ├── develop/             #     Development guides (pipeline.md, custom.md, etc.)
+│   │   ├── manual/              #     User-facing guides (connection, FAQ, etc.)
+│   │   └── protocol/            #     Activity / combat / item protocols
+│   └── en/                      #   English documentation (mirror of zh)
 ├── tools/                       # Build, release, schema validation, CI scripts
-├── .github/workflows/           # CI/CD configuration
-└── maa-project.json             # MaaFramework project config (runtime channels, features)
+└── .github/workflows/           # CI/CD configuration
 ```
 
 **Key directories inside `agent/`:**
@@ -49,16 +51,17 @@ MaaKEDR/
 
 **When working on a specific area, consult the relevant docs first:**
 
-| Area                                 | Recommended reading                            |
-| ------------------------------------ | ---------------------------------------------- |
-| Custom actions / recognitions        | `docs/*/develop/custom.md`                     |
-| Pipeline task logic                  | `docs/*/develop/pipeline.md`                   |
-| Project structure & conventions      | `docs/*/develop/structure.md`                  |
-| Bug-fixing workflow                  | `docs/*/develop/fix.md`                        |
-| Formatting & linting                 | `docs/*/develop/formatting.md`                 |
-| Overseas client adaptation           | `docs/*/develop/overseas-client-adaptation.md` |
-| Activity / combat / item protocols   | `docs/*/protocol/`                             |
-| CLI / connection / FAQ (user-facing) | `docs/*/manual/`                               |
+| Area                                 | Recommended reading             |
+| ------------------------------------ | ------------------------------- |
+| Custom actions / recognitions        | `docs/*/develop/custom.md`      |
+| Pipeline task logic                  | `docs/*/develop/pipeline.md`    |
+| Project structure & conventions      | `docs/*/develop/structure.md`   |
+| Development environment setup        | `docs/*/develop/setup.md`       |
+| Bug-fixing workflow                  | `docs/*/develop/fix.md`         |
+| Formatting & linting                 | `docs/*/develop/formatting.md`  |
+| Vibe coding                          | `docs/*/develop/vibe-coding.md` |
+| Activity / combat / item protocols   | `docs/*/protocol/`              |
+| CLI / connection / FAQ (user-facing) | `docs/*/manual/`                |
 
 ## Build, Test, and Development Commands
 
