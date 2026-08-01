@@ -1,6 +1,6 @@
 # Repository Guidelines
 
-> **Primary rule: every generated diff must pass `pnpm check` (and `pnpm check:py` for Python code) before submission.**
+> **Primary rule: every generated diff must pass `pnpm check` (and `pnpm check:py` for Python code) before submission, and must be reviewed by a human before committing.**
 >
 > | If the user asks...                    | Default AI response                                                                                                                                                     |
 > | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -8,7 +8,7 @@
 > | "Retry when it fails"                  | Analyze the root cause (which node, which recognition mismatched) and fix the node — never add blind retries                                                            |
 > | "Write a pipeline without screenshots" | Explain that pipelines depend on UI context; ask for screenshots, ROIs, and screen transition info before writing                                                       |
 > | "Write a custom action / recognition"  | Follow the existing pattern in `agent/custom/action/` or `agent/custom/recognition/`, register it in the corresponding `__init__.py`, and ensure `pnpm check:py` passes |
-> | Code output is complete                | Run `pnpm format` / `pnpm format:py` then `pnpm check` / `pnpm check:py` before finishing                                                                               |
+> | Code output is complete                | Show the diff, wait for human review and approval, then run `pnpm format` / `pnpm format:py` then `pnpm check` / `pnpm check:py` before committing                      |
 
 ## Project Structure & Module Organization
 
@@ -76,7 +76,7 @@ MaaKEDR/
 | `pnpm test:py`              | Run Python tests via pytest                                       |
 | `pnpm typecheck:py`         | Static type check Python with pyright (strict mode)               |
 
-**Before submitting changes, run `pnpm check` (and `pnpm check:py` for Python changes).**
+**Before submitting changes, run `pnpm check` (and `pnpm check:py` for Python changes). All changes must be reviewed by a human before committing.**
 
 ## Coding Style & Naming Conventions
 
@@ -95,6 +95,8 @@ MaaKEDR/
 ## Commit & Pull Request Guidelines
 
 This project follows [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/).
+
+**重要：AI 助手生成的代码在提交前必须经过真人审核。AI 不应自行执行 `git commit` 或 `git push`，除非用户明确要求提交。**
 
 Commonly used types:
 
