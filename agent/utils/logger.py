@@ -91,9 +91,7 @@ def _enrich_record(record: Any) -> bool:
     record["extra"]["level_short"] = _short_level_name(level_name)
     record["extra"]["level_color"] = level_color
     record["extra"]["color_reset"] = "\033[0m" if level_color else ""
-    record["extra"]["mxu_html_message"] = _format_mxu_html_message(
-        level_name, str(record["message"])
-    )
+    record["extra"]["mxu_html_message"] = _format_mxu_html_message(level_name, str(record["message"]))
     return True
 
 
