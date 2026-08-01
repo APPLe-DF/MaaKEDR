@@ -112,6 +112,16 @@ Commonly used types:
 
 See [CONTRIBUTING.md](/CONTRIBUTING.md) for pull request requirements (branch naming, description format, and what to include).
 
+## Branching Strategy
+
+- **`main`**：稳定发布分支。仅允许以下情况直接提交：
+    - 有主仓库写入权限的开发者进行的小范围修复/改动（如 CI 配置更新、文档修正、单节点小调整）
+    - 紧急 bug 修复
+- **`develop`**：新功能开发分支。所有新增功能、多节点流程改动、需要测试的新逻辑，都应在 `develop` 分支上开发，通过 PR 合并到 `main`
+- **功能分支**：复杂功能可基于 `develop` 创建 `feat/<功能名>` 分支，完成后合并回 `develop`
+
+> 一般情况下，AI 助手不应直接在 `main` 分支上修改代码，除非明确收到指令且改动范围很小。新功能开发请切换到 `develop` 分支。
+
 ## Release Guidelines
 
 Before tagging a new release (`vX.Y.Z`), manually update the version in `interface.json`:
