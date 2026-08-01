@@ -10,6 +10,74 @@ from utils.maa_types import ocr_text
 from utils.params import parse_params
 
 
+@AgentServer.custom_recognition("SelectPVPOpponent")
+class SelectPVPOpponent(CustomRecognition):
+    """识别三个对手的等级，选择等级最低的进行点击"""
+
+    def analyze(
+        self, context: Context, argv: CustomRecognition.AnalyzeArg
+    ) -> CustomRecognition.AnalyzeResult | RectType | None:
+        try:
+            params = parse_params(argv.custom_recognition_param)
+        except ValueError as error:
+            logger.error("SelectPVPOpponent: {}", error)
+            return None
+
+        rois = params.get("rois", [])
+        click_positions = params.get("click_positions", [])
+        only_rec = params.get("only_rec", True)
+
+        if len(rois) != 3 or len(click_positions) != 3:
+            logger.error(
+                "SelectPVPOpponent: 需要3个ROI和3个点击位置，得到 roi={} click={}",
+                len(rois),
+                len(click_positions),
+            )
+            return None
+
+        image = argv.image
+
+        best_value: float | None = None
+        best_index: int = -1
+
+        for i, roi in enumerate(rois):
+            detail = context.run_recognition_direct(
+                JRecognitionType.OCR,
+                JOCR(roi=roi, only_rec=only_rec),
+                image,
+            )
+            text = ocr_text(detail)
+            try:
+                value = float(text)
+                logger.info("[PVP] 对手{} 等级: {}", i + 1, value)
+                if best_value is None or value < best_value:
+                    best_value = value
+                    best_index = i
+            except (ValueError, TypeError):
+                logger.warning("[PVP] 对手{} 无法识别等级: '{}'", i + 1, text)
+
+        if best_index < 0:
+            logger.error("SelectPVPOpponent: 未能识别任何对手的等级")
+            return None
+
+        click_x, click_y = click_positions[best_index]
+        logger.info(
+            "[PVP] 选择对手{} (等级最低: {}), 点击位置: [{}, {}]",
+            best_index + 1,
+            best_value,
+            click_x,
+            click_y,
+        )
+
+        return CustomRecognition.AnalyzeResult(
+            box=[click_x, click_y, 10, 10],
+            detail={
+                "selected_index": best_index + 1,
+                "selected_value": best_value,
+            },
+        )
+
+
 @AgentServer.custom_recognition("ReadPVPResult")
 class ReadPVPResult(CustomRecognition):
     """读取PVP战斗结果"""

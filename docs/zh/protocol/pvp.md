@@ -21,8 +21,8 @@ icon: ri:sword-line
 
 ```text
 CheckHomePage → Entry → CheckBattleInterface
+  → SelectOpponent（Custom 识别三个对手等级，选最低点击）
   → InitBattleCount
-  → SelectPlayer
        → CheckChallengeLimit（今日次数用尽则回主页）
        → StartBattle
        → BeginCombat（可重试直至进入战斗）
@@ -31,12 +31,13 @@ CheckHomePage → Entry → CheckBattleInterface
        → WaitSettlement → ReadResult（Custom 读分/排名）
        → ExitResult → BackToBattleInterface
        → CheckBattleCount
-            → 未满：SelectPlayer
+            → 未满：SelectOpponent
             → 已满：ReturnMain
 ```
 
 ## 关键约定
 
+- **SelectOpponent**：`SelectPVPOpponent` 自定义识别，对 3 个对手区域分别 OCR 提取等级，选择等级最低的对手点击。ROI 和点击位置在 pipeline 的 `custom_recognition_param` 中配置
 - **BeginCombat**：一次点击可能无响应；`next` / `on_error` 应允许重试，直到 `CheckInBattle` 成功
 - **BattleLoop**：长超时等待结算；失败可兜底 `ReadResult`
 - **ReadResult**：`ReadPVPResult` 自定义识别，ROI 在 pipeline 的 `custom_recognition_param` 中

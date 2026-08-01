@@ -63,6 +63,10 @@ node_modules/
 # 项目文档（仅本地保留）
 PROJECT_SUMMARY.md
 
+# Reasonix 工具配置
+.reasonix/
+reasonix.toml
+
 # 系统文件
 .DS_Store
 Thumbs.db

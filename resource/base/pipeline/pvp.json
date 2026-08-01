@@ -99,6 +99,57 @@
             "PVP.InitBattleCount"
         ]
     },
+    "PVP.SelectOpponent": {
+        "desc": "识别三个对手的等级，选择等级最低的进行点击",
+        "recognition": "Custom",
+        "custom_recognition": "SelectPVPOpponent",
+        "custom_recognition_param": {
+            "rois": [
+                [
+                    579,
+                    276,
+                    45,
+                    27
+                ],
+                [
+                    818,
+                    276,
+                    45,
+                    28
+                ],
+                [
+                    1055,
+                    276,
+                    45,
+                    28
+                ]
+            ],
+            "click_positions": [
+                [
+                    716,
+                    578
+                ],
+                [
+                    954,
+                    577
+                ],
+                [
+                    1191,
+                    578
+                ]
+            ],
+            "only_rec": true
+        },
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1000,
+        "next": [
+            "[JumpBack]PVP.CheckChallengeLimit",
+            "PVP.StartBattle"
+        ]
+    },
     "PVP.InitBattleCount": {
         "desc": "初始化战斗计数器",
         "recognition": "DirectHit",
@@ -112,28 +163,7 @@
             }
         },
         "next": [
-            "PVP.SelectPlayer"
-        ]
-    },
-    "PVP.SelectPlayer": {
-        "desc": "选择玩家对战",
-        "recognition": "TemplateMatch",
-        "roi": [
-            669,
-            539,
-            78,
-            81
-        ],
-        "template": "pvp/player_button.png",
-        "threshold": 0.8,
-        "pre_delay": 500,
-        "action": {
-            "type": "Click"
-        },
-        "post_delay": 1000,
-        "next": [
-            "[JumpBack]PVP.CheckChallengeLimit",
-            "PVP.StartBattle"
+            "PVP.SelectOpponent"
         ]
     },
     "PVP.CheckChallengeLimit": {
@@ -358,7 +388,7 @@
         },
         "timeout": 5000,
         "next": [
-            "PVP.SelectPlayer",
+            "PVP.SelectOpponent",
             "PVP.ReturnMain"
         ]
     },
