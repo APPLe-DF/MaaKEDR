@@ -66,3 +66,7 @@ PROJECT_SUMMARY.md
 # 系统文件
 .DS_Store
 Thumbs.db
+
+# Reasonix 工具配置
+.reasonix/
+reasonix.toml
