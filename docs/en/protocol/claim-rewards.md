@@ -13,16 +13,17 @@ icon: ri:gift-line
 
 ## Options
 
-| Key                   | Meaning                   |
-| --------------------- | ------------------------- |
-| `claim_dispatch`      | Dispatch rewards          |
-| `dispatch_redeploy`   | Redeploy after claim      |
-| `claim_daily_rewards` | Daily / weekly / military |
-| `claim_battle_pass`   | Battle pass               |
-| `claim_mailbox`       | Mailbox                   |
+| Key                   | Meaning                                 |
+| --------------------- | --------------------------------------- |
+| `claim_dispatch`      | Dispatch rewards                        |
+| `dispatch_redeploy`   | Redeploy after claim                    |
+| `claim_daily_rewards` | Daily / weekly / military               |
+| `claim_battle_pass`   | Battle pass                             |
+| `claim_mailbox`       | Mailbox                                 |
+| `claim_premium_shop`  | Premium shop daily reward (default off) |
 
 ## Flow
 
-Main hub after home check → dispatch / daily / battle pass / mailbox modules → return hub or exit.
+Main hub after home check → dispatch / daily / battle pass / mailbox / premium shop (default off) modules → return hub or exit.
 
 `CheckMainInterface` must `next` into `MainHub` to avoid loops. Item popups: `Common.CheckItemObtained`.

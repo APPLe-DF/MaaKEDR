@@ -16,13 +16,14 @@ icon: ri:gift-line
 
 ## 子模块开关
 
-| 选项 key              | 说明               | 关闭时常见行为             |
-| --------------------- | ------------------ | -------------------------- |
-| `claim_dispatch`      | 派遣任务领取       | 禁用 `DispatchClaim.Start` |
-| `dispatch_redeploy`   | 领取后是否再次派遣 | 改 `RedeployConfirm` 路径  |
-| `claim_daily_rewards` | 每日/每周/军旅成就 | 禁用 `ClaimRewards.Start`  |
-| `claim_battle_pass`   | 战令通行证         | 禁用 `BattlePass.Start`    |
-| `claim_mailbox`       | 邮箱               | 禁用 `Mailbox.Start`       |
+| 选项 key              | 说明                 | 关闭时常见行为                               |
+| --------------------- | -------------------- | -------------------------------------------- |
+| `claim_dispatch`      | 派遣任务领取         | 禁用 `DispatchClaim.Start`                   |
+| `dispatch_redeploy`   | 领取后是否再次派遣   | 改 `RedeployConfirm` 路径                    |
+| `claim_daily_rewards` | 每日/每周/军旅成就   | 禁用 `ClaimRewards.Start`                    |
+| `claim_battle_pass`   | 战令通行证           | 禁用 `BattlePass.Start`                      |
+| `claim_mailbox`       | 邮箱                 | 禁用 `Mailbox.Start`                         |
+| `claim_premium_shop`  | 高级账号商店每日奖励 | 禁用 `PremiumShop.ClickShopIcon`（默认关闭） |
 
 ## 总流程（MainHub）
 
@@ -34,6 +35,7 @@ ClaimRewards
        → ClaimRewards.Start / ConfirmInterface / CheckDaily|Weekly|Military
        → BattlePass.*
        → Mailbox.*
+       → PremiumShop.*（默认关闭）
   → 各子流程结束回 MainHub 或退出
 ```
 

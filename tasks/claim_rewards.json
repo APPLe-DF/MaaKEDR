@@ -5,12 +5,13 @@
             "entry": "ClaimRewards",
             "default_check": true,
             "group": ["Daily"],
-            "description": "一键领取各类奖励。包含每日/每周/军旅成就奖励、战令通行证奖励、邮箱奖励、资源派遣奖励。支持各奖励类型独立开关",
+            "description": "一键领取各类奖励。包含每日/每周/军旅成就奖励、战令通行证奖励、邮箱奖励、资源派遣奖励、高级账号商店每日奖励。支持各奖励类型独立开关",
             "option": [
                 "claim_dispatch",
                 "claim_daily_rewards",
                 "claim_battle_pass",
-                "claim_mailbox"
+                "claim_mailbox",
+                "claim_premium_shop"
             ]
         }
     ],
@@ -116,6 +117,24 @@
                     "name": "No",
                     "pipeline_override": {
                         "Mailbox.Start": {
+                            "enabled": false
+                        }
+                    }
+                }
+            ]
+        },
+        "claim_premium_shop": {
+            "type": "switch",
+            "label": "高级账号商店每日奖励",
+            "default_case": "No",
+            "cases": [
+                {
+                    "name": "Yes"
+                },
+                {
+                    "name": "No",
+                    "pipeline_override": {
+                        "PremiumShop.ClickShopIcon": {
                             "enabled": false
                         }
                     }
