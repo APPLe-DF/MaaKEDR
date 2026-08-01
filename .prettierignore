@@ -13,3 +13,4 @@ tools/schema/interface_import.schema.json
 tools/schema/pipeline.schema.json
 docs/.vuepress/.temp/
 docs/.vuepress/dist/
+.reasonix/

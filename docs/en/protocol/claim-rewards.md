@@ -24,6 +24,6 @@ icon: ri:gift-line
 
 ## Flow
 
-Main hub after home check → dispatch / daily / battle pass / mailbox / premium shop (default off) modules → return hub or exit.
+Main hub after home check → dispatch / daily / battle pass / mailbox / premium shop (default off) modules → return to hub or exit.
 
 `CheckMainInterface` must `next` into `MainHub` to avoid loops. Item popups: `Common.CheckItemObtained`.

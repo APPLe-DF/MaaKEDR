@@ -798,7 +798,7 @@
             "PremiumShop.ClickPremiumShop"
         ],
         "on_error": [
-            "PremiumShop.ClickShopIcon"
+            "PremiumShop.ReturnMain"
         ]
     },
     "PremiumShop.ClickPremiumShop": {
@@ -864,7 +864,7 @@
             "PremiumShop.PurchaseHub"
         ],
         "on_error": [
-            "PremiumShop.ClickPremiumShop"
+            "PremiumShop.ReturnMain"
         ]
     },
     "PremiumShop.PurchaseHub": {
