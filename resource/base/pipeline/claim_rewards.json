@@ -34,6 +34,7 @@
             "[JumpBack]ClaimRewards.Start",
             "[JumpBack]BattlePass.Start",
             "[JumpBack]Mailbox.Start",
+            "[JumpBack]PremiumShop.ClickShopIcon",
             "[JumpBack]Common.CheckItemObtained"
         ]
     },
@@ -75,7 +76,7 @@
             48,
             43
         ],
-        "template": "claim_rewards/reward_badge.png",
+        "template": "claim_rewards/daily/reward_badge.png",
         "threshold": 0.75,
         "action": {
             "type": "Click",
@@ -105,7 +106,7 @@
             48,
             43
         ],
-        "template": "claim_rewards/reward_badge.png",
+        "template": "claim_rewards/daily/reward_badge.png",
         "threshold": 0.75,
         "action": {
             "type": "Click",
@@ -133,7 +134,7 @@
             86,
             83
         ],
-        "template": "claim_rewards/reward_interface.png",
+        "template": "claim_rewards/daily/reward_interface.png",
         "threshold": 0.75,
         "action": {
             "type": "DoNothing"
@@ -158,7 +159,7 @@
             60,
             38
         ],
-        "template": "claim_rewards/common_reward_badge.png",
+        "template": "claim_rewards/daily/common_reward_badge.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
@@ -179,7 +180,7 @@
             60,
             39
         ],
-        "template": "claim_rewards/common_reward_badge.png",
+        "template": "claim_rewards/daily/common_reward_badge.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
@@ -200,7 +201,7 @@
             60,
             39
         ],
-        "template": "claim_rewards/common_reward_badge.png",
+        "template": "claim_rewards/daily/common_reward_badge.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
@@ -239,7 +240,7 @@
             197,
             36
         ],
-        "template": "claim_rewards/claim_button.png",
+        "template": "claim_rewards/daily/claim_button.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
@@ -259,7 +260,7 @@
             176,
             69
         ],
-        "template": "claim_rewards/medal_display.png",
+        "template": "claim_rewards/daily/medal_display.png",
         "threshold": 0.75,
         "pre_delay": 300,
         "action": {
@@ -279,7 +280,7 @@
             33,
             36
         ],
-        "template": "claim_rewards/battlepass_badge.png",
+        "template": "claim_rewards/battlepass/battlepass_badge.png",
         "threshold": 0.75,
         "action": {
             "type": "DoNothing"
@@ -297,7 +298,7 @@
             33,
             36
         ],
-        "template": "claim_rewards/battlepass_badge.png",
+        "template": "claim_rewards/battlepass/battlepass_badge.png",
         "threshold": 0.75,
         "action": {
             "type": "Click",
@@ -326,7 +327,7 @@
             33,
             36
         ],
-        "template": "claim_rewards/battlepass_badge.png",
+        "template": "claim_rewards/battlepass/battlepass_badge.png",
         "threshold": 0.75,
         "action": {
             "type": "Click",
@@ -355,7 +356,7 @@
             76,
             86
         ],
-        "template": "claim_rewards/battlepass_interface.png",
+        "template": "claim_rewards/battlepass/battlepass_interface.png",
         "threshold": 0.75,
         "action": {
             "type": "DoNothing"
@@ -398,7 +399,7 @@
             62,
             51
         ],
-        "template": "claim_rewards/battlepass_reward_check.png",
+        "template": "claim_rewards/battlepass/battlepass_reward_check.png",
         "threshold": 0.75,
         "action": {
             "type": "Click",
@@ -426,7 +427,7 @@
             87,
             54
         ],
-        "template": "claim_rewards/battlepass_claim_button.png",
+        "template": "claim_rewards/battlepass/battlepass_claim_button.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
@@ -446,7 +447,7 @@
             36,
             39
         ],
-        "template": "claim_rewards/battlepass_reward_check.png",
+        "template": "claim_rewards/battlepass/battlepass_reward_check.png",
         "threshold": 0.75,
         "action": {
             "type": "Click",
@@ -468,7 +469,7 @@
     "BattlePass.ClaimRewardButton": {
         "desc": "点击战令奖励领取按钮",
         "recognition": "TemplateMatch",
-        "template": "claim_rewards/battlepass_claim_button.png",
+        "template": "claim_rewards/battlepass/battlepass_claim_button.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
@@ -492,7 +493,7 @@
             180,
             76
         ],
-        "template": "claim_rewards/battlepass_reward_display.png",
+        "template": "claim_rewards/battlepass/battlepass_reward_display.png",
         "threshold": 0.75,
         "pre_delay": 5000,
         "action": {
@@ -539,7 +540,7 @@
             64,
             45
         ],
-        "template": "claim_rewards/mailbox.png",
+        "template": "claim_rewards/mailbox/mailbox.png",
         "threshold": 0.75,
         "action": {
             "type": "DoNothing"
@@ -558,7 +559,7 @@
             64,
             45
         ],
-        "template": "claim_rewards/mailbox.png",
+        "template": "claim_rewards/mailbox/mailbox.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
@@ -579,7 +580,7 @@
             64,
             45
         ],
-        "template": "claim_rewards/mailbox.png",
+        "template": "claim_rewards/mailbox/mailbox.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
@@ -598,7 +599,7 @@
             74,
             42
         ],
-        "template": "claim_rewards/mailbox_interface.png",
+        "template": "claim_rewards/mailbox/mailbox_interface.png",
         "threshold": 0.75,
         "action": {
             "type": "DoNothing"
@@ -637,7 +638,7 @@
             53,
             51
         ],
-        "template": "claim_rewards/mailbox_back_button.png",
+        "template": "claim_rewards/mailbox/mailbox_back_button.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
@@ -656,7 +657,7 @@
             41,
             51
         ],
-        "template": "claim_rewards/dispatch_entry.png",
+        "template": "claim_rewards/dispatch/dispatch_entry.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
@@ -677,7 +678,7 @@
             41,
             51
         ],
-        "template": "claim_rewards/dispatch_entry.png",
+        "template": "claim_rewards/dispatch/dispatch_entry.png",
         "threshold": 0.8,
         "action": {
             "type": "Click"
@@ -696,7 +697,7 @@
             165,
             59
         ],
-        "template": "claim_rewards/dispatch_claim.png",
+        "template": "claim_rewards/dispatch/dispatch_claim.png",
         "threshold": 0.8,
         "action": {
             "type": "Click"
@@ -716,7 +717,7 @@
             115,
             51
         ],
-        "template": "claim_rewards/dispatch_redeploy.png",
+        "template": "claim_rewards/dispatch/dispatch_redeploy.png",
         "threshold": 0.8,
         "action": {
             "type": "Click"
@@ -735,7 +736,7 @@
             117,
             64
         ],
-        "template": "claim_rewards/dispatch_close.png",
+        "template": "claim_rewards/dispatch/dispatch_close.png",
         "threshold": 0.8,
         "action": {
             "type": "Click"
@@ -743,6 +744,223 @@
         "post_wait_freezes": 500,
         "next": [
             "ClaimRewards.MainHub"
+        ]
+    },
+    "PremiumShop.ClickShopIcon": {
+        "desc": "检测商店图标并点击",
+        "recognition": "TemplateMatch",
+        "roi": [
+            143,
+            582,
+            82,
+            83
+        ],
+        "template": "claim_rewards/premium_shop/shop_icon.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "PremiumShop.ConfirmShopInterface",
+            "PremiumShop.RetryClickShopIcon",
+            "[JumpBack]Common.CheckItemObtained"
+        ]
+    },
+    "PremiumShop.RetryClickShopIcon": {
+        "desc": "重试点击商店图标",
+        "recognition": "TemplateMatch",
+        "roi": [
+            143,
+            582,
+            82,
+            83
+        ],
+        "template": "claim_rewards/premium_shop/shop_icon.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "PremiumShop.ConfirmShopInterface"
+        ]
+    },
+    "PremiumShop.ConfirmShopInterface": {
+        "desc": "确认在商店界面",
+        "recognition": "TemplateMatch",
+        "roi": [
+            311,
+            112,
+            69,
+            62
+        ],
+        "template": "claim_rewards/premium_shop/shop_interface.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "timeout": 5000,
+        "next": [
+            "PremiumShop.ClickPremiumShop"
+        ],
+        "on_error": [
+            "PremiumShop.ReturnMain"
+        ]
+    },
+    "PremiumShop.ClickPremiumShop": {
+        "desc": "检测高账商店按钮（带红点）并点击",
+        "recognition": "TemplateMatch",
+        "roi": [
+            220,
+            586,
+            42,
+            42
+        ],
+        "template": "claim_rewards/premium_shop/premium_shop_entry.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "post_wait_freezes": 500,
+        "timeout": 5000,
+        "next": [
+            "PremiumShop.ConfirmPremiumShop",
+            "PremiumShop.RetryClickPremiumShop",
+            "[JumpBack]Common.CheckItemObtained"
+        ],
+        "on_error": [
+            "PremiumShop.NoPremiumShopEntry"
+        ]
+    },
+    "PremiumShop.RetryClickPremiumShop": {
+        "desc": "重试点击高账商店按钮",
+        "recognition": "TemplateMatch",
+        "roi": [
+            220,
+            586,
+            42,
+            42
+        ],
+        "template": "claim_rewards/premium_shop/premium_shop_entry.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "post_wait_freezes": 500,
+        "next": [
+            "PremiumShop.ConfirmPremiumShop"
+        ]
+    },
+    "PremiumShop.ConfirmPremiumShop": {
+        "desc": "确认在高账商店界面",
+        "recognition": "TemplateMatch",
+        "roi": [
+            213,
+            508,
+            100,
+            67
+        ],
+        "template": "claim_rewards/premium_shop/premium_shop_interface.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "timeout": 5000,
+        "next": [
+            "PremiumShop.PurchaseHub"
+        ],
+        "on_error": [
+            "PremiumShop.ReturnMain"
+        ]
+    },
+    "PremiumShop.PurchaseHub": {
+        "desc": "高账商店购买中枢",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "PremiumShop.ClickFreeItem",
+            "[JumpBack]Common.CheckItemObtained",
+            "PremiumShop.ReturnMain"
+        ]
+    },
+    "PremiumShop.ClickFreeItem": {
+        "desc": "检测免费商品按钮（带红点）并点击",
+        "recognition": "TemplateMatch",
+        "roi": [
+            480,
+            171,
+            52,
+            45
+        ],
+        "template": "claim_rewards/premium_shop/free_item.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "post_wait_freezes": 500,
+        "timeout": 5000,
+        "next": [
+            "PremiumShop.ConfirmPurchase"
+        ]
+    },
+    "PremiumShop.ConfirmPurchase": {
+        "desc": "点击确认购买按钮",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1001,
+            501,
+            116,
+            82
+        ],
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "post_wait_freezes": 500,
+        "next": [
+            "[JumpBack]Common.CheckItemObtained",
+            "PremiumShop.PurchaseHub"
+        ]
+    },
+    "PremiumShop.NoPremiumShopEntry": {
+        "desc": "未检测到高账商店可领取提示，提示后返回主页",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "PremiumShop.ReturnMain"
+        ],
+        "focus": {
+            "Node.Recognition.Succeeded": {
+                "content": "未检测到高账商店可领取提示，请检查是否已开通高级账号",
+                "display": [
+                    "log",
+                    "toast"
+                ]
+            }
+        }
+    },
+    "PremiumShop.ReturnMain": {
+        "desc": "返回主页",
+        "recognition": "TemplateMatch",
+        "roi": [
+            15,
+            30,
+            86,
+            43
+        ],
+        "template": "back_button.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click"
+        },
+        "post_wait_freezes": 500,
+        "next": [
+            "ClaimRewards.MainHub",
+            "[JumpBack]Common.BackButton"
         ]
     }
 }
