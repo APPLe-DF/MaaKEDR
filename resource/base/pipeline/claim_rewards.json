@@ -897,9 +897,6 @@
         "timeout": 5000,
         "next": [
             "PremiumShop.ConfirmPurchase"
-        ],
-        "on_error": [
-            "PremiumShop.NoFreeItem"
         ]
     },
     "PremiumShop.ConfirmPurchase": {
@@ -918,7 +915,8 @@
         },
         "post_wait_freezes": 500,
         "next": [
-            "[JumpBack]Common.CheckItemObtained"
+            "[JumpBack]Common.CheckItemObtained",
+            "PremiumShop.PurchaseHub"
         ]
     },
     "PremiumShop.NoPremiumShopEntry": {
@@ -933,25 +931,6 @@
         "focus": {
             "Node.Recognition.Succeeded": {
                 "content": "未检测到高账商店可领取提示，请检查是否已开通高级账号",
-                "display": [
-                    "log",
-                    "toast"
-                ]
-            }
-        }
-    },
-    "PremiumShop.NoFreeItem": {
-        "desc": "未检测到免费商品，提示后返回主页",
-        "recognition": "DirectHit",
-        "action": {
-            "type": "DoNothing"
-        },
-        "next": [
-            "PremiumShop.ReturnMain"
-        ],
-        "focus": {
-            "Node.Recognition.Succeeded": {
-                "content": "未检测到可领取的免费商品",
                 "display": [
                     "log",
                     "toast"
