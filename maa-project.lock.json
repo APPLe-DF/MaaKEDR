@@ -139,19 +139,19 @@
             "templateHash": "146fc4a7e29026507034652f344d0f100f70fd1a61e2a9cfa74bbabe38281b43"
         },
         ".github/workflows/format.yml": {
-            "hash": "99084caa4b24381bf13fa9129302a6ca3015cf49b1d036a90db90369d729be69",
+            "hash": "6d9f8fd2ef7747f76a2aa9c1c0571965f81db7a3b43d4b36fc33bb43f4bd0209",
             "templateHash": "88fb255e8edbbf1b9d2db38ae39406ba70855e06ff6fe1806be4fdaa1c5ba1c6"
         },
         ".github/workflows/optimize-images.yml": {
-            "hash": "73a7c9e794094326764331ef81841f10534d74e083609773d064cfbe2ce4b072",
+            "hash": "56a61521cebc62d3531b0ac1ef99321f57d40037af7e6582c14642bcdff325bc",
             "templateHash": "73a7c9e794094326764331ef81841f10534d74e083609773d064cfbe2ce4b072"
         },
         ".github/workflows/release.yml": {
-            "hash": "86fd374810ddbfdce4a19a5649a627c92d656fded88387cd356883f68124cdca",
+            "hash": "48a2055cf4d30ac6a708e91c520111a96a6e5949e0a0e439a59c5da2f2cf465e",
             "templateHash": "1948c8135358e77ebb874e0b99952b6f592f093b50efe9c4fa515786f6074172"
         },
         ".github/workflows/schema-sync.yml": {
-            "hash": "49bb37756a12155cfe4fdbdc7fd0d9a619f1b4b6f7271d12e0cf0ca7d552a261",
+            "hash": "d87ccfe91ebddd1d2df8f16d59f5c4979e58033948ce039f73a147cabc286950",
             "templateHash": "49bb37756a12155cfe4fdbdc7fd0d9a619f1b4b6f7271d12e0cf0ca7d552a261"
         },
         ".node-version": {
