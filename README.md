@@ -183,6 +183,12 @@ MaaKEDR/
 - [create-maa-project](https://github.com/Windsland52/create-maa-project) — 项目脚手架
 - [MaaMCP](https://github.com/MAA-AI/MaaMCP) — MaaFramework MCP 服务器
 
+### 开发者
+
+感谢以下开发者对本项目作出的贡献:
+
+[![Contributors](https://contrib.rocks/image?repo=APPLe-DF/MaaKEDR&max=1000)](https://github.com/APPLe-DF/MaaKEDR/graphs/contributors)
+
 ---
 
 ## 许可证

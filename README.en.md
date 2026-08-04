@@ -166,6 +166,12 @@ See [docs/](docs/README.md) for detailed development documentation:
 - [create-maa-project](https://github.com/Windsland52/create-maa-project) — Project scaffolding
 - [MaaMCP](https://github.com/MAA-AI/MaaMCP) — MaaFramework MCP server
 
+### Developers
+
+Thanks to the following developers who have contributed to this project:
+
+[![Contributors](https://contrib.rocks/image?repo=APPLe-DF/MaaKEDR&max=1000)](https://github.com/APPLe-DF/MaaKEDR/graphs/contributors)
+
 ---
 
 ## License
