@@ -44,6 +44,9 @@
             "default_case": "Yes",
             "cases": [
                 {
+                    "name": "Yes"
+                },
+                {
                     "name": "No",
                     "pipeline_override": {
                         "DispatchClaim.ClaimButton": {
@@ -63,9 +66,6 @@
                             ]
                         }
                     }
-                },
-                {
-                    "name": "Yes"
                 }
             ]
         },
@@ -129,15 +129,15 @@
             "default_case": "No",
             "cases": [
                 {
-                    "name": "Yes"
-                },
-                {
                     "name": "No",
                     "pipeline_override": {
                         "PremiumShop.ClickShopIcon": {
                             "enabled": false
                         }
                     }
+                },
+                {
+                    "name": "Yes"
                 }
             ]
         }
