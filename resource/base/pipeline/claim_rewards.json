@@ -1,7 +1,7 @@
 {
     "ClaimRewards": {
         "next": [
-            "[JumpBack]ClaimRewards.CheckMainInterface",
+            "ClaimRewards.CheckMainInterface",
             "ClaimRewards.MainHub",
             "[JumpBack]ClaimRewards.ReturnMain"
         ]
@@ -35,10 +35,8 @@
             "[JumpBack]BattlePass.Start",
             "[JumpBack]Mailbox.Start",
             "[JumpBack]PremiumShop.ClickShopIcon",
-            "[JumpBack]Common.CheckItemObtained"
-        ],
-        "on_error": [
-            "ClaimRewards.ReturnMain"
+            "[JumpBack]Common.CheckItemObtained",
+            "ClaimRewards.MainHubIdle"
         ]
     },
     "ClaimRewards.MainHubIdle": {
@@ -766,6 +764,7 @@
     },
     "PremiumShop.ClickShopIcon": {
         "desc": "检测商店图标并点击",
+        "max_hit": 1,
         "recognition": "TemplateMatch",
         "roi": [
             143,
@@ -818,10 +817,8 @@
         },
         "timeout": 5000,
         "next": [
-            "PremiumShop.ClickPremiumShop"
-        ],
-        "on_error": [
-            "PremiumShop.ReturnMain"
+            "PremiumShop.ClickPremiumShop",
+            "PremiumShop.NoPremiumShopEntry"
         ]
     },
     "PremiumShop.ClickPremiumShop": {
@@ -843,9 +840,7 @@
         "next": [
             "PremiumShop.ConfirmPremiumShop",
             "PremiumShop.RetryClickPremiumShop",
-            "[JumpBack]Common.CheckItemObtained"
-        ],
-        "on_error": [
+            "[JumpBack]Common.CheckItemObtained",
             "PremiumShop.NoPremiumShopEntry"
         ]
     },
@@ -977,7 +972,7 @@
         },
         "post_wait_freezes": 500,
         "next": [
-            "ClaimRewards.MainHub",
+            "ClaimRewards.MainHubIdle",
             "[JumpBack]Common.BackButton"
         ]
     }
