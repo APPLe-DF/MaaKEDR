@@ -208,7 +208,7 @@
         }
     },
     "pending": [],
-    "schemaVersion": 1,
+    "schemaVersion": 2,
     "template": {
         "createdBy": "create-maa-project",
         "lastUpdatedBy": "create-maa-project",
