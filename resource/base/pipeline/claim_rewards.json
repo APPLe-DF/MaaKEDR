@@ -36,7 +36,25 @@
             "[JumpBack]Mailbox.Start",
             "[JumpBack]PremiumShop.ClickShopIcon",
             "[JumpBack]Common.CheckItemObtained"
+        ],
+        "on_error": [
+            "ClaimRewards.ReturnMain"
         ]
+    },
+    "ClaimRewards.MainHubIdle": {
+        "desc": "无奖励可领，识别主界面作为成功退出条件",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1199,
+            6,
+            77,
+            83
+        ],
+        "template": "main_option.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        }
     },
     "ClaimRewards.CheckMainInterface": {
         "desc": "确认在主界面",
