@@ -1,27 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="820" height="240" viewBox="0 0 820 240">
-<rect width="820" height="240" fill="#ffffff"/>
-<line x1="70" y1="196.0" x2="796" y2="196.0" stroke="#d0d7de" stroke-width="1"/>
-<text x="60" y="200.0" fill="#57606a" font-size="12" text-anchor="end" font-family="Arial">0</text>
-<line x1="70" y1="162.8" x2="796" y2="162.8" stroke="#d0d7de" stroke-width="1"/>
-<text x="60" y="166.8" fill="#57606a" font-size="12" text-anchor="end" font-family="Arial">2</text>
-<line x1="70" y1="129.6" x2="796" y2="129.6" stroke="#d0d7de" stroke-width="1"/>
-<text x="60" y="133.6" fill="#57606a" font-size="12" text-anchor="end" font-family="Arial">4</text>
-<line x1="70" y1="96.4" x2="796" y2="96.4" stroke="#d0d7de" stroke-width="1"/>
-<text x="60" y="100.4" fill="#57606a" font-size="12" text-anchor="end" font-family="Arial">6</text>
-<line x1="70" y1="63.2" x2="796" y2="63.2" stroke="#d0d7de" stroke-width="1"/>
-<text x="60" y="67.2" fill="#57606a" font-size="12" text-anchor="end" font-family="Arial">8</text>
-<line x1="70" y1="30.0" x2="796" y2="30.0" stroke="#d0d7de" stroke-width="1"/>
-<text x="60" y="34.0" fill="#57606a" font-size="12" text-anchor="end" font-family="Arial">10</text>
-<text x="70.0" y="216" fill="#57606a" font-size="12" text-anchor="middle" font-family="Arial">07-19</text>
-<text x="312.0" y="216" fill="#57606a" font-size="12" text-anchor="middle" font-family="Arial">07-24</text>
-<text x="554.0" y="216" fill="#57606a" font-size="12" text-anchor="middle" font-family="Arial">07-29</text>
-<text x="796.0" y="216" fill="#57606a" font-size="12" text-anchor="middle" font-family="Arial">08-04</text>
-<polyline points="70.0,179.4 73.0,162.8 79.9,146.2 296.8,129.6 303.8,113.0 796.0,96.4" fill="none" stroke="#0969da" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
-<circle cx="70.0" cy="179.4" r="4" fill="#0969da" stroke="#ffffff" stroke-width="1.5"/>
-<circle cx="73.0" cy="162.8" r="4" fill="#0969da" stroke="#ffffff" stroke-width="1.5"/>
-<circle cx="79.9" cy="146.2" r="4" fill="#0969da" stroke="#ffffff" stroke-width="1.5"/>
-<circle cx="296.8" cy="129.6" r="4" fill="#0969da" stroke="#ffffff" stroke-width="1.5"/>
-<circle cx="303.8" cy="113.0" r="4" fill="#0969da" stroke="#ffffff" stroke-width="1.5"/>
-<circle cx="796.0" cy="96.4" r="4" fill="#0969da" stroke="#ffffff" stroke-width="1.5"/>
-<text x="796.0" y="84.4" fill="#1f883d" font-size="13" text-anchor="middle" font-family="Arial" font-weight="bold">6 ⭐</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="300" viewBox="0 0 920 300" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+<defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0969da" stop-opacity="0.28"/><stop offset="100%" stop-color="#0969da" stop-opacity="0"/></linearGradient></defs>
+<rect width="920" height="300" rx="10" fill="#ffffff"/>
+<text x="64" y="32" fill="#1f2328" font-size="17" font-weight="600">APPLe-DF/MaaKEDR</text>
+<text x="72" y="50" fill="#656d76" font-size="12">6 stars · Star History</text>
+<line x1="64" y1="254.0" x2="896" y2="254.0" stroke="#eef1f4" stroke-width="1"/>
+<text x="54" y="258.0" fill="#656d76" font-size="12" text-anchor="end">0</text>
+<line x1="64" y1="204.5" x2="896" y2="204.5" stroke="#eef1f4" stroke-width="1"/>
+<text x="54" y="208.5" fill="#656d76" font-size="12" text-anchor="end">2</text>
+<line x1="64" y1="155.0" x2="896" y2="155.0" stroke="#eef1f4" stroke-width="1"/>
+<text x="54" y="159.0" fill="#656d76" font-size="12" text-anchor="end">4</text>
+<line x1="64" y1="105.5" x2="896" y2="105.5" stroke="#eef1f4" stroke-width="1"/>
+<text x="54" y="109.5" fill="#656d76" font-size="12" text-anchor="end">6</text>
+<line x1="64" y1="56.0" x2="896" y2="56.0" stroke="#eef1f4" stroke-width="1"/>
+<text x="54" y="60.0" fill="#656d76" font-size="12" text-anchor="end">8</text>
+<text x="64.0" y="272" fill="#656d76" font-size="11" text-anchor="middle">2026-07-19</text>
+<text x="182.9" y="272" fill="#656d76" font-size="11" text-anchor="middle">2026-07-21</text>
+<text x="301.7" y="272" fill="#656d76" font-size="11" text-anchor="middle">2026-07-23</text>
+<text x="420.6" y="272" fill="#656d76" font-size="11" text-anchor="middle">2026-07-25</text>
+<text x="539.4" y="272" fill="#656d76" font-size="11" text-anchor="middle">2026-07-28</text>
+<text x="658.3" y="272" fill="#656d76" font-size="11" text-anchor="middle">2026-07-30</text>
+<text x="777.1" y="272" fill="#656d76" font-size="11" text-anchor="middle">2026-08-01</text>
+<text x="896.0" y="272" fill="#656d76" font-size="11" text-anchor="middle">2026-08-04</text>
+<path d="M 64.0 254.0 L 64.0 179.8 L 324.0 130.2 L 896.0 105.5 L 896.0 254.0 Z" fill="url(#areaGrad)"/>
+<path d="M 64.0 179.8 C 107.3 171.5 185.3 142.6 324.0 130.2 C 462.7 117.9 800.7 109.6 896.0 105.5 " fill="none" stroke="#0969da" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="64.0" cy="179.8" r="4.5" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+<circle cx="324.0" cy="130.2" r="3.5" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+<circle cx="896.0" cy="105.5" r="4.5" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+<g><rect x="904.0" y="92.5" rx="10" width="30" height="22" fill="#0969da"/><text x="919.0" y="108.5" fill="#ffffff" font-size="12" font-weight="600" text-anchor="middle">6</text></g>
 </svg>
