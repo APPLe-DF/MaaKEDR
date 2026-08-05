@@ -158,11 +158,11 @@ MaaKEDR/
 
 ## Star 历史
 
-<a href="https://www.star-history.com/?repos=APPLe-DF%2FMaaKEDR&type=date&legend=top-left">
+<a href="https://github.com/APPLe-DF/MaaKEDR/stargazers">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/APPLe-DF/MaaKEDR/main/assets/star-history-dark.svg" />
-   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/APPLe-DF/MaaKEDR/main/assets/star-history-light.svg" />
-   <img alt="Star History Chart" src="https://raw.githubusercontent.com/APPLe-DF/MaaKEDR/main/assets/star-history-light.svg" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/APPLe-DF/MaaKEDR/main/assets/dark.webp" />
+   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/APPLe-DF/MaaKEDR/main/assets/light.webp" />
+   <img alt="APPLe-DF/MaaKEDR Star History" src="https://raw.githubusercontent.com/APPLe-DF/MaaKEDR/main/assets/light.webp" width="700" />
  </picture>
 </a>
 
