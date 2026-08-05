@@ -36,6 +36,7 @@ Claim various rewards with individual toggles.
 | Daily/Weekly/Military Rewards | Toggle | Claim daily, weekly, and military achievement rewards |
 | Battle Pass                   | Toggle | Claim battle pass rewards                             |
 | Mailbox                       | Toggle | Claim mail attachments                                |
+| Premium Shop Daily Reward     | Toggle | Claim the premium shop free item (default off)        |
 
 ### Dispatch Claim
 
@@ -57,6 +58,10 @@ Claims unlocked battle pass rewards.
 ### Mailbox
 
 Automatically collects mail attachments.
+
+### Premium Shop Daily Reward
+
+Automatically enters the premium shop and claims the daily free item (only when a claimable indicator is present; default off).
 
 ---
 

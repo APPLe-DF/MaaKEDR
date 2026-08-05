@@ -18,6 +18,7 @@
   <img alt="license" src="https://img.shields.io/github/license/APPLe-DF/MaaKEDR">
   <br>
   <img alt="commit" src="https://img.shields.io/github/commit-activity/m/APPLe-DF/MaaKEDR">
+  <img alt="downloads" src="https://img.shields.io/github/downloads/APPLe-DF/MaaKEDR/total?style=social">
   <img alt="stars" src="https://img.shields.io/github/stars/APPLe-DF/MaaKEDR?style=social">
   <a href="https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-badge" target="_blank"><img alt="mirrorc" src="https://img.shields.io/badge/Mirror%E9%85%B1-%239af3f6?logo=countingworkspro&logoColor=4f46e5"></a>
 </p>
@@ -34,17 +35,13 @@
 
 ---
 
-> ✅ **项目状态：维护模式**
+> ✅ **项目状态：持续维护与迭代**
 >
 > 本项目已完成**每日主要流程**（启动游戏、领取奖励、资源刷取、技能演练等核心循环）的完整实现，
-> 现正式进入**维护模式**：
+> 现进入**持续维护与迭代**阶段：
 >
 > - ✅ 核心流程已完整覆盖
-> - 🔧 后续仅进行 **Bug 修复**、**游戏版本适配**、**依赖更新** 等维护性工作
-> - ❌ 不再积极开发新功能、新任务、新流程
->
-> 如需更完善的功能、更积极的迭代，建议关注同类活跃项目：
-> [MaaAssistantKedrgame (MAK)](https://github.com/Hollow-YK/MaaAssistantKedrgame)。
+> - 🔧 后续以 **Bug 修复**、**游戏版本适配**、**依赖更新** 为主，同时按需评估新功能、新任务、新流程
 
 > 🎵 **开发方式**
 >
@@ -61,10 +58,10 @@
 ## 功能列表
 
 - 启动游戏
-- 领取奖励（派遣任务、每日/每周/军旅成就、战令通行证、邮箱，可独立开关）
+- 领取奖励（派遣任务、每日/每周/军旅成就、战令通行证、邮箱、高级账号商店每日奖励，可独立开关）
 - 资源刷取（特别军费行动、作战体能训练、兵种能力评级、载具对抗演练）
 - 技能演练（基础技能、专业技能）
-- 玩家对战（PVP 自动战斗，支持多场循环）
+- 玩家对战（PVP 自动战斗，自动选择等级最低的对手，支持多场循环）
 - 多关卡选择，可配置战斗次数（1~6 次 / 最大）
 - 清空体力循环模式
 
@@ -150,12 +147,24 @@ MaaKEDR/
 
 详细的项目开发文档请参见 [docs/](docs/README.md)，包含：
 
-- [Pipeline 编写指南](docs/zh_cn/develop/pipeline.md)
-- [Custom 识别与动作开发](docs/zh_cn/develop/custom.md)
-- [项目结构说明](docs/zh_cn/develop/structure.md)
-- [格式化规范](docs/zh_cn/develop/formatting.md)
-- [Bug 排查](docs/zh_cn/develop/fix.md)
-- [Vibe Coding 开发说明](docs/zh_cn/develop/vibe-coding.md)
+- [Pipeline 编写指南](docs/zh/develop/pipeline.md)
+- [Custom 识别与动作开发](docs/zh/develop/custom.md)
+- [项目结构说明](docs/zh/develop/structure.md)
+- [格式化规范](docs/zh/develop/formatting.md)
+- [Bug 排查](docs/zh/develop/fix.md)
+- [Vibe Coding 开发说明](docs/zh/develop/vibe-coding.md)
+
+---
+
+## Star 历史
+
+<a href="https://www.star-history.com/#APPLe-DF/MaaKEDR&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=APPLe-DF/MaaKEDR&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=APPLe-DF/MaaKEDR&type=Date&theme=light" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=APPLe-DF/MaaKEDR&type=Date&theme=light" />
+ </picture>
+</a>
 
 ---
 

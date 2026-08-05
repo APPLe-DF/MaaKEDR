@@ -18,6 +18,7 @@ Powered by [MaaFramework](https://github.com/MaaXYZ/MaaFramework)!
   <img alt="license" src="https://img.shields.io/github/license/APPLe-DF/MaaKEDR">
   <br>
   <img alt="commit" src="https://img.shields.io/github/commit-activity/m/APPLe-DF/MaaKEDR">
+  <img alt="downloads" src="https://img.shields.io/github/downloads/APPLe-DF/MaaKEDR/total?style=social">
   <img alt="stars" src="https://img.shields.io/github/stars/APPLe-DF/MaaKEDR?style=social">
   <a href="https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-badge" target="_blank"><img alt="mirrorc" src="https://img.shields.io/badge/Mirror%E9%85%B1-%239af3f6?logo=countingworkspro&logoColor=4f46e5"></a>
 </p>
@@ -34,13 +35,13 @@ Powered by [MaaFramework](https://github.com/MaaXYZ/MaaFramework)!
 
 ---
 
-> ℹ️ **Project Status: Maintenance Mode**
+> ℹ️ **Project Status: Active Maintenance & Iteration**
 >
-> After completing the daily routine features, this project will enter **maintenance mode**,
-> with no active development of new content, only bug fixes and necessary compatibility updates.
+> The core daily flows (game launch, claim rewards, resource farming, skill training, etc.) are fully implemented,
+> and the project is now in **active maintenance & iteration**:
 >
-> For more comprehensive features and active maintenance, please consider the similar open-source project
-> [MaaAssistantKedrgame (MAK)](https://github.com/Hollow-YK/MaaAssistantKedrgame).
+> - ✅ Core flows fully covered
+> - 🔧 Focus on **bug fixes**, **game version adaptation**, and **dependency updates**, with new features evaluated on demand
 
 > 🎵 **Development Approach**
 >
@@ -57,9 +58,10 @@ Powered by [MaaFramework](https://github.com/MaaXYZ/MaaFramework)!
 ## Features
 
 - Game Launch
-- Claim Rewards (dispatch tasks, daily/weekly/military achievements, battle pass, mailbox — individually toggleable)
+- Claim Rewards (dispatch tasks, daily/weekly/military achievements, battle pass, mailbox, premium shop daily reward — individually toggleable)
 - Resource Farming (Special Funds, Physical Training, Unit Rating, Vehicle Drill)
 - Skill Training (Basic Skills, Advanced Skills)
+- PVP (auto-battle with automatic selection of the lowest-level opponent, multi-round loop)
 - Multiple stage selection with configurable battle count (1-6 / max)
 - Stamina-drain loop mode
 
@@ -133,12 +135,24 @@ For more documentation, visit the [MaaFramework](https://github.com/MaaXYZ/MaaFr
 
 See [docs/](docs/README.md) for detailed development documentation:
 
-- [Pipeline Guide](docs/en_us/develop/pipeline.md)
-- [Custom Recognition & Action](docs/en_us/develop/custom.md)
-- [Project Structure](docs/en_us/develop/structure.md)
-- [Formatting](docs/en_us/develop/formatting.md)
-- [Troubleshooting](docs/en_us/develop/fix.md)
-- [Vibe Coding Development](docs/en_us/develop/vibe-coding.md)
+- [Pipeline Guide](docs/en/develop/pipeline.md)
+- [Custom Recognition & Action](docs/en/develop/custom.md)
+- [Project Structure](docs/en/develop/structure.md)
+- [Formatting](docs/en/develop/formatting.md)
+- [Troubleshooting](docs/en/develop/fix.md)
+- [Vibe Coding Development](docs/en/develop/vibe-coding.md)
+
+---
+
+## Star History
+
+<a href="https://www.star-history.com/#APPLe-DF/MaaKEDR&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=APPLe-DF/MaaKEDR&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=APPLe-DF/MaaKEDR&type=Date&theme=light" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=APPLe-DF/MaaKEDR&type=Date&theme=light" />
+ </picture>
+</a>
 
 ---
 
