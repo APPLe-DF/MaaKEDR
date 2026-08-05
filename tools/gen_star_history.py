@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """生成 star 历史 SVG 折线图（深色/浅色两版）
 
 用法（需 GitHub token 环境变量，仅需 public_repo 只读权限）：
@@ -6,9 +5,8 @@
 """
 import json
 import os
-from datetime import datetime, timezone
-
 import urllib.request
+from datetime import datetime
 
 REPO = "APPLe-DF/MaaKEDR"
 
