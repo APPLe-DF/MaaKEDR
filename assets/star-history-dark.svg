@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="240" viewBox="0 0 820 240">
+<rect width="820" height="240" fill="#0d1117"/>
+<line x1="70" y1="196.0" x2="796" y2="196.0" stroke="#21262d" stroke-width="1"/>
+<text x="60" y="200.0" fill="#8b949e" font-size="12" text-anchor="end" font-family="Arial">0</text>
+<line x1="70" y1="162.8" x2="796" y2="162.8" stroke="#21262d" stroke-width="1"/>
+<text x="60" y="166.8" fill="#8b949e" font-size="12" text-anchor="end" font-family="Arial">2</text>
+<line x1="70" y1="129.6" x2="796" y2="129.6" stroke="#21262d" stroke-width="1"/>
+<text x="60" y="133.6" fill="#8b949e" font-size="12" text-anchor="end" font-family="Arial">4</text>
+<line x1="70" y1="96.4" x2="796" y2="96.4" stroke="#21262d" stroke-width="1"/>
+<text x="60" y="100.4" fill="#8b949e" font-size="12" text-anchor="end" font-family="Arial">6</text>
+<line x1="70" y1="63.2" x2="796" y2="63.2" stroke="#21262d" stroke-width="1"/>
+<text x="60" y="67.2" fill="#8b949e" font-size="12" text-anchor="end" font-family="Arial">8</text>
+<line x1="70" y1="30.0" x2="796" y2="30.0" stroke="#21262d" stroke-width="1"/>
+<text x="60" y="34.0" fill="#8b949e" font-size="12" text-anchor="end" font-family="Arial">10</text>
+<text x="70.0" y="216" fill="#8b949e" font-size="12" text-anchor="middle" font-family="Arial">07-19</text>
+<text x="312.0" y="216" fill="#8b949e" font-size="12" text-anchor="middle" font-family="Arial">07-24</text>
+<text x="554.0" y="216" fill="#8b949e" font-size="12" text-anchor="middle" font-family="Arial">07-29</text>
+<text x="796.0" y="216" fill="#8b949e" font-size="12" text-anchor="middle" font-family="Arial">08-04</text>
+<polyline points="70.0,179.4 73.0,162.8 79.9,146.2 296.8,129.6 303.8,113.0 796.0,96.4" fill="none" stroke="#58a6ff" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="70.0" cy="179.4" r="4" fill="#58a6ff" stroke="#0d1117" stroke-width="1.5"/>
+<circle cx="73.0" cy="162.8" r="4" fill="#58a6ff" stroke="#0d1117" stroke-width="1.5"/>
+<circle cx="79.9" cy="146.2" r="4" fill="#58a6ff" stroke="#0d1117" stroke-width="1.5"/>
+<circle cx="296.8" cy="129.6" r="4" fill="#58a6ff" stroke="#0d1117" stroke-width="1.5"/>
+<circle cx="303.8" cy="113.0" r="4" fill="#58a6ff" stroke="#0d1117" stroke-width="1.5"/>
+<circle cx="796.0" cy="96.4" r="4" fill="#58a6ff" stroke="#0d1117" stroke-width="1.5"/>
+<text x="796.0" y="84.4" fill="#58a6ff" font-size="13" text-anchor="middle" font-family="Arial" font-weight="bold">6 ⭐</text>
+</svg>

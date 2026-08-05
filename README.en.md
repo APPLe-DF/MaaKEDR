@@ -146,11 +146,11 @@ See [docs/](docs/README.md) for detailed development documentation:
 
 ## Star History
 
-<a href="https://www.star-history.com/#APPLe-DF/MaaKEDR&Date">
+<a href="https://www.star-history.com/?repos=APPLe-DF%2FMaaKEDR&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=APPLe-DF/MaaKEDR&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=APPLe-DF/MaaKEDR&type=Date&theme=light" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=APPLe-DF/MaaKEDR&type=Date&theme=light" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/APPLe-DF/MaaKEDR/main/assets/star-history-dark.svg" />
+   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/APPLe-DF/MaaKEDR/main/assets/star-history-light.svg" />
+   <img alt="Star History Chart" src="https://raw.githubusercontent.com/APPLe-DF/MaaKEDR/main/assets/star-history-light.svg" />
  </picture>
 </a>
 
