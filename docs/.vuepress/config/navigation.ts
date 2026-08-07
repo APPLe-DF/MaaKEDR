@@ -31,6 +31,7 @@ const zh: NavigationConfig = {
         'formatting.md',
         'structure.md',
         'doc.md',
+        'overseas-client-adaptation.md',
       ],
     },
     {
@@ -74,6 +75,7 @@ const en: NavigationConfig = {
         'formatting.md',
         'structure.md',
         'doc.md',
+        'overseas-client-adaptation.md',
       ],
     },
     {
