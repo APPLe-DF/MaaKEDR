@@ -26,3 +26,14 @@ icon: ri:treasure-map-line
 - **Drain stamina**: `SetBattleCountMax`, `ReduceCount` on low stamina, exit via confirm → main
 
 Skill training: basic / advanced stages via OCR + lock checks. Custom actions: battle count helpers in `agent/custom/`.
+
+## Acceptance checklist
+
+After changing this task, verify in order:
+
+1. One stage per resource board runs alone (including 4/5 stages that need swiping)
+2. Single-battle mode end-to-end: finishes after the configured count
+3. Drain-stamina mode: count is reduced when stamina is low, exits normally at 1
+4. Victory screen / item popup / quick-battle button verified separately
+5. Locked stage (grey text): notifies "not unlocked" instead of hanging
+6. Full regression: runs together with other tasks (startup, claim, PVP) without conflict

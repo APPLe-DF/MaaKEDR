@@ -106,3 +106,14 @@ MainHub → [JumpBack]ClickShopIcon（max_hit: 1，整个任务只进一次商�
 ## 图片目录
 
 `resource/base/image/claim_rewards/` 按任务分子目录：`daily/`（含勋章弹窗）、`battlepass/`、`mailbox/`、`dispatch/`、`premium_shop/`；通用图（`back_button.png`、`item_obtained_dialog.png` 等）在 `resource/base/image/` 根目录。
+
+## 验收清单
+
+改动本任务后按以下顺序验证：
+
+1. 每个子模块入口（派遣 / 日常 / 战令 / 邮箱 / 高账商店）单独跑一遍，确认能进入并领完
+2. 全部子模块开启时端到端跑一遍，确认按序轮询、无死循环
+3. 领到一半时重启任务，确认剩余奖励能继续领完（JumpBack 栈正确重建）
+4. 全部领完后任务正常收尾退出（命中 `MainHubIdle`，不依赖 `on_error`）
+5. 领奖过程中出现物品弹窗 / 勋章弹窗时能正常处理
+6. 全量回归：与其它任务（启动、刷取、PVP）组合跑一遍无冲突

@@ -103,3 +103,14 @@ Key points:
 ## Image directories
 
 `resource/base/image/claim_rewards/` is organized by sub-module: `daily/` (incl. medal popup), `battlepass/`, `mailbox/`, `dispatch/`, `premium_shop/`; shared templates (`back_button.png`, `item_obtained_dialog.png`, etc.) live in `resource/base/image/`.
+
+## Acceptance checklist
+
+After changing this task, verify in order:
+
+1. Each sub-module entry (dispatch / daily / battle pass / mailbox / premium shop) runs alone and claims everything
+2. End-to-end with all sub-modules enabled: polls in order, no dead loop
+3. Restart halfway through: remaining rewards are still claimed (JumpBack stack rebuilt correctly)
+4. Task ends normally when everything is claimed (hits `MainHubIdle`, not `on_error`)
+5. Item popup / medal popup during claiming are handled
+6. Full regression: runs together with other tasks (startup, farm, PVP) without conflict
