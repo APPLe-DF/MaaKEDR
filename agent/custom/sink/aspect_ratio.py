@@ -65,8 +65,7 @@ class AspectRatioChecker(TaskerEventSink):
 
         actual_ratio = width / height
         logger.error(
-            "🚨 分辨率比例不是 16:9，任务已停止！当前 {}x{}（比例 {:.4f}），"
-            "请调整为: {}",
+            "🚨 分辨率比例不是 16:9，任务已停止！当前 {}x{}（比例 {:.4f}），请调整为: {}",
             width,
             height,
             actual_ratio,
