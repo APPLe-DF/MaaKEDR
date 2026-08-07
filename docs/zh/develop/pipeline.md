@@ -68,6 +68,30 @@ Pipeline 节点用 JSON 定义，每个节点描述一个识别 → 动作 → �
 - 前缀用功能模块英文名：`PVP.`、`BattlePass.`、`Common.`
 - JumpBack 节点不加 `next` 字段
 
+## 注释与占位字段
+
+Pipeline 节点支持两类注释/占位字段（schema 已支持，不会报错）：
+
+1. `doc` / `*_doc`：节点功能说明
+2. `*_code` / `code`：**必填字段占位**，用于"模板路径统一在 `interface.json` 配置、不硬编码进 pipeline"的场景
+
+```json
+"EnterBattle": {
+    "doc": "进入作战界面",
+    "template_code": "在 interface.json 的 pipeline_override 中配置 template",
+    "recognition": "TemplateMatch",
+    "roi": [885, 123, 340, 183],
+    "action": { "type": "Click" },
+    "next": ["CheckBattleInterface"]
+}
+```
+
+:::tip 为什么需要 `*_code` 占位？
+
+`TemplateMatch` 的 `template` 字段是必填项，但若模板路径由 `interface.json` 的 `pipeline_override` 统一注入（换分辨率/换区服时只改一处），pipeline 文件中就没有可填的值。此时用 `template_code` 占位，既过 schema 校验，又提示开发者"模板在别处配置"。
+
+:::
+
 ## 设计模式
 
 ### 线性流程
@@ -252,7 +276,7 @@ JOCR(roi=(x, y, w, h), color_filter="GoldTextFilter")
 2. **OCR expected 是正则表达式** — `".*"` 匹配任意，`"^text$"` 精确匹配
 3. **ROI 以 1280x720 为基准** — 坐标 `[x, y, w, h]`
 4. **兜底策略** — 流程兜底（正常可预期的走不通）放 `next` 末尾；真错误兜底（异常状态）保留 `on_error` 并加 `[错误兜底]` 标记。详见上方"兜底策略"一节
-5. **`next` 顺序重要** — 优先匹配的放在前面，减少等待时间
+5. **`next` 顺序重要 — 按"必须先判断的"优先** — `next` 按优先级从高到低排列：先放**需要优先排除的界面**（如弹窗、错误提示），再放常规分支。反例：若主界面节点（识别频率高）排在弹窗节点前面，弹窗出现时主界面节点先命中，流程会卡死在错误界面。同优先级时按匹配频率排序，匹配快的放前面
 6. **截图不全时加 roi** — 缩小识别范围提升速度和准确率
 7. **`post_wait_freezes`** — 适合动画结束后再操作，比固定 `post_delay` 更可靠
 8. **清体力模式使用 RepeatCount** — 通过 Custom Action 动态减少战斗次数

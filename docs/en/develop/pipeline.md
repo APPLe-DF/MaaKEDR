@@ -66,6 +66,30 @@ Each pipeline node defines a recognition → action → transition step:
 - Prefix with module name: `PVP.`, `BattlePass.`, `Common.`
 - JumpBack nodes must NOT have `next`
 
+## Comment & Placeholder Fields
+
+Pipeline nodes support two kinds of comment/placeholder fields (already supported by schema):
+
+1. `doc` / `*_doc`: node description
+2. `*_code` / `code`: **placeholder for a required field**, used when the template path is configured centrally in `interface.json` instead of being hardcoded in the pipeline
+
+```json
+"EnterBattle": {
+    "doc": "Enter battle interface",
+    "template_code": "configure template via pipeline_override in interface.json",
+    "recognition": "TemplateMatch",
+    "roi": [885, 123, 340, 183],
+    "action": { "type": "Click" },
+    "next": ["CheckBattleInterface"]
+}
+```
+
+:::tip Why `*_code` placeholders?
+
+`TemplateMatch` requires a `template` field, but if template paths are injected centrally via `pipeline_override` in `interface.json` (change once for resolution/server adaptation), there is nothing to fill in the pipeline file. `template_code` passes schema validation while telling developers "the template is configured elsewhere".
+
+:::
+
 ## Design Patterns
 
 ### Linear Flow
@@ -166,5 +190,5 @@ Max 5 hits before skip. Counts cross-session.
 2. **OCR expected is regex** — `".*"` matches anything, `"^text$"` exact match
 3. **ROI at 1280x720** — coordinates `[x, y, w, h]`
 4. **Always add `on_error`** — For critical navigation nodes
-5. **`next` order matters** — Put high-priority matches first
+5. **`next` order matters — highest priority first** — Order `next` by priority: put nodes that must be **excluded first** (pop-ups, error dialogs) before normal branches. Counter-example: if a home-screen node (high match frequency) comes before a pop-up node, the pop-up case matches the home-screen node first and the flow gets stuck on the wrong screen. Within the same priority, sort by match frequency, fastest first
 6. **Use `post_wait_freezes`** — More reliable than fixed `post_delay` for animations
