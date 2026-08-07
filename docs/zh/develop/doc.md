@@ -97,4 +97,4 @@ pnpm docs:build
 ## 参考
 
 - [VuePress Theme Plume](https://theme-plume.vuejs.press/)
-- [MaaFramework 文档](https://maaframework.github.io/)
+- [MaaFramework 文档](https://maafw.com/docs/1.1-QuickStarted)

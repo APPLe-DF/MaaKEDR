@@ -213,7 +213,7 @@ resource/base/image/start_button.png
 
 ## 参考
 
-- [MaaFramework 文档](https://maaframework.github.io/)
+- [MaaFramework 文档](https://maafw.com/docs/1.1-QuickStarted)
 - [Pipeline 编写指南](./pipeline.md)
 - [Custom 编写指南](./custom.md)
 - [Bug 排查指南](./fix.md)

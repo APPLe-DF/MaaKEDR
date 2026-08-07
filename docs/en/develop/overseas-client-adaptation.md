@@ -23,7 +23,7 @@ Differences with the CN client are usually concentrated in **startup & login**:
 1. **Only adapt startup & login first**: other tasks (claim rewards, farm, PVP) should reuse `base`; do not copy whole pipelines into the overseas pack
 2. Prefer overriding `expected` / template images for language differences over restructuring the flow
 3. When adding a resource pack, update the pack table in `docs/*/protocol/overview.md`
-4. See the MaaFramework [ProjectInterface V2](https://maaframework.github.io/docs/zh-cn/develop/1.1-ProjectInterface.html) protocol for the `interface.json` resource-switching mechanism
+4. See the MaaFramework [ProjectInterface V2](https://maafw.com/docs/3.3-ProjectInterfaceV2) protocol for the `interface.json` resource-switching mechanism
 
 ## Current Status
 

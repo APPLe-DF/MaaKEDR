@@ -163,7 +163,7 @@ When reviewing code, check for:
 
 ## Related Projects & References
 
-- **MaaFramework Documentation:** https://maaframework.github.io/
+- **MaaFramework Documentation:** https://maafw.com/docs/1.1-QuickStarted
 - **M9A Reference Project:** `G:\M9AA\M9A-pr\55\M9A`
 - **create-maa-project Scaffold Tool:** `G:\M9AA\create-maa-project`
 - **MaaKEDR交流群 QQ:** 1051890489

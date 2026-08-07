@@ -23,7 +23,7 @@ icon: "ri:earth-fill"
 1. **优先只改启动与登录**：其余任务（领取奖励、刷取、PVP）尽量复用 `base`，不要在海外包中复制整条流程
 2. 语言差异优先通过覆盖 `expected` / 模板图解决，而不是改流程结构
 3. 新增资源包时同步更新 `docs/*/protocol/overview.md` 的资源包表格
-4. 参考 MaaFramework [ProjectInterface V2](https://maaframework.github.io/docs/zh-cn/develop/1.1-ProjectInterface.html) 协议理解 `interface.json` 的资源切换机制
+4. 参考 MaaFramework [ProjectInterface V2](https://maafw.com/docs/3.3-ProjectInterfaceV2) 协议理解 `interface.json` 的资源切换机制
 
 ## 当前状态
 

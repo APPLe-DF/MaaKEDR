@@ -209,7 +209,7 @@ See [CONTRIBUTING.md](https://github.com/APPLe-DF/MaaKEDR/blob/main/CONTRIBUTING
 
 ## References
 
-- [MaaFramework Documentation](https://maaframework.github.io/)
+- [MaaFramework Documentation](https://maafw.com/docs/1.1-QuickStarted)
 - [Pipeline Guide](./pipeline.md)
 - [Custom Module Guide](./custom.md)
 - [Troubleshooting](./fix.md)
