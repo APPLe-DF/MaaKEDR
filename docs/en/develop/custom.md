@@ -90,16 +90,24 @@ Sinks listen to task events (start, complete, error) for pre-checks, logging, or
 
 ```python
 from maa.agent.agent_server import AgentServer
-from maa.event import TaskerEventSink, TaskerEvent
+from maa.event_sink import NotificationType
+from maa.tasker import Tasker, TaskerEventSink
 
 
 @AgentServer.tasker_sink()
 class MySink(TaskerEventSink):
-    def on_event(self, event: TaskerEvent) -> None:
-        if event.event_type == TaskerEvent.Type.RECOGNITION_FAILED:
-            node_name = event.detail.get("node_name", "")
-            logger.warning(f"Recognition failed: {node_name}")
+    def on_tasker_task(
+        self,
+        tasker: Tasker,
+        noti_type: NotificationType,
+        detail: TaskerEventSink.TaskerTaskDetail,
+    ) -> None:
+        if noti_type != NotificationType.Starting:
+            return
+        logger.info("Task started: {}", detail.entry)
 ```
+
+Real example: `agent/custom/sink/aspect_ratio.py` — checks the controller resolution is 16:9 when a task starts, calls `tasker.post_stop()` otherwise (see resolution baseline in `docs/*/protocol/overview.md`).
 
 ## Recognition Result Handling
 
@@ -147,10 +155,10 @@ context.override_pipeline({"SomeNode": {"next": ["CustomNext"]}})
 
 ## Registration
 
-1. Create a Python file in `agent/custom/recognition/` or `agent/custom/action/`
+1. Create a Python file in `agent/custom/recognition/`, `agent/custom/action/` or `agent/custom/sink/`
 2. Add `@AgentServer.custom_recognition("Name")` / `@AgentServer.custom_action("Name")` / `@AgentServer.tasker_sink()` decorator
-3. Register the module name in `agent/custom/recognition/__init__.py::RECOGNITION_MODULES`
-4. Reference via `custom_recognition` / `custom_action` in pipeline JSON
+3. Register the module name in the matching `agent/custom/*/__init__.py` (`RECOGNITION_MODULES` / `ACTION_MODULES` / `SINK_MODULES`)
+4. Reference via `custom_recognition` / `custom_action` in pipeline JSON; sinks need no pipeline reference — they fire automatically on task events
 
 ## Development Tips
 

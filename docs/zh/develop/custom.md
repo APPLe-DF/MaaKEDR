@@ -93,16 +93,24 @@ Sink 用于监听任务事件（开始、完成、错误等），适合做前置
 
 ```python
 from maa.agent.agent_server import AgentServer
-from maa.event import TaskerEventSink, TaskerEvent
+from maa.event_sink import NotificationType
+from maa.tasker import Tasker, TaskerEventSink
 
 
 @AgentServer.tasker_sink()
 class MySink(TaskerEventSink):
-    def on_event(self, event: TaskerEvent) -> None:
-        if event.event_type == TaskerEvent.Type.RECOGNITION_FAILED:
-            node_name = event.detail.get("node_name", "")
-            logger.warning(f"节点识别失败: {node_name}")
+    def on_tasker_task(
+        self,
+        tasker: Tasker,
+        noti_type: NotificationType,
+        detail: TaskerEventSink.TaskerTaskDetail,
+    ) -> None:
+        if noti_type != NotificationType.Starting:
+            return
+        logger.info("任务开始: {}", detail.entry)
 ```
+
+实际实例：`agent/custom/sink/aspect_ratio.py` — 任务开始时检查控制器分辨率是否为 16:9，不符合则 `tasker.post_stop()` 停止任务并提示（见 `docs/*/develop/custom.md` 的注册方式与 `docs/*/protocol/overview.md` 的分辨率基线）。
 
 ## 识别结果处理
 
@@ -151,10 +159,10 @@ context.override_pipeline({"SomeNode": {"next": ["CustomNext"]}})
 
 ## 注册模块
 
-1. 在 `agent/custom/recognition/` 或 `agent/custom/action/` 下创建 Python 文件
+1. 在 `agent/custom/recognition/`、`agent/custom/action/` 或 `agent/custom/sink/` 下创建 Python 文件
 2. 添加 `@AgentServer.custom_recognition("Name")` / `@AgentServer.custom_action("Name")` / `@AgentServer.tasker_sink()` 装饰器
-3. 在 `agent/custom/recognition/__init__.py` 的 `RECOGNITION_MODULES` 中注册模块名
-4. Pipeline 中通过 `custom_recognition` / `custom_action` 字段引用
+3. 在对应的 `agent/custom/*/__init__.py` 的 `RECOGNITION_MODULES` / `ACTION_MODULES` / `SINK_MODULES` 中注册模块名
+4. Pipeline 中通过 `custom_recognition` / `custom_action` 字段引用；Sink 无需 pipeline 引用，任务事件发生时自动触发
 
 ## 开发建议
 
