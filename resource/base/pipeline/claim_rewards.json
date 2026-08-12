@@ -763,16 +763,16 @@
         ]
     },
     "PremiumShop.ClickShopIcon": {
-        "desc": "检测商店图标并点击",
+        "desc": "检测商店红点（可领取状态）后点击进入",
         "max_hit": 1,
         "recognition": "TemplateMatch",
         "roi": [
-            143,
-            582,
-            82,
-            83
+            195,
+            593,
+            58,
+            56
         ],
-        "template": "claim_rewards/premium_shop/shop_icon.png",
+        "template": "claim_rewards/premium_shop/shop_icon_reddot.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"
@@ -784,15 +784,15 @@
         ]
     },
     "PremiumShop.RetryClickShopIcon": {
-        "desc": "重试点击商店图标",
+        "desc": "重试检测商店红点并点击",
         "recognition": "TemplateMatch",
         "roi": [
-            143,
-            582,
-            82,
-            83
+            195,
+            593,
+            58,
+            56
         ],
-        "template": "claim_rewards/premium_shop/shop_icon.png",
+        "template": "claim_rewards/premium_shop/shop_icon_reddot.png",
         "threshold": 0.75,
         "action": {
             "type": "Click"

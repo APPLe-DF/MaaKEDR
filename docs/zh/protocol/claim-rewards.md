@@ -81,7 +81,7 @@ ClaimRewards
 默认关闭（`claim_premium_shop`），面向已开通高级账号、每日可领取免费商品的玩家。
 
 ```text
-MainHub → [JumpBack]ClickShopIcon（max_hit: 1，整个任务只进一次商店）
+MainHub → [JumpBack]ClickShopIcon（检测商店红点（可领取状态）后点击进入；max_hit: 1，整个任务只进一次商店）
   → ConfirmShopInterface（确认在商店界面）
        → ClickPremiumShop：识别"带红点（可领取状态）"的高账入口，命中才点击进入
        → NoPremiumShopEntry（兜底）：入口无红点/未开通 → 提示后返回主页
@@ -96,6 +96,7 @@ MainHub → [JumpBack]ClickShopIcon（max_hit: 1，整个任务只进一次商�
 
 - **红点即可领取**：`premium_shop_entry.png` 模板截的是"有可领取状态"（红点）的入口；无红点时匹配分低于阈值，视为今日已领完/未开通，不进商店。
 - **`NoPremiumShopEntry`**：DirectHit 兜底节点，位于 `ConfirmShopInterface.next` 与 `ClickPremiumShop.next` 末尾，命中时 toast「未检测到高账商店可领取提示，请检查是否已开通高级账号」并返回主页——不依赖 `on_error`，无超时等待、不触发错误截图。
+- **红点即可进入**：`shop_icon_reddot.png` 截的是主页商店图标带红点（有可领取内容）的状态，无红点时识别失败、不进商店，直接进入后续轮询；`RetryClickShopIcon` 同模板重试。
 - **`ClickShopIcon` 的 `max_hit: 1`**：商店图标是常驻元素，不加限制会在 `MainHub` 轮询中反复进商店导致死循环。
 
 ### 通用

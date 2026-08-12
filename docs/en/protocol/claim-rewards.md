@@ -78,7 +78,7 @@ Every sub-module entry in `MainHub.next` is a `[JumpBack]` node: once hit and ex
 Default off (`claim_premium_shop`); for players with a premium account who can claim a free item daily.
 
 ```text
-MainHub → [JumpBack]ClickShopIcon (max_hit: 1, enter the shop only once per task)
+MainHub → [JumpBack]ClickShopIcon (click after detecting the shop icon red dot (claimable state); max_hit: 1, enter the shop only once per task)
   → ConfirmShopInterface (confirm shop UI)
        → ClickPremiumShop: recognizes the premium-shop entry WITH red dot (claimable state); enters only when hit
        → NoPremiumShopEntry (fallback): no red dot / not enabled → notify and return home
@@ -93,6 +93,7 @@ Key points:
 
 - **Red dot means claimable**: `premium_shop_entry.png` is captured WITH the red dot (claimable state); without the red dot the match score stays below the threshold and is treated as "already claimed today / not enabled" — the shop is not entered.
 - **`NoPremiumShopEntry`**: DirectHit fallback at the end of `ConfirmShopInterface.next` and `ClickPremiumShop.next`; toasts "no claimable premium-shop entry detected, check whether the premium account is enabled" and returns home — no `on_error`, no timeout wait, no error screenshots.
+- **Red dot gates entry**: `shop_icon_reddot.png` is captured with the red dot (claimable content) on the home-screen shop icon; without it the recognition fails and the shop is not entered, falling through to the next poll entries; `RetryClickShopIcon` retries with the same template.
 - **`ClickShopIcon.max_hit: 1`**: the shop icon is a permanent element; without this cap the `MainHub` poll would keep entering the shop forever (dead loop).
 
 ### Common
