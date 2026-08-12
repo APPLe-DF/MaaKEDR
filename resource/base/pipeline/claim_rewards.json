@@ -262,8 +262,8 @@
             "type": "Click"
         },
         "next": [
-            "[JumpBack]Common.CheckItemObtained",
             "[JumpBack]ClaimRewards.MedalDisplay",
+            "[JumpBack]Common.CheckItemObtained",
             "ClaimRewards.ConfirmInterface"
         ]
     },
