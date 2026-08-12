@@ -8,7 +8,9 @@
             }
         },
         "next": [
-            "WaitGameLoading"
+            "WaitGameLoading",
+            "ClickToStart",
+            "CheckHomePage"
         ]
     },
     "WaitGameLoading": {
