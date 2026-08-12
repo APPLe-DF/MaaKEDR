@@ -56,7 +56,7 @@ Every sub-module entry in `MainHub.next` is a `[JumpBack]` node: once hit and ex
 - `ClaimRewards.Start`: weekly entry badge
 - `ConfirmInterface`: reward interface; `next` includes `MedalDisplay` and `ExitRewardInterface`
 - `CheckDaily` / `CheckWeekly` / `CheckMilitary`: section badges
-- `ClaimButton`: claim button; afterwards handle `Common.CheckItemObtained` popup and `MedalDisplay`
+- `ClaimButton`: claim button; afterwards handle `MedalDisplay` (medal popup) first, then `Common.CheckItemObtained` (item popup)
 - `MedalDisplay`: recognize and click the "medal obtained" popup (see `claim_rewards/daily/medal_display.png`)
 
 ### Battle pass

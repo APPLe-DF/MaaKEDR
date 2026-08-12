@@ -59,7 +59,7 @@ ClaimRewards
 - `ClaimRewards.Start`：周常入口徽章
 - `ConfirmInterface`：奖励界面；`next` 中含 `MedalDisplay`（获得勋章弹窗识别）与 `ExitRewardInterface` 退出
 - `CheckDaily` / `CheckWeekly` / `CheckMilitary`：分栏徽章
-- `ClaimButton`：领取按钮；领完后处理 `Common.CheckItemObtained` 弹窗与 `MedalDisplay` 勋章弹窗
+- `ClaimButton`：领取按钮；领完后优先处理 `MedalDisplay` 勋章弹窗，再处理 `Common.CheckItemObtained` 物品弹窗
 - `MedalDisplay`：识别"获得勋章"弹窗并点击关闭（见 `claim_rewards/daily/medal_display.png`）
 
 ### 战令
