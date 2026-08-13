@@ -378,7 +378,7 @@
         "desc": "点击关卡(使用Agent动态识别) [错误兜底: StageLocked]",
         "recognition": "Custom",
         "custom_recognition": "CheckResourceStage",
-        "custom_recognition_param": "{\"stage_name\": \"farm_stage\", \"stage_index\": 1, \"lock_template\": \"farm_resources/lock_icon.png\", \"lock_threshold\": 0.8}",
+        "custom_recognition_param": "{\"stage_name\": \"farm_stage\", \"stage_index\": 1}",
         "action": {
             "type": "Click"
         },

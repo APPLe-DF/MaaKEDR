@@ -60,13 +60,13 @@ class CheckResourceStage(CustomRecognition):
         stage_roi: list[int],
         lock_template: str,
         lock_threshold: float,
-    ) -> bool:
-        """在关卡识别区域内检测锁定图标"""
+    ) -> tuple[int, int, int, int] | None:
+        """在关卡识别区域内检测锁定图标，命中时返回图标位置，未命中返回 None。"""
         if not lock_template:
-            return False
+            return None
         roi_tuple = self._stage_roi_or_none(stage_roi)
         if roi_tuple is None:
-            return False
+            return None
         try:
             lock_detail = context.run_recognition_direct(
                 JRecognitionType.TemplateMatch,
@@ -78,10 +78,11 @@ class CheckResourceStage(CustomRecognition):
                 image,
             )
             if lock_detail and lock_detail.box:
-                return True
+                box = lock_detail.box
+                return (int(box[0]), int(box[1]), int(box[2]), int(box[3]))
         except Exception:
-            return False
-        return False
+            return None
+        return None
 
     def analyze(
         self, context: Context, argv: CustomRecognition.AnalyzeArg
@@ -113,10 +114,14 @@ class CheckResourceStage(CustomRecognition):
 
         image = argv.image
 
-        if stage_index > 1 and self._check_locked(context, image, stage_roi, lock_template, lock_threshold):
+        lock_box = None
+        if stage_index > 1:
+            lock_box = self._check_locked(context, image, stage_roi, lock_template, lock_threshold)
+        if lock_box is not None:
             logger.warning("[资源刷取] {} 关卡被锁定", stage_name)
             context.override_next(argv.node_name, ["FarmResources.StageLocked"])
-            return CustomRecognition.AnalyzeResult(box=(0, 0, 1, 1), detail={"status": "locked"})
+            # 返回锁定图标位置而非 (0,0)，避免 pipeline 的 Click 动作误点屏幕左上角
+            return CustomRecognition.AnalyzeResult(box=lock_box, detail={"status": "locked"})
 
         stage_name_no_dash = stage_name.replace("-", "")
         ocr_detail = context.run_recognition_direct(

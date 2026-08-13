@@ -491,6 +491,7 @@
                 {
                     "name": "基础训练1",
                     "label": "基础训练1",
+                    "description": "第 1 关默认解锁，不做锁定检查",
                     "pipeline_override": {
                         "FarmResources.ClickSkillStage": {
                             "roi": [
@@ -564,6 +565,7 @@
                 {
                     "name": "专业训练1",
                     "label": "专业训练1",
+                    "description": "第 1 关默认解锁，不做锁定检查",
                     "pipeline_override": {
                         "FarmResources.ClickSkillStage": {
                             "roi": [

@@ -222,16 +222,3 @@ class ReduceBattleCount(CustomAction):
         except Exception:
             logger.exception("[ReduceBattleCount] 执行异常")
             return CustomAction.RunResult(success=False)
-
-
-@AgentServer.custom_action("ResetBattleCountTarget")
-class ResetBattleCountTarget(CustomAction):
-    """
-    重置目标次数为 _DEFAULT_TARGET（调用 ReduceBattleCount 前需要调用）
-    """
-
-    def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
-        global _target
-        _target = _DEFAULT_TARGET
-        logger.info("[ResetBattleCountTarget] 目标次数重置为: {}", _DEFAULT_TARGET)
-        return CustomAction.RunResult(success=True)
