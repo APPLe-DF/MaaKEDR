@@ -382,7 +382,8 @@
             "[JumpBack]BattlePass.CheckTaskComplete",
             "[JumpBack]BattlePass.CheckRewardList",
             "BattlePass.ExitToMailbox",
-            "[JumpBack]Common.CheckItemObtained"
+            "[JumpBack]Common.CheckItemObtained",
+            "ClaimRewards.MainHub"
         ]
     },
     "BattlePass.ExitToMailbox": {
