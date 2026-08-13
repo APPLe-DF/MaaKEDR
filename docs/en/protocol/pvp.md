@@ -16,6 +16,10 @@ Home → entry → battle UI → select opponent (custom: OCR 3 levels, pick low
 
 `SelectOpponent` uses `SelectPVPOpponent` custom recognition to OCR 3 opponent slots and click the one with the lowest level. `BeginCombat` should retry if one click does nothing. Challenge limit ends the task. Automation does not guarantee wins.
 
+## Precondition
+
+The task entry is `PVP.CheckHomePage`: **the game must already be on the main screen** (`main_option`, 5 s timeout with no fallback — the task fails otherwise). Return to the main screen manually or run the "Launch Game" task first.
+
 ## Acceptance checklist
 
 After changing this task, verify in order:

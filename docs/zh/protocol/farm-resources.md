@@ -58,18 +58,28 @@ farm_category（刷取板块）
 
 ## 战斗模式
 
+> **终止语义**：两种模式都以「体力不足」为最终终止条件。`BattleStage` 战斗循环结束后回到关卡界面，若体力仍足以继续，会再次进入下一场战斗；直到 `CheckStamina` 命中「体力不足」弹窗（或快速战按钮消失走退出路径）才收尾。
+
 ### 单次战斗
 
 `QuickBattle` → `SetBattleCount`（按选项 target_count）→ `PrepareBattle` → 体力检测 → 开战 → `BattleStage` 循环。
+
+战斗次数选项控制的是**每次开战批次**的场次数；任务整体会刷到体力不足（`no_stamina` 弹窗）为止，而非严格刷满 N 场即停。
 
 ### 清空体力
 
 `pipeline_override` 将：
 
 - `QuickBattle.next` → `SetBattleCountMax`
-- `CheckStamina.next` → `ReduceCount`（不够则减次数再试）
+- `CheckStamina.next` → `CheckCountOCR` / `ReduceCount`（体力不足时减次数再试）
 - `BattleStage` 增加回主页 / 再准备等兜底
 - 退出走 `ExitStageConfirm` → `ReturnMainFromFarm`
+
+与单次战斗的区别：体力不足时**逐步减次**（每次减 1，直到次数为 1 后经 `ReductionDone` 退出），尽量榨干剩余体力；单次战斗则在体力不足时直接退出，剩余不足一场的体力会被浪费。
+
+## 任务前置条件
+
+任务以 `FarmResources.CheckHomePage` 为入口：**开始前需处于游戏主界面**（`main_option` 识别 5 秒超时且无兜底，不在主界面则任务失败）。不在主界面时请先手动返回主界面或先运行「启动游戏」任务。
 
 ## 关键节点
 

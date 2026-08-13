@@ -13,6 +13,10 @@ icon: ri:sword-line
 | entry  | 以该文件中定义为准（通常自检主页后进对战） |
 | 流程   | `resource/base/pipeline/pvp.json`          |
 
+## 任务前置条件
+
+任务以 `PVP.CheckHomePage` 为入口：**开始前需处于游戏主界面**（`main_option` 识别 5 秒超时且无兜底，不在主界面则任务失败）。不在主界面时请先手动返回主界面或先运行「启动游戏」任务。
+
 ## 选项
 
 战斗次数由任务选项控制（如 1–5 次），通过 Custom（如 `InitPVPBattleCount` / `CheckPVPBattleCount`）维护计数。

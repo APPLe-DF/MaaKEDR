@@ -22,10 +22,16 @@ icon: ri:treasure-map-line
 
 ## Modes
 
-- **Single battle**: `SetBattleCount` from option (1–6 / max)
-- **Drain stamina**: `SetBattleCountMax`, `ReduceCount` on low stamina, exit via confirm → main
+> **Termination semantics**: both modes end when stamina runs out. After the `BattleStage` loop returns to the stage screen, the next battle starts if stamina remains; only the "no stamina" popup (or the quick-battle button disappearing) ends the task.
+
+- **Single battle**: `SetBattleCount` from option (1–6 / max). The count is the battles per batch, not a hard task limit — the task farms until stamina is insufficient.
+- **Drain stamina**: `SetBattleCountMax`, `ReduceCount` on low stamina (count −1 per cycle until 1, then exit via `ReductionDone`), exit via confirm → main. Unlike single-battle mode, it squeezes out the remaining stamina instead of wasting it.
 
 Skill training: basic / advanced stages via OCR + lock checks. Custom actions: battle count helpers in `agent/custom/`.
+
+## Precondition
+
+The task entry is `FarmResources.CheckHomePage`: **the game must already be on the main screen** (`main_option`, 5 s timeout with no fallback — the task fails otherwise). Return to the main screen manually or run the "Launch Game" task first.
 
 ## Acceptance checklist
 
