@@ -53,7 +53,7 @@ Every sub-module entry in `MainHub.next` is a `[JumpBack]` node: once hit and ex
 
 ### Daily / weekly / military
 
-- `ClaimRewards.Start`: weekly entry badge
+- `ClaimRewards.Start`: weekly entry badge (**multi-template**: `reward_badge.png` + variants `reward_badge_1/2.png`, any match hits — covers different styles/states of the entry icon)
 - `ConfirmInterface`: reward interface; `next` includes `MedalDisplay` and `ExitRewardInterface`
 - `CheckDaily` / `CheckWeekly` / `CheckMilitary`: section badges
 - `ClaimButton`: claim button; afterwards handle `MedalDisplay` (medal popup) first, then `Common.CheckItemObtained` (item popup)
@@ -61,13 +61,13 @@ Every sub-module entry in `MainHub.next` is a `[JumpBack]` node: once hit and ex
 
 ### Battle pass
 
-- `BattlePass.ClickEntry` / `RetryClickEntry`: entry, may click fixed coordinates (see pipeline)
+- `BattlePass.Start` / `ClickEntry` / `RetryClickEntry`: battle-pass badge entry (**multi-template**: `battlepass_badge.png` + variants `battlepass_badge_1/2.png`, any match hits); entry may click fixed coordinates (see pipeline)
 - `CheckTaskComplete`: task-complete tab; may switch by fixed coordinates
 - `CheckRewardList` / `ClaimRewardButton`: claim rewards from the list
 
 ### Dispatch
 
-- `DispatchClaim.Start` → `ClaimButton` → `RedeployConfirm` (optional) → `Exit`
+- `DispatchClaim.Start` / `RetryClick`: dispatch entry (**multi-template**: `dispatch_entry.png` + variants `dispatch_entry_1/2.png`, any match hits) → `ClaimButton` → `RedeployConfirm` (optional) → `Exit`
 
 ### Mailbox
 
@@ -114,4 +114,5 @@ After changing this task, verify in order:
 3. Restart halfway through: remaining rewards are still claimed (JumpBack stack rebuilt correctly)
 4. Task ends normally when everything is claimed (hits `MainHubIdle`, not `on_error`)
 5. Item popup / medal popup during claiming are handled
-6. Full regression: runs together with other tasks (startup, farm, PVP) without conflict
+6. Entry icons with multiple styles/states (multi-template): every variant is recognized and entered correctly
+7. Full regression: runs together with other tasks (startup, farm, PVP) without conflict

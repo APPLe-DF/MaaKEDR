@@ -56,7 +56,7 @@ ClaimRewards
 
 ### 日常成就
 
-- `ClaimRewards.Start`：周常入口徽章
+- `ClaimRewards.Start`：周常入口徽章（**多模板**：`reward_badge.png` + 变体 `reward_badge_1/2.png`，任一命中即可，覆盖入口图标的不同样式/状态）
 - `ConfirmInterface`：奖励界面；`next` 中含 `MedalDisplay`（获得勋章弹窗识别）与 `ExitRewardInterface` 退出
 - `CheckDaily` / `CheckWeekly` / `CheckMilitary`：分栏徽章
 - `ClaimButton`：领取按钮；领完后优先处理 `MedalDisplay` 勋章弹窗，再处理 `Common.CheckItemObtained` 物品弹窗
@@ -64,13 +64,13 @@ ClaimRewards
 
 ### 战令
 
-- `BattlePass.ClickEntry` / `RetryClickEntry`：入口可改为固定坐标点击（见 pipeline）
+- `BattlePass.Start` / `ClickEntry` / `RetryClickEntry`：战令徽章入口（**多模板**：`battlepass_badge.png` + 变体 `battlepass_badge_1/2.png`，任一命中即可）；入口可改为固定坐标点击（见 pipeline）
 - `CheckTaskComplete`：任务完成页签；识别后可固定坐标切入
 - `CheckRewardList` / `ClaimRewardButton`：奖励列表领取
 
 ### 派遣
 
-- `DispatchClaim.Start` → `ClaimButton` → `RedeployConfirm`（可选）→ `Exit`
+- `DispatchClaim.Start` / `RetryClick`：派遣任务入口（**多模板**：`dispatch_entry.png` + 变体 `dispatch_entry_1/2.png`，任一命中即可）→ `ClaimButton` → `RedeployConfirm`（可选）→ `Exit`
 
 ### 邮箱
 
@@ -117,4 +117,5 @@ MainHub → [JumpBack]ClickShopIcon（检测商店红点（可领取状态）后
 3. 领到一半时重启任务，确认剩余奖励能继续领完（JumpBack 栈正确重建）
 4. 全部领完后任务正常收尾退出（命中 `MainHubIdle`，不依赖 `on_error`）
 5. 领奖过程中出现物品弹窗 / 勋章弹窗时能正常处理
-6. 全量回归：与其它任务（启动、刷取、PVP）组合跑一遍无冲突
+6. 入口图标存在多种样式/状态时（多模板），各变体均能正常识别进入
+7. 全量回归：与其它任务（启动、刷取、PVP）组合跑一遍无冲突

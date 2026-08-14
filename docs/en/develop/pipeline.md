@@ -31,13 +31,13 @@ Each pipeline node defines a recognition → action → transition step:
 
 ## Recognition Types
 
-| Type          | Use Case      | Description                                                       |
-| ------------- | ------------- | ----------------------------------------------------------------- |
-| TemplateMatch | Static UI     | OpenCV template matching, images in `image/`, threshold 0.7       |
-| OCR           | Dynamic text  | PaddleOCR v5, `expected` supports regex, `roi` for text region    |
-| DirectHit     | Routing       | Always matches, used for `next` branching                         |
-| Custom        | Complex logic | Python custom recognition via `@AgentServer.custom_recognition()` |
-| ColorMatch    | Color filter  | Used with OCR `color_filter` field for background removal         |
+| Type          | Use Case      | Description                                                                                                                                                      |
+| ------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TemplateMatch | Static UI     | OpenCV template matching, images in `image/`, threshold 0.7; `template` accepts an array (any match hits — useful when an entry icon has multiple styles/states) |
+| OCR           | Dynamic text  | PaddleOCR v5, `expected` supports regex, `roi` for text region                                                                                                   |
+| DirectHit     | Routing       | Always matches, used for `next` branching                                                                                                                        |
+| Custom        | Complex logic | Python custom recognition via `@AgentServer.custom_recognition()`                                                                                                |
+| ColorMatch    | Color filter  | Used with OCR `color_filter` field for background removal                                                                                                        |
 
 ## Action Types
 

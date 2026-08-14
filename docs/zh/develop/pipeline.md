@@ -33,13 +33,13 @@ Pipeline 节点用 JSON 定义，每个节点描述一个识别 → 动作 → �
 
 ## 识别类型
 
-| 类型          | 适用场景     | 说明                                                             |
-| ------------- | ------------ | ---------------------------------------------------------------- |
-| TemplateMatch | 静态 UI 元素 | OpenCV 模板匹配，图片放 `image/` 目录，threshold 默认 0.7        |
-| OCR           | 动态文本     | PaddleOCR v5，`expected` 支持正则，`roi` 指定文字区域            |
-| DirectHit     | 路由分发     | 始终匹配成功，用于 `next` 分支控制                               |
-| Custom        | 复杂逻辑     | Python 自定义识别，通过 `@AgentServer.custom_recognition()` 注册 |
-| ColorMatch    | 颜色过滤     | 配合 OCR 的 `color_filter` 字段使用，过滤背景干扰                |
+| 类型          | 适用场景     | 说明                                                                                                                                    |
+| ------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| TemplateMatch | 静态 UI 元素 | OpenCV 模板匹配，图片放 `image/` 目录，threshold 默认 0.7；`template` 支持数组（多模板任一命中即可，适合入口图存在多种样式/状态时兜底） |
+| OCR           | 动态文本     | PaddleOCR v5，`expected` 支持正则，`roi` 指定文字区域                                                                                   |
+| DirectHit     | 路由分发     | 始终匹配成功，用于 `next` 分支控制                                                                                                      |
+| Custom        | 复杂逻辑     | Python 自定义识别，通过 `@AgentServer.custom_recognition()` 注册                                                                        |
+| ColorMatch    | 颜色过滤     | 配合 OCR 的 `color_filter` 字段使用，过滤背景干扰                                                                                       |
 
 ## 动作类型
 
