@@ -96,7 +96,11 @@
             48,
             43
         ],
-        "template": "claim_rewards/daily/reward_badge.png",
+        "template": [
+            "claim_rewards/daily/reward_badge.png",
+            "claim_rewards/daily/reward_badge_1.png",
+            "claim_rewards/daily/reward_badge_2.png"
+        ],
         "threshold": 0.75,
         "action": {
             "type": "Click",
@@ -126,7 +130,11 @@
             48,
             43
         ],
-        "template": "claim_rewards/daily/reward_badge.png",
+        "template": [
+            "claim_rewards/daily/reward_badge.png",
+            "claim_rewards/daily/reward_badge_1.png",
+            "claim_rewards/daily/reward_badge_2.png"
+        ],
         "threshold": 0.75,
         "action": {
             "type": "Click",
@@ -300,7 +308,11 @@
             33,
             36
         ],
-        "template": "claim_rewards/battlepass/battlepass_badge.png",
+        "template": [
+            "claim_rewards/battlepass/battlepass_badge.png",
+            "claim_rewards/battlepass/battlepass_badge_1.png",
+            "claim_rewards/battlepass/battlepass_badge_2.png"
+        ],
         "threshold": 0.75,
         "action": {
             "type": "DoNothing"
@@ -318,7 +330,11 @@
             33,
             36
         ],
-        "template": "claim_rewards/battlepass/battlepass_badge.png",
+        "template": [
+            "claim_rewards/battlepass/battlepass_badge.png",
+            "claim_rewards/battlepass/battlepass_badge_1.png",
+            "claim_rewards/battlepass/battlepass_badge_2.png"
+        ],
         "threshold": 0.75,
         "action": {
             "type": "Click",
@@ -347,7 +363,11 @@
             33,
             36
         ],
-        "template": "claim_rewards/battlepass/battlepass_badge.png",
+        "template": [
+            "claim_rewards/battlepass/battlepass_badge.png",
+            "claim_rewards/battlepass/battlepass_badge_1.png",
+            "claim_rewards/battlepass/battlepass_badge_2.png"
+        ],
         "threshold": 0.75,
         "action": {
             "type": "Click",
@@ -678,7 +698,11 @@
             41,
             51
         ],
-        "template": "claim_rewards/dispatch/dispatch_entry.png",
+        "template": [
+            "claim_rewards/dispatch/dispatch_entry.png",
+            "claim_rewards/dispatch/dispatch_entry_1.png",
+            "claim_rewards/dispatch/dispatch_entry_2.png"
+        ],
         "threshold": 0.75,
         "action": {
             "type": "Click"
@@ -699,7 +723,11 @@
             41,
             51
         ],
-        "template": "claim_rewards/dispatch/dispatch_entry.png",
+        "template": [
+            "claim_rewards/dispatch/dispatch_entry.png",
+            "claim_rewards/dispatch/dispatch_entry_1.png",
+            "claim_rewards/dispatch/dispatch_entry_2.png"
+        ],
         "threshold": 0.8,
         "action": {
             "type": "Click"
