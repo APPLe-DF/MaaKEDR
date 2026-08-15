@@ -174,7 +174,8 @@
             "ClaimRewards.CheckMilitary",
             "[JumpBack]ClaimRewards.MedalDisplay",
             "[JumpBack]Common.CheckItemObtained",
-            "[JumpBack]ClaimRewards.ExitRewardInterface"
+            "ClaimRewards.ExitRewardInterface",
+            "ClaimRewards.MainHub"
         ]
     },
     "ClaimRewards.CheckDaily": {
