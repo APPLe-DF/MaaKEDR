@@ -48,7 +48,8 @@
         "spdx": "AGPL-3.0-or-later"
     },
     "maafw": {
-        "channel": "stable"
+        "channel": "stable",
+        "version": ""
     },
     "python": {
         "devCommand": [
@@ -61,7 +62,7 @@
         "requiresPython": ">=3.13,<3.14"
     },
     "network": {
-        "mode": "official"
+        "mode": "auto"
     },
     "project": {
         "displayName": "MaaKEDR",
@@ -93,11 +94,13 @@
     "runtime": {
         "mfa": {
             "channel": "beta",
-            "enabled": true
+            "enabled": true,
+            "version": ""
         },
         "mxu": {
             "channel": "stable",
-            "enabled": true
+            "enabled": true,
+            "version": ""
         }
     },
     "schemaVersion": 2
