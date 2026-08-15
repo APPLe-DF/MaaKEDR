@@ -15,6 +15,7 @@
         "pvp_battle_count": {
             "type": "select",
             "label": "战斗次数",
+            "description": "每天 5 次 PVP 机会；高级账号含首次失败保护（首次失败不消耗次数），最多可打 6 场，打满请选「6次」",
             "default_case": "1次",
             "cases": [
                 {
@@ -68,6 +69,18 @@
                         "PVP.InitBattleCount": {
                             "custom_action_param": {
                                 "target_count": 5
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "6次",
+                    "label": "6次（用于高账保护）",
+                    "description": "高级账号首次失败保护（首次失败不消耗挑战次数）使用",
+                    "pipeline_override": {
+                        "PVP.InitBattleCount": {
+                            "custom_action_param": {
+                                "target_count": 6
                             }
                         }
                     }
