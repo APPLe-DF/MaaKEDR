@@ -89,6 +89,7 @@
             "type": "DoNothing"
         },
         "next": [
+            "[JumpBack]DailyLoginReward",
             "ClickHomePage"
         ]
     },
@@ -107,6 +108,25 @@
             }
         },
         "repeat": 5,
-        "repeat_delay": 500
+        "repeat_delay": 500,
+        "next": [
+            "[JumpBack]DailyLoginReward",
+            "CheckHomePageStable"
+        ]
+    },
+    "CheckHomePageStable": {
+        "desc": "确认主界面稳定（无弹窗覆盖）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1199,
+            6,
+            77,
+            83
+        ],
+        "template": "main_option.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        }
     }
 }
