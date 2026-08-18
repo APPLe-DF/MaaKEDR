@@ -798,6 +798,7 @@
     },
     "PremiumShop.ClickShopIcon": {
         "desc": "检测商店红点（可领取状态）后点击进入",
+        "max_hit": 2,
         "recognition": "TemplateMatch",
         "roi": [
             195,
@@ -846,6 +847,7 @@
         ],
         "template": "claim_rewards/premium_shop/shop_interface.png",
         "threshold": 0.75,
+        "pre_delay": 4000,
         "action": {
             "type": "DoNothing"
         },
