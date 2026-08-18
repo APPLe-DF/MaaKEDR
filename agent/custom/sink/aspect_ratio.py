@@ -1,8 +1,9 @@
-"""任务开始前的分辨率前置检查。
+"""任务流水线开始前的分辨率前置检查。
 
 MaaKEDR 所有 ROI / 坐标 / 模板图以 1280x720（16:9）为基准，若设备分辨率
-比例不是 16:9，模板匹配和 OCR 会大面积失效。此 Sink 在每次任务开始时检查
-控制器实际分辨率，不符合则停止任务并给出提示，避免"跑半天全是识别失败"。
+比例不是 16:9，模板匹配和 OCR 会大面积失效。此 Sink 只在每次任务流水线最
+开始（排队任务的第一个任务启动前）检查一次控制器实际分辨率，不符合则停止
+任务并给出提示，避免"跑半天全是识别失败"。
 """
 
 from __future__ import annotations
@@ -28,7 +29,11 @@ def is_aspect_ratio_16x9(width: int, height: int) -> bool:
 
 @AgentServer.tasker_sink()
 class AspectRatioChecker(TaskerEventSink):
-    """任务开始时检查设备分辨率是否为 16:9，不符合则停止任务。"""
+    """任务流水线开始时检查一次设备分辨率是否为 16:9，不符合则停止任务。"""
+
+    def __init__(self) -> None:
+        #: 本次流水线是否已检查过分辨率
+        self._checked = False
 
     def on_tasker_task(
         self,
@@ -36,13 +41,19 @@ class AspectRatioChecker(TaskerEventSink):
         noti_type: NotificationType,
         detail: TaskerEventSink.TaskerTaskDetail,
     ) -> None:
-        # 只在任务开始时检查
+        # 只在任务开始时处理
         if noti_type != NotificationType.Starting:
             return
 
-        # 忽略停止任务事件
+        # MaaTaskerPostStop 标记上一次流水线结束，重置标记使下一次运行重新检查
         if detail.entry == "MaaTaskerPostStop":
+            self._checked = False
             return
+
+        # 分辨率检查只在流水线最开始进行一次，后续任务直接跳过
+        if self._checked:
+            return
+        self._checked = True
 
         controller = tasker.controller
 

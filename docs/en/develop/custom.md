@@ -107,7 +107,7 @@ class MySink(TaskerEventSink):
         logger.info("Task started: {}", detail.entry)
 ```
 
-Real example: `agent/custom/sink/aspect_ratio.py` — checks the controller resolution is 16:9 when a task starts, calls `tasker.post_stop()` otherwise (see resolution baseline in `docs/*/protocol/overview.md`).
+Real example: `agent/custom/sink/aspect_ratio.py` — checks the controller resolution is 16:9 once at the start of a task pipeline (only before the first task of each run; the flag is reset on `MaaTaskerPostStop`), calls `tasker.post_stop()` otherwise (see resolution baseline in `docs/*/protocol/overview.md`).
 
 ## Recognition Result Handling
 

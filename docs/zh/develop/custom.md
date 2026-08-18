@@ -110,7 +110,7 @@ class MySink(TaskerEventSink):
         logger.info("任务开始: {}", detail.entry)
 ```
 
-实际实例：`agent/custom/sink/aspect_ratio.py` — 任务开始时检查控制器分辨率是否为 16:9，不符合则 `tasker.post_stop()` 停止任务并提示（见 `docs/*/develop/custom.md` 的注册方式与 `docs/*/protocol/overview.md` 的分辨率基线）。
+实际实例：`agent/custom/sink/aspect_ratio.py` — 任务流水线开始时检查一次控制器分辨率是否为 16:9（每次运行只在第一个任务前检查，`MaaTaskerPostStop` 后重置），不符合则 `tasker.post_stop()` 停止任务并提示（见 `docs/*/develop/custom.md` 的注册方式与 `docs/*/protocol/overview.md` 的分辨率基线）。
 
 ## 识别结果处理
 
