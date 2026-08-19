@@ -555,7 +555,8 @@
         "threshold": 0.75,
         "action": {
             "type": "Click"
-        }
+        },
+        "post_delay": 3000
     },
     "Common.CheckItemObtained": {
         "desc": "模板匹配获得物品提示并点击（通用）",
