@@ -142,7 +142,13 @@ class ReadPVPResult(CustomRecognition):
         score_change_fmt = self._format_change(score_change)
         rank_change_fmt = self._format_change(rank_change)
 
-        result_msg = f"{result_text} 积分:{current_score}({score_change_fmt}) 排名:{current_rank}({rank_change_fmt})"
+        # 高级账号失败保护：分数与排名均不变，变化区域 OCR 为空
+        protected = not score_change_fmt and not rank_change_fmt
+        if protected:
+            logger.info("[PVP] 未识别到分数与排名变化，疑似高级账号失败保护")
+            result_msg = f"高账失败保护触发：本场不扣分，积分:{current_score or '-'} 排名:{current_rank or '-'}"
+        else:
+            result_msg = f"{result_text} 积分:{current_score}({score_change_fmt}) 排名:{current_rank}({rank_change_fmt})"
         logger.info("[PVP] {}", result_msg)
 
         context.override_pipeline(
@@ -151,7 +157,7 @@ class ReadPVPResult(CustomRecognition):
                     "focus": {
                         "Node.Action.Starting": {
                             "content": result_msg,
-                            "display": ["log", "toast"],
+                            "display": ["log"],
                         },
                     },
                 },
@@ -166,6 +172,7 @@ class ReadPVPResult(CustomRecognition):
                 "score_change": score_change_fmt or "-",
                 "current_rank": current_rank or "-",
                 "rank_change": rank_change_fmt or "-",
+                "protected": protected,
             },
         )
 

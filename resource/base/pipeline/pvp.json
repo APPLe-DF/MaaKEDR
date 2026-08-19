@@ -343,8 +343,7 @@
             "Node.Recognition.Succeeded": {
                 "content": "PVP 战斗结束，详情见日志",
                 "display": [
-                    "log",
-                    "toast"
+                    "log"
                 ]
             }
         }
