@@ -35,6 +35,7 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tools/schema
+          node tools/update-lock-baselines.mjs
+          git add tools/schema maa-project.lock.json
           git commit -m "chore: sync MaaFW schema [skip changelog]"
           git push
