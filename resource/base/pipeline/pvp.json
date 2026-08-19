@@ -56,8 +56,11 @@
         "repeat_delay": 500,
         "timeout": 5000,
         "next": [
-            "[JumpBack]ReturnMain",
-            "PVP.Entry"
+            "PVP.Entry",
+            "[JumpBack]PVP.ReturnMain"
+        ],
+        "on_error": [
+            "PVP.ReturnToHome"
         ]
     },
     "PVP.Entry": {
@@ -406,5 +409,24 @@
         "action": {
             "type": "Click"
         }
+    },
+    "PVP.ReturnToHome": {
+        "desc": "任务开始前不在主页时点击返回按钮回到主页",
+        "recognition": "TemplateMatch",
+        "roi": [
+            199,
+            26,
+            85,
+            52
+        ],
+        "template": "return_main.png",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "PVP.CheckHomePage"
+        ]
     }
 }

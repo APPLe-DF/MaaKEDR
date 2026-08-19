@@ -1,0 +1,1309 @@
+{
+    "EventStage.CheckHomePage": {
+        "desc": "确认当前是否在游戏主页",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1199,
+            6,
+            77,
+            83
+        ],
+        "template": "main_option.png",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    588,
+                    369,
+                    9,
+                    11
+                ]
+            }
+        },
+        "repeat": 2,
+        "repeat_delay": 500,
+        "timeout": 5000,
+        "next": [
+            "EventStage.Start",
+            "[JumpBack]EventStage.ReturnMain"
+        ],
+        "on_error": [
+            "EventStage.ReturnToHome"
+        ]
+    },
+    "EventStage.Start": {
+        "desc": "从主页 TemplateMatch 识别左侧活动入口上方的「耀斑」艺术字并点击，进入活动主页 event7 [错误兜底: ReturnMain]",
+        "recognition": "TemplateMatch",
+        "roi": [
+            0,
+            130,
+            520,
+            250
+        ],
+        "template": [
+            "event_stage/flare_title.png",
+            "event_stage/flare_title_plain.png"
+        ],
+        "threshold": 0.7,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1500,
+        "timeout": 20000,
+        "next": [
+            "EventStage.EventHub"
+        ],
+        "on_error": [
+            "EventStage.ReturnMain"
+        ]
+    },
+    "EventStage.EventHub": {
+        "desc": "活动主页 event7：包含踏上征途（战斗）和战果上报（商店）两个入口",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.ClickJourney",
+            "EventStage.ClickBattleReport"
+        ]
+    },
+    "EventStage.ClickJourney": {
+        "desc": "点击踏上征途进入关卡选择（event7 右下角，精确裁剪文字区域后 OCR）",
+        "recognition": "OCR",
+        "roi": [
+            920,
+            570,
+            320,
+            100
+        ],
+        "expected": "踏上征途",
+        "only_rec": true,
+        "threshold": 0.5,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 2000,
+        "next": [
+            "EventStage.WaitStageMapStable"
+        ]
+    },
+    "EventStage.WaitStageMapStable": {
+        "desc": "等待 EX 关卡地图画面稳定",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.ClickEP2"
+        ]
+    },
+    "EventStage.FindTargetStage": {
+        "desc": "识别当前视口中的目标 EX 关卡；未找到时进入单次慢速滑动",
+        "recognition": "Custom",
+        "custom_recognition": "CheckEventStage",
+        "custom_recognition_param": "{\"stage_name\": \"EX2-1\", \"stage_roi\": [0, 0, 1280, 640]}",
+        "pre_delay": 200,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.CheckStageEntryResult"
+        ],
+        "on_error": [
+            "EventStage.DragFindStage"
+        ]
+    },
+    "EventStage.DragFindStage": {
+        "desc": "目标未出现时向左拖动地图（露出右侧关卡）并重试（最多 8 次）",
+        "max_hit": 8,
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    950,
+                    400
+                ],
+                "end": [
+                    350,
+                    400
+                ],
+                "duration": 1200
+            }
+        },
+        "post_delay": 1000,
+        "next": [
+            "EventStage.FindTargetStage"
+        ]
+    },
+    "EventStage.ClickEX2_1": {
+        "desc": "点击 EX2-1 关卡（EP.2 区域）",
+        "recognition": "OCR",
+        "roi": [
+            780,
+            360,
+            500,
+            300
+        ],
+        "expected": "EX2-1",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.CheckStageEntryResult"
+        ]
+    },
+    "EventStage.ClickEX2_2": {
+        "desc": "点击 EX2-2 关卡（EP.3 区域）—— TODO: ROI 需校准",
+        "recognition": "OCR",
+        "roi": [
+            0,
+            0,
+            600,
+            400
+        ],
+        "expected": "EX2-2",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.CheckStageEntryResult"
+        ]
+    },
+    "EventStage.ClickEX3_1": {
+        "desc": "点击 EX3-1 关卡（EP.4 区域左侧）—— TODO: ROI 需校准",
+        "recognition": "OCR",
+        "roi": [
+            0,
+            0,
+            600,
+            400
+        ],
+        "expected": "EX3-1",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.CheckStageEntryResult"
+        ]
+    },
+    "EventStage.ClickEX4_1": {
+        "desc": "点击 EX4-1 关卡（EP.4 区域右侧）—— TODO: ROI 需校准",
+        "recognition": "OCR",
+        "roi": [
+            600,
+            0,
+            680,
+            400
+        ],
+        "expected": "EX4-1",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.CheckStageEntryResult"
+        ]
+    },
+    "EventStage.CheckStageEntryResult": {
+        "desc": "检查点击 EX 关后的结果：次数耗尽时只显示短暂提示，不会进入 event5；命中后返回主页，未命中则继续进入 event5",
+        "recognition": "OCR",
+        "roi": [
+            280,
+            90,
+            720,
+            100
+        ],
+        "expected": "关卡通关次数已耗尽",
+        "threshold": 0.8,
+        "pre_delay": 100,
+        "action": {
+            "type": "DoNothing"
+        },
+        "timeout": 1200,
+        "next": [
+            "EventStage.ReturnMainFromStage"
+        ],
+        "on_error": [
+            "EventStage.StagePrepare"
+        ]
+    },
+    "EventStage.StagePrepare": {
+        "desc": "战斗准备界面 event5：点击 EX 关后正常进入",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckQuickBattleState"
+        ]
+    },
+    "EventStage.CheckQuickBattleState": {
+        "desc": "判断快速战斗开关状态：关闭态显示打开，开启态显示关闭；仅在关闭态点击开关",
+        "recognition": "OCR",
+        "roi": [
+            800,
+            500,
+            300,
+            80
+        ],
+        "expected": "打开",
+        "threshold": 0.8,
+        "pre_delay": 300,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.SetBattleCount"
+        ],
+        "on_error": [
+            "EventStage.CheckQuickBattleEnabled"
+        ]
+    },
+    "EventStage.CheckQuickBattleEnabled": {
+        "desc": "快速战斗已开启：识别关闭后不点击开关，直接设置次数",
+        "recognition": "OCR",
+        "roi": [
+            800,
+            500,
+            300,
+            80
+        ],
+        "expected": "关闭",
+        "threshold": 0.8,
+        "pre_delay": 300,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.SetBattleCount"
+        ]
+    },
+    "EventStage.SetBattleCount": {
+        "desc": "按任务选项设置快速战斗次数（默认最大）",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "SetBattleCount",
+                "custom_action_param": {
+                    "target_count": "max",
+                    "count_roi": [
+                        903,
+                        441,
+                        27,
+                        43
+                    ],
+                    "plus_button": [
+                        1086,
+                        470
+                    ],
+                    "minus_button": [
+                        739,
+                        470
+                    ],
+                    "max_template": "farm_resources/max_count.png"
+                }
+            }
+        },
+        "next": [
+            "EventStage.PrepareBattle"
+        ]
+    },
+    "EventStage.PrepareBattle": {
+        "desc": "点击准备战斗开始快速战斗（OCR「准备战斗」）",
+        "recognition": "OCR",
+        "expected": "准备(?:快速)?战斗",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 3000,
+        "next": [
+            "EventStage.ReturnToStageSelect"
+        ]
+    },
+    "EventStage.ReturnToStageSelect": {
+        "desc": "快速战斗完成后回到关卡选择界面 event1-4",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.ReturnMainFromStage"
+        ]
+    },
+    "EventStage.ReturnMainFromStage": {
+        "desc": "从关卡选择返回主页（点击 BACK）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            199,
+            26,
+            85,
+            52
+        ],
+        "template": "return_main.png",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "EventStage.CheckReturnedHome"
+        ],
+        "on_error": [
+            "EventStage.ReturnMain"
+        ]
+    },
+    "EventStage.ClickBattleReport": {
+        "desc": "从活动主页点击战果上报入口（event7 左下角，精确裁剪文字区域后 OCR）",
+        "recognition": "OCR",
+        "roi": [
+            78,
+            600,
+            105,
+            42
+        ],
+        "expected": "战果上报",
+        "only_rec": true,
+        "threshold": 0.5,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1500,
+        "next": [
+            "EventStage.SelectFixedGuarantee"
+        ]
+    },
+    "EventStage.SelectFixedGuarantee": {
+        "desc": "选择定额保障 tab（event8-9 顶部 OCR 定额保障）—— TODO: ROI 需校准",
+        "recognition": "OCR",
+        "roi": [
+            500,
+            100,
+            230,
+            70
+        ],
+        "expected": "定额保障",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1000,
+        "next": [
+            "EventStage.CheckAllSoldOut"
+        ]
+    },
+    "EventStage.CheckAllSoldOut": {
+        "desc": "优先检查商店是否全部商品已售罄",
+        "recognition": "Custom",
+        "custom_recognition": "CheckAllSoldOut",
+        "custom_recognition_param": "{\"roi\": [0, 180, 1280, 540]}",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.ShopAllSoldOut"
+        ],
+        "on_error": [
+            "EventStage.CheckSoldOut1"
+        ]
+    },
+    "EventStage.ReturnMainFromShop": {
+        "desc": "从商店返回主页",
+        "recognition": "TemplateMatch",
+        "roi": [
+            15,
+            30,
+            86,
+            43
+        ],
+        "template": "back_button.png",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 2000,
+        "next": [
+            "EventStage.CheckReturnedHome"
+        ],
+        "on_error": [
+            "EventStage.ReturnMain"
+        ]
+    },
+    "EventStage.CheckSoldOut1": {
+        "desc": "检查定额保障商品1是否已售罄；已售罄则跳过，未售罄进入购买",
+        "recognition": "OCR",
+        "roi": [
+            295,
+            235,
+            190,
+            105
+        ],
+        "expected": "已售罄",
+        "threshold": 0.8,
+        "pre_delay": 200,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut2"
+        ],
+        "on_error": [
+            "EventStage.BuyItem1"
+        ]
+    },
+    "EventStage.BuyItem1": {
+        "desc": "点击定额保障商品1",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    390,
+                    280
+                ]
+            }
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.ConfirmPurchase1"
+        ]
+    },
+    "EventStage.ConfirmPurchase1": {
+        "desc": "确认购买定额保障商品1",
+        "recognition": "OCR",
+        "roi": [
+            450,
+            400,
+            400,
+            200
+        ],
+        "expected": "确认",
+        "threshold": 0.8,
+        "pre_delay": 300,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1000,
+        "timeout": 2500,
+        "next": [
+            "EventStage.CheckSoldOut2"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase1"
+        ]
+    },
+    "EventStage.CheckSoldOut2": {
+        "desc": "检查定额保障商品2是否已售罄；已售罄则跳过，未售罄进入购买",
+        "recognition": "OCR",
+        "roi": [
+            455,
+            235,
+            190,
+            105
+        ],
+        "expected": "已售罄",
+        "threshold": 0.8,
+        "pre_delay": 200,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut3"
+        ],
+        "on_error": [
+            "EventStage.BuyItem2"
+        ]
+    },
+    "EventStage.BuyItem2": {
+        "desc": "点击定额保障商品2",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    550,
+                    280
+                ]
+            }
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.ConfirmPurchase2"
+        ]
+    },
+    "EventStage.ConfirmPurchase2": {
+        "desc": "确认购买定额保障商品2",
+        "recognition": "OCR",
+        "roi": [
+            450,
+            400,
+            400,
+            200
+        ],
+        "expected": "确认",
+        "threshold": 0.8,
+        "pre_delay": 300,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1000,
+        "timeout": 2500,
+        "next": [
+            "EventStage.CheckSoldOut3"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase2"
+        ]
+    },
+    "EventStage.CheckSoldOut3": {
+        "desc": "检查定额保障商品3是否已售罄；已售罄则跳过，未售罄进入购买",
+        "recognition": "OCR",
+        "roi": [
+            615,
+            235,
+            190,
+            105
+        ],
+        "expected": "已售罄",
+        "threshold": 0.8,
+        "pre_delay": 200,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut4"
+        ],
+        "on_error": [
+            "EventStage.BuyItem3"
+        ]
+    },
+    "EventStage.BuyItem3": {
+        "desc": "点击定额保障商品3",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    710,
+                    280
+                ]
+            }
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.ConfirmPurchase3"
+        ]
+    },
+    "EventStage.ConfirmPurchase3": {
+        "desc": "确认购买定额保障商品3",
+        "recognition": "OCR",
+        "roi": [
+            450,
+            400,
+            400,
+            200
+        ],
+        "expected": "确认",
+        "threshold": 0.8,
+        "pre_delay": 300,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1000,
+        "timeout": 2500,
+        "next": [
+            "EventStage.CheckSoldOut4"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase3"
+        ]
+    },
+    "EventStage.CheckSoldOut4": {
+        "desc": "检查定额保障商品4是否已售罄；已售罄则跳过，未售罄进入购买",
+        "recognition": "OCR",
+        "roi": [
+            775,
+            235,
+            190,
+            105
+        ],
+        "expected": "已售罄",
+        "threshold": 0.8,
+        "pre_delay": 200,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut5"
+        ],
+        "on_error": [
+            "EventStage.BuyItem4"
+        ]
+    },
+    "EventStage.BuyItem4": {
+        "desc": "点击定额保障商品4",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    870,
+                    280
+                ]
+            }
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.ConfirmPurchase4"
+        ]
+    },
+    "EventStage.ConfirmPurchase4": {
+        "desc": "确认购买定额保障商品4",
+        "recognition": "OCR",
+        "roi": [
+            450,
+            400,
+            400,
+            200
+        ],
+        "expected": "确认",
+        "threshold": 0.8,
+        "pre_delay": 300,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1000,
+        "timeout": 2500,
+        "next": [
+            "EventStage.CheckSoldOut5"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase4"
+        ]
+    },
+    "EventStage.CheckSoldOut5": {
+        "desc": "检查定额保障商品5是否已售罄；已售罄则跳过，未售罄进入购买",
+        "recognition": "OCR",
+        "roi": [
+            935,
+            235,
+            190,
+            105
+        ],
+        "expected": "已售罄",
+        "threshold": 0.8,
+        "pre_delay": 200,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut6"
+        ],
+        "on_error": [
+            "EventStage.BuyItem5"
+        ]
+    },
+    "EventStage.BuyItem5": {
+        "desc": "点击定额保障商品5",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    1030,
+                    280
+                ]
+            }
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.ConfirmPurchase5"
+        ]
+    },
+    "EventStage.ConfirmPurchase5": {
+        "desc": "确认购买定额保障商品5",
+        "recognition": "OCR",
+        "roi": [
+            450,
+            400,
+            400,
+            200
+        ],
+        "expected": "确认",
+        "threshold": 0.8,
+        "pre_delay": 300,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1000,
+        "timeout": 2500,
+        "next": [
+            "EventStage.CheckSoldOut6"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase5"
+        ]
+    },
+    "EventStage.CheckSoldOut6": {
+        "desc": "检查定额保障商品6是否已售罄；已售罄则跳过，未售罄进入购买",
+        "recognition": "OCR",
+        "roi": [
+            295,
+            440,
+            190,
+            105
+        ],
+        "expected": "已售罄",
+        "threshold": 0.8,
+        "pre_delay": 200,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut7"
+        ],
+        "on_error": [
+            "EventStage.BuyItem6"
+        ]
+    },
+    "EventStage.BuyItem6": {
+        "desc": "点击定额保障商品6",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    390,
+                    500
+                ]
+            }
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.ConfirmPurchase6"
+        ]
+    },
+    "EventStage.ConfirmPurchase6": {
+        "desc": "确认购买定额保障商品6",
+        "recognition": "OCR",
+        "roi": [
+            450,
+            400,
+            400,
+            200
+        ],
+        "expected": "确认",
+        "threshold": 0.8,
+        "pre_delay": 300,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1000,
+        "timeout": 2500,
+        "next": [
+            "EventStage.CheckSoldOut7"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase6"
+        ]
+    },
+    "EventStage.CheckSoldOut7": {
+        "desc": "检查定额保障商品7是否已售罄；已售罄则跳过，未售罄进入购买",
+        "recognition": "OCR",
+        "roi": [
+            455,
+            440,
+            190,
+            105
+        ],
+        "expected": "已售罄",
+        "threshold": 0.8,
+        "pre_delay": 200,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut8"
+        ],
+        "on_error": [
+            "EventStage.BuyItem7"
+        ]
+    },
+    "EventStage.BuyItem7": {
+        "desc": "点击定额保障商品7",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    550,
+                    500
+                ]
+            }
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.ConfirmPurchase7"
+        ]
+    },
+    "EventStage.ConfirmPurchase7": {
+        "desc": "确认购买定额保障商品7",
+        "recognition": "OCR",
+        "roi": [
+            450,
+            400,
+            400,
+            200
+        ],
+        "expected": "确认",
+        "threshold": 0.8,
+        "pre_delay": 300,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1000,
+        "timeout": 2500,
+        "next": [
+            "EventStage.CheckSoldOut8"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase7"
+        ]
+    },
+    "EventStage.CheckSoldOut8": {
+        "desc": "检查定额保障商品8是否已售罄；已售罄则跳过，未售罄进入购买",
+        "recognition": "OCR",
+        "roi": [
+            615,
+            440,
+            190,
+            105
+        ],
+        "expected": "已售罄",
+        "threshold": 0.8,
+        "pre_delay": 200,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut9"
+        ],
+        "on_error": [
+            "EventStage.BuyItem8"
+        ]
+    },
+    "EventStage.BuyItem8": {
+        "desc": "点击定额保障商品8",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    710,
+                    500
+                ]
+            }
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.ConfirmPurchase8"
+        ]
+    },
+    "EventStage.ConfirmPurchase8": {
+        "desc": "确认购买定额保障商品8",
+        "recognition": "OCR",
+        "roi": [
+            450,
+            400,
+            400,
+            200
+        ],
+        "expected": "确认",
+        "threshold": 0.8,
+        "pre_delay": 300,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1000,
+        "timeout": 2500,
+        "next": [
+            "EventStage.CheckSoldOut9"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase8"
+        ]
+    },
+    "EventStage.CheckSoldOut9": {
+        "desc": "检查定额保障商品9是否已售罄；已售罄则跳过，未售罄进入购买",
+        "recognition": "OCR",
+        "roi": [
+            775,
+            440,
+            190,
+            105
+        ],
+        "expected": "已售罄",
+        "threshold": 0.8,
+        "pre_delay": 200,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut10"
+        ],
+        "on_error": [
+            "EventStage.BuyItem9"
+        ]
+    },
+    "EventStage.BuyItem9": {
+        "desc": "点击定额保障商品9",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    870,
+                    500
+                ]
+            }
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.ConfirmPurchase9"
+        ]
+    },
+    "EventStage.ConfirmPurchase9": {
+        "desc": "确认购买定额保障商品9",
+        "recognition": "OCR",
+        "roi": [
+            450,
+            400,
+            400,
+            200
+        ],
+        "expected": "确认",
+        "threshold": 0.8,
+        "pre_delay": 300,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1000,
+        "timeout": 2500,
+        "next": [
+            "EventStage.CheckSoldOut10"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase9"
+        ]
+    },
+    "EventStage.CheckSoldOut10": {
+        "desc": "检查定额保障商品10是否已售罄；已售罄则跳过，未售罄进入购买",
+        "recognition": "OCR",
+        "roi": [
+            935,
+            440,
+            190,
+            105
+        ],
+        "expected": "已售罄",
+        "threshold": 0.8,
+        "pre_delay": 200,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.ShopAllSoldOut"
+        ],
+        "on_error": [
+            "EventStage.BuyItem10"
+        ]
+    },
+    "EventStage.ShopAllSoldOut": {
+        "desc": "定额保障商品全部售罄，提示后正常返回主页",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.ReturnMainFromShop"
+        ],
+        "focus": {
+            "Node.Recognition.Succeeded": {
+                "content": "活动商店商品已全部售罄",
+                "display": [
+                    "log",
+                    "toast"
+                ]
+            }
+        }
+    },
+    "EventStage.BuyItem10": {
+        "desc": "点击定额保障商品10",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    1030,
+                    500
+                ]
+            }
+        },
+        "post_delay": 500,
+        "next": [
+            "EventStage.ConfirmPurchase10"
+        ]
+    },
+    "EventStage.ConfirmPurchase10": {
+        "desc": "确认购买定额保障商品10",
+        "recognition": "OCR",
+        "roi": [
+            450,
+            400,
+            400,
+            200
+        ],
+        "expected": "确认",
+        "threshold": 0.8,
+        "pre_delay": 300,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1000,
+        "timeout": 2500,
+        "next": [
+            "EventStage.ReturnMainFromShop"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase10"
+        ]
+    },
+    "EventStage.SkipConfirmPurchase1": {
+        "desc": "商品1未出现确认按钮，跳过并继续检查",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut2"
+        ]
+    },
+    "EventStage.SkipConfirmPurchase2": {
+        "desc": "商品2未出现确认按钮，跳过并继续检查",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut3"
+        ]
+    },
+    "EventStage.SkipConfirmPurchase3": {
+        "desc": "商品3未出现确认按钮，跳过并继续检查",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut4"
+        ]
+    },
+    "EventStage.SkipConfirmPurchase4": {
+        "desc": "商品4未出现确认按钮，跳过并继续检查",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut5"
+        ]
+    },
+    "EventStage.SkipConfirmPurchase5": {
+        "desc": "商品5未出现确认按钮，跳过并继续检查",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut6"
+        ]
+    },
+    "EventStage.SkipConfirmPurchase6": {
+        "desc": "商品6未出现确认按钮，跳过并继续检查",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut7"
+        ]
+    },
+    "EventStage.SkipConfirmPurchase7": {
+        "desc": "商品7未出现确认按钮，跳过并继续检查",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut8"
+        ]
+    },
+    "EventStage.SkipConfirmPurchase8": {
+        "desc": "商品8未出现确认按钮，跳过并继续检查",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut9"
+        ]
+    },
+    "EventStage.SkipConfirmPurchase9": {
+        "desc": "商品9未出现确认按钮，跳过并继续检查",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut10"
+        ]
+    },
+    "EventStage.SkipConfirmPurchase10": {
+        "desc": "商品10未出现确认按钮，跳过并继续检查",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.ReturnMainFromShop"
+        ]
+    },
+    "EventStage.ReturnMain": {
+        "desc": "点击返回按钮返回主页（活动模块专用，不进入资源刷取）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            199,
+            26,
+            85,
+            52
+        ],
+        "template": "return_main.png",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "EventStage.CheckReturnedHome"
+        ]
+    },
+    "EventStage.CheckReturnedHome": {
+        "desc": "确认已返回主页，确认后任务结束",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1199,
+            6,
+            77,
+            83
+        ],
+        "template": "main_option.png",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "DoNothing"
+        },
+        "on_error": [
+            "EventStage.ReturnMain"
+        ]
+    },
+    "EventStage.ReturnToHome": {
+        "desc": "任务开始前不在主页时点击返回按钮回到主页",
+        "recognition": "TemplateMatch",
+        "roi": [
+            199,
+            26,
+            85,
+            52
+        ],
+        "template": "return_main.png",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "EventStage.CheckHomePage"
+        ]
+    },
+    "EventStage.ClickEP1": {
+        "desc": "先单击 EP.1 标签切回最左章节（进入地图默认停在 EP.4 时单击 EP.4 无响应，需先切离再切回）",
+        "recognition": "OCR",
+        "roi": [
+            80,
+            590,
+            560,
+            130
+        ],
+        "expected": "EP\\.?1",
+        "threshold": 0.75,
+        "pre_delay": 300,
+        "action": {
+            "type": "Click"
+        },
+        "post_wait_freezes": 800,
+        "timeout": 30000,
+        "next": [
+            "EventStage.ClickEP2"
+        ]
+    },
+    "EventStage.ClickEP2": {
+        "desc": "进入地图后点击对应 EP 标签定位章节（EP.4 在最右，ROI 需覆盖全部标签）",
+        "recognition": "OCR",
+        "roi": [
+            80,
+            590,
+            560,
+            130
+        ],
+        "expected": "EP\\.?2",
+        "threshold": 0.75,
+        "pre_delay": 300,
+        "action": {
+            "type": "Click"
+        },
+        "post_wait_freezes": 1000,
+        "timeout": 30000,
+        "next": [
+            "EventStage.FindTargetStage",
+            "EventStage.DragFindStage"
+        ],
+        "on_error": [
+            "EventStage.WaitStageMapStable"
+        ]
+    }
+}
