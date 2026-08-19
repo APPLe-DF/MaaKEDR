@@ -22,6 +22,10 @@ jobs:
       - run: node tools/sync-schema.mjs
       - run: pnpm install --frozen-lockfile
       - run: pnpm check:schema
+      - name: Install MaaFW runtime system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpipewire-0.3-0t64 || sudo apt-get install -y libpipewire-0.3-0
       - run: pnpm exec maa-tools check
       - name: Commit schema updates
         run: |
