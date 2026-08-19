@@ -151,7 +151,7 @@
             "templateHash": "1948c8135358e77ebb874e0b99952b6f592f093b50efe9c4fa515786f6074172"
         },
         ".github/workflows/schema-sync.yml": {
-            "hash": "d87ccfe91ebddd1d2df8f16d59f5c4979e58033948ce039f73a147cabc286950",
+            "hash": "3d295f35101c145b32b7b6bf59733715a94e658e9f434b82ef675828ca544fb8",
             "templateHash": "49bb37756a12155cfe4fdbdc7fd0d9a619f1b4b6f7271d12e0cf0ca7d552a261"
         },
         ".node-version": {
