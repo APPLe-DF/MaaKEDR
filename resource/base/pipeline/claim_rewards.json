@@ -1,9 +1,50 @@
 {
     "ClaimRewards": {
         "next": [
+            "ClaimRewards.EnsureHome",
             "ClaimRewards.CheckMainInterface",
             "ClaimRewards.MainHub",
             "[JumpBack]ClaimRewards.ReturnMain"
+        ]
+    },
+    "ClaimRewards.EnsureHome": {
+        "desc": "确认在游戏主页，不在主页则点主页按钮回到主页后再开始",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1199,
+            6,
+            77,
+            83
+        ],
+        "template": "main_option.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "timeout": 60000,
+        "next": [
+            "ClaimRewards.CheckMainInterface",
+            "ClaimRewards.ClickHome"
+        ]
+    },
+    "ClaimRewards.ClickHome": {
+        "desc": "点击主页按钮回到主界面",
+        "recognition": "TemplateMatch",
+        "roi": [
+            199,
+            26,
+            85,
+            52
+        ],
+        "template": "return_main.png",
+        "threshold": 0.75,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1000,
+        "next": [
+            "ClaimRewards.EnsureHome"
         ]
     },
     "ClaimRewards.ReturnMain": {
