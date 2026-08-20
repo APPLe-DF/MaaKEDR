@@ -68,6 +68,8 @@
         "./tasks/farm_resources.json",
         "./tasks/pvp.json",
         "./tasks/claim_rewards.json",
+        "./tasks/stamina_info.json",
         "./tasks/event_stage.json"
+        
     ]
 }

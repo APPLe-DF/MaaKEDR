@@ -148,7 +148,9 @@ class ReadPVPResult(CustomRecognition):
             logger.info("[PVP] 未识别到分数与排名变化，疑似高级账号失败保护")
             result_msg = f"高账失败保护触发：本场不扣分，积分:{current_score or '-'} 排名:{current_rank or '-'}"
         else:
-            result_msg = f"{result_text} 积分:{current_score}({score_change_fmt}) 排名:{current_rank}({rank_change_fmt})"
+            result_msg = (
+                f"{result_text} 积分:{current_score}({score_change_fmt}) 排名:{current_rank}({rank_change_fmt})"
+            )
         logger.info("[PVP] {}", result_msg)
 
         context.override_pipeline(

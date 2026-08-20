@@ -36,6 +36,18 @@
                                 "FarmResources.SetBattleCountMax"
                             ]
                         },
+                        "FarmResources.ClickStage": {
+                            "next": [
+                                "FarmResources.QuickBattle",
+                                "FarmResources.SetBattleCountMax"
+                            ]
+                        },
+                        "FarmResources.ClickSkillStage": {
+                            "next": [
+                                "FarmResources.QuickBattle",
+                                "FarmResources.SetBattleCountMax"
+                            ]
+                        },
                         "FarmResources.CheckStamina": {
                             "next": [
                                 "FarmResources.CheckCountOCR",
