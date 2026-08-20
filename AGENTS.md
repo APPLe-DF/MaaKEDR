@@ -97,7 +97,7 @@ MaaKEDR/
 
 This project follows [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/).
 
-**重要：AI 助手生成的代码在提交前必须经过真人审核。AI 不应自行执行 `git commit` 或 `git push`，除非用户明确要求提交。**
+**Important: AI-generated code must be reviewed by a human before committing. The AI should not run `git commit` or `git push` on its own unless the user explicitly asks to commit.**
 
 Commonly used types:
 
@@ -117,13 +117,12 @@ See [CONTRIBUTING.md](/CONTRIBUTING.md) for pull request requirements (branch na
 
 ## Branching Strategy
 
-- **`main`**：稳定发布分支。仅允许以下情况直接提交：
-    - 有主仓库写入权限的开发者进行的小范围修复/改动（如 CI 配置更新、文档修正、单节点小调整）
-    - 紧急 bug 修复
-- **`develop`**：新功能开发分支。所有新增功能、多节点流程改动、需要测试的新逻辑，都应在 `develop` 分支上开发，通过 PR 合并到 `main`
-- **功能分支**：复杂功能可基于 `develop` 创建 `feat/<功能名>` 分支，完成后合并回 `develop`
+- **`main`**: Stable release branch. Direct commits are only allowed for:
+    - Small fixes/changes by developers with write access to the main repo (e.g. CI config updates, doc fixes, single-node tweaks)
+    - Urgent bug fixes
+- **Feature branches**: User-facing general/new features should be developed on a `feat/<feature-name>` branch created from `main`, and merged back into `main` via a PR
 
-> 一般情况下，AI 助手不应直接在 `main` 分支上修改代码，除非明确收到指令且改动范围很小。新功能开发请切换到 `develop` 分支。
+> In general, the AI assistant should not modify code directly on the `main` branch unless explicitly instructed and the change is small. For general new features, create or switch to a `feat/<feature-name>` branch based on `main` first.
 
 ## Release Guidelines
 
@@ -166,5 +165,5 @@ When reviewing code, check for:
 - **MaaFramework Documentation:** https://maafw.com/docs/1.1-QuickStarted
 - **M9A Reference Project:** `G:\M9AA\M9A-pr\55\M9A`
 - **create-maa-project Scaffold Tool:** `G:\M9AA\create-maa-project`
-- **MaaKEDR交流群 QQ:** 1051890489
+- **MaaKEDR QQ Group:** 1051890489
 - **Repository:** https://github.com/APPLe-DF/MaaKEDR
