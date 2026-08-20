@@ -114,7 +114,7 @@
         },
         "post_delay": 500,
         "next": [
-            "EventStage.CheckStageEntryResult"
+            "EventStage.StagePrepare"
         ],
         "on_error": [
             "EventStage.DragFindStage"
@@ -160,7 +160,8 @@
         },
         "post_delay": 500,
         "next": [
-            "EventStage.CheckStageEntryResult"
+            "EventStage.CheckStageEntryResult",
+            "EventStage.StagePrepare"
         ]
     },
     "EventStage.ClickEX2_2": {
@@ -180,7 +181,8 @@
         },
         "post_delay": 500,
         "next": [
-            "EventStage.CheckStageEntryResult"
+            "EventStage.CheckStageEntryResult",
+            "EventStage.StagePrepare"
         ]
     },
     "EventStage.ClickEX3_1": {
@@ -200,7 +202,8 @@
         },
         "post_delay": 500,
         "next": [
-            "EventStage.CheckStageEntryResult"
+            "EventStage.CheckStageEntryResult",
+            "EventStage.StagePrepare"
         ]
     },
     "EventStage.ClickEX4_1": {
@@ -220,7 +223,8 @@
         },
         "post_delay": 500,
         "next": [
-            "EventStage.CheckStageEntryResult"
+            "EventStage.CheckStageEntryResult",
+            "EventStage.StagePrepare"
         ]
     },
     "EventStage.CheckStageEntryResult": {
@@ -249,6 +253,7 @@
     "EventStage.StagePrepare": {
         "desc": "战斗准备界面 event5：点击 EX 关后正常进入",
         "recognition": "DirectHit",
+        "pre_delay": 1000,
         "action": {
             "type": "DoNothing"
         },
@@ -338,13 +343,117 @@
         "action": {
             "type": "Click"
         },
-        "post_delay": 3000,
+        "post_delay": 2000,
         "next": [
-            "EventStage.ReturnToStageSelect"
+            "EventStage.StartBattle"
+        ]
+    },
+    "EventStage.StartBattle": {
+        "desc": "点击开始战斗",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1048,
+            642,
+            158,
+            58
+        ],
+        "template": "farm_resources/start_battle.png",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 7500,
+        "next": [
+            "EventStage.BattleStage"
+        ]
+    },
+    "EventStage.BattleStage": {
+        "desc": "活动战斗循环：处理胜利、物品弹窗、下一轮快速战斗和退出；最后检查是否已回到活动地图（快速战斗全部结束）",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "[JumpBack]EventStage.ClickVictory",
+            "[JumpBack]EventStage.ClickItemDialog",
+            "EventStage.CheckQuickBattleState",
+            "EventStage.ExitStageConfirm",
+            "EventStage.CheckBackOnMap"
+        ]
+    },
+    "EventStage.CheckBackOnMap": {
+        "desc": "检测已回到活动地图：底部 EP 标签页可见即命中。快速战斗结束后游戏直接回到地图，此前无此候选导致 BattleStage 空转 20s 超时失败",
+        "recognition": "OCR",
+        "roi": [
+            80,
+            590,
+            560,
+            130
+        ],
+        "expected": "EP\\.?[1-4]",
+        "threshold": 0.7,
+        "pre_delay": 500,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.ReturnMainFromStage"
+        ]
+    },
+    "EventStage.ClickVictory": {
+        "desc": "检测并点击战斗胜利画面",
+        "recognition": "TemplateMatch",
+        "roi": [
+            14,
+            6,
+            270,
+            119
+        ],
+        "template": "farm_resources/battle_victory.png",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        }
+    },
+    "EventStage.ClickItemDialog": {
+        "desc": "检测并点击获得物品对话框",
+        "recognition": "TemplateMatch",
+        "roi": [
+            534,
+            210,
+            198,
+            85
+        ],
+        "template": "item_obtained_dialog.png",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        }
+    },
+    "EventStage.ExitStageConfirm": {
+        "desc": "点击关卡界面退出键",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1070,
+            24,
+            82,
+            69
+        ],
+        "template": "farm_resources/exit_stage_confirm.png",
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "EventStage.ReturnMainFromStage"
         ]
     },
     "EventStage.ReturnToStageSelect": {
-        "desc": "快速战斗完成后回到关卡选择界面 event1-4",
+        "desc": "活动战斗结束后返回关卡选择界面",
         "recognition": "DirectHit",
         "action": {
             "type": "DoNothing"
@@ -420,14 +529,11 @@
         "desc": "优先检查商店是否全部商品已售罄",
         "recognition": "Custom",
         "custom_recognition": "CheckAllSoldOut",
-        "custom_recognition_param": "{\"roi\": [0, 180, 1280, 540]}",
+        "custom_recognition_param": "{\"roi\":[0,180,1280,540],\"total_items\":10}",
         "action": {
             "type": "DoNothing"
         },
         "next": [
-            "EventStage.ShopAllSoldOut"
-        ],
-        "on_error": [
             "EventStage.CheckSoldOut1"
         ]
     },
@@ -455,25 +561,15 @@
         ]
     },
     "EventStage.CheckSoldOut1": {
-        "desc": "检查定额保障商品1是否已售罄；已售罄则跳过，未售罄进入购买",
-        "recognition": "OCR",
-        "roi": [
-            295,
-            235,
-            190,
-            105
-        ],
-        "expected": "已售罄",
-        "threshold": 0.8,
-        "pre_delay": 200,
+        "desc": "检查定额保障商品1是否已售罄；显式路由到跳过或购买",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopItemSoldOut",
+        "custom_recognition_param": "{\"item\":1,\"roi\":[319,235,175,105],\"shop_roi\":[0,180,1280,540],\"sold_out_next\":\"EventStage.CheckSoldOut2\",\"buy_next\":\"EventStage.BuyItem1\"}",
         "action": {
             "type": "DoNothing"
         },
         "next": [
             "EventStage.CheckSoldOut2"
-        ],
-        "on_error": [
-            "EventStage.BuyItem1"
         ]
     },
     "EventStage.BuyItem1": {
@@ -483,60 +579,48 @@
             "type": "Click",
             "param": {
                 "target": [
-                    390,
+                    408,
                     280
                 ]
             }
         },
         "post_delay": 500,
         "next": [
-            "EventStage.ConfirmPurchase1"
+            "EventStage.SetPurchaseMax1"
         ]
     },
     "EventStage.ConfirmPurchase1": {
         "desc": "确认购买定额保障商品1",
-        "recognition": "OCR",
+        "recognition": "TemplateMatch",
         "roi": [
-            450,
-            400,
-            400,
-            200
+            1001,
+            501,
+            116,
+            82
         ],
-        "expected": "确认",
-        "threshold": 0.8,
-        "pre_delay": 300,
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
         "action": {
             "type": "Click"
         },
-        "post_delay": 1000,
-        "timeout": 2500,
+        "post_wait_freezes": 500,
         "next": [
-            "EventStage.CheckSoldOut2"
+            "EventStage.WaitPurchaseClosed1"
         ],
         "on_error": [
             "EventStage.SkipConfirmPurchase1"
         ]
     },
     "EventStage.CheckSoldOut2": {
-        "desc": "检查定额保障商品2是否已售罄；已售罄则跳过，未售罄进入购买",
-        "recognition": "OCR",
-        "roi": [
-            455,
-            235,
-            190,
-            105
-        ],
-        "expected": "已售罄",
-        "threshold": 0.8,
-        "pre_delay": 200,
+        "desc": "检查定额保障商品2是否已售罄；显式路由到跳过或购买",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopItemSoldOut",
+        "custom_recognition_param": "{\"item\":2,\"roi\":[510,235,181,105],\"shop_roi\":[0,180,1280,540],\"sold_out_next\":\"EventStage.CheckSoldOut3\",\"buy_next\":\"EventStage.BuyItem2\"}",
         "action": {
             "type": "DoNothing"
         },
         "next": [
             "EventStage.CheckSoldOut3"
-        ],
-        "on_error": [
-            "EventStage.BuyItem2"
         ]
     },
     "EventStage.BuyItem2": {
@@ -546,60 +630,48 @@
             "type": "Click",
             "param": {
                 "target": [
-                    550,
+                    600,
                     280
                 ]
             }
         },
         "post_delay": 500,
         "next": [
-            "EventStage.ConfirmPurchase2"
+            "EventStage.SetPurchaseMax2"
         ]
     },
     "EventStage.ConfirmPurchase2": {
         "desc": "确认购买定额保障商品2",
-        "recognition": "OCR",
+        "recognition": "TemplateMatch",
         "roi": [
-            450,
-            400,
-            400,
-            200
+            1001,
+            501,
+            116,
+            82
         ],
-        "expected": "确认",
-        "threshold": 0.8,
-        "pre_delay": 300,
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
         "action": {
             "type": "Click"
         },
-        "post_delay": 1000,
-        "timeout": 2500,
+        "post_wait_freezes": 500,
         "next": [
-            "EventStage.CheckSoldOut3"
+            "EventStage.WaitPurchaseClosed2"
         ],
         "on_error": [
             "EventStage.SkipConfirmPurchase2"
         ]
     },
     "EventStage.CheckSoldOut3": {
-        "desc": "检查定额保障商品3是否已售罄；已售罄则跳过，未售罄进入购买",
-        "recognition": "OCR",
-        "roi": [
-            615,
-            235,
-            190,
-            105
-        ],
-        "expected": "已售罄",
-        "threshold": 0.8,
-        "pre_delay": 200,
+        "desc": "检查定额保障商品3是否已售罄；显式路由到跳过或购买",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopItemSoldOut",
+        "custom_recognition_param": "{\"item\":3,\"roi\":[704,235,187,105],\"shop_roi\":[0,180,1280,540],\"sold_out_next\":\"EventStage.CheckSoldOut4\",\"buy_next\":\"EventStage.BuyItem3\"}",
         "action": {
             "type": "DoNothing"
         },
         "next": [
             "EventStage.CheckSoldOut4"
-        ],
-        "on_error": [
-            "EventStage.BuyItem3"
         ]
     },
     "EventStage.BuyItem3": {
@@ -609,60 +681,48 @@
             "type": "Click",
             "param": {
                 "target": [
-                    710,
+                    797,
                     280
                 ]
             }
         },
         "post_delay": 500,
         "next": [
-            "EventStage.ConfirmPurchase3"
+            "EventStage.SetPurchaseMax3"
         ]
     },
     "EventStage.ConfirmPurchase3": {
         "desc": "确认购买定额保障商品3",
-        "recognition": "OCR",
+        "recognition": "TemplateMatch",
         "roi": [
-            450,
-            400,
-            400,
-            200
+            1001,
+            501,
+            116,
+            82
         ],
-        "expected": "确认",
-        "threshold": 0.8,
-        "pre_delay": 300,
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
         "action": {
             "type": "Click"
         },
-        "post_delay": 1000,
-        "timeout": 2500,
+        "post_wait_freezes": 500,
         "next": [
-            "EventStage.CheckSoldOut4"
+            "EventStage.WaitPurchaseClosed3"
         ],
         "on_error": [
             "EventStage.SkipConfirmPurchase3"
         ]
     },
     "EventStage.CheckSoldOut4": {
-        "desc": "检查定额保障商品4是否已售罄；已售罄则跳过，未售罄进入购买",
-        "recognition": "OCR",
-        "roi": [
-            775,
-            235,
-            190,
-            105
-        ],
-        "expected": "已售罄",
-        "threshold": 0.8,
-        "pre_delay": 200,
+        "desc": "检查定额保障商品4是否已售罄；显式路由到跳过或购买",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopItemSoldOut",
+        "custom_recognition_param": "{\"item\":4,\"roi\":[897,235,188,105],\"shop_roi\":[0,180,1280,540],\"sold_out_next\":\"EventStage.CheckSoldOut5\",\"buy_next\":\"EventStage.BuyItem4\"}",
         "action": {
             "type": "DoNothing"
         },
         "next": [
             "EventStage.CheckSoldOut5"
-        ],
-        "on_error": [
-            "EventStage.BuyItem4"
         ]
     },
     "EventStage.BuyItem4": {
@@ -672,60 +732,48 @@
             "type": "Click",
             "param": {
                 "target": [
-                    870,
+                    991,
                     280
                 ]
             }
         },
         "post_delay": 500,
         "next": [
-            "EventStage.ConfirmPurchase4"
+            "EventStage.SetPurchaseMax4"
         ]
     },
     "EventStage.ConfirmPurchase4": {
         "desc": "确认购买定额保障商品4",
-        "recognition": "OCR",
+        "recognition": "TemplateMatch",
         "roi": [
-            450,
-            400,
-            400,
-            200
+            1001,
+            501,
+            116,
+            82
         ],
-        "expected": "确认",
-        "threshold": 0.8,
-        "pre_delay": 300,
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
         "action": {
             "type": "Click"
         },
-        "post_delay": 1000,
-        "timeout": 2500,
+        "post_wait_freezes": 500,
         "next": [
-            "EventStage.CheckSoldOut5"
+            "EventStage.WaitPurchaseClosed4"
         ],
         "on_error": [
             "EventStage.SkipConfirmPurchase4"
         ]
     },
     "EventStage.CheckSoldOut5": {
-        "desc": "检查定额保障商品5是否已售罄；已售罄则跳过，未售罄进入购买",
-        "recognition": "OCR",
-        "roi": [
-            935,
-            235,
-            190,
-            105
-        ],
-        "expected": "已售罄",
-        "threshold": 0.8,
-        "pre_delay": 200,
+        "desc": "检查定额保障商品5是否已售罄；显式路由到跳过或购买",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopItemSoldOut",
+        "custom_recognition_param": "{\"item\":5,\"roi\":[1094,235,186,105],\"shop_roi\":[0,180,1280,540],\"sold_out_next\":\"EventStage.CheckSoldOut6\",\"buy_next\":\"EventStage.BuyItem5\"}",
         "action": {
             "type": "DoNothing"
         },
         "next": [
             "EventStage.CheckSoldOut6"
-        ],
-        "on_error": [
-            "EventStage.BuyItem5"
         ]
     },
     "EventStage.BuyItem5": {
@@ -735,60 +783,48 @@
             "type": "Click",
             "param": {
                 "target": [
-                    1030,
+                    1183,
                     280
                 ]
             }
         },
         "post_delay": 500,
         "next": [
-            "EventStage.ConfirmPurchase5"
+            "EventStage.SetPurchaseMax5"
         ]
     },
     "EventStage.ConfirmPurchase5": {
         "desc": "确认购买定额保障商品5",
-        "recognition": "OCR",
+        "recognition": "TemplateMatch",
         "roi": [
-            450,
-            400,
-            400,
-            200
+            1001,
+            501,
+            116,
+            82
         ],
-        "expected": "确认",
-        "threshold": 0.8,
-        "pre_delay": 300,
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
         "action": {
             "type": "Click"
         },
-        "post_delay": 1000,
-        "timeout": 2500,
+        "post_wait_freezes": 500,
         "next": [
-            "EventStage.CheckSoldOut6"
+            "EventStage.WaitPurchaseClosed5"
         ],
         "on_error": [
             "EventStage.SkipConfirmPurchase5"
         ]
     },
     "EventStage.CheckSoldOut6": {
-        "desc": "检查定额保障商品6是否已售罄；已售罄则跳过，未售罄进入购买",
-        "recognition": "OCR",
-        "roi": [
-            295,
-            440,
-            190,
-            105
-        ],
-        "expected": "已售罄",
-        "threshold": 0.8,
-        "pre_delay": 200,
+        "desc": "检查定额保障商品6是否已售罄；显式路由到跳过或购买",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopItemSoldOut",
+        "custom_recognition_param": "{\"item\":6,\"roi\":[319,440,175,105],\"shop_roi\":[0,180,1280,540],\"sold_out_next\":\"EventStage.CheckSoldOut7\",\"buy_next\":\"EventStage.BuyItem6\"}",
         "action": {
             "type": "DoNothing"
         },
         "next": [
             "EventStage.CheckSoldOut7"
-        ],
-        "on_error": [
-            "EventStage.BuyItem6"
         ]
     },
     "EventStage.BuyItem6": {
@@ -798,60 +834,48 @@
             "type": "Click",
             "param": {
                 "target": [
-                    390,
-                    500
+                    408,
+                    491
                 ]
             }
         },
         "post_delay": 500,
         "next": [
-            "EventStage.ConfirmPurchase6"
+            "EventStage.SetPurchaseMax6"
         ]
     },
     "EventStage.ConfirmPurchase6": {
         "desc": "确认购买定额保障商品6",
-        "recognition": "OCR",
+        "recognition": "TemplateMatch",
         "roi": [
-            450,
-            400,
-            400,
-            200
+            1001,
+            501,
+            116,
+            82
         ],
-        "expected": "确认",
-        "threshold": 0.8,
-        "pre_delay": 300,
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
         "action": {
             "type": "Click"
         },
-        "post_delay": 1000,
-        "timeout": 2500,
+        "post_wait_freezes": 500,
         "next": [
-            "EventStage.CheckSoldOut7"
+            "EventStage.WaitPurchaseClosed6"
         ],
         "on_error": [
             "EventStage.SkipConfirmPurchase6"
         ]
     },
     "EventStage.CheckSoldOut7": {
-        "desc": "检查定额保障商品7是否已售罄；已售罄则跳过，未售罄进入购买",
-        "recognition": "OCR",
-        "roi": [
-            455,
-            440,
-            190,
-            105
-        ],
-        "expected": "已售罄",
-        "threshold": 0.8,
-        "pre_delay": 200,
+        "desc": "检查定额保障商品7是否已售罄；显式路由到跳过或购买",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopItemSoldOut",
+        "custom_recognition_param": "{\"item\":7,\"roi\":[510,440,181,105],\"shop_roi\":[0,180,1280,540],\"sold_out_next\":\"EventStage.CheckSoldOut8\",\"buy_next\":\"EventStage.BuyItem7\"}",
         "action": {
             "type": "DoNothing"
         },
         "next": [
             "EventStage.CheckSoldOut8"
-        ],
-        "on_error": [
-            "EventStage.BuyItem7"
         ]
     },
     "EventStage.BuyItem7": {
@@ -861,60 +885,48 @@
             "type": "Click",
             "param": {
                 "target": [
-                    550,
-                    500
+                    600,
+                    491
                 ]
             }
         },
         "post_delay": 500,
         "next": [
-            "EventStage.ConfirmPurchase7"
+            "EventStage.SetPurchaseMax7"
         ]
     },
     "EventStage.ConfirmPurchase7": {
         "desc": "确认购买定额保障商品7",
-        "recognition": "OCR",
+        "recognition": "TemplateMatch",
         "roi": [
-            450,
-            400,
-            400,
-            200
+            1001,
+            501,
+            116,
+            82
         ],
-        "expected": "确认",
-        "threshold": 0.8,
-        "pre_delay": 300,
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
         "action": {
             "type": "Click"
         },
-        "post_delay": 1000,
-        "timeout": 2500,
+        "post_wait_freezes": 500,
         "next": [
-            "EventStage.CheckSoldOut8"
+            "EventStage.WaitPurchaseClosed7"
         ],
         "on_error": [
             "EventStage.SkipConfirmPurchase7"
         ]
     },
     "EventStage.CheckSoldOut8": {
-        "desc": "检查定额保障商品8是否已售罄；已售罄则跳过，未售罄进入购买",
-        "recognition": "OCR",
-        "roi": [
-            615,
-            440,
-            190,
-            105
-        ],
-        "expected": "已售罄",
-        "threshold": 0.8,
-        "pre_delay": 200,
+        "desc": "检查定额保障商品8是否已售罄；显式路由到跳过或购买",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopItemSoldOut",
+        "custom_recognition_param": "{\"item\":8,\"roi\":[704,440,187,105],\"shop_roi\":[0,180,1280,540],\"sold_out_next\":\"EventStage.CheckSoldOut9\",\"buy_next\":\"EventStage.BuyItem8\"}",
         "action": {
             "type": "DoNothing"
         },
         "next": [
             "EventStage.CheckSoldOut9"
-        ],
-        "on_error": [
-            "EventStage.BuyItem8"
         ]
     },
     "EventStage.BuyItem8": {
@@ -924,60 +936,48 @@
             "type": "Click",
             "param": {
                 "target": [
-                    710,
-                    500
+                    797,
+                    491
                 ]
             }
         },
         "post_delay": 500,
         "next": [
-            "EventStage.ConfirmPurchase8"
+            "EventStage.SetPurchaseMax8"
         ]
     },
     "EventStage.ConfirmPurchase8": {
         "desc": "确认购买定额保障商品8",
-        "recognition": "OCR",
+        "recognition": "TemplateMatch",
         "roi": [
-            450,
-            400,
-            400,
-            200
+            1001,
+            501,
+            116,
+            82
         ],
-        "expected": "确认",
-        "threshold": 0.8,
-        "pre_delay": 300,
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
         "action": {
             "type": "Click"
         },
-        "post_delay": 1000,
-        "timeout": 2500,
+        "post_wait_freezes": 500,
         "next": [
-            "EventStage.CheckSoldOut9"
+            "EventStage.WaitPurchaseClosed8"
         ],
         "on_error": [
             "EventStage.SkipConfirmPurchase8"
         ]
     },
     "EventStage.CheckSoldOut9": {
-        "desc": "检查定额保障商品9是否已售罄；已售罄则跳过，未售罄进入购买",
-        "recognition": "OCR",
-        "roi": [
-            775,
-            440,
-            190,
-            105
-        ],
-        "expected": "已售罄",
-        "threshold": 0.8,
-        "pre_delay": 200,
+        "desc": "检查定额保障商品9是否已售罄；显式路由到跳过或购买",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopItemSoldOut",
+        "custom_recognition_param": "{\"item\":9,\"roi\":[897,440,188,105],\"shop_roi\":[0,180,1280,540],\"sold_out_next\":\"EventStage.CheckSoldOut10\",\"buy_next\":\"EventStage.BuyItem9\"}",
         "action": {
             "type": "DoNothing"
         },
         "next": [
             "EventStage.CheckSoldOut10"
-        ],
-        "on_error": [
-            "EventStage.BuyItem9"
         ]
     },
     "EventStage.BuyItem9": {
@@ -987,60 +987,48 @@
             "type": "Click",
             "param": {
                 "target": [
-                    870,
-                    500
+                    991,
+                    491
                 ]
             }
         },
         "post_delay": 500,
         "next": [
-            "EventStage.ConfirmPurchase9"
+            "EventStage.SetPurchaseMax9"
         ]
     },
     "EventStage.ConfirmPurchase9": {
         "desc": "确认购买定额保障商品9",
-        "recognition": "OCR",
+        "recognition": "TemplateMatch",
         "roi": [
-            450,
-            400,
-            400,
-            200
+            1001,
+            501,
+            116,
+            82
         ],
-        "expected": "确认",
-        "threshold": 0.8,
-        "pre_delay": 300,
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
         "action": {
             "type": "Click"
         },
-        "post_delay": 1000,
-        "timeout": 2500,
+        "post_wait_freezes": 500,
         "next": [
-            "EventStage.CheckSoldOut10"
+            "EventStage.WaitPurchaseClosed9"
         ],
         "on_error": [
             "EventStage.SkipConfirmPurchase9"
         ]
     },
     "EventStage.CheckSoldOut10": {
-        "desc": "检查定额保障商品10是否已售罄；已售罄则跳过，未售罄进入购买",
-        "recognition": "OCR",
-        "roi": [
-            935,
-            440,
-            190,
-            105
-        ],
-        "expected": "已售罄",
-        "threshold": 0.8,
-        "pre_delay": 200,
+        "desc": "检查定额保障商品10是否已售罄；显式路由到跳过或购买",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopItemSoldOut",
+        "custom_recognition_param": "{\"item\":10,\"roi\":[1094,440,186,105],\"shop_roi\":[0,180,1280,540],\"sold_out_next\":\"EventStage.ShopAllSoldOut\",\"buy_next\":\"EventStage.BuyItem10\"}",
         "action": {
             "type": "DoNothing"
         },
         "next": [
             "EventStage.ShopAllSoldOut"
-        ],
-        "on_error": [
-            "EventStage.BuyItem10"
         ]
     },
     "EventStage.ShopAllSoldOut": {
@@ -1069,38 +1057,726 @@
             "type": "Click",
             "param": {
                 "target": [
-                    1030,
-                    500
+                    1183,
+                    491
                 ]
             }
         },
         "post_delay": 500,
         "next": [
-            "EventStage.ConfirmPurchase10"
+            "EventStage.SetPurchaseMax10"
         ]
     },
     "EventStage.ConfirmPurchase10": {
         "desc": "确认购买定额保障商品10",
-        "recognition": "OCR",
+        "recognition": "TemplateMatch",
         "roi": [
-            450,
-            400,
-            400,
-            200
+            1001,
+            501,
+            116,
+            82
         ],
-        "expected": "确认",
-        "threshold": 0.8,
-        "pre_delay": 300,
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
         "action": {
             "type": "Click"
         },
-        "post_delay": 1000,
-        "timeout": 2500,
+        "post_wait_freezes": 500,
         "next": [
-            "EventStage.ReturnMainFromShop"
+            "EventStage.WaitPurchaseClosed10"
         ],
         "on_error": [
             "EventStage.SkipConfirmPurchase10"
+        ]
+    },
+    "EventStage.SetPurchaseMax1": {
+        "desc": "购买弹窗商品1数量设置为最大值（MAX）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1001,
+            501,
+            116,
+            82
+        ],
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    1030,
+                    376
+                ]
+            }
+        },
+        "post_wait_freezes": 300,
+        "timeout": 5000,
+        "next": [
+            "EventStage.ConfirmPurchase1"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase1"
+        ]
+    },
+    "EventStage.WaitPurchaseClosed1": {
+        "desc": "商品1购买确认后等待弹窗关闭并稳定",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckShopRefreshAfterPurchase1"
+        ]
+    },
+    "EventStage.CheckShopRefreshAfterPurchase1": {
+        "desc": "首次购买后确认商店已刷新；无售罄标记时准备补点",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopRefreshAfterPurchase",
+        "custom_recognition_param": "{\"shop_roi\":[0,180,1280,540],\"ready_next\":\"EventStage.CheckSoldOut2\",\"refresh_next\":\"EventStage.RefreshShopAfterPurchase1\"}",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut2"
+        ]
+    },
+    "EventStage.RefreshShopAfterPurchase1": {
+        "desc": "首次购买后商店未刷新，点击左侧空白区域一次",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    100,
+                    650
+                ]
+            }
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckSoldOut2"
+        ]
+    },
+    "EventStage.SetPurchaseMax2": {
+        "desc": "购买弹窗商品2数量设置为最大值（MAX）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1001,
+            501,
+            116,
+            82
+        ],
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    1030,
+                    376
+                ]
+            }
+        },
+        "post_wait_freezes": 300,
+        "timeout": 5000,
+        "next": [
+            "EventStage.ConfirmPurchase2"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase2"
+        ]
+    },
+    "EventStage.WaitPurchaseClosed2": {
+        "desc": "商品2购买确认后等待弹窗关闭并稳定",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckShopRefreshAfterPurchase2"
+        ]
+    },
+    "EventStage.SetPurchaseMax3": {
+        "desc": "购买弹窗商品3数量设置为最大值（MAX）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1001,
+            501,
+            116,
+            82
+        ],
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    1030,
+                    376
+                ]
+            }
+        },
+        "post_wait_freezes": 300,
+        "timeout": 5000,
+        "next": [
+            "EventStage.ConfirmPurchase3"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase3"
+        ]
+    },
+    "EventStage.WaitPurchaseClosed3": {
+        "desc": "商品3购买确认后等待弹窗关闭并稳定",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckShopRefreshAfterPurchase3"
+        ]
+    },
+    "EventStage.SetPurchaseMax4": {
+        "desc": "购买弹窗商品4数量设置为最大值（MAX）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1001,
+            501,
+            116,
+            82
+        ],
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    1030,
+                    376
+                ]
+            }
+        },
+        "post_wait_freezes": 300,
+        "timeout": 5000,
+        "next": [
+            "EventStage.ConfirmPurchase4"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase4"
+        ]
+    },
+    "EventStage.WaitPurchaseClosed4": {
+        "desc": "商品4购买确认后等待弹窗关闭并稳定",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckShopRefreshAfterPurchase4"
+        ]
+    },
+    "EventStage.SetPurchaseMax5": {
+        "desc": "购买弹窗商品5数量设置为最大值（MAX）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1001,
+            501,
+            116,
+            82
+        ],
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    1030,
+                    376
+                ]
+            }
+        },
+        "post_wait_freezes": 300,
+        "timeout": 5000,
+        "next": [
+            "EventStage.ConfirmPurchase5"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase5"
+        ]
+    },
+    "EventStage.WaitPurchaseClosed5": {
+        "desc": "商品5购买确认后等待弹窗关闭并稳定",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckShopRefreshAfterPurchase5"
+        ]
+    },
+    "EventStage.SetPurchaseMax6": {
+        "desc": "购买弹窗商品6数量设置为最大值（MAX）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1001,
+            501,
+            116,
+            82
+        ],
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    1030,
+                    376
+                ]
+            }
+        },
+        "post_wait_freezes": 300,
+        "timeout": 5000,
+        "next": [
+            "EventStage.ConfirmPurchase6"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase6"
+        ]
+    },
+    "EventStage.WaitPurchaseClosed6": {
+        "desc": "商品6购买确认后等待弹窗关闭并稳定",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckShopRefreshAfterPurchase6"
+        ]
+    },
+    "EventStage.SetPurchaseMax7": {
+        "desc": "购买弹窗商品7数量设置为最大值（MAX）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1001,
+            501,
+            116,
+            82
+        ],
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    1030,
+                    376
+                ]
+            }
+        },
+        "post_wait_freezes": 300,
+        "timeout": 5000,
+        "next": [
+            "EventStage.ConfirmPurchase7"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase7"
+        ]
+    },
+    "EventStage.WaitPurchaseClosed7": {
+        "desc": "商品7购买确认后等待弹窗关闭并稳定",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckShopRefreshAfterPurchase7"
+        ]
+    },
+    "EventStage.SetPurchaseMax8": {
+        "desc": "购买弹窗商品8数量设置为最大值（MAX）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1001,
+            501,
+            116,
+            82
+        ],
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    1030,
+                    376
+                ]
+            }
+        },
+        "post_wait_freezes": 300,
+        "timeout": 5000,
+        "next": [
+            "EventStage.ConfirmPurchase8"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase8"
+        ]
+    },
+    "EventStage.WaitPurchaseClosed8": {
+        "desc": "商品8购买确认后等待弹窗关闭并稳定",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckShopRefreshAfterPurchase8"
+        ]
+    },
+    "EventStage.SetPurchaseMax9": {
+        "desc": "购买弹窗商品9数量设置为最大值（MAX）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1001,
+            501,
+            116,
+            82
+        ],
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    1030,
+                    376
+                ]
+            }
+        },
+        "post_wait_freezes": 300,
+        "timeout": 5000,
+        "next": [
+            "EventStage.ConfirmPurchase9"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase9"
+        ]
+    },
+    "EventStage.WaitPurchaseClosed9": {
+        "desc": "商品9购买确认后等待弹窗关闭并稳定",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckShopRefreshAfterPurchase9"
+        ]
+    },
+    "EventStage.SetPurchaseMax10": {
+        "desc": "购买弹窗商品10数量设置为最大值（MAX）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1001,
+            501,
+            116,
+            82
+        ],
+        "template": "claim_rewards/premium_shop/confirm_purchase.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    1030,
+                    376
+                ]
+            }
+        },
+        "post_wait_freezes": 300,
+        "timeout": 5000,
+        "next": [
+            "EventStage.ConfirmPurchase10"
+        ],
+        "on_error": [
+            "EventStage.SkipConfirmPurchase10"
+        ]
+    },
+    "EventStage.WaitPurchaseClosed10": {
+        "desc": "商品10购买确认后等待弹窗关闭并稳定",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckShopRefreshAfterPurchase10"
+        ]
+    },
+    "EventStage.CheckShopRefreshAfterPurchase2": {
+        "desc": "商品2购买后确认商店已刷新；无售罄标记时准备补点",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopRefreshAfterPurchase",
+        "custom_recognition_param": "{\"shop_roi\":[0,180,1280,540],\"ready_next\":\"EventStage.CheckSoldOut3\",\"refresh_next\":\"EventStage.RefreshShopAfterPurchase2\"}",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut3"
+        ]
+    },
+    "EventStage.RefreshShopAfterPurchase2": {
+        "desc": "商品2购买后商店未刷新，点击左侧空白区域一次",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    100,
+                    650
+                ]
+            }
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckSoldOut3"
+        ]
+    },
+    "EventStage.CheckShopRefreshAfterPurchase3": {
+        "desc": "商品3购买后确认商店已刷新；无售罄标记时准备补点",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopRefreshAfterPurchase",
+        "custom_recognition_param": "{\"shop_roi\":[0,180,1280,540],\"ready_next\":\"EventStage.CheckSoldOut4\",\"refresh_next\":\"EventStage.RefreshShopAfterPurchase3\"}",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut4"
+        ]
+    },
+    "EventStage.RefreshShopAfterPurchase3": {
+        "desc": "商品3购买后商店未刷新，点击左侧空白区域一次",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    100,
+                    650
+                ]
+            }
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckSoldOut4"
+        ]
+    },
+    "EventStage.CheckShopRefreshAfterPurchase4": {
+        "desc": "商品4购买后确认商店已刷新；无售罄标记时准备补点",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopRefreshAfterPurchase",
+        "custom_recognition_param": "{\"shop_roi\":[0,180,1280,540],\"ready_next\":\"EventStage.CheckSoldOut5\",\"refresh_next\":\"EventStage.RefreshShopAfterPurchase4\"}",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut5"
+        ]
+    },
+    "EventStage.RefreshShopAfterPurchase4": {
+        "desc": "商品4购买后商店未刷新，点击左侧空白区域一次",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    100,
+                    650
+                ]
+            }
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckSoldOut5"
+        ]
+    },
+    "EventStage.CheckShopRefreshAfterPurchase5": {
+        "desc": "商品5购买后确认商店已刷新；无售罄标记时准备补点",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopRefreshAfterPurchase",
+        "custom_recognition_param": "{\"shop_roi\":[0,180,1280,540],\"ready_next\":\"EventStage.CheckSoldOut6\",\"refresh_next\":\"EventStage.RefreshShopAfterPurchase5\"}",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut6"
+        ]
+    },
+    "EventStage.RefreshShopAfterPurchase5": {
+        "desc": "商品5购买后商店未刷新，点击左侧空白区域一次",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    100,
+                    650
+                ]
+            }
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckSoldOut6"
+        ]
+    },
+    "EventStage.CheckShopRefreshAfterPurchase6": {
+        "desc": "商品6购买后确认商店已刷新；无售罄标记时准备补点",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopRefreshAfterPurchase",
+        "custom_recognition_param": "{\"shop_roi\":[0,180,1280,540],\"ready_next\":\"EventStage.CheckSoldOut7\",\"refresh_next\":\"EventStage.RefreshShopAfterPurchase6\"}",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut7"
+        ]
+    },
+    "EventStage.RefreshShopAfterPurchase6": {
+        "desc": "商品6购买后商店未刷新，点击左侧空白区域一次",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    100,
+                    650
+                ]
+            }
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckSoldOut7"
+        ]
+    },
+    "EventStage.CheckShopRefreshAfterPurchase7": {
+        "desc": "商品7购买后确认商店已刷新；无售罄标记时准备补点",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopRefreshAfterPurchase",
+        "custom_recognition_param": "{\"shop_roi\":[0,180,1280,540],\"ready_next\":\"EventStage.CheckSoldOut8\",\"refresh_next\":\"EventStage.RefreshShopAfterPurchase7\"}",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut8"
+        ]
+    },
+    "EventStage.RefreshShopAfterPurchase7": {
+        "desc": "商品7购买后商店未刷新，点击左侧空白区域一次",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    100,
+                    650
+                ]
+            }
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckSoldOut8"
+        ]
+    },
+    "EventStage.CheckShopRefreshAfterPurchase8": {
+        "desc": "商品8购买后确认商店已刷新；无售罄标记时准备补点",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopRefreshAfterPurchase",
+        "custom_recognition_param": "{\"shop_roi\":[0,180,1280,540],\"ready_next\":\"EventStage.CheckSoldOut9\",\"refresh_next\":\"EventStage.RefreshShopAfterPurchase8\"}",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut9"
+        ]
+    },
+    "EventStage.RefreshShopAfterPurchase8": {
+        "desc": "商品8购买后商店未刷新，点击左侧空白区域一次",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    100,
+                    650
+                ]
+            }
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckSoldOut9"
+        ]
+    },
+    "EventStage.CheckShopRefreshAfterPurchase9": {
+        "desc": "商品9购买后确认商店已刷新；无售罄标记时准备补点",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopRefreshAfterPurchase",
+        "custom_recognition_param": "{\"shop_roi\":[0,180,1280,540],\"ready_next\":\"EventStage.CheckSoldOut10\",\"refresh_next\":\"EventStage.RefreshShopAfterPurchase9\"}",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckSoldOut10"
+        ]
+    },
+    "EventStage.RefreshShopAfterPurchase9": {
+        "desc": "商品9购买后商店未刷新，点击左侧空白区域一次",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    100,
+                    650
+                ]
+            }
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.CheckSoldOut10"
+        ]
+    },
+    "EventStage.CheckShopRefreshAfterPurchase10": {
+        "desc": "商品10购买后确认商店已刷新；无售罄标记时准备补点",
+        "recognition": "Custom",
+        "custom_recognition": "CheckShopRefreshAfterPurchase",
+        "custom_recognition_param": "{\"shop_roi\":[0,180,1280,540],\"ready_next\":\"EventStage.ReturnMainFromShop\",\"refresh_next\":\"EventStage.RefreshShopAfterPurchase10\"}",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.ReturnMainFromShop"
+        ]
+    },
+    "EventStage.RefreshShopAfterPurchase10": {
+        "desc": "商品10购买后商店未刷新，点击左侧空白区域一次",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    100,
+                    650
+                ]
+            }
+        },
+        "post_wait_freezes": 1000,
+        "next": [
+            "EventStage.ReturnMainFromShop"
         ]
     },
     "EventStage.SkipConfirmPurchase1": {
@@ -1202,6 +1878,25 @@
         "next": [
             "EventStage.ReturnMainFromShop"
         ]
+    },
+    "EventStage.StageLocked": {
+        "desc": "关卡未解锁，返回主页",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.ReturnMainFromStage"
+        ],
+        "focus": {
+            "Node.Action.Starting": {
+                "content": "该关卡暂不可用",
+                "display": [
+                    "log",
+                    "toast"
+                ]
+            }
+        }
     },
     "EventStage.ReturnMain": {
         "desc": "点击返回按钮返回主页（活动模块专用，不进入资源刷取）",
