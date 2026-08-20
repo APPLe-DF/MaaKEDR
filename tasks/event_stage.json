@@ -3,7 +3,7 @@
         {
             "name": "活动关卡刷取",
             "entry": "EventStage.CheckHomePage",
-            "default_check": true,
+            "default_check": false,
             "group": [
                 "Daily"
             ],
@@ -23,7 +23,7 @@
         {
             "name": "活动商店兑换",
             "entry": "EventStage.CheckHomePage",
-            "default_check": true,
+            "default_check": false,
             "group": [
                 "Daily"
             ],

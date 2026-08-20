@@ -17,7 +17,7 @@ ROI, coordinates, and templates use **1280×720**. Other resolutions are scaled 
 | `maa-project.json` | Scaffold / release / runtime channels       |
 | `tasks/*.json`     | GUI tasks: `entry`, options, overrides      |
 
-Imported tasks: `startup`, `claim_rewards`, `farm_resources`, `pvp`, `event_stage`, `stamina_info`. Group: `Daily`.
+Imported tasks: `startup`, `farm_resources`, `event_stage`, `pvp`, `claim_rewards`, `stamina_info`. Group: `Daily`.
 
 ## Resource packs
 

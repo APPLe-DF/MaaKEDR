@@ -66,9 +66,9 @@
     "import": [
         "./tasks/startup.json",
         "./tasks/farm_resources.json",
+        "./tasks/event_stage.json",
         "./tasks/pvp.json",
         "./tasks/claim_rewards.json",
-        "./tasks/stamina_info.json",
-        "./tasks/event_stage.json"
+        "./tasks/stamina_info.json"
     ]
 }

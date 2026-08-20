@@ -20,10 +20,10 @@ icon: ri:book-open-line
 当前 `interface.json` 导入的任务：
 
 - `tasks/startup.json` — 启动游戏
-- `tasks/claim_rewards.json` — 领取奖励
 - `tasks/farm_resources.json` — 资源刷取
-- `tasks/pvp.json` — 玩家对战
 - `tasks/event_stage.json` — 活动关卡刷取与活动商店兑换
+- `tasks/pvp.json` — 玩家对战
+- `tasks/claim_rewards.json` — 领取奖励
 - `tasks/stamina_info.json` — 体力信息（主界面体力与回满时间）
 
 任务组：`Daily`（日常任务）。
