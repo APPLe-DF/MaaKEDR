@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta
 from typing import Any
 
 import numpy as np
@@ -120,7 +120,7 @@ class ReadStamina(CustomRecognition):
 
         missing = cap - current
         minutes = missing * float(STAMINA_RECOVER_MINUTES_PER_POINT)
-        full_time = datetime.now(UTC) + timedelta(minutes=minutes)
+        full_time = datetime.now() + timedelta(minutes=minutes)
         logger.info(
             "体力将在 {} 回满。({}h {}m 后)",
             full_time.strftime("%Y-%m-%d %H:%M"),
