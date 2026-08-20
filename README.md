@@ -64,6 +64,8 @@
 - 玩家对战（PVP 自动战斗，自动选择等级最低的对手，支持多场循环）
 - 多关卡选择，可配置战斗次数（1~6 次 / 最大）
 - 清空体力循环模式
+- 活动关卡与活动商店（耀斑 EX 关卡刷取、商店商品清空）
+- 体力信息（读取主界面体力并提示回满时间）
 
 ---
 
@@ -125,7 +127,9 @@ MaaKEDR/
 │   ├── startup.json             #   启动游戏
 │   ├── pvp.json                 #   玩家对战
 │   ├── claim_rewards.json       #   领取奖励
-│   └── farm_resources.json      #   资源刷取
+│   ├── farm_resources.json      #   资源刷取
+│   ├── event_stage.json         #   活动关卡与活动商店
+│   └── stamina_info.json        #   体力信息
 ├── resource/base/               # 核心资源
 │   ├── pipeline/                #   Pipeline 流程定义
 │   ├── image/                   #   模板匹配用图片

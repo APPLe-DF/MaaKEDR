@@ -64,6 +64,8 @@ Powered by [MaaFramework](https://github.com/MaaXYZ/MaaFramework)!
 - PVP (auto-battle with automatic selection of the lowest-level opponent, multi-round loop)
 - Multiple stage selection with configurable battle count (1-6 / max)
 - Stamina-drain loop mode
+- Event stages and shop (Flare EX-stage farming and shop clearing)
+- Stamina info (reads home-screen stamina and reports refill time)
 
 ---
 

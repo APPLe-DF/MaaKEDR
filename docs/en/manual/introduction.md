@@ -127,6 +127,18 @@ Opens the `定额保障` (fixed-guarantee) tab, buys available items in order, s
 
 ---
 
+## Stamina Info
+
+Reads the current stamina and cap on the home screen, then reports when it will refill naturally. Enabled by default and runs last in the daily task chain.
+
+It automatically:
+
+1. Confirms it is on the home screen (taps the home button if not)
+2. Reads the home-screen stamina digits
+3. Computes and reports the refill time (once at the natural-recovery cap, stamina no longer refills over time and the task reports so)
+
+---
+
 ## PVP
 
 Auto-battle PVP with configurable rounds.

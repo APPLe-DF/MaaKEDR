@@ -34,6 +34,8 @@ Image technology + simulation control, free your hands!
 - Claim Rewards: Daily/Weekly, Battle Pass, Mailbox, Dispatch
 - Resource Farming: Auto Battle Loop + Stamina Handling
 - PvP Auto Battle
+- Event Stages and Shop
+- Stamina Info: reads home-screen stamina and reports refill time
 
 ## User Guide
 
