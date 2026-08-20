@@ -1,6 +1,6 @@
 from importlib import import_module
 
-RECOGNITION_MODULES = ("farm_resources", "pvp", "stamina")
+RECOGNITION_MODULES = ("farm_resources", "pvp", "stamina", "event_stage")
 
 
 def register_all() -> None:

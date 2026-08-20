@@ -1,0 +1,146 @@
+{
+    "task": [
+        {
+            "name": "活动关卡刷取",
+            "entry": "EventStage.CheckHomePage",
+            "default_check": true,
+            "group": [
+                "Daily"
+            ],
+            "description": "自动刷取活动关卡（雪松）。活动关卡不消耗体力，每日扫荡次数上限为 3。当前支持 EX2-1 / EX2-2 / EX3-1 / EX4-1，需要先完成耀斑活动全部关卡（含EX）。",
+            "option": [
+                "event_stage",
+                "event_sweep_count"
+            ],
+            "pipeline_override": {
+                "EventStage.EventHub": {
+                    "next": [
+                        "EventStage.ClickJourney"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "活动商店兑换",
+            "entry": "EventStage.CheckHomePage",
+            "default_check": true,
+            "group": [
+                "Daily"
+            ],
+            "description": "进入活动商店兑换定额保障商品，自动跳过已售罄商品并依次确认购买。",
+            "pipeline_override": {
+                "EventStage.EventHub": {
+                    "next": [
+                        "EventStage.ClickBattleReport"
+                    ]
+                }
+            }
+        }
+    ],
+    "option": {
+        "event_stage": {
+            "type": "select",
+            "label": "活动关卡",
+            "default_case": "EX2-1",
+            "cases": [
+                {
+                    "name": "EX2-1",
+                    "label": "EX2-1",
+                    "pipeline_override": {
+                        "EventStage.FindTargetStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"EX2-1\", \"stage_roi\": [0, 0, 1280, 640]}"
+                        },
+                        "EventStage.ClickEP2": {
+                            "expected": "EP\\.?2"
+                        }
+                    }
+                },
+                {
+                    "name": "EX2-2",
+                    "label": "EX2-2",
+                    "pipeline_override": {
+                        "EventStage.FindTargetStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"EX2-2\", \"stage_roi\": [0, 0, 1280, 640]}"
+                        },
+                        "EventStage.ClickEP2": {
+                            "expected": "EP\\.?3"
+                        }
+                    }
+                },
+                {
+                    "name": "EX3-1",
+                    "label": "EX3-1",
+                    "pipeline_override": {
+                        "EventStage.WaitStageMapStable": {
+                            "next": [
+                                "EventStage.ClickEP1",
+                                "EventStage.ClickEP2"
+                            ]
+                        },
+                        "EventStage.FindTargetStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"EX3-1\", \"stage_roi\": [0, 0, 1280, 640]}"
+                        },
+                        "EventStage.ClickEP2": {
+                            "expected": "EP\\.?4"
+                        }
+                    }
+                },
+                {
+                    "name": "EX4-1",
+                    "label": "EX4-1",
+                    "pipeline_override": {
+                        "EventStage.FindTargetStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"EX4-1\", \"stage_roi\": [0, 0, 1280, 640]}"
+                        },
+                        "EventStage.ClickEP2": {
+                            "expected": "EP\\.?4"
+                        }
+                    }
+                }
+            ]
+        },
+        "event_sweep_count": {
+            "type": "select",
+            "label": "扫荡次数",
+            "default_case": "3次",
+            "cases": [
+                {
+                    "name": "1次",
+                    "label": "1次",
+                    "pipeline_override": {
+                        "EventStage.SetBattleCount": {
+                            "custom_action_param": "{\"target_count\": 1, \"count_roi\": [903, 441, 27, 43], \"plus_button\": [1086, 470], \"minus_button\": [739, 470], \"max_template\": \"farm_resources/max_count.png\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "2次",
+                    "label": "2次",
+                    "pipeline_override": {
+                        "EventStage.SetBattleCount": {
+                            "custom_action_param": "{\"target_count\": 2, \"count_roi\": [903, 441, 27, 43], \"plus_button\": [1086, 470], \"minus_button\": [739, 470], \"max_template\": \"farm_resources/max_count.png\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "3次",
+                    "label": "3次",
+                    "pipeline_override": {
+                        "EventStage.SetBattleCount": {
+                            "custom_action_param": "{\"target_count\": 3, \"count_roi\": [903, 441, 27, 43], \"plus_button\": [1086, 470], \"minus_button\": [739, 470], \"max_template\": \"farm_resources/max_count.png\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "最大",
+                    "label": "最大",
+                    "pipeline_override": {
+                        "EventStage.SetBattleCount": {
+                            "custom_action_param": "{\"target_count\": \"max\", \"count_roi\": [903, 441, 27, 43], \"plus_button\": [1086, 470], \"minus_button\": [739, 470], \"max_template\": \"farm_resources/max_count.png\"}"
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

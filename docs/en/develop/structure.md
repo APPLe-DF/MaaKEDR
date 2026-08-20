@@ -18,7 +18,8 @@ MaaKEDR/
 │   ├── pipeline/                   # Pipeline node definitions
 │   │   ├── startup.json            # Game startup
 │   │   ├── claim_rewards.json      # Reward claiming
-│   │   └── farm_resources.json     # Resource farming
+│   │   ├── farm_resources.json     # Resource farming
+│   │   └── event_stage.json         # Event stages and shop
 │   ├── image/                      # Template images
 │   │   ├── claim_rewards/          # Reward images
 │   │   ├── farm_resources/         # Farming images
@@ -38,7 +39,8 @@ MaaKEDR/
 ├── tasks/                          # Task entry definitions
 │   ├── startup.json
 │   ├── claim_rewards.json
-│   └── farm_resources.json
+│   ├── farm_resources.json
+│   └── event_stage.json            # Event stages and shop
 │
 ├── tools/                          # Dev tools
 │   ├── build-release.mjs           # Release packaging

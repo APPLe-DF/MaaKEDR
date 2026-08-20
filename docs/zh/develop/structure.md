@@ -18,7 +18,8 @@ MaaKEDR/
 │   ├── pipeline/                   # Pipeline 节点定义
 │   │   ├── startup.json            # 启动游戏
 │   │   ├── claim_rewards.json      # 领取奖励
-│   │   └── farm_resources.json     # 资源刷取
+│   │   ├── farm_resources.json     # 资源刷取
+│   │   └── event_stage.json        # 活动关卡与活动商店
 │   ├── image/                      # 模板图片
 │   │   ├── claim_rewards/          # 奖励相关图片
 │   │   ├── farm_resources/         # 刷取相关图片
@@ -38,7 +39,8 @@ MaaKEDR/
 ├── tasks/                          # 任务入口定义
 │   ├── startup.json                # 启动游戏
 │   ├── claim_rewards.json          # 奖励领取
-│   └── farm_resources.json         # 资源刷取
+│   ├── farm_resources.json         # 资源刷取
+│   └── event_stage.json            # 活动关卡与商店
 │
 ├── tools/                          # 开发工具
 │   ├── build-release.mjs           # 打包发布

@@ -79,7 +79,7 @@ farm_category（刷取板块）
 
 ## 任务前置条件
 
-任务以 `FarmResources.CheckHomePage` 为入口：**开始前需处于游戏主界面**（`main_option` 识别 5 秒超时且无兜底，不在主界面则任务失败）。不在主界面时请先手动返回主界面或先运行「启动游戏」任务。
+任务以 `FarmResources.CheckHomePage` 为入口：开始前通常应处于游戏主界面。若主页识别失败，Pipeline 会通过 `FarmResources.ReturnToHome` 尝试识别并点击返回按钮，再回到主页重新检查；如果仍无法确认主页，任务才会失败。
 
 ## 关键节点
 

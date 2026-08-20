@@ -23,6 +23,7 @@ icon: ri:book-open-line
 - `tasks/claim_rewards.json` — 领取奖励
 - `tasks/farm_resources.json` — 资源刷取
 - `tasks/pvp.json` — 玩家对战
+- `tasks/event_stage.json` — 活动关卡刷取与活动商店兑换
 
 任务组：`Daily`（日常任务）。
 
