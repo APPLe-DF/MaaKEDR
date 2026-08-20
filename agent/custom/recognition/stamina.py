@@ -110,9 +110,11 @@ class ReadStamina(CustomRecognition):
 
         image = argv.image
         current = self._read_number(context, image, current_roi, tilt_angle)
-        cap = self._read_number(context, image, cap_roi, tilt_angle) or cap_fallback
+        cap = self._read_number(context, image, cap_roi, tilt_angle)
+        if cap is None:
+            cap = cap_fallback
 
-        if current is None or not cap:
+        if current is None or cap is None:
             logger.info("[雪松] 未识别到完整体力数值（当前: {}，上限: {}）, 跳过回满时间计算", current, cap)
             return None
 
