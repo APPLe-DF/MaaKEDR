@@ -1,0 +1,558 @@
+{
+    "task": [
+        {
+            "name": "剩余体力刷取",
+            "entry": "FarmResources.CheckHomePage",
+            "default_check": false,
+            "group": [
+                "Daily"
+            ],
+            "description": "仅刷剩余体力（固定清空体力模式）：刷到体力不足自动减次退出，榨干剩余体力。需选择刷取板块",
+            "option": [
+                "remaining_farm_category"
+            ],
+            "pipeline_override": {
+                "FarmResources.QuickBattle": {
+                    "next": [
+                        "FarmResources.SetBattleCountMax"
+                    ]
+                },
+                "FarmResources.ClickStage": {
+                    "next": [
+                        "FarmResources.QuickBattle",
+                        "FarmResources.SetBattleCountMax"
+                    ]
+                },
+                "FarmResources.ClickSkillStage": {
+                    "next": [
+                        "FarmResources.QuickBattle",
+                        "FarmResources.SetBattleCountMax"
+                    ]
+                },
+                "FarmResources.CheckStamina": {
+                    "next": [
+                        "FarmResources.CheckCountOCR",
+                        "FarmResources.ReduceCount"
+                    ]
+                },
+                "FarmResources.BattleStage": {
+                    "next": [
+                        "[JumpBack]FarmResources.ClickVictory",
+                        "[JumpBack]FarmResources.ClickItemDialog",
+                        "FarmResources.QuickBattle",
+                        "FarmResources.ReturnMainFromFarm",
+                        "FarmResources.PrepareBattle"
+                    ]
+                },
+                "FarmResources.ExitStageConfirm": {
+                    "next": [
+                        "FarmResources.ReturnMainFromFarm"
+                    ]
+                }
+            }
+        }
+    ],
+    "option": {
+        "remaining_farm_category": {
+            "type": "select",
+            "label": "刷取板块",
+            "default_case": "资源收集",
+            "cases": [
+                {
+                    "name": "资源收集",
+                    "label": "资源收集",
+                    "option": [
+                        "remaining_farm_resource_type"
+                    ],
+                    "pipeline_override": {
+                        "FarmResources.Start": {
+                            "next": [
+                                "FarmResources.ResourceCollect"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "技能演练",
+                    "label": "技能演练",
+                    "option": [
+                        "remaining_farm_skill_type"
+                    ],
+                    "pipeline_override": {
+                        "FarmResources.Start": {
+                            "next": [
+                                "FarmResources.SkillTraining"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "remaining_farm_resource_type": {
+            "type": "select",
+            "label": "资源类型",
+            "default_case": "特别军费行动",
+            "cases": [
+                {
+                    "name": "特别军费行动",
+                    "label": "特别军费行动",
+                    "option": [
+                        "remaining_farm_resource_stage_1"
+                    ],
+                    "pipeline_override": {
+                        "FarmResources.SelectResourceType": {
+                            "next": [
+                                "FarmResources.SelectSpecialFunds"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "作战体能训练",
+                    "label": "作战体能训练",
+                    "option": [
+                        "remaining_farm_resource_stage_2"
+                    ],
+                    "pipeline_override": {
+                        "FarmResources.SelectResourceType": {
+                            "next": [
+                                "FarmResources.SelectPhysicalTraining"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "兵种能力评级",
+                    "label": "兵种能力评级",
+                    "option": [
+                        "remaining_farm_resource_stage_3"
+                    ],
+                    "pipeline_override": {
+                        "FarmResources.SelectResourceType": {
+                            "next": [
+                                "FarmResources.SelectUnitRating"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "载具对抗演练",
+                    "label": "载具对抗演练",
+                    "option": [
+                        "remaining_farm_resource_stage_4"
+                    ],
+                    "pipeline_override": {
+                        "FarmResources.SelectResourceType": {
+                            "next": [
+                                "FarmResources.SelectVehicleDrill"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "remaining_farm_skill_type": {
+            "type": "select",
+            "label": "技能类型",
+            "default_case": "基础技能演练",
+            "cases": [
+                {
+                    "name": "基础技能演练",
+                    "label": "基础技能演练",
+                    "option": [
+                        "remaining_farm_skill_stage_1"
+                    ],
+                    "pipeline_override": {
+                        "FarmResources.SelectSkillType": {
+                            "next": [
+                                "FarmResources.SelectBasicSkill"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "专业技能演练",
+                    "label": "专业技能演练",
+                    "option": [
+                        "remaining_farm_skill_stage_2"
+                    ],
+                    "pipeline_override": {
+                        "FarmResources.SelectSkillType": {
+                            "next": [
+                                "FarmResources.SelectAdvancedSkill"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "remaining_farm_resource_stage_1": {
+            "type": "select",
+            "label": "关卡选择",
+            "default_case": "1-1",
+            "cases": [
+                {
+                    "name": "1-1",
+                    "label": "1-1",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"1-1\", \"stage_index\": 1, \"resource_type\": \"特别军费行动\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "1-2",
+                    "label": "1-2",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"1-2\", \"stage_index\": 2, \"resource_type\": \"特别军费行动\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "1-3",
+                    "label": "1-3",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"1-3\", \"stage_index\": 3, \"resource_type\": \"特别军费行动\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "1-4",
+                    "label": "1-4",
+                    "pipeline_override": {
+                        "FarmResources.SelectStage": {
+                            "next": [
+                                "FarmResources.SwipeToRight"
+                            ]
+                        },
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"1-4\", \"stage_index\": 4, \"resource_type\": \"特别军费行动\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "1-5",
+                    "label": "1-5",
+                    "pipeline_override": {
+                        "FarmResources.SelectStage": {
+                            "next": [
+                                "FarmResources.SwipeToRight"
+                            ]
+                        },
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"1-5\", \"stage_index\": 5, \"resource_type\": \"特别军费行动\"}"
+                        }
+                    }
+                }
+            ]
+        },
+        "remaining_farm_resource_stage_2": {
+            "type": "select",
+            "label": "关卡选择",
+            "default_case": "2-1",
+            "cases": [
+                {
+                    "name": "2-1",
+                    "label": "2-1",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"2-1\", \"stage_index\": 1, \"resource_type\": \"作战体能训练\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "2-2",
+                    "label": "2-2",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"2-2\", \"stage_index\": 2, \"resource_type\": \"作战体能训练\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "2-3",
+                    "label": "2-3",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"2-3\", \"stage_index\": 3, \"resource_type\": \"作战体能训练\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "2-4",
+                    "label": "2-4",
+                    "pipeline_override": {
+                        "FarmResources.SelectStage": {
+                            "next": [
+                                "FarmResources.SwipeToRight"
+                            ]
+                        },
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"2-4\", \"stage_index\": 4, \"resource_type\": \"作战体能训练\"}"
+                        }
+                    }
+                }
+            ]
+        },
+        "remaining_farm_resource_stage_3": {
+            "type": "select",
+            "label": "关卡选择",
+            "default_case": "3-1",
+            "cases": [
+                {
+                    "name": "3-1",
+                    "label": "3-1",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"3-1\", \"stage_index\": 1, \"resource_type\": \"兵种能力评级\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "3-2",
+                    "label": "3-2",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"3-2\", \"stage_index\": 2, \"resource_type\": \"兵种能力评级\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "3-3",
+                    "label": "3-3",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"3-3\", \"stage_index\": 3, \"resource_type\": \"兵种能力评级\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "3-4",
+                    "label": "3-4",
+                    "pipeline_override": {
+                        "FarmResources.SelectStage": {
+                            "next": [
+                                "FarmResources.SwipeToRight"
+                            ]
+                        },
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"3-4\", \"stage_index\": 4, \"resource_type\": \"兵种能力评级\"}"
+                        }
+                    }
+                }
+            ]
+        },
+        "remaining_farm_resource_stage_4": {
+            "type": "select",
+            "label": "关卡选择",
+            "default_case": "4-1",
+            "cases": [
+                {
+                    "name": "4-1",
+                    "label": "4-1",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"4-1\", \"stage_index\": 1, \"resource_type\": \"载具对抗演练\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "4-2",
+                    "label": "4-2",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"4-2\", \"stage_index\": 2, \"resource_type\": \"载具对抗演练\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "4-3",
+                    "label": "4-3",
+                    "pipeline_override": {
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"4-3\", \"stage_index\": 3, \"resource_type\": \"载具对抗演练\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "4-4",
+                    "label": "4-4",
+                    "pipeline_override": {
+                        "FarmResources.SelectStage": {
+                            "next": [
+                                "FarmResources.SwipeToRight"
+                            ]
+                        },
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"4-4\", \"stage_index\": 4, \"resource_type\": \"载具对抗演练\"}"
+                        }
+                    }
+                },
+                {
+                    "name": "4-5",
+                    "label": "4-5",
+                    "pipeline_override": {
+                        "FarmResources.SelectStage": {
+                            "next": [
+                                "FarmResources.SwipeToRight"
+                            ]
+                        },
+                        "FarmResources.ClickStage": {
+                            "custom_recognition_param": "{\"stage_name\": \"4-5\", \"stage_index\": 5, \"resource_type\": \"载具对抗演练\"}"
+                        }
+                    }
+                }
+            ]
+        },
+        "remaining_farm_skill_stage_1": {
+            "type": "select",
+            "label": "关卡选择",
+            "default_case": "基础训练1",
+            "cases": [
+                {
+                    "name": "基础训练1",
+                    "label": "基础训练1",
+                    "description": "第 1 关默认解锁，不做锁定检查",
+                    "pipeline_override": {
+                        "FarmResources.ClickSkillStage": {
+                            "roi": [
+                                130,
+                                381,
+                                126,
+                                28
+                            ],
+                            "expected": "基础训练1"
+                        },
+                        "FarmResources.SelectSkillStage": {
+                            "next": [
+                                "FarmResources.ClickSkillStage"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "基础训练2",
+                    "label": "基础训练2",
+                    "pipeline_override": {
+                        "FarmResources.ClickSkillStage": {
+                            "roi": [
+                                437,
+                                381,
+                                126,
+                                28
+                            ],
+                            "expected": "基础训练2"
+                        },
+                        "FarmResources.CheckSkillLocked": {
+                            "roi": [
+                                454,
+                                248,
+                                80,
+                                81
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "基础训练3",
+                    "label": "基础训练3",
+                    "pipeline_override": {
+                        "FarmResources.ClickSkillStage": {
+                            "roi": [
+                                742,
+                                381,
+                                126,
+                                28
+                            ],
+                            "expected": "基础训练3"
+                        },
+                        "FarmResources.CheckSkillLocked": {
+                            "roi": [
+                                760,
+                                249,
+                                80,
+                                81
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "remaining_farm_skill_stage_2": {
+            "type": "select",
+            "label": "关卡选择",
+            "default_case": "专业训练1",
+            "cases": [
+                {
+                    "name": "专业训练1",
+                    "label": "专业训练1",
+                    "description": "第 1 关默认解锁，不做锁定检查",
+                    "pipeline_override": {
+                        "FarmResources.ClickSkillStage": {
+                            "roi": [
+                                130,
+                                381,
+                                126,
+                                28
+                            ],
+                            "expected": "专业训练1"
+                        },
+                        "FarmResources.SelectSkillStage": {
+                            "next": [
+                                "FarmResources.ClickSkillStage"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "专业训练2",
+                    "label": "专业训练2",
+                    "pipeline_override": {
+                        "FarmResources.ClickSkillStage": {
+                            "roi": [
+                                437,
+                                381,
+                                126,
+                                28
+                            ],
+                            "expected": "专业训练2"
+                        },
+                        "FarmResources.CheckSkillLocked": {
+                            "roi": [
+                                454,
+                                248,
+                                80,
+                                81
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "专业训练3",
+                    "label": "专业训练3",
+                    "pipeline_override": {
+                        "FarmResources.ClickSkillStage": {
+                            "roi": [
+                                742,
+                                381,
+                                126,
+                                28
+                            ],
+                            "expected": "专业训练3"
+                        },
+                        "FarmResources.CheckSkillLocked": {
+                            "roi": [
+                                760,
+                                249,
+                                80,
+                                81
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

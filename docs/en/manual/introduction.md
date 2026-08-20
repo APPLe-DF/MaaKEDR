@@ -83,6 +83,10 @@ Auto-battle resource stages with stamina management.
 - **Single Battle**: Runs the set number of battles then stops
 - **Clear Stamina**: Keeps battling until stamina is depleted — ideal for overnight farming
 
+### Remaining Stamina
+
+A Farm Resources variant **locked to Clear Stamina** mode, used to drain whatever stamina is left: pick a category and it keeps battling until stamina runs out. Usually enabled via the **Daily / Activity** presets, but can also be toggled manually.
+
 ### Resource Collection
 
 | Resource Type     | Description                    |
@@ -159,3 +163,14 @@ MaaKEDR will automatically:
 > [!NOTE]
 >
 > PVP outcomes depend on your roster and gear. MaaKEDR only automates the process — it does not guarantee wins.
+
+---
+
+## Task Presets
+
+Presets check a set of common tasks in one click for different scenarios:
+
+- **Daily**: Game Launch → Farm Resources → Claim Rewards → Remaining Stamina → PVP → Claim Rewards → Stamina Info
+- **Activity**: Game Launch → Event Stage → Event Shop → Farm Resources → Claim Rewards → Remaining Stamina → PVP → Claim Rewards → Stamina Info
+
+When the **Activity** preset is selected, `Event Stage` and `Event Shop` are enabled by default; the **Daily** preset does not include event tasks.

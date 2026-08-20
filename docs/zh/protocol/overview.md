@@ -21,10 +21,13 @@ icon: ri:book-open-line
 
 - `tasks/startup.json` — 启动游戏
 - `tasks/farm_resources.json` — 资源刷取
+- `tasks/farm_remaining_stamina.json` — 剩余体力刷取（固定清空体力模式）
 - `tasks/event_stage.json` — 活动关卡刷取与活动商店兑换
 - `tasks/pvp.json` — 玩家对战
 - `tasks/claim_rewards.json` — 领取奖励
 - `tasks/stamina_info.json` — 体力信息（主界面体力与回满时间）
+
+任务预设：`tasks/preset/Daily.json`（日常）、`tasks/preset/Activity.json`（活动）——在 GUI 选择预设即可一键勾选对应任务组合；活动预设内含「活动关卡刷取 / 活动商店兑换」，选择即默认开启。
 
 任务组：`Daily`（日常任务）。
 

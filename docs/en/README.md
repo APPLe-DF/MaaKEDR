@@ -33,6 +33,7 @@ Image technology + simulation control, free your hands!
 - Game Launch → Login → Main Interface
 - Claim Rewards: Daily/Weekly, Battle Pass, Mailbox, Dispatch
 - Resource Farming: Auto Battle Loop + Stamina Handling
+- Remaining Stamina Farming: Clear Stamina fixed, drains leftover stamina
 - PvP Auto Battle
 - Event Stages and Shop
 - Stamina Info: reads home-screen stamina and reports refill time

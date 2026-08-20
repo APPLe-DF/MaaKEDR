@@ -60,6 +60,7 @@ Powered by [MaaFramework](https://github.com/MaaXYZ/MaaFramework)!
 - Game Launch
 - Claim Rewards (dispatch tasks, daily/weekly/military achievements, battle pass, mailbox, premium shop daily reward — individually toggleable)
 - Resource Farming (Special Funds, Physical Training, Unit Rating, Vehicle Drill)
+- Remaining Stamina Farming (Farm Resources locked to Clear Stamina mode, for draining leftover stamina; enabled via presets or manually)
 - Skill Training (Basic Skills, Advanced Skills)
 - PVP (auto-battle with automatic selection of the lowest-level opponent, multi-round loop)
 - Multiple stage selection with configurable battle count (1-6 / max)

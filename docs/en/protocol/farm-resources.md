@@ -27,6 +27,15 @@ icon: ri:treasure-map-line
 - **Single battle**: `SetBattleCount` from option (1–6 / max). The count is the battles per batch, not a hard task limit — the task farms until stamina is insufficient.
 - **Drain stamina**: `SetBattleCountMax`, `ReduceCount` on low stamina (count −1 per cycle until 1, then exit via `ReductionDone`), exit via confirm → main. Unlike single-battle mode, it squeezes out the remaining stamina instead of wasting it.
 
+## Remaining Stamina
+
+| Item  | Value                                            |
+| ----- | ------------------------------------------------ |
+| Task  | `tasks/farm_remaining_stamina.json`              |
+| Entry | `FarmResources.CheckHomePage` (reuses farm flow) |
+
+A copy of Farm Resources locked to **drain-stamina** mode: the task-level `pipeline_override` carries max count (`SetBattleCountMax`), stamina-low count reduction (`CheckStamina → CheckCountOCR / ReduceCount`) and the exit path. It uses its own independent option set `remaining_farm_category` (category → resource type → stage, separate from `farm_resources`), meant to drain whatever stamina is left at that point, usually enabled via task presets rather than checked by default.
+
 Skill training: basic / advanced stages via OCR + lock checks. Custom actions: battle count helpers in `agent/custom/`.
 
 ## Precondition

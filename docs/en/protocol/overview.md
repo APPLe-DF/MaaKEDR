@@ -17,7 +17,9 @@ ROI, coordinates, and templates use **1280×720**. Other resolutions are scaled 
 | `maa-project.json` | Scaffold / release / runtime channels       |
 | `tasks/*.json`     | GUI tasks: `entry`, options, overrides      |
 
-Imported tasks: `startup`, `farm_resources`, `event_stage`, `pvp`, `claim_rewards`, `stamina_info`. Group: `Daily`.
+Imported tasks: `startup`, `farm_resources`, `farm_remaining_stamina`, `event_stage`, `pvp`, `claim_rewards`, `stamina_info`. Group: `Daily`.
+
+Task presets: `tasks/preset/Daily.json` (daily) and `tasks/preset/Activity.json` (activity). Selecting a preset in the GUI checks the matching task combo at once; the activity preset includes `活动关卡刷取` / `活动商店兑换`, which are enabled by default when chosen.
 
 ## Resource packs
 
