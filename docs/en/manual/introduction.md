@@ -108,6 +108,25 @@ Stage counts differ by type (selectable in options):
 
 ---
 
+## Event Stages and Shop
+
+Farm Flare event stages and redeem available event-shop items automatically.
+
+**Event stage options:**
+
+| Option       | Type   | Description                         |
+| :----------- | :----- | :---------------------------------- |
+| Event Stage  | Select | EX2-1 / EX2-2 / EX3-1 / EX4-1        |
+| Sweep Count  | Select | 1 / 2 / 3 / Max                     |
+
+Event stages do not consume normal stamina and are limited to three sweeps per day. Complete all Flare stages, including EX stages, before using this task.
+
+**Event shop:**
+
+Opens the `定额保障` (fixed-guarantee) tab, buys available items in order, skips sold-out items, and finishes when no items remain.
+
+---
+
 ## PVP
 
 Auto-battle PVP with configurable rounds.

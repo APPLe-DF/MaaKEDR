@@ -114,9 +114,10 @@ Real example: `agent/custom/sink/aspect_ratio.py` — checks the controller reso
 `analyze()` returns either `AnalyzeResult` or `None`:
 
 - Return `AnalyzeResult(box=..., detail=...)`: matches, uses the specified box
-- Return `None`: no match, framework takes `on_error` path
+- Return `None`: no match, framework takes the `on_error` path
+- A recognizer that successfully reads the current UI but must choose a next node based on state may instead return a placeholder `AnalyzeResult` and call `context.override_next(argv.node_name, [target])` for dynamic routing. For example, `CheckShopRefreshAfterPurchase` uses shop OCR to choose between continuing item checks and performing one fallback refresh click.
 
-The `detail` dict is included in logs for debugging.
+Reserve `None` / `on_error` for actual recognition or parameter-parsing failures; expected UI-state branches should not be modeled as errors.
 
 ## Context API Reference
 
@@ -162,6 +163,6 @@ context.override_pipeline({"SomeNode": {"next": ["CustomNext"]}})
 
 ## Development Tips
 
-- Study existing Custom implementations (`farm_resources.py`, `pvp.py`) for patterns
+- Study existing Custom implementations (`farm_resources.py`, `pvp.py`, `event_stage.py`) for patterns
 - Test complex logic in a separate Python file before integrating into pipeline
 - Use `from utils.logger import logger` for debug output

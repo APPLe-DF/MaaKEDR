@@ -31,7 +31,7 @@ Skill training: basic / advanced stages via OCR + lock checks. Custom actions: b
 
 ## Precondition
 
-The task entry is `FarmResources.CheckHomePage`: **the game must already be on the main screen** (`main_option`, 5 s timeout with no fallback — the task fails otherwise). Return to the main screen manually or run the "Launch Game" task first.
+The task entry is `FarmResources.CheckHomePage`. The game should normally start on the main screen. If home recognition fails, the pipeline uses `FarmResources.ReturnToHome` to find and click the back button, then checks the home screen again; the task fails only if home still cannot be confirmed.
 
 ## Acceptance checklist
 

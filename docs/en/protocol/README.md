@@ -17,6 +17,7 @@ Task, resource, and UI-flow conventions for MaaKEDR (_Cedar_). For the shared pr
 - [Claim rewards](./claim-rewards.md)
 - [Farm resources](./farm-resources.md)
 - [PVP](./pvp.md)
+- [Event stages and shop](./event-stage.md)
 
 ## Code map
 

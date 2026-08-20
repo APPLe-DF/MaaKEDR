@@ -118,8 +118,9 @@ Custom Recognition 的 `analyze` 返回 `AnalyzeResult` 或 `None`：
 
 - 返回 `AnalyzeResult(box=..., detail=...)`：命中，使用指定 box
 - 返回 `None`：未命中，框架走 `on_error`
+- 对于已经成功读取当前 UI、但需要按状态选择后续节点的识别器，也可以返回占位 `AnalyzeResult`，并调用 `context.override_next(argv.node_name, [target])` 动态路由；例如 `CheckShopRefreshAfterPurchase` 根据商店 OCR 状态在继续检查与一次性补点之间选择路径。
 
-返回值中的 `detail` 会记录在日志中，可用于调试。
+`None` / `on_error` 应保留给真正的识别或参数解析失败；预期的 UI 状态分支不应伪装成错误。
 
 ## Context API 参考
 
@@ -166,6 +167,6 @@ context.override_pipeline({"SomeNode": {"next": ["CustomNext"]}})
 
 ## 开发建议
 
-- 先阅读项目已有的 Custom 实现（`farm_resources.py`、`pvp.py`）了解模式
+- 先阅读项目已有的 Custom 实现（`farm_resources.py`、`pvp.py`、`event_stage.py`）了解模式
 - 复杂逻辑先在单独的 Python 文件中测试，再集成到 Pipeline 中
 - 使用 `from utils.logger import logger` 输出日志，方便调试

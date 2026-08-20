@@ -18,7 +18,7 @@ Home → entry → battle UI → select opponent (custom: OCR 3 levels, pick low
 
 ## Precondition
 
-The task entry is `PVP.CheckHomePage`: **the game must already be on the main screen** (`main_option`, 5 s timeout with no fallback — the task fails otherwise). Return to the main screen manually or run the "Launch Game" task first.
+The task entry is `PVP.CheckHomePage`. The game should normally start on the main screen. If home recognition fails, the pipeline uses `PVP.ReturnToHome` to find and click the back button, then checks the home screen again; the task fails only if home still cannot be confirmed.
 
 ## Acceptance checklist
 
