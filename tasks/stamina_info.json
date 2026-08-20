@@ -3,7 +3,7 @@
         {
             "name": "体力信息",
             "entry": "StaminaInfo",
-            "default_check": false,
+            "default_check": true,
             "group": ["Daily"],
             "description": "读取主界面体力并输出回满剩余时间与具体回满时间（建议作为最后一个任务运行，需处于主界面）"
         }

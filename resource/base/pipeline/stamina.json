@@ -1,6 +1,46 @@
 {
     "StaminaInfo": {
-        "desc": "独立任务：读取主界面体力并输出回满时间（识别失败则任务失败）",
+        "desc": "确认在主页后读取体力并输出回满时间（不在主页则点主页按钮自动返回）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1199,
+            6,
+            77,
+            83
+        ],
+        "template": "main_option.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "timeout": 60000,
+        "next": [
+            "StaminaInfo.Read",
+            "StaminaInfo.ClickHome"
+        ]
+    },
+    "StaminaInfo.ClickHome": {
+        "desc": "点击主页按钮回到主界面",
+        "recognition": "TemplateMatch",
+        "roi": [
+            199,
+            26,
+            85,
+            52
+        ],
+        "template": "return_main.png",
+        "threshold": 0.75,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1000,
+        "next": [
+            "StaminaInfo"
+        ]
+    },
+    "StaminaInfo.Read": {
+        "desc": "读取主界面体力并输出回满时间（识别失败则任务失败）",
         "recognition": "Custom",
         "custom_recognition": "ReadStamina",
         "custom_recognition_param": "{\"current_roi\": [1120, 512, 38, 44], \"cap_roi\": [1152, 484, 28, 30], \"rotate_angle\": -45.0}",

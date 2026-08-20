@@ -107,14 +107,18 @@ class ReadStamina(CustomRecognition):
             logger.info("[雪松] 未识别到完整体力数值（当前: {}，上限: {}）, 跳过回满时间计算", current, cap)
             return None
 
-        missing = cap - current
-        if missing <= 0:
-            logger.info("[雪松] 体力已满: {}/{}", current, cap)
+        # 体力达到自然恢复上限后不再随时间增长，因此没有“回满时间”
+        if current >= cap:
+            if current > cap:
+                logger.info("[雪松] 体力 {}/{}（已超出自然恢复上限，不再随时间恢复）", current, cap)
+            else:
+                logger.info("[雪松] 体力 {}/{}（已达自然恢复上限，不再随时间恢复）", current, cap)
             return CustomRecognition.AnalyzeResult(
                 box=(current_roi[0], current_roi[1], current_roi[2], current_roi[3]),
                 detail={"current": current, "cap": cap, "full": True},
             )
 
+        missing = cap - current
         minutes = missing * float(STAMINA_RECOVER_MINUTES_PER_POINT)
         full_time = datetime.now(UTC) + timedelta(minutes=minutes)
         logger.info(
@@ -148,7 +152,7 @@ class ReadStamina(CustomRecognition):
         try:
             detail = context.run_recognition_direct(
                 JRecognitionType.OCR,
-                JOCR(roi=(0, 0, int(rotated.shape[1]), int(rotated.shape[0]))),
+                JOCR(roi=(0, 0, int(rotated.shape[1]), int(rotated.shape[0])), only_rec=True),
                 rotated,
             )
         except Exception as exc:
