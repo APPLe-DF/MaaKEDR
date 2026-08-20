@@ -465,6 +465,13 @@
     "FarmResources.SetBattleCountMax": {
         "desc": "设置战斗次数为最大(清空体力模式)",
         "recognition": "DirectHit",
+        "pre_wait_freezes": {
+            "time": 300,
+            "threshold": 0.95,
+            "method": 5,
+            "rate_limit": 1000,
+            "timeout": 8000
+        },
         "action": {
             "type": "Custom",
             "param": {

@@ -24,6 +24,7 @@ COUNT_ROI = [903, 441, 27, 43]
 PLUS_BUTTON = (1086, 470)
 MINUS_BUTTON = (739, 470)
 MAX_BUTTON_TEMPLATE = "farm_resources/max_count.png"
+MAX_BUTTON_ROI = (1008, 476, 125, 109)
 
 _DEFAULT_TARGET = 6
 _COUNT_EXPECTED = ["1", "2", "3", "4", "5", "6"]
@@ -102,15 +103,26 @@ class SetBattleCount(CustomAction):
         if target_count == "max":
             max_detail = context.run_recognition_direct(
                 JRecognitionType.TemplateMatch,
-                JTemplateMatch(template=[max_template], threshold=_MAX_TEMPLATE_THRESHOLD),
+                JTemplateMatch(
+                    template=[max_template],
+                    threshold=_MAX_TEMPLATE_THRESHOLD,
+                    roi=MAX_BUTTON_ROI,
+                ),
                 image,
             )
             if max_detail and max_detail.box:
+                logger.info("[SetBattleCount] 检测到最大按钮，点击设置最大次数: {}", max_detail.box)
                 context.run_action_direct(
                     JActionType.Click,
                     JClick(),
                     max_detail.box,
                     "",
+                )
+            else:
+                logger.warning(
+                    "[SetBattleCount] 未检测到最大按钮模板 {} (threshold={})，保持当前次数不变",
+                    max_template,
+                    _MAX_TEMPLATE_THRESHOLD,
                 )
             return CustomAction.RunResult(success=True)
 
