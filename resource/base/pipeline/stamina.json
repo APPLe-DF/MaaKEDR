@@ -43,7 +43,7 @@
         "desc": "读取主界面体力并输出回满时间（识别失败则任务失败）",
         "recognition": "Custom",
         "custom_recognition": "ReadStamina",
-        "custom_recognition_param": "{\"current_roi\": [1120, 512, 38, 44], \"cap_roi\": [1152, 484, 28, 30], \"rotate_angle\": -45.0}",
+        "custom_recognition_param": "{\"current_roi\": [1120, 512, 38, 44], \"cap_roi\": [1152, 484, 28, 30], \"tilt_angle\": -45.0}",
         "action": {
             "type": "DoNothing"
         }

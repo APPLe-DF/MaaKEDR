@@ -91,17 +91,26 @@ class ReadStamina(CustomRecognition):
 
         current_roi = coerce_roi(params.get("current_roi", [0, 0, 0, 0]), [0, 0, 0, 0], "ReadStamina")
         cap_roi = coerce_roi(params.get("cap_roi", [0, 0, 0, 0]), [0, 0, 0, 0], "ReadStamina")
-        roi_angle = float(params.get("rotate_angle", -45.0))
-        # 可选的上限兜底（cap_roi 读取失败时使用）
-        cap_fallback = params.get("stamina_cap", None)
+        #: 屏幕上数字的倾斜角；纠正角为 -tilt_angle（见 _read_number）
+        tilt_angle = float(params.get("tilt_angle", params.get("rotate_angle", -45.0)))
+        # 可选的上限兜底（cap_roi 读取失败时使用），强制数值化
+        cap_fallback: int | None = None
+        raw_cap = params.get("stamina_cap", None)
+        if raw_cap is not None:
+            try:
+                cap_fallback = int(raw_cap)
+            except (TypeError, ValueError):
+                logger.warning(
+                    "ReadStamina: stamina_cap 参数非整数（{}），忽略兜底", raw_cap
+                )
 
         if current_roi == [0, 0, 0, 0] or cap_roi == [0, 0, 0, 0]:
             logger.warning("ReadStamina: 未配置 current_roi / cap_roi")
             return None
 
         image = argv.image
-        current = self._read_number(context, image, current_roi, roi_angle)
-        cap = self._read_number(context, image, cap_roi, roi_angle) or cap_fallback
+        current = self._read_number(context, image, current_roi, tilt_angle)
+        cap = self._read_number(context, image, cap_roi, tilt_angle) or cap_fallback
 
         if current is None or not cap:
             logger.info("[雪松] 未识别到完整体力数值（当前: {}，上限: {}）, 跳过回满时间计算", current, cap)
@@ -140,8 +149,14 @@ class ReadStamina(CustomRecognition):
     def _read_number(
         self, context: Context, image: Any, roi: list[int], angle: float
     ) -> int | None:
-        """单个 ROI：旋转扶正后 OCR，提取第一个整数。"""
+        """单个 ROI：旋转扶正后 OCR，提取第一个整数。
+
+        angle 为屏幕上数字的“倾斜角”（tilt_angle），纠正角取其相反数。
+        """
         x, y, w, h = [max(0, int(v)) for v in roi]
+        if w <= 0 or h <= 0:
+            logger.warning("ReadStamina: ROI [{}] 宽或高非正，跳过 OCR", roi)
+            return None
         if image.ndim != 3 or y + h > image.shape[0] or x + w > image.shape[1]:
             logger.warning("ReadStamina: ROI [{}] 超出截图范围", roi)
             return None
