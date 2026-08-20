@@ -316,7 +316,8 @@
             "type": "Click"
         },
         "next": [
-            "FarmResources.QuickBattle"
+            "FarmResources.QuickBattle",
+            "FarmResources.SetBattleCount"
         ]
     },
     "FarmResources.SelectStage": {
@@ -384,7 +385,8 @@
         },
         "timeout": 10000,
         "next": [
-            "FarmResources.QuickBattle"
+            "FarmResources.QuickBattle",
+            "FarmResources.SetBattleCount"
         ],
         "on_error": [
             "FarmResources.StageLocked"
