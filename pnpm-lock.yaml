@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@nekosu/maa-tools':
-        specifier: 1.1.0
-        version: 1.1.0
+        specifier: 1.1.1
+        version: 1.1.1
       '@nekosu/prettier-plugin-maafw-sort':
         specifier: 1.0.6
         version: 1.0.6
@@ -650,8 +650,8 @@ packages:
   '@nekosu/maa-tasker@1.0.0':
     resolution: {integrity: sha512-p5SaBJGvAMr5J2uk6imoiK7eIF7yA67HndWyfxddAHHdoyliai2dkHqBhTmDDuRmmAJ/ly4INg5Hnx8CI7Po3A==}
 
-  '@nekosu/maa-tools@1.1.0':
-    resolution: {integrity: sha512-+RPjfMFNmhA89M8VKP34VuR+ZZsKAUSFFTeaAOBSPK/wb8hXdG7WDZ/c8khs0NPGCZ/EvuddjZhYPrrORxmpIQ==}
+  '@nekosu/maa-tools@1.1.1':
+    resolution: {integrity: sha512-QSSt8ivIDSnVRMaBxpmT+2shrsLGvMkZohYCAesKQg8UOHKw6G/MQhvHgNftY8u/XPwwUiWx0fZ2PxOyl9hZCw==}
     hasBin: true
 
   '@nekosu/maa-version-manager@1.1.0':
@@ -3982,7 +3982,7 @@ snapshots:
     dependencies:
       '@nekosu/simple-parser': 1.0.0
 
-  '@nekosu/maa-tools@1.1.0':
+  '@nekosu/maa-tools@1.1.1':
     dependencies:
       '@actions/core': 3.0.1
       '@nekosu/maa-locale': 1.0.3
