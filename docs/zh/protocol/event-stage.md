@@ -9,10 +9,10 @@ icon: ri:fire-line
 
 ## 任务入口与选项
 
-| 任务 | 入口 | 选项 |
-| --- | --- | --- |
+| 任务         | 入口                       | 选项                               |
+| ------------ | -------------------------- | ---------------------------------- |
 | 活动关卡刷取 | `EventStage.CheckHomePage` | `event_stage`、`event_sweep_count` |
-| 活动商店兑换 | `EventStage.CheckHomePage` | 无额外选项，自动处理定额保障商品 |
+| 活动商店兑换 | `EventStage.CheckHomePage` | 无额外选项，自动处理定额保障商品   |
 
 活动关卡当前支持 `EX2-1`、`EX2-2`、`EX3-1`、`EX4-1`。`event_sweep_count` 支持 1、2、3 次及最大次数；活动关卡每日扫荡上限为 3，且不消耗普通体力。开始任务前如果不在主页，`EventStage.CheckHomePage` 会通过 `EventStage.ReturnToHome` 尝试返回主页后再检查。
 
@@ -54,13 +54,13 @@ CheckHomePage → Start → EventHub → ClickBattleReport
 
 ## 代码位置
 
-| 内容 | 路径 |
-| --- | --- |
-| 任务与选项 | `tasks/event_stage.json` |
-| 活动 Pipeline | `resource/base/pipeline/event_stage.json` |
+| 内容               | 路径                                      |
+| ------------------ | ----------------------------------------- |
+| 任务与选项         | `tasks/event_stage.json`                  |
+| 活动 Pipeline      | `resource/base/pipeline/event_stage.json` |
 | Custom Recognition | `agent/custom/recognition/event_stage.py` |
-| Recognition 注册 | `agent/custom/recognition/__init__.py` |
-| Interface import | `interface.json` |
+| Recognition 注册   | `agent/custom/recognition/__init__.py`    |
+| Interface import   | `interface.json`                          |
 
 ## 验收清单
 

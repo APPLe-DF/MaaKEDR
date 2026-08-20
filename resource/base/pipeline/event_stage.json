@@ -1938,6 +1938,7 @@
     },
     "EventStage.ReturnToHome": {
         "desc": "任务开始前不在主页时点击返回按钮回到主页",
+        "max_hit": 3,
         "recognition": "TemplateMatch",
         "roi": [
             199,

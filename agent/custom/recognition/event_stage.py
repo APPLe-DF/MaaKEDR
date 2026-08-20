@@ -43,11 +43,12 @@ def _box_tuple(box: Any) -> tuple[float, float, float, float] | None:
         return None
     try:
         values = tuple(float(box[index]) for index in range(4))
+        x, y, width, height = values
     except (TypeError, IndexError, ValueError):
         return None
-    if values[2] <= 0 or values[3] <= 0:
+    if width <= 0 or height <= 0:
         return None
-    return values
+    return x, y, width, height
 
 
 def _box_center_in_roi(box: Any, roi: list[int]) -> bool:
@@ -62,9 +63,7 @@ def _box_center_in_roi(box: Any, roi: list[int]) -> bool:
 
 def _sold_out_results(detail: Any) -> list[OCRResult]:
     """Return deduplicated OCR hits containing the sold-out label."""
-    raw_results = [
-        result for result in _ocr_results(detail) if "售罄" in _normalize_ocr_text(result.text)
-    ]
+    raw_results = [result for result in _ocr_results(detail) if "售罄" in _normalize_ocr_text(result.text)]
     unique: list[OCRResult] = []
     for result in raw_results:
         box = _box_tuple(result.box)
@@ -79,10 +78,7 @@ def _sold_out_results(detail: Any) -> list[OCRResult]:
             if old_box is None:
                 continue
             old_x, old_y, old_w, old_h = old_box
-            if (
-                abs(center[0] - (old_x + old_w / 2)) < 50
-                and abs(center[1] - (old_y + old_h / 2)) < 35
-            ):
+            if abs(center[0] - (old_x + old_w / 2)) < 50 and abs(center[1] - (old_y + old_h / 2)) < 35:
                 duplicate = True
                 break
         if not duplicate:
@@ -139,9 +135,7 @@ class CheckAllSoldOut(CustomRecognition):
 
         # 只有达到商品总数才进入全部售罄分支；否则 SelectFixedGuarantee 会按 override 路由。
         context.override_next(argv.node_name, ["EventStage.ShopAllSoldOut"])
-        logger.info(
-            "[活动商店] 检测到全部商品售罄（{}/{} 个标记）", sold_out_count, total_items
-        )
+        logger.info("[活动商店] 检测到全部商品售罄（{}/{} 个标记）", sold_out_count, total_items)
         return CustomRecognition.AnalyzeResult(
             box=first_box, detail={"status": "all_sold_out", "count": sold_out_count}
         )
@@ -166,9 +160,7 @@ class CheckShopItemSoldOut(CustomRecognition):
                 argv.image,
             )
             all_results = _sold_out_results(detail)
-            matching_results = [
-                result for result in all_results if _box_center_in_roi(result.box, item_roi)
-            ]
+            matching_results = [result for result in all_results if _box_center_in_roi(result.box, item_roi)]
             if matching_results:
                 target, status = sold_out_next, "sold_out"
             else:
@@ -197,9 +189,7 @@ class CheckShopRefreshAfterPurchase(CustomRecognition):
     ) -> CustomRecognition.AnalyzeResult | RectType | None:
         try:
             params = parse_params(argv.custom_recognition_param)
-            shop_roi = coerce_roi(
-                params.get("shop_roi"), [0, 180, 1280, 540], "CheckShopRefreshAfterPurchase"
-            )
+            shop_roi = coerce_roi(params.get("shop_roi"), [0, 180, 1280, 540], "CheckShopRefreshAfterPurchase")
             ready_next = str(params["ready_next"])
             refresh_next = str(params["refresh_next"])
             detail = context.run_recognition_direct(
@@ -241,7 +231,7 @@ class CheckStageExhausted(CustomRecognition):
         roi = coerce_roi(params.get("stage_roi"), [280, 90, 720, 100], "CheckStageExhausted")
         detail = context.run_recognition_direct(
             JRecognitionType.OCR,
-            JOCR(expected=[r"^0/3$"], roi=(roi[0], roi[1], roi[2], roi[3]), only_rec=True),
+            JOCR(expected=[], roi=(roi[0], roi[1], roi[2], roi[3]), only_rec=True),
             argv.image,
         )
         results = results_as(detail, OCRResult)
@@ -262,7 +252,6 @@ class CheckStageExhausted(CustomRecognition):
         )
 
 
-
 @AgentServer.custom_recognition("CheckEventStage")
 class CheckEventStage(CustomRecognition):
     """检测活动关卡（按参数传入关卡名与识别区域，OCR 定位）"""
@@ -273,9 +262,7 @@ class CheckEventStage(CustomRecognition):
             return None
         return result[0], result[1], result[2], result[3]
 
-    def _count_roi_or_none(
-        self, raw: Any, box: RectType | None
-    ) -> tuple[int, int, int, int] | None:
+    def _count_roi_or_none(self, raw: Any, box: RectType | None) -> tuple[int, int, int, int] | None:
         """优先使用显式 count_roi（task 选项可能覆盖）；否则按关卡卡片位置推导。
 
         次数徽标（如 0/3）位于卡片左上角上方约 36~40px，宽度约为卡片宽 -17px
@@ -324,6 +311,7 @@ class CheckEventStage(CustomRecognition):
                 box = lock_detail.box
                 return (int(box[0]), int(box[1]), int(box[2]), int(box[3]))
         except Exception:
+            logger.exception("CheckEventStage: lock template recognition failed")
             return None
         return None
 
@@ -338,8 +326,13 @@ class CheckEventStage(CustomRecognition):
 
         stage_name = params.get("stage_name", "")
         stage_roi = coerce_roi(params.get("stage_roi"), [0, 0, 1280, 640], "CheckEventStage")
-        lock_template = params.get("lock_template", "")
-        lock_threshold = params.get("lock_threshold", 0.7)
+        lock_template = str(params.get("lock_template", ""))
+        try:
+            lock_threshold = float(params.get("lock_threshold", 0.7))
+        except (TypeError, ValueError):
+            lock_threshold = 0.7
+        if not 0.0 <= lock_threshold <= 1.0:
+            lock_threshold = 0.7
 
         if not stage_name:
             logger.error("CheckEventStage: stage_name 为空")
@@ -392,12 +385,7 @@ class CheckEventStage(CustomRecognition):
             count_results = all_results_as(count_detail, OCRResult)
             for count_result in count_results:
                 raw_count_text = count_result.text or ""
-                count_text = (
-                    re.sub(r"\s+", "", raw_count_text)
-                    .replace("／", "/")
-                    .replace("O", "0")
-                    .replace("o", "0")
-                )
+                count_text = re.sub(r"\s+", "", raw_count_text).replace("／", "/").replace("O", "0").replace("o", "0")
                 if re.search(r"0/3", count_text):
                     logger.info("[活动刷取] {} 关卡次数已耗尽，徽标文本: {}", stage_name, raw_count_text)
                     context.override_next(argv.node_name, ["EventStage.ReturnMainFromStage"])
