@@ -159,8 +159,15 @@ class ReadStamina(CustomRecognition):
         if w <= 0 or h <= 0:
             logger.warning("ReadStamina: ROI [{}] 宽或高非正，跳过 OCR", roi)
             return None
-        if image.ndim != 3 or y + h > image.shape[0] or x + w > image.shape[1]:
-            logger.warning("ReadStamina: ROI [{}] 超出截图范围", roi)
+        if image.ndim != 3:
+            logger.warning(
+                "ReadStamina: 截图维度异常（期望 3 通道，实际 ndim={}），跳过 OCR", image.ndim
+            )
+            return None
+        if y + h > image.shape[0] or x + w > image.shape[1]:
+            logger.warning(
+                "ReadStamina: ROI [{}] 超出截图范围 {}", roi, (image.shape[0], image.shape[1])
+            )
             return None
 
         sub = image[y : y + h, x : x + w]
