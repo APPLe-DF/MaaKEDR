@@ -69,6 +69,8 @@
         "./tasks/event_stage.json",
         "./tasks/pvp.json",
         "./tasks/claim_rewards.json",
-        "./tasks/stamina_info.json"
+        "./tasks/stamina_info.json",
+        "./tasks/preset/Daily.json",
+        "./tasks/preset/Activity.json"
     ]
 }
