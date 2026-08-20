@@ -36,8 +36,8 @@ importers:
         specifier: 3.3.1
         version: 3.3.1
       katex:
-        specifier: 0.18.3
-        version: 0.18.3
+        specifier: 0.18.4
+        version: 0.18.4
       prettier:
         specifier: 3.9.6
         version: 3.9.6
@@ -2153,8 +2153,8 @@ packages:
     resolution: {integrity: sha512-Vdw0ATsQ9V+LuegM/BTwQqV/6cTl5lbGcIrU+BCgLxyf6bo38ybOr372tuSIxir3CN720flu1meYR6XzNMwQnw==}
     hasBin: true
 
-  katex@0.18.3:
-    resolution: {integrity: sha512-6kbPr8KiYZpRfNNIw+8Td33njnFzK/ELcw6bI9FzIHysYPatAUdepQimfCX1vG2VCD/5Lv+Gu6P5YA58k8HHmw==}
+  katex@0.18.4:
+    resolution: {integrity: sha512-IMPntbRLOU+eu88XDiFKqQ8Akhr9Tv7jDMXqPhjG9SI1JMA4DIgXk4x9k4skJz2NZJXBRbC+2pYBLj9olqcZow==}
     hasBin: true
 
   kind-of@6.0.3:
@@ -5693,7 +5693,7 @@ snapshots:
     dependencies:
       commander: 8.3.0
 
-  katex@0.18.3:
+  katex@0.18.4:
     dependencies:
       commander: 8.3.0
 
