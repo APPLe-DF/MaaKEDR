@@ -100,9 +100,7 @@ class ReadStamina(CustomRecognition):
             try:
                 cap_fallback = int(raw_cap)
             except (TypeError, ValueError):
-                logger.warning(
-                    "ReadStamina: stamina_cap 参数非整数（{}），忽略兜底", raw_cap
-                )
+                logger.warning("ReadStamina: stamina_cap 参数非整数（{}），忽略兜底", raw_cap)
 
         if current_roi == [0, 0, 0, 0] or cap_roi == [0, 0, 0, 0]:
             logger.warning("ReadStamina: 未配置 current_roi / cap_roi")
@@ -148,9 +146,7 @@ class ReadStamina(CustomRecognition):
             },
         )
 
-    def _read_number(
-        self, context: Context, image: Any, roi: list[int], angle: float
-    ) -> int | None:
+    def _read_number(self, context: Context, image: Any, roi: list[int], angle: float) -> int | None:
         """单个 ROI：旋转扶正后 OCR，提取第一个整数。
 
         angle 为屏幕上数字的“倾斜角”（tilt_angle），纠正角取其相反数。
@@ -160,14 +156,10 @@ class ReadStamina(CustomRecognition):
             logger.warning("ReadStamina: ROI [{}] 宽或高非正，跳过 OCR", roi)
             return None
         if image.ndim != 3:
-            logger.warning(
-                "ReadStamina: 截图维度异常（期望 3 通道，实际 ndim={}），跳过 OCR", image.ndim
-            )
+            logger.warning("ReadStamina: 截图维度异常（期望 3 通道，实际 ndim={}），跳过 OCR", image.ndim)
             return None
         if y + h > image.shape[0] or x + w > image.shape[1]:
-            logger.warning(
-                "ReadStamina: ROI [{}] 超出截图范围 {}", roi, (image.shape[0], image.shape[1])
-            )
+            logger.warning("ReadStamina: ROI [{}] 超出截图范围 {}", roi, (image.shape[0], image.shape[1]))
             return None
 
         sub = image[y : y + h, x : x + w]
