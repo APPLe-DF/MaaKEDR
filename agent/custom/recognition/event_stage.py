@@ -91,6 +91,54 @@ def _distinct_sold_out_count(results: list[OCRResult]) -> int:
     return len(results)
 
 
+@AgentServer.custom_recognition("CheckEventHub")
+class CheckEventHub(CustomRecognition):
+    """Route entry through activity home, global home, or a foreign page."""
+
+    _DEFAULT_JOURNEY_ROI = [880, 560, 350, 120]
+    _DEFAULT_REPORT_ROI = [40, 570, 280, 110]
+    _DEFAULT_GLOBAL_HOME_ROI = [650, 540, 500, 150]
+    _DEFAULT_ACTIVITY_HOME_ROI = [0, 500, 400, 220]
+
+    def analyze(
+        self, context: Context, argv: CustomRecognition.AnalyzeArg
+    ) -> CustomRecognition.AnalyzeResult | RectType | None:
+        try:
+            params = parse_params(argv.custom_recognition_param)
+        except ValueError as error:
+            logger.error("CheckEventHub: {}", error)
+            return None
+
+        activity_next = str(params.get("activity_next", "EventStage.ClickJourney"))
+        global_next = str(params.get("global_next", "EventStage.Start"))
+        other_next = str(params.get("other_next", "EventStage.ReturnToHome"))
+        activity_only = str(params.get("activity_only", "false")).lower() == "true"
+        activity_template = str(params.get("activity_template", "flare_home.png"))
+        global_template = str(params.get("global_template", "home.png"))
+        template_roi = coerce_roi(params.get("template_roi"), [0, 0, 1280, 720], "CheckEventHub")
+        for template, status, target in ((activity_template, "activity_home", activity_next), (global_template, "global_home", global_next)):
+            detail = context.run_recognition_direct(
+                JRecognitionType.TemplateMatch,
+                JTemplateMatch(
+                    template=[template],
+                    roi=(template_roi[0], template_roi[1], template_roi[2], template_roi[3]),
+                    threshold=[0.8],
+                ),
+                argv.image,
+            )
+            if detail and getattr(detail, "box", None):
+                context.override_next(argv.node_name, [target])
+                logger.debug("[活动入口] 识别状态={}，路由到 {}", status, target)
+                return CustomRecognition.AnalyzeResult(box=detail.box, detail={"status": status})
+        if activity_only:
+            logger.debug("[活动入口] 尚未识别活动首页，继续等待")
+            return None
+        context.override_next(argv.node_name, [other_next])
+        logger.warning("[活动入口] 未识别活动首页或全局主页，路由到 {}", other_next)
+        return CustomRecognition.AnalyzeResult(box=(0, 0, 1, 1), detail={"status": "other"})
+
+
+
 @AgentServer.custom_recognition("CheckAllSoldOut")
 class CheckAllSoldOut(CustomRecognition):
     """Detect the shop's all-sold-out layout from multiple OCR hits."""
@@ -205,7 +253,7 @@ class CheckShopRefreshAfterPurchase(CustomRecognition):
             else:
                 target, status = refresh_next, "refresh_needed"
                 box = (0, 0, 1, 1)
-                logger.info("[活动商店] 完成购买返回商店：状态未更新，左侧补点一次")
+                logger.debug("[活动商店] 完成购买返回商店：状态未更新，左侧补点一次")
             context.override_next(argv.node_name, [target])
             return CustomRecognition.AnalyzeResult(
                 box=box, detail={"status": status, "sold_out_count": len(sold_out_results)}

@@ -310,7 +310,9 @@ function prepareReleasePackage(guiKey, gui, packagePaths, interfaceJson, runtime
     const pkgDir = `dist/package-${guiKey}`;
     rmSync(pkgDir, {recursive: true, force: true});
     mkdirSync(pkgDir, {recursive: true});
-    copyDirectoryContents(guiRuntimePath(gui.runtimeDir, runtimePlatform), pkgDir);
+    copyDirectoryContents(guiRuntimePath(gui.runtimeDir, runtimePlatform), pkgDir, {
+        filter: shouldCopyGuiRuntimePath,
+    });
     renameGuiEntrypoint(gui, pkgDir, runtimePlatform);
     writeJson(join(pkgDir, "interface.json"), interfaceJson);
     if (existsSync("logo.ico")) {
@@ -504,6 +506,11 @@ function removeFiles(root, shouldRemove) {
 function shouldCopyAgentPath(source) {
     const name = basename(source).toLowerCase();
     return name !== "__pycache__" && !name.endsWith(".pyc") && !name.endsWith(".pyo");
+}
+
+function shouldCopyGuiRuntimePath(source) {
+    const name = basename(source).toLowerCase();
+    return name !== "cache" && name !== "debug";
 }
 
 function shouldCopyMxuMaafwPath(source) {

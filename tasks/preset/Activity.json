@@ -9,7 +9,35 @@
                 },
                 {
                     "name": "活动关卡刷取",
-                    "enabled": true
+                    "enabled": true,
+                    "option": {
+                        "event_stage": "EX2-1",
+                        "event_sweep_count": "最大"
+                    }
+                },
+                {
+                    "name": "活动关卡刷取",
+                    "enabled": true,
+                    "option": {
+                        "event_stage": "EX2-2",
+                        "event_sweep_count": "最大"
+                    }
+                },
+                {
+                    "name": "活动关卡刷取",
+                    "enabled": true,
+                    "option": {
+                        "event_stage": "EX3-1",
+                        "event_sweep_count": "最大"
+                    }
+                },
+                {
+                    "name": "活动关卡刷取",
+                    "enabled": true,
+                    "option": {
+                        "event_stage": "EX4-1",
+                        "event_sweep_count": "最大"
+                    }
                 },
                 {
                     "name": "活动商店兑换",

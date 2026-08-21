@@ -1,40 +1,28 @@
 {
     "EventStage.CheckHomePage": {
-        "desc": "确认当前是否在游戏主页",
+        "desc": "快速确认当前是否为全局主页",
+        "max_hit": 3,
         "recognition": "TemplateMatch",
         "roi": [
-            1199,
-            6,
-            77,
-            83
+            650,
+            540,
+            500,
+            150
         ],
-        "template": "main_option.png",
+        "template": "home.png",
         "threshold": 0.8,
-        "pre_delay": 500,
-        "action": {
-            "type": "Click",
-            "param": {
-                "target": [
-                    588,
-                    369,
-                    9,
-                    11
-                ]
-            }
-        },
-        "repeat": 2,
-        "repeat_delay": 500,
-        "timeout": 5000,
+        "pre_delay": 0,
+        "post_delay": 0,
+        "timeout": 0,
         "next": [
-            "EventStage.Start",
-            "[JumpBack]EventStage.ReturnMain"
+            "EventStage.Start"
         ],
         "on_error": [
             "EventStage.ReturnToHome"
         ]
     },
     "EventStage.Start": {
-        "desc": "从主页 TemplateMatch 识别左侧活动入口上方的「耀斑」艺术字并点击，进入活动主页 event7 [错误兜底: ReturnMain]",
+        "desc": "从主页识别并点击左侧活动入口上方的「耀斑」艺术字；识别失败时返回主页重试",
         "recognition": "TemplateMatch",
         "roi": [
             0,
@@ -51,28 +39,69 @@
         "action": {
             "type": "Click"
         },
-        "post_delay": 1500,
-        "timeout": 20000,
+        "post_delay": 5000,
+        "timeout": 15000,
         "next": [
-            "EventStage.EventHub"
+            "EventStage.EventHubAfterClick"
         ],
         "on_error": [
             "EventStage.ReturnMain"
         ]
     },
-    "EventStage.EventHub": {
-        "desc": "活动主页 event7：包含踏上征途（战斗）和战果上报（商店）两个入口",
-        "recognition": "DirectHit",
+    "EventStage.EventHubAfterClick": {
+        "desc": "点击活动入口后等待加载并确认活动首页",
+        "recognition": "Custom",
+        "custom_recognition": "CheckEventHub",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.ReturnToHome\",\"activity_only\":\"true\",\"activity_template\":\"flare_home.png\",\"global_template\":\"home.png\",\"template_roi\":[0,0,1280,720]}",
+        "pre_delay": 5000,
         "action": {
             "type": "DoNothing"
         },
+        "timeout": 15000,
         "next": [
-            "EventStage.ClickJourney",
-            "EventStage.ClickBattleReport"
+            "EventStage.ClickJourney"
+        ],
+        "on_error": [
+            "EventStage.ReturnToHome"
+        ]
+    },
+    "EventStage.EventHub": {
+        "desc": "三态确认入口：活动首页、全局主页或其他页面",
+        "recognition": "Custom",
+        "custom_recognition": "CheckEventHub",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.CheckHomePage\",\"activity_template\":\"flare_home.png\",\"global_template\":\"home.png\",\"template_roi\":[0,0,1280,720]}",
+        "pre_delay": 1500,
+        "action": {
+            "type": "DoNothing"
+        },
+        "timeout": 0,
+        "next": [
+            "EventStage.ClickJourney"
+        ],
+        "on_error": [
+            "EventStage.CheckHomePage"
+        ]
+    },
+    "EventStage.EventHubRetry": {
+        "desc": "入口识别超时后额外重试5秒",
+        "recognition": "Custom",
+        "custom_recognition": "CheckEventHub",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.ReturnToHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"home.png\",\"template_roi\":[0,0,1280,720]}",
+        "pre_delay": 0,
+        "action": {
+            "type": "DoNothing"
+        },
+        "timeout": 5000,
+        "next": [
+            "EventStage.ClickJourney"
+        ],
+        "on_error": [
+            "EventStage.ReturnToHome"
         ]
     },
     "EventStage.ClickJourney": {
-        "desc": "点击踏上征途进入关卡选择（event7 右下角，精确裁剪文字区域后 OCR）",
+        "desc": "点击踏上征途进入关卡选择（固定点击 event7 右下角按钮中心，并用 OCR 确认按钮存在）",
+        "max_hit": 3,
         "recognition": "OCR",
         "roi": [
             920,
@@ -85,7 +114,15 @@
         "threshold": 0.5,
         "pre_delay": 500,
         "action": {
-            "type": "Click"
+            "type": "Click",
+            "param": {
+                "target": [
+                    1025,
+                    607,
+                    1,
+                    1
+                ]
+            }
         },
         "post_delay": 2000,
         "next": [
@@ -93,14 +130,26 @@
         ]
     },
     "EventStage.WaitStageMapStable": {
-        "desc": "等待 EX 关卡地图画面稳定",
-        "recognition": "DirectHit",
+        "desc": "确认已进入 EX 关卡地图：底部 EP 标签页可见后再继续；未切换成功则重试踏上征途",
+        "recognition": "OCR",
+        "roi": [
+            80,
+            590,
+            560,
+            130
+        ],
+        "expected": "EP\\.?[1-4]",
+        "threshold": 0.7,
+        "pre_delay": 500,
         "action": {
             "type": "DoNothing"
         },
         "post_wait_freezes": 1000,
         "next": [
             "EventStage.ClickEP2"
+        ],
+        "on_error": [
+            "EventStage.ClickJourney"
         ]
     },
     "EventStage.FindTargetStage": {
@@ -244,7 +293,7 @@
         },
         "timeout": 1200,
         "next": [
-            "EventStage.ReturnMainFromStage"
+            "EventStage.CheckBattlePage"
         ],
         "on_error": [
             "EventStage.StagePrepare"
@@ -258,11 +307,12 @@
             "type": "DoNothing"
         },
         "next": [
-            "EventStage.CheckQuickBattleState"
+            "EventStage.CheckQuickBattleState",
+            "EventStage.CheckQuickBattleEnabled"
         ]
     },
     "EventStage.CheckQuickBattleState": {
-        "desc": "判断快速战斗开关状态：关闭态显示打开，开启态显示关闭；仅在关闭态点击开关",
+        "desc": "快速战斗未开启时识别“打开”并点击；开启态由同级候选节点处理",
         "recognition": "OCR",
         "roi": [
             800,
@@ -279,9 +329,6 @@
         "post_delay": 500,
         "next": [
             "EventStage.SetBattleCount"
-        ],
-        "on_error": [
-            "EventStage.CheckQuickBattleEnabled"
         ]
     },
     "EventStage.CheckQuickBattleEnabled": {
@@ -398,7 +445,7 @@
             "type": "DoNothing"
         },
         "next": [
-            "EventStage.ReturnMainFromStage"
+            "EventStage.CheckBattlePage"
         ]
     },
     "EventStage.ClickVictory": {
@@ -449,7 +496,7 @@
             "type": "Click"
         },
         "next": [
-            "EventStage.ReturnMainFromStage"
+            "EventStage.CheckBattlePage"
         ]
     },
     "EventStage.ReturnToStageSelect": {
@@ -459,24 +506,51 @@
             "type": "DoNothing"
         },
         "next": [
+            "EventStage.CheckBattlePage"
+        ]
+    },
+    "EventStage.CheckBattlePage": {
+        "desc": "确认战斗已回到活动关卡地图，再统一返回主页",
+        "max_hit": 3,
+        "recognition": "OCR",
+        "roi": [
+            80,
+            590,
+            560,
+            130
+        ],
+        "expected": "EP\\.?[1-4]",
+        "threshold": 0.7,
+        "pre_delay": 500,
+        "action": {
+            "type": "DoNothing"
+        },
+        "timeout": 2500,
+        "next": [
             "EventStage.ReturnMainFromStage"
+        ],
+        "on_error": [
+            "EventStage.CheckBattlePage"
         ]
     },
     "EventStage.ReturnMainFromStage": {
-        "desc": "从关卡选择返回主页（点击 BACK）",
-        "recognition": "TemplateMatch",
-        "roi": [
-            199,
-            26,
-            85,
-            52
-        ],
-        "template": "return_main.png",
-        "threshold": 0.8,
-        "pre_delay": 500,
+        "desc": "从活动关卡地图固定点击 HOME 返回主页",
+        "max_hit": 3,
+        "recognition": "DirectHit",
+        "pre_delay": 300,
         "action": {
-            "type": "Click"
+            "type": "Click",
+            "param": {
+                "target": [
+                    236,
+                    59,
+                    1,
+                    1
+                ]
+            }
         },
+        "post_delay": 2000,
+        "timeout": 2000,
         "next": [
             "EventStage.CheckReturnedHome"
         ],
@@ -538,21 +612,23 @@
         ]
     },
     "EventStage.ReturnMainFromShop": {
-        "desc": "从商店返回主页",
-        "recognition": "TemplateMatch",
-        "roi": [
-            15,
-            30,
-            86,
-            43
-        ],
-        "template": "back_button.png",
-        "threshold": 0.8,
+        "desc": "从商店固定点击 HOME 返回主页",
+        "max_hit": 3,
+        "recognition": "DirectHit",
         "pre_delay": 500,
         "action": {
-            "type": "Click"
+            "type": "Click",
+            "param": {
+                "target": [
+                    236,
+                    59,
+                    1,
+                    1
+                ]
+            }
         },
-        "post_delay": 2000,
+        "post_delay": 3500,
+        "timeout": 8000,
         "next": [
             "EventStage.CheckReturnedHome"
         ],
@@ -1886,7 +1962,7 @@
             "type": "DoNothing"
         },
         "next": [
-            "EventStage.ReturnMainFromStage"
+            "EventStage.CheckBattlePage"
         ],
         "focus": {
             "Node.Action.Starting": {
@@ -1899,39 +1975,44 @@
         }
     },
     "EventStage.ReturnMain": {
-        "desc": "点击返回按钮返回主页（活动模块专用，不进入资源刷取）",
-        "recognition": "TemplateMatch",
-        "roi": [
-            199,
-            26,
-            85,
-            52
-        ],
-        "template": "return_main.png",
-        "threshold": 0.8,
-        "pre_delay": 500,
+        "desc": "点击 HOME 返回主页（活动模块专用）",
+        "max_hit": 3,
+        "recognition": "DirectHit",
+        "pre_delay": 300,
         "action": {
-            "type": "Click"
+            "type": "Click",
+            "param": {
+                "target": [
+                    236,
+                    59,
+                    1,
+                    1
+                ]
+            }
         },
+        "post_delay": 2000,
+        "timeout": 2000,
         "next": [
             "EventStage.CheckReturnedHome"
         ]
     },
     "EventStage.CheckReturnedHome": {
-        "desc": "确认已返回主页，确认后任务结束",
+        "desc": "确认已返回全局主页",
+        "max_hit": 3,
         "recognition": "TemplateMatch",
         "roi": [
-            1199,
-            6,
-            77,
-            83
+            650,
+            540,
+            500,
+            150
         ],
-        "template": "main_option.png",
+        "template": "home.png",
         "threshold": 0.8,
-        "pre_delay": 500,
+        "pre_delay": 300,
         "action": {
             "type": "DoNothing"
         },
+        "timeout": 1800,
         "on_error": [
             "EventStage.ReturnMain"
         ]
@@ -1939,22 +2020,43 @@
     "EventStage.ReturnToHome": {
         "desc": "任务开始前不在主页时点击返回按钮回到主页",
         "max_hit": 3,
+        "recognition": "DirectHit",
+        "pre_delay": 300,
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    236,
+                    59,
+                    1,
+                    1
+                ]
+            }
+        },
+        "post_delay": 5000,
+        "timeout": 15000,
+        "next": [
+            "EventStage.CheckHomePageRecovered"
+        ],
+        "on_error": []
+    },
+    "EventStage.CheckHomePageRecovered": {
+        "desc": "确认返回主页后重新进入活动",
         "recognition": "TemplateMatch",
         "roi": [
-            199,
-            26,
-            85,
-            52
+            650,
+            540,
+            500,
+            150
         ],
-        "template": "return_main.png",
+        "template": "home.png",
         "threshold": 0.8,
-        "pre_delay": 500,
-        "action": {
-            "type": "Click"
-        },
+        "pre_delay": 0,
+        "timeout": 15000,
         "next": [
-            "EventStage.CheckHomePage"
-        ]
+            "EventStage.Start"
+        ],
+        "on_error": []
     },
     "EventStage.ClickEP1": {
         "desc": "先单击 EP.1 标签切回最左章节（进入地图默认停在 EP.4 时单击 EP.4 无响应，需先切离再切回）",
@@ -2000,6 +2102,67 @@
         ],
         "on_error": [
             "EventStage.WaitStageMapStable"
+        ]
+    },
+    "EventStage.EventHubShop": {
+        "desc": "商店任务入口：快速确认活动首页或主页",
+        "recognition": "Custom",
+        "custom_recognition": "CheckEventHub",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickBattleReport\",\"global_next\":\"EventStage.StartShop\",\"other_next\":\"EventStage.ReturnToHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"home.png\",\"template_roi\":[0,0,1280,720]}",
+        "pre_delay": 1500,
+        "action": {
+            "type": "DoNothing"
+        },
+        "timeout": 0,
+        "next": [
+            "EventStage.ClickBattleReport"
+        ],
+        "on_error": [
+            "EventStage.CheckHomePage"
+        ]
+    },
+    "EventStage.StartShop": {
+        "desc": "商店任务从主页点击活动入口",
+        "recognition": "TemplateMatch",
+        "roi": [
+            0,
+            130,
+            520,
+            250
+        ],
+        "template": [
+            "event_stage/flare_title.png",
+            "event_stage/flare_title_plain.png"
+        ],
+        "threshold": 0.7,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 5000,
+        "timeout": 15000,
+        "next": [
+            "EventStage.EventHubShopAfterClick"
+        ],
+        "on_error": [
+            "EventStage.ReturnMain"
+        ]
+    },
+    "EventStage.EventHubShopAfterClick": {
+        "desc": "商店任务点击入口后等待活动首页",
+        "recognition": "Custom",
+        "custom_recognition": "CheckEventHub",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickBattleReport\",\"global_next\":\"EventStage.StartShop\",\"other_next\":\"EventStage.ReturnToHome\",\"activity_only\":\"true\",\"activity_template\":\"flare_home.png\",\"global_template\":\"home.png\",\"template_roi\":[0,0,1280,720]}",
+        "pre_delay": 5000,
+        "action": {
+            "type": "DoNothing"
+        },
+        "timeout": 15000,
+        "next": [
+            "EventStage.ClickBattleReport"
+        ],
+        "on_error": [
+            "EventStage.ReturnToHome"
         ]
     }
 }
