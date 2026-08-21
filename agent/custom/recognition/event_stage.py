@@ -95,11 +95,6 @@ def _distinct_sold_out_count(results: list[OCRResult]) -> int:
 class CheckEventHub(CustomRecognition):
     """Route entry through activity home, global home, or a foreign page."""
 
-    _DEFAULT_JOURNEY_ROI = [880, 560, 350, 120]
-    _DEFAULT_REPORT_ROI = [40, 570, 280, 110]
-    _DEFAULT_GLOBAL_HOME_ROI = [650, 540, 500, 150]
-    _DEFAULT_ACTIVITY_HOME_ROI = [0, 500, 400, 220]
-
     def analyze(
         self, context: Context, argv: CustomRecognition.AnalyzeArg
     ) -> CustomRecognition.AnalyzeResult | RectType | None:

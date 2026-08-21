@@ -310,8 +310,9 @@ function prepareReleasePackage(guiKey, gui, packagePaths, interfaceJson, runtime
     const pkgDir = `dist/package-${guiKey}`;
     rmSync(pkgDir, {recursive: true, force: true});
     mkdirSync(pkgDir, {recursive: true});
-    copyDirectoryContents(guiRuntimePath(gui.runtimeDir, runtimePlatform), pkgDir, {
-        filter: shouldCopyGuiRuntimePath,
+    const guiRuntimeRoot = guiRuntimePath(gui.runtimeDir, runtimePlatform);
+    copyDirectoryContents(guiRuntimeRoot, pkgDir, {
+        filter: (source) => shouldCopyGuiRuntimePath(source, guiRuntimeRoot),
     });
     renameGuiEntrypoint(gui, pkgDir, runtimePlatform);
     writeJson(join(pkgDir, "interface.json"), interfaceJson);
@@ -508,9 +509,13 @@ function shouldCopyAgentPath(source) {
     return name !== "__pycache__" && !name.endsWith(".pyc") && !name.endsWith(".pyo");
 }
 
-function shouldCopyGuiRuntimePath(source) {
+function shouldCopyGuiRuntimePath(source, runtimeRoot) {
     const name = basename(source).toLowerCase();
-    return name !== "cache" && name !== "debug";
+    return !(
+        dirname(source) === runtimeRoot &&
+        statSync(source).isDirectory() &&
+        (name === "cache" || name === "debug")
+    );
 }
 
 function shouldCopyMxuMaafwPath(source) {

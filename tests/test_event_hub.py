@@ -3,7 +3,6 @@ from __future__ import annotations
 from types import SimpleNamespace
 from typing import Any, cast
 
-import pytest
 from custom.recognition import event_stage
 from maa.context import Context
 from maa.custom_recognition import CustomRecognition
@@ -30,11 +29,6 @@ class _FakeContext:
 
 def _argv() -> SimpleNamespace:
     return SimpleNamespace(custom_recognition_param="", image=object(), node_name="EventStage.EventHub")
-
-
-@pytest.fixture(autouse=True)
-def _use_fake_detail(monkeypatch: pytest.MonkeyPatch) -> None:  # pyright: ignore[reportUnusedFunction]
-    monkeypatch.setattr(event_stage, "OCRResult", _FakeDetail)
 
 
 def _run(context: _FakeContext) -> CustomRecognition.AnalyzeResult:
@@ -73,3 +67,17 @@ def test_event_hub_routes_unknown_page_to_return_to_home() -> None:
     assert result.detail["status"] == "other"
     assert context.templates == ["flare_home.png", "home.png"]
     assert context.overridden == ["EventStage.ReturnToHome"]
+
+
+def test_event_hub_activity_only_waits_on_unknown_page() -> None:
+    context = _FakeContext([None, None])
+    argv = _argv()
+    argv.custom_recognition_param = '{"activity_only":"true"}'
+
+    result = event_stage.CheckEventHub().analyze(
+        cast(Context, context), cast(CustomRecognition.AnalyzeArg, argv)
+    )
+
+    assert result is None
+    assert context.templates == ["flare_home.png", "home.png"]
+    assert context.overridden == []
