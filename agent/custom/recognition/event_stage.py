@@ -109,8 +109,13 @@ class CheckEventHub(CustomRecognition):
         other_next = str(params.get("other_next", "EventStage.ReturnToHome"))
         activity_only = str(params.get("activity_only", "false")).lower() == "true"
         activity_template = str(params.get("activity_template", "flare_home.png"))
-        global_template = str(params.get("global_template", "home.png"))
+        global_template = str(params.get("global_template", "main_option.png"))
         template_roi = coerce_roi(params.get("template_roi"), [0, 0, 1280, 720], "CheckEventHub")
+        # 全局主页模板是右上角小图标，默认限定在其常驻区域，避免全屏匹配误判。
+        global_roi = template_roi
+        raw_global_roi = params.get("global_roi")
+        if raw_global_roi is not None:
+            global_roi = coerce_roi(raw_global_roi, template_roi, "CheckEventHub")
         detail = context.run_recognition_direct(
             JRecognitionType.TemplateMatch,
             JTemplateMatch(
@@ -132,7 +137,7 @@ class CheckEventHub(CustomRecognition):
             JRecognitionType.TemplateMatch,
             JTemplateMatch(
                 template=[global_template],
-                roi=(template_roi[0], template_roi[1], template_roi[2], template_roi[3]),
+                roi=(global_roi[0], global_roi[1], global_roi[2], global_roi[3]),
                 threshold=[0.8],
             ),
             argv.image,

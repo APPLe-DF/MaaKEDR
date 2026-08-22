@@ -57,7 +57,7 @@ def test_event_hub_routes_global_home_to_start() -> None:
     result = _run(context)
 
     assert result.detail["status"] == "global_home"
-    assert context.templates == ["flare_home.png", "home.png"]
+    assert context.templates == ["flare_home.png", "main_option.png"]
     assert context.overridden == ["EventStage.Start"]
 
 
@@ -67,7 +67,7 @@ def test_event_hub_routes_unknown_page_to_return_to_home() -> None:
     result = _run(context)
 
     assert result.detail["status"] == "other"
-    assert context.templates == ["flare_home.png", "home.png"]
+    assert context.templates == ["flare_home.png", "main_option.png"]
     assert context.overridden == ["EventStage.ReturnToHome"]
 
 
@@ -141,3 +141,13 @@ def test_event_stage_battle_handles_item_dialog_before_returning_home() -> None:
     assert item_dialog["repeat_delay"] == 500
     assert item_dialog["post_delay"] == 1000
     assert check_back["next"] == ["EventStage.ReturnMainFromStage"]
+
+
+def test_event_stage_return_home_waits_for_slow_transition() -> None:
+    pipeline = _event_stage_pipeline()
+
+    # 点击活动地图 HOME 后游戏转场回全局主页约需 6s；
+    # 验证窗口必须足够长，否则 CheckReturnedHome 尚未命中就超时导致任务误报失败。
+    assert pipeline["EventStage.ReturnMainFromStage"]["timeout"] >= 10000
+    assert pipeline["EventStage.ReturnMainFromStage"]["next"] == ["EventStage.CheckReturnedHome"]
+    assert pipeline["EventStage.CheckReturnedHome"]["template"] == "main_option.png"

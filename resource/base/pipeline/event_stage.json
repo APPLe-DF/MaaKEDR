@@ -4,12 +4,12 @@
         "max_hit": 3,
         "recognition": "TemplateMatch",
         "roi": [
-            650,
-            540,
-            500,
-            150
+            1199,
+            6,
+            77,
+            83
         ],
-        "template": "home.png",
+        "template": "main_option.png",
         "threshold": 0.8,
         "pre_delay": 0,
         "post_delay": 0,
@@ -52,7 +52,7 @@
         "desc": "点击活动入口后等待加载并确认活动首页",
         "recognition": "Custom",
         "custom_recognition": "CheckEventHub",
-        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.ReturnToHome\",\"activity_only\":\"true\",\"activity_template\":\"flare_home.png\",\"global_template\":\"home.png\",\"template_roi\":[0,0,1280,720]}",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.ReturnToHome\",\"activity_only\":\"true\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
         "pre_delay": 0,
         "action": {
             "type": "DoNothing"
@@ -69,7 +69,7 @@
         "desc": "三态确认入口：活动首页、全局主页或其他页面",
         "recognition": "Custom",
         "custom_recognition": "CheckEventHub",
-        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.ReturnToHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"home.png\",\"template_roi\":[0,0,1280,720]}",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.ReturnToHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
         "pre_delay": 0,
         "action": {
             "type": "DoNothing"
@@ -86,7 +86,7 @@
         "desc": "入口识别超时后额外重试5秒",
         "recognition": "Custom",
         "custom_recognition": "CheckEventHub",
-        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.ReturnToHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"home.png\",\"template_roi\":[0,0,1280,720]}",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.ReturnToHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
         "pre_delay": 0,
         "action": {
             "type": "DoNothing"
@@ -537,23 +537,23 @@
         ]
     },
     "EventStage.ReturnMainFromStage": {
-        "desc": "从活动关卡地图固定点击 HOME 返回主页",
+        "desc": "从活动关卡地图通过 HOME 按钮返回主页（点击后游戏转场约 6s，验证窗口需放宽）",
         "max_hit": 3,
-        "recognition": "DirectHit",
-        "pre_delay": 300,
+        "recognition": "TemplateMatch",
+        "roi": [
+            199,
+            26,
+            85,
+            52
+        ],
+        "template": "return_main.png",
+        "threshold": 0.8,
+        "pre_delay": 500,
         "action": {
-            "type": "Click",
-            "param": {
-                "target": [
-                    236,
-                    59,
-                    1,
-                    1
-                ]
-            }
+            "type": "Click"
         },
         "post_delay": 2000,
-        "timeout": 2000,
+        "timeout": 15000,
         "next": [
             "EventStage.CheckReturnedHome"
         ],
@@ -615,20 +615,20 @@
         ]
     },
     "EventStage.ReturnMainFromShop": {
-        "desc": "从商店固定点击 HOME 返回主页",
+        "desc": "从商店通过 HOME 按钮返回主页",
         "max_hit": 3,
-        "recognition": "DirectHit",
+        "recognition": "TemplateMatch",
+        "roi": [
+            199,
+            26,
+            85,
+            52
+        ],
+        "template": "return_main.png",
+        "threshold": 0.8,
         "pre_delay": 500,
         "action": {
-            "type": "Click",
-            "param": {
-                "target": [
-                    236,
-                    59,
-                    1,
-                    1
-                ]
-            }
+            "type": "Click"
         },
         "post_delay": 3500,
         "timeout": 8000,
@@ -1980,21 +1980,20 @@
     "EventStage.ReturnMain": {
         "desc": "点击 HOME 返回主页（活动模块专用）",
         "max_hit": 3,
-        "recognition": "DirectHit",
-        "pre_delay": 300,
+        "recognition": "TemplateMatch",
+        "roi": [
+            199,
+            26,
+            85,
+            52
+        ],
+        "template": "return_main.png",
+        "threshold": 0.8,
+        "pre_delay": 500,
         "action": {
-            "type": "Click",
-            "param": {
-                "target": [
-                    236,
-                    59,
-                    1,
-                    1
-                ]
-            }
+            "type": "Click"
         },
         "post_delay": 2000,
-        "timeout": 2000,
         "next": [
             "EventStage.CheckReturnedHome"
         ]
@@ -2004,12 +2003,12 @@
         "max_hit": 3,
         "recognition": "TemplateMatch",
         "roi": [
-            650,
-            540,
-            500,
-            150
+            1199,
+            6,
+            77,
+            83
         ],
-        "template": "home.png",
+        "template": "main_option.png",
         "threshold": 0.8,
         "pre_delay": 300,
         "action": {
@@ -2023,18 +2022,18 @@
     "EventStage.ReturnToHome": {
         "desc": "任务开始前不在主页时点击返回按钮回到主页",
         "max_hit": 3,
-        "recognition": "DirectHit",
-        "pre_delay": 300,
+        "recognition": "TemplateMatch",
+        "roi": [
+            199,
+            26,
+            85,
+            52
+        ],
+        "template": "return_main.png",
+        "threshold": 0.8,
+        "pre_delay": 500,
         "action": {
-            "type": "Click",
-            "param": {
-                "target": [
-                    236,
-                    59,
-                    1,
-                    1
-                ]
-            }
+            "type": "Click"
         },
         "post_delay": 0,
         "timeout": 15000,
@@ -2047,12 +2046,12 @@
         "desc": "确认返回主页后重新进入关卡活动",
         "recognition": "TemplateMatch",
         "roi": [
-            650,
-            540,
-            500,
-            150
+            1199,
+            6,
+            77,
+            83
         ],
-        "template": "home.png",
+        "template": "main_option.png",
         "threshold": 0.8,
         "pre_delay": 0,
         "action": {
@@ -2070,12 +2069,12 @@
         "desc": "商店恢复异常时快速确认当前是否已在全局主页",
         "recognition": "TemplateMatch",
         "roi": [
-            650,
-            540,
-            500,
-            150
+            1199,
+            6,
+            77,
+            83
         ],
-        "template": "home.png",
+        "template": "main_option.png",
         "threshold": 0.8,
         "pre_delay": 0,
         "post_delay": 0,
@@ -2091,12 +2090,12 @@
         "desc": "确认返回主页后重新进入活动商店",
         "recognition": "TemplateMatch",
         "roi": [
-            650,
-            540,
-            500,
-            150
+            1199,
+            6,
+            77,
+            83
         ],
-        "template": "home.png",
+        "template": "main_option.png",
         "threshold": 0.8,
         "pre_delay": 0,
         "action": {
@@ -2111,20 +2110,20 @@
         ]
     },
     "EventStage.ReturnToHomeShop": {
-        "desc": "商店任务点击 HOME 后等待主页恢复",
+        "desc": "商店任务通过 HOME 按钮返回主页并等待恢复",
         "max_hit": 3,
-        "recognition": "DirectHit",
-        "pre_delay": 300,
+        "recognition": "TemplateMatch",
+        "roi": [
+            199,
+            26,
+            85,
+            52
+        ],
+        "template": "return_main.png",
+        "threshold": 0.8,
+        "pre_delay": 500,
         "action": {
-            "type": "Click",
-            "param": {
-                "target": [
-                    236,
-                    59,
-                    1,
-                    1
-                ]
-            }
+            "type": "Click"
         },
         "post_delay": 0,
         "timeout": 15000,
@@ -2183,7 +2182,7 @@
         "desc": "商店任务入口：快速确认活动首页或主页",
         "recognition": "Custom",
         "custom_recognition": "CheckEventHub",
-        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickBattleReport\",\"global_next\":\"EventStage.StartShop\",\"other_next\":\"EventStage.ReturnToHomeShop\",\"activity_template\":\"flare_home.png\",\"global_template\":\"home.png\",\"template_roi\":[0,0,1280,720]}",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickBattleReport\",\"global_next\":\"EventStage.StartShop\",\"other_next\":\"EventStage.ReturnToHomeShop\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
         "pre_delay": 0,
         "action": {
             "type": "DoNothing"
@@ -2227,7 +2226,7 @@
         "desc": "商店任务点击入口后等待活动首页",
         "recognition": "Custom",
         "custom_recognition": "CheckEventHub",
-        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickBattleReport\",\"global_next\":\"EventStage.StartShop\",\"other_next\":\"EventStage.ReturnToHomeShop\",\"activity_only\":\"true\",\"activity_template\":\"flare_home.png\",\"global_template\":\"home.png\",\"template_roi\":[0,0,1280,720]}",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickBattleReport\",\"global_next\":\"EventStage.StartShop\",\"other_next\":\"EventStage.ReturnToHomeShop\",\"activity_only\":\"true\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
         "pre_delay": 0,
         "action": {
             "type": "DoNothing"

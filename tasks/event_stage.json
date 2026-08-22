@@ -14,7 +14,7 @@
             ],
             "pipeline_override": {
                 "EventStage.EventHub": {
-                    "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.ReturnToHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"home.png\",\"template_roi\":[0,0,1280,720]}",
+                    "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.ReturnToHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
                     "next": [
                         "EventStage.ClickJourney"
                     ]
