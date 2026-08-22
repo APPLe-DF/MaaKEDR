@@ -11,7 +11,7 @@ icon: ph:question-fill
 
 MaaKEDR 的发布压缩包命名格式为：
 
-```
+```text
 MaaKEDR-<系统>-<架构>-<版本>-<前端>.<扩展名>
 ```
 

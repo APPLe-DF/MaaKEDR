@@ -14,6 +14,18 @@ icon: "ri:bug-fill"
 | `maafw.log`                 | MaaFramework 运行日志（项目根目录） |
 | `debug/`                    | 调试截图目录（识别过程的截图）      |
 
+## 日志分析工具
+
+推荐使用 [MaaLogAnalyzer](https://github.com/Windsland52/MAALogAnalyzer) 可视化分析 `maafw.log`：
+
+1. 从 [MaaLogAnalyzer](https://github.com/Windsland52/MAALogAnalyzer/releases) 下载并启动
+2. 打开 `maafw.log`（项目根目录）或 `debug/` 目录
+3. 按任务/节点过滤，查看每条识别记录的 `reco_id`、算法、`box` 与细节，并结合 `debug/` 截图对照当前画面
+
+此外，[MaaEvidenceKit](https://github.com/Windsland52/MaaEvidenceKit) 是面向 MaaFramework 的证据提取与诊断工具包（CLI/SDK）：借助 MaaLogAnalyzer 从日志与项目中提取可定位的运行时与静态证据，输出 JSON/文本，供 Codex、Claude Code 等 AI 助手按需诊断。
+
+开发调试时也可使用 **Maa Pipeline Support**（VSCode 插件）实时查看识别过程（见 [环境搭建](./setup.md#调试与开发工具)）。
+
 ## 问题分类
 
 ### 启动类
@@ -107,3 +119,14 @@ icon: "ri:bug-fill"
 - `detail.best` — 最佳匹配结果
 
 查看 `debug/` 目录下的截图可以确认当前画面是否与预期一致。
+
+## 验证修复
+
+修复后应验证，而不是直接提交：
+
+1. **本地检查**：`pnpm check`（改动 Python 时同时执行 `pnpm check:py`）
+2. **实机复跑**：在 GUI 中勾选对应任务，连续运行 2–3 次，确认问题不再出现
+3. **回归确认**：检查 `debug/` 截图与 `maafw.log`，确认识别结果符合预期、无 `on_error` 异常路径触发
+4. **边界场景**：如改动涉及流程分支，额外验证相邻状态（启动页/主页/弹窗等）未被破坏
+
+若修复涉及行为变化，请同步更新 [协议文档](../protocol/) 与 [验收清单](../protocol/event-stage.md) 等对应文档。

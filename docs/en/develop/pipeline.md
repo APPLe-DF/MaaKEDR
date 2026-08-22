@@ -6,6 +6,23 @@ icon: "ri:git-branch-fill"
 
 # Pipeline Guide
 
+## Protocol Version
+
+This project is generated from the create-maa-project pipeline template and uses the **classic style**: `recognition` / `action` are strings with parameters flattened at the node top level:
+
+```json
+{
+    "NodeName": {
+        "recognition": "TemplateMatch",
+        "template": "button.png",
+        "threshold": 0.8,
+        "action": {"type": "Click"}
+    }
+}
+```
+
+This is structurally equivalent to the nested v2 style (`recognition: {"type": ..., "param": {...}}`) in the official docs. The runtime channel is MaaFramework **stable** (see the `maafw` field in `maa-project.json`; the version follows the channel automatically and the packaged runtime is authoritative); field validity is governed by the schemas in `tools/schema/` and `pnpm check:schema`. For generic protocol details see the [MaaFramework Pipeline Protocol](https://maafw.com/docs/3.1-PipelineProtocol).
+
 ## Node Structure
 
 Each pipeline node defines a recognition → action → transition step:
@@ -65,6 +82,16 @@ Each pipeline node defines a recognition → action → transition step:
 - Use **dot-separated hierarchy**: `FarmResources.Start`, `ClaimRewards.CheckDaily`
 - Prefix with module name: `PVP.`, `BattlePass.`, `Common.`
 - JumpBack nodes must NOT have `next`
+
+## Template Images & Asset Naming
+
+Template images live under `resource/base/image/`:
+
+- **Folders**: organize by pipeline module (e.g. `image/event_stage/`, `image/farm_resources/`); shared images used by multiple modules go directly in `image/`
+- **File names**: lowercase `snake_case`, e.g. `flare_title.png`, `no_stamina.png`, `main_option.png`
+- **Server-specific images**: put them under `resource/bilibili/image/` or `resource/taptap/image/` (load order follows the `resource` field in `interface.json`)
+- **Making templates**: crop from a 1280×720 screenshot at a moderate size (roughly 50×50 to 200×200); oversized templates are prone to false matches. See [Overview](../protocol/overview.md) for ROI and resolution baselines
+- **Paths**: in pipeline JSON, `template` is a path relative to the `image/` directory using **forward slashes** (e.g. `event_stage/flare_title.png`)
 
 ## Comment & Placeholder Fields
 

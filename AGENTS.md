@@ -36,7 +36,7 @@ MaaKEDR/
 ├── docs/                        # Developer documentation (zh / en)
 │   ├── zh/                      #   Chinese documentation
 │   │   ├── develop/             #     Development guides (pipeline.md, custom.md, etc.)
-│   │   ├── manual/              #     User-facing guides (connection, FAQ, etc.)
+│   │   ├── manual/              #     User-facing guides (newbie, connection, FAQ, etc.)
 │   │   └── protocol/            #     Activity / combat / item protocols
 │   └── en/                      #   English documentation (mirror of zh)
 ├── tools/                       # Build, release, schema validation, CI scripts
@@ -51,18 +51,18 @@ MaaKEDR/
 
 **When working on a specific area, consult the relevant docs first:**
 
-| Area                                 | Recommended reading                            |
-| ------------------------------------ | ---------------------------------------------- |
-| Custom actions / recognitions        | `docs/*/develop/custom.md`                     |
-| Pipeline task logic                  | `docs/*/develop/pipeline.md`                   |
-| Project structure & conventions      | `docs/*/develop/structure.md`                  |
-| Development environment setup        | `docs/*/develop/setup.md`                      |
-| Bug-fixing workflow                  | `docs/*/develop/fix.md`                        |
-| Formatting & linting                 | `docs/*/develop/formatting.md`                 |
-| Vibe coding                          | `docs/*/develop/vibe-coding.md`                |
-| Overseas client adaptation           | `docs/*/develop/overseas-client-adaptation.md` |
-| Activity / combat / item protocols   | `docs/*/protocol/`                             |
-| CLI / connection / FAQ (user-facing) | `docs/*/manual/`                               |
+| Area                                               | Recommended reading                            |
+| -------------------------------------------------- | ---------------------------------------------- |
+| Custom actions / recognitions                      | `docs/*/develop/custom.md`                     |
+| Pipeline task logic                                | `docs/*/develop/pipeline.md`                   |
+| Project structure & conventions                    | `docs/*/develop/structure.md`                  |
+| Development environment setup                      | `docs/*/develop/setup.md`                      |
+| Bug-fixing workflow                                | `docs/*/develop/fix.md`                        |
+| Formatting & linting                               | `docs/*/develop/formatting.md`                 |
+| Vibe coding                                        | `docs/*/develop/vibe-coding.md`                |
+| Overseas client adaptation                         | `docs/*/develop/overseas-client-adaptation.md` |
+| Activity / combat / item protocols                 | `docs/*/protocol/`                             |
+| Newbie / connection / FAQ / Mirror酱 (user-facing) | `docs/*/manual/`                               |
 
 ## Build, Test, and Development Commands
 

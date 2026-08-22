@@ -133,6 +133,10 @@ Windows 用户**必须安装 VCRedist x64**：这是运行 MaaKEDR（无论哪�
 
 MaaKEDR 下载地址：[GitHub 发布页](https://github.com/APPLe-DF/MaaKEDR/releases)。点击链接后，在 `Assets` 处选择适配您系统的最新版压缩包下载。
 
+> [!TIP]
+>
+> **认准官方渠道**：MaaKEDR 通过 GitHub Releases 与 [Mirror酱](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-release)（合作渠道，内容与官方一致）双渠道发布，部分图形界面支持通过 Mirror酱 界面内自动更新。从其他非官方渠道（仿冒网站、网盘转发等）下载存在安全风险，安装前请核对应用标识。
+
 每个版本提供两种图形前端，按需下载其一即可：
 
 <div align="center">

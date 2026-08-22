@@ -88,9 +88,24 @@ pnpm check:py
 
 > 首次运行需要下载 MaaFramework 运行时和 PaddleOCR 模型，请确保网络畅通。
 
+## 调试与开发工具
+
+| 工具                                                                                           | 简介                                                                      |
+| ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [MaaDebugger](https://github.com/MaaXYZ/MaaDebugger)                                           | 独立调试工具：连接控制器、实时查看识别结果与截图                          |
+| [Maa Pipeline Support](https://marketplace.visualstudio.com/items?itemName=nekosu.maa-support) | VSCode 插件：提供调试、截图、获取 ROI、取色等功能                         |
+| [MFAToolsPlus](https://github.com/SweetSmellFox/MFAToolsPlus)                                  | 跨平台开发工具箱：提供便捷的数据获取和模拟测试方法                        |
+| [MaaLogAnalyzer](https://github.com/Windsland52/MAALogAnalyzer)                                | 可视化分析 MaaFramework 应用的日志（`maafw.log`）                         |
+| [MaaEvidenceKit](https://github.com/Windsland52/MaaEvidenceKit)                                | 面向 MaaFramework 的证据提取与诊断工具包（CLI/SDK），供 AI 助手等按需诊断 |
+| [ImageCropper（不推荐）](https://github.com/MaaXYZ/MaaFramework/tree/main/tools/ImageCropper)  | 独立截图及获取 ROI 工具，功能已被 VSCode 插件取代                         |
+
+::: tip 推荐组合
+开发调试使用 **Maa Pipeline Support**（VSCode 插件），用户日志分析使用 **MaaLogAnalyzer**（见 [Bug 排查](./fix.md#日志分析工具)）。
+:::
+
 ## 项目结构速览
 
-```
+```text
 MaaKEDR/
 ├── interface.json        # 入口配置，定义任务列表和连接方式
 ├── maa-project.json      # MaaFramework 项目配置
@@ -123,7 +138,7 @@ MaaKEDR/
 
 用画图工具打开 `start_screen.png`，测量"开始游戏"按钮的位置和尺寸：
 
-```
+```text
 示例：按钮在 1280x720 分辨率下
 x = 540, y = 600, w = 200, h = 60
 ```
@@ -132,7 +147,7 @@ x = 540, y = 600, w = 200, h = 60
 
 从截图中抠出按钮的小图，保存到 `resource/base/image/`：
 
-```
+```text
 resource/base/image/start_button.png
 ```
 

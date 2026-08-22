@@ -14,6 +14,18 @@ icon: "ri:bug-fill"
 | `maafw.log`                 | MaaFramework runtime log (project root) |
 | `debug/`                    | Debug screenshots                       |
 
+## Log Analysis Tools
+
+Use [MaaLogAnalyzer](https://github.com/Windsland52/MAALogAnalyzer) to visually analyze `maafw.log`:
+
+1. Download and launch [MaaLogAnalyzer](https://github.com/Windsland52/MAALogAnalyzer/releases)
+2. Open `maafw.log` (project root) or the `debug/` directory
+3. Filter by task/node and inspect each recognition record's `reco_id`, algorithm, `box`, and details; compare with the `debug/` screenshots to see the actual screen state
+
+In addition, [MaaEvidenceKit](https://github.com/Windsland52/MaaEvidenceKit) is a deterministic evidence extraction and diagnostic toolkit for MaaFramework (CLI/SDK): it extracts locatable runtime and static evidence from logs and the project via MaaLogAnalyzer, outputting JSON/text for on-demand diagnosis by AI assistants such as Codex or Claude Code.
+
+During development you can also use **Maa Pipeline Support** (VSCode extension) to watch recognition in real time (see [Environment Setup](./setup.md#debugging-tools)).
+
 ## Categories
 
 ### Startup Issues
@@ -98,3 +110,14 @@ Runtime logs (`maafw.log`) contain detailed recognition results:
 - `box: null` — no match
 - `box: [x, y, w, h]` — match found
 - `debug/` screenshots show actual screen state
+
+## Verifying a Fix
+
+Verify your fix before committing:
+
+1. **Local checks**: `pnpm check` (also run `pnpm check:py` if Python code changed)
+2. **Re-run in the GUI**: enable the affected task and run it 2–3 times to confirm the issue is gone
+3. **Regression check**: inspect `debug/` screenshots and `maafw.log` to confirm recognition results match expectations and no error paths (`on_error`) fired unexpectedly
+4. **Edge cases**: if the change touches flow branches, also verify adjacent states (startup/home/popups) are unaffected
+
+If the fix changes behavior, update the corresponding [Protocol](../protocol/) docs and their acceptance checklists (e.g. [Event Stages](../protocol/event-stage.md)).

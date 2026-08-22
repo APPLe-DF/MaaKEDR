@@ -170,3 +170,14 @@ context.override_pipeline({"SomeNode": {"next": ["CustomNext"]}})
 - 先阅读项目已有的 Custom 实现（`farm_resources.py`、`pvp.py`、`event_stage.py`）了解模式
 - 复杂逻辑先在单独的 Python 文件中测试，再集成到 Pipeline 中
 - 使用 `from utils.logger import logger` 输出日志，方便调试
+
+## 开发资源
+
+- **MaaFramework 官方文档**：[快速开始](https://maafw.com/docs/1.1-QuickStarted)、[Custom & Agent 教程](https://maafw.com/docs/1.3-Custom&Agent)、[集成接口一览](https://maafw.com/docs/2.2-集成接口一览)
+- **Python Binding 源码**：[MaaFramework `source/binding/Python`](https://github.com/MaaXYZ/MaaFramework/tree/main/source/binding/Python) —— API 行为细节以源码为准
+- **调试工具**：见 [环境搭建](./setup.md#调试与开发工具)（MaaDebugger、Maa Pipeline Support 插件、MaaLogAnalyzer）
+- **项目实例**：直接查看 `agent/custom/` 下现有实现，并按 [注册模块](#注册模块) 的步骤接入
+
+::: tip 学习路径
+建议按以下顺序学习：先读项目现有 custom 实现了解惯用模式，再参考 MaaFramework 官方文档理解核心概念，最后结合 Python Binding 源码深入理解 API 行为。
+:::

@@ -16,7 +16,7 @@ const zh: NavigationConfig = {
       type: 'doc',
       title: '用户手册',
       dir: 'manual',
-      sidebar: ['newbie.md', 'faq.md', 'connection.md', 'introduction.md', 'choose-ui.md'],
+      sidebar: ['newbie.md', 'faq.md', 'connection.md', 'introduction.md', 'choose-ui.md', 'mirror-chyan.md'],
     },
     {
       type: 'doc',
@@ -45,6 +45,7 @@ const zh: NavigationConfig = {
         'farm-resources.md',
         'pvp.md',
         'event-stage.md',
+        'stamina-info.md',
       ],
     },
   ],
@@ -61,7 +62,7 @@ const en: NavigationConfig = {
       type: 'doc',
       title: 'User Manual',
       dir: 'manual',
-      sidebar: ['newbie.md', 'faq.md', 'connection.md', 'introduction.md', 'choose-ui.md'],
+      sidebar: ['newbie.md', 'faq.md', 'connection.md', 'introduction.md', 'choose-ui.md', 'mirror-chyan.md'],
     },
     {
       type: 'doc',
@@ -90,6 +91,7 @@ const en: NavigationConfig = {
         'farm-resources.md',
         'pvp.md',
         'event-stage.md',
+        'stamina-info.md',
       ],
     },
   ],

@@ -6,7 +6,7 @@ icon: "ri:folder-tree-fill"
 
 # 项目结构
 
-```
+```text
 MaaKEDR/
 ├── interface.json                  # MaaFW 项目定义
 ├── maa-project.json / .lock.json   # 工具状态文件
@@ -55,7 +55,7 @@ MaaKEDR/
 
 ## 三层架构
 
-```
+```text
 tasks/*.json ──→ pipeline/*.json ──→ agent/custom/
 (task 入口)      (节点图)            (Python 自定义逻辑)
 ```

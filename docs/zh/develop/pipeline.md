@@ -6,6 +6,23 @@ icon: "ri:git-branch-fill"
 
 # Pipeline 编写指南
 
+## 协议版本
+
+本项目由 create-maa-project 的 pipeline 模板生成，Pipeline 使用**经典写法**：`recognition` / `action` 为字符串、参数平铺在节点顶层：
+
+```json
+{
+    "NodeName": {
+        "recognition": "TemplateMatch",
+        "template": "button.png",
+        "threshold": 0.8,
+        "action": {"type": "Click"}
+    }
+}
+```
+
+它与官方文档中 v2 协议的嵌套写法（`recognition: {"type": ..., "param": {...}}`）结构等价。运行渠道为 MaaFramework **stable**（见 `maa-project.json` 的 `maafw` 字段，版本随渠道自动更新，以发布包内置运行时为准），字段合法性以 `tools/schema/` 的 schema 与 `pnpm check:schema` 为准；通用协议细节可对照 [MaaFramework Pipeline 协议](https://maafw.com/docs/3.1-PipelineProtocol)。
+
 ## 节点结构
 
 Pipeline 节点用 JSON 定义，每个节点描述一个识别 → 动作 → 跳转的完整步骤：
@@ -67,6 +84,16 @@ Pipeline 节点用 JSON 定义，每个节点描述一个识别 → 动作 → �
 - 节点名称用**点分隔层级**，如 `FarmResources.Start`、`ClaimRewards.CheckDaily`
 - 前缀用功能模块英文名：`PVP.`、`BattlePass.`、`Common.`
 - JumpBack 节点不加 `next` 字段
+
+## 模板图片与资源命名
+
+模板图片统一放在 `resource/base/image/` 下：
+
+- **目录组织**：按 pipeline 模块分子目录（如 `image/event_stage/`、`image/farm_resources/`）；多模块共用的公共图直接放在 `image/` 根目录
+- **文件命名**：小写 `snake_case`，如 `flare_title.png`、`no_stamina.png`、`main_option.png`
+- **区服差异图**：放 `resource/bilibili/image/`、`resource/taptap/image/` 对应目录（加载顺序见 `interface.json` 的 `resource` 字段）
+- **制作规范**：以 1280×720 截图裁剪，尺寸适中（约 50×50 到 200×200），过大容易误匹配；ROI 与分辨率基线见 [项目与资源约定](../protocol/overview.md)
+- **路径写法**：Pipeline JSON 中 `template` 写相对 `image/` 目录的路径，统一使用**正斜杠**（如 `event_stage/flare_title.png`）
 
 ## 注释与占位字段
 

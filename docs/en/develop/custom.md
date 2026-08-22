@@ -166,3 +166,14 @@ context.override_pipeline({"SomeNode": {"next": ["CustomNext"]}})
 - Study existing Custom implementations (`farm_resources.py`, `pvp.py`, `event_stage.py`) for patterns
 - Test complex logic in a separate Python file before integrating into pipeline
 - Use `from utils.logger import logger` for debug output
+
+## Resources
+
+- **MaaFramework official docs**: [Quick Started](https://maafw.com/docs/1.1-QuickStarted), [Custom & Agent](https://maafw.com/docs/1.3-Custom&Agent), [Integration Interfaces](https://maafw.com/docs/2.2-集成接口一览)
+- **Python binding source**: [MaaFramework `source/binding/Python`](https://github.com/MaaXYZ/MaaFramework/tree/main/source/binding/Python) — API behavior details follow the source
+- **Debugging tools**: see [Environment Setup](./setup.md#debugging-tools) (MaaDebugger, Maa Pipeline Support extension, MaaLogAnalyzer)
+- **In-repo examples**: read the implementations under `agent/custom/` and wire new modules in per [Registration](#registration)
+
+::: tip Learning path
+Recommended order: read existing custom implementations for common patterns first, then the MaaFramework official docs for core concepts, and finally the Python binding source for precise API behavior.
+:::

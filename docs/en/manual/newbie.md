@@ -133,6 +133,10 @@ Python is bundled in the release package &mdash; no separate installation requir
 
 Download MaaKEDR from the [GitHub Releases page](https://github.com/APPLe-DF/MaaKEDR/releases). Each release provides two GUI frontends — download only one:
 
+> [!TIP]
+>
+> **Trust only the official channels**: MaaKEDR is released through GitHub Releases and [Mirror酱](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-release) (a partner channel with content identical to the official one); some GUIs support in-app updates via Mirror酱. Downloads from other unofficial sources (lookalike sites, file-hosting reshare) carry security risks — verify the app identifier before installing.
+
 <div align="center">
 
 | Frontend | Suffix  | Description                                          |

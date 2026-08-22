@@ -11,7 +11,7 @@ icon: ph:question-fill
 
 MaaKEDR release archives are named as:
 
-```
+```text
 MaaKEDR-<os>-<arch>-<version>-<frontend>.<ext>
 ```
 

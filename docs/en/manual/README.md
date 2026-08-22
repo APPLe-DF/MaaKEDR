@@ -22,6 +22,7 @@ Welcome to the MaaKEDR user manual. Here you'll find everything from getting sta
 - [**Connection Settings**](./connection) — Detailed ADB connection guide with emulator port reference
 - [**Feature Introduction**](./introduction) — Task configuration details and usage instructions
 - [**Choosing a UI**](./choose-ui) — comparison between MFAA and MXU frontends
+- [**Mirror酱**](./mirror-chyan) — partner distribution and update platform
 
 Developers: see [Protocol](../protocol/) and [Development Docs](../develop/).
 

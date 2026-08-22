@@ -6,7 +6,7 @@ icon: "ri:folder-tree-fill"
 
 # Project Structure
 
-```
+```text
 MaaKEDR/
 ├── interface.json                  # MaaFW project definition
 ├── maa-project.json / .lock.json   # Tooling state files
@@ -54,7 +54,7 @@ MaaKEDR/
 
 ## Three-Layer Architecture
 
-```
+```text
 tasks/*.json ──→ pipeline/*.json ──→ agent/custom/
 (task entry)     (node graph)        (Python logic)
 ```

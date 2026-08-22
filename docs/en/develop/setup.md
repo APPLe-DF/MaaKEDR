@@ -84,9 +84,24 @@ pnpm check:py
 
 > The first run downloads MaaFramework runtime and PaddleOCR models — ensure network connectivity.
 
+## Debugging Tools
+
+| Tool                                                                                                  | Description                                                                                                               |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| [MaaDebugger](https://github.com/MaaXYZ/MaaDebugger)                                                  | Standalone debugger: connect a controller, inspect recognition results and screenshots live                               |
+| [Maa Pipeline Support](https://marketplace.visualstudio.com/items?itemName=nekosu.maa-support)        | VSCode extension: debugging, screenshots, ROI acquisition, color picking                                                  |
+| [MFAToolsPlus](https://github.com/SweetSmellFox/MFAToolsPlus)                                         | Cross-platform toolbox: convenient data acquisition and mock testing                                                      |
+| [MaaLogAnalyzer](https://github.com/Windsland52/MAALogAnalyzer)                                       | Visual log analysis for MaaFramework apps (`maafw.log`)                                                                   |
+| [MaaEvidenceKit](https://github.com/Windsland52/MaaEvidenceKit)                                       | Deterministic evidence extraction/diagnostic toolkit for MaaFramework (CLI/SDK), for on-demand diagnosis by AI assistants |
+| [ImageCropper (not recommended)](https://github.com/MaaXYZ/MaaFramework/tree/main/tools/ImageCropper) | Standalone screenshot/ROI tool, superseded by the VSCode extension                                                        |
+
+::: tip Recommended combo
+Use **Maa Pipeline Support** (VSCode extension) for development and debugging, and **MaaLogAnalyzer** for analyzing user logs (see [Troubleshooting](./fix.md#log-analysis-tools)).
+:::
+
 ## Project Structure Overview
 
-```
+```text
 MaaKEDR/
 ├── interface.json        # Entry config — tasks and connection settings
 ├── maa-project.json      # MaaFramework project configuration
@@ -119,7 +134,7 @@ Take a screenshot from your emulator or device. Save as `start_screen.png`.
 
 Open `start_screen.png` in an image editor and measure the button:
 
-```
+```text
 Example at 1280x720 resolution:
 x = 540, y = 600, w = 200, h = 60
 ```
@@ -128,7 +143,7 @@ x = 540, y = 600, w = 200, h = 60
 
 Crop the button from the screenshot and save to `resource/base/image/`:
 
-```
+```text
 resource/base/image/start_button.png
 ```
 

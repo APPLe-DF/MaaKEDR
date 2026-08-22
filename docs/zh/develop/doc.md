@@ -78,6 +78,14 @@ Plume 支持容器语法：
 > 说明文字
 ```
 
+## MarkdownLint 规范
+
+文档需符合 **MarkdownLint** 规范，配置见仓库根目录 `docs/.markdownlint.yaml`（规则覆盖、关闭项及原因均在其中注明）。
+
+- 规则说明请参考 [MarkdownLint 规则](https://github.com/DavidAnson/markdownlint/blob/master/docs/RULES.md)
+- 可使用 [VSCode 插件](https://github.com/DavidAnson/vscode-markdownlint) 实时提示（自动读取 `.markdownlint.yaml`）
+- 与 Prettier 的分工：**Prettier 负责格式**（缩进、换行、表格对齐），**MarkdownLint 负责规范**（标题层级、列表正确性、链接有效性等）。两者不冲突：`.markdownlint.yaml` 中已关闭与 Prettier 无关的噪音规则（如 MD013 行长）
+
 ## 写作要求
 
 - 用户手册：步骤可操作，选项与 `tasks/*.json` 一致
