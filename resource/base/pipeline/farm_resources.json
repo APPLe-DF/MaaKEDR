@@ -629,7 +629,7 @@
         }
     },
     "FarmResources.ExitStageConfirm": {
-        "desc": "点击关卡界面退出键",
+        "desc": "点击关卡界面退出键（等待界面冻结后再识别，规避加载/过渡动画期间的识别失败）",
         "recognition": "TemplateMatch",
         "roi": [
             1070,
@@ -639,7 +639,13 @@
         ],
         "template": "farm_resources/exit_stage_confirm.png",
         "threshold": 0.8,
-        "pre_delay": 500,
+        "pre_wait_freezes": {
+            "time": 300,
+            "threshold": 0.95,
+            "method": 5,
+            "rate_limit": 1000,
+            "timeout": 8000
+        },
         "action": {
             "type": "Click"
         },
