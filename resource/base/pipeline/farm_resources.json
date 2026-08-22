@@ -334,7 +334,7 @@
         ]
     },
     "FarmResources.SwipeToBegin": {
-        "desc": "滑动到起始位置(还原关卡选择到最左侧)",
+        "desc": "滑动到起始位置(还原关卡选择到最左侧,滑动两次确保复位)",
         "max_hit": 3,
         "recognition": "DirectHit",
         "action": {
@@ -351,13 +351,15 @@
                 "duration": 500
             }
         },
+        "repeat": 2,
+        "repeat_delay": 400,
         "post_delay": 1000,
         "next": [
             "FarmResources.ClickStage"
         ]
     },
     "FarmResources.SwipeToRight": {
-        "desc": "滑动到最右边(关卡4、5需要)",
+        "desc": "滑动到最右边(关卡4、5需要,滑动两次确保到位)",
         "recognition": "DirectHit",
         "action": {
             "type": "Swipe",
@@ -373,6 +375,8 @@
                 "duration": 500
             }
         },
+        "repeat": 2,
+        "repeat_delay": 400,
         "post_delay": 1000,
         "next": [
             "FarmResources.ClickStage"
