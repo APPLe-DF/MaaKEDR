@@ -151,7 +151,6 @@ class CheckEventHub(CustomRecognition):
         return CustomRecognition.AnalyzeResult(box=(0, 0, 1, 1), detail={"status": "other"})
 
 
-
 @AgentServer.custom_recognition("CheckAllSoldOut")
 class CheckAllSoldOut(CustomRecognition):
     """Detect the shop's all-sold-out layout from multiple OCR hits."""

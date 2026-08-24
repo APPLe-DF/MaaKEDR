@@ -34,9 +34,7 @@ def _argv() -> SimpleNamespace:
 
 
 def _run(context: _FakeContext) -> CustomRecognition.AnalyzeResult:
-    result = event_stage.CheckEventHub().analyze(
-        cast(Context, context), cast(CustomRecognition.AnalyzeArg, _argv())
-    )
+    result = event_stage.CheckEventHub().analyze(cast(Context, context), cast(CustomRecognition.AnalyzeArg, _argv()))
     assert result is not None
     return cast(CustomRecognition.AnalyzeResult, result)
 
@@ -76,9 +74,7 @@ def test_event_hub_activity_only_waits_on_unknown_page() -> None:
     argv = _argv()
     argv.custom_recognition_param = '{"activity_only":"true"}'
 
-    result = event_stage.CheckEventHub().analyze(
-        cast(Context, context), cast(CustomRecognition.AnalyzeArg, argv)
-    )
+    result = event_stage.CheckEventHub().analyze(cast(Context, context), cast(CustomRecognition.AnalyzeArg, argv))
 
     assert result is None
     assert context.templates == ["flare_home.png"]
@@ -90,9 +86,7 @@ def test_event_hub_activity_only_does_not_route_stale_global_home() -> None:
     argv = _argv()
     argv.custom_recognition_param = '{"activity_only":"true"}'
 
-    result = event_stage.CheckEventHub().analyze(
-        cast(Context, context), cast(CustomRecognition.AnalyzeArg, argv)
-    )
+    result = event_stage.CheckEventHub().analyze(cast(Context, context), cast(CustomRecognition.AnalyzeArg, argv))
 
     assert result is None
     assert context.templates == ["flare_home.png"]
