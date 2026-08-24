@@ -150,5 +150,5 @@ class CheckResourceStage(CustomRecognition):
             if not ocr_detail or not ocr_detail.box:
                 return None
 
-        logger.info("[资源刷取] 找到关卡 {}，位置: {}", stage_name, ocr_detail.box)
+        logger.debug("[资源刷取] 找到关卡 {}，位置: {}", stage_name, ocr_detail.box)
         return CustomRecognition.AnalyzeResult(box=ocr_detail.box, detail={"status": "found"})

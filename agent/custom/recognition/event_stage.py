@@ -91,6 +91,67 @@ def _distinct_sold_out_count(results: list[OCRResult]) -> int:
     return len(results)
 
 
+@AgentServer.custom_recognition("CheckEventHub")
+class CheckEventHub(CustomRecognition):
+    """Route entry through activity home, global home, or a foreign page."""
+
+    def analyze(
+        self, context: Context, argv: CustomRecognition.AnalyzeArg
+    ) -> CustomRecognition.AnalyzeResult | RectType | None:
+        try:
+            params = parse_params(argv.custom_recognition_param)
+        except ValueError as error:
+            logger.error("CheckEventHub: {}", error)
+            return None
+
+        activity_next = str(params.get("activity_next", "EventStage.ClickJourney"))
+        global_next = str(params.get("global_next", "EventStage.Start"))
+        other_next = str(params.get("other_next", "EventStage.ReturnToHome"))
+        activity_only = str(params.get("activity_only", "false")).lower() == "true"
+        activity_template = str(params.get("activity_template", "flare_home.png"))
+        global_template = str(params.get("global_template", "main_option.png"))
+        template_roi = coerce_roi(params.get("template_roi"), [0, 0, 1280, 720], "CheckEventHub")
+        # 全局主页模板是右上角小图标，默认限定在其常驻区域，避免全屏匹配误判。
+        global_roi = template_roi
+        raw_global_roi = params.get("global_roi")
+        if raw_global_roi is not None:
+            global_roi = coerce_roi(raw_global_roi, template_roi, "CheckEventHub")
+        detail = context.run_recognition_direct(
+            JRecognitionType.TemplateMatch,
+            JTemplateMatch(
+                template=[activity_template],
+                roi=(template_roi[0], template_roi[1], template_roi[2], template_roi[3]),
+                threshold=[0.8],
+            ),
+            argv.image,
+        )
+        if detail and getattr(detail, "box", None):
+            context.override_next(argv.node_name, [activity_next])
+            logger.debug("[活动入口] 识别状态=activity_home，路由到 {}", activity_next)
+            return CustomRecognition.AnalyzeResult(box=detail.box, detail={"status": "activity_home"})
+        if activity_only:
+            logger.debug("[活动入口] 尚未识别活动首页，继续等待")
+            return None
+
+        detail = context.run_recognition_direct(
+            JRecognitionType.TemplateMatch,
+            JTemplateMatch(
+                template=[global_template],
+                roi=(global_roi[0], global_roi[1], global_roi[2], global_roi[3]),
+                threshold=[0.8],
+            ),
+            argv.image,
+        )
+        if detail and getattr(detail, "box", None):
+            context.override_next(argv.node_name, [global_next])
+            logger.debug("[活动入口] 识别状态=global_home，路由到 {}", global_next)
+            return CustomRecognition.AnalyzeResult(box=detail.box, detail={"status": "global_home"})
+        context.override_next(argv.node_name, [other_next])
+        logger.warning("[活动入口] 未识别活动首页或全局主页，路由到 {}", other_next)
+        return CustomRecognition.AnalyzeResult(box=(0, 0, 1, 1), detail={"status": "other"})
+
+
+
 @AgentServer.custom_recognition("CheckAllSoldOut")
 class CheckAllSoldOut(CustomRecognition):
     """Detect the shop's all-sold-out layout from multiple OCR hits."""
@@ -166,7 +227,7 @@ class CheckShopItemSoldOut(CustomRecognition):
             else:
                 target, status = buy_next, "available"
             context.override_next(argv.node_name, [target])
-            logger.info(
+            logger.debug(
                 "[活动商店] 商品{}: {} -> {}（OCR售罄框: {}）",
                 params.get("item", "?"),
                 status,
@@ -205,7 +266,7 @@ class CheckShopRefreshAfterPurchase(CustomRecognition):
             else:
                 target, status = refresh_next, "refresh_needed"
                 box = (0, 0, 1, 1)
-                logger.info("[活动商店] 完成购买返回商店：状态未更新，左侧补点一次")
+                logger.debug("[活动商店] 完成购买返回商店：状态未更新，左侧补点一次")
             context.override_next(argv.node_name, [target])
             return CustomRecognition.AnalyzeResult(
                 box=box, detail={"status": status, "sold_out_count": len(sold_out_results)}
@@ -365,7 +426,7 @@ class CheckEventStage(CustomRecognition):
         if not ocr_detail or not ocr_detail.box:
             # 目标关卡不在当前视野：路由到向右滑动，滑完回来再找（EX4-1 在最右需滑到底）
             context.override_next(argv.node_name, ["EventStage.DragFindStage"])
-            logger.info("[活动刷取] 未找到关卡 {}，向右滑动地图", stage_name)
+            logger.debug("[活动刷取] 未找到关卡 {}，向右滑动地图", stage_name)
             return CustomRecognition.AnalyzeResult(box=(400, 300, 1, 1), detail={"status": "not_found"})
 
         # 已找到关卡：在其上方徽标区域检查次数是否耗尽（0/3）。
@@ -397,5 +458,5 @@ class CheckEventStage(CustomRecognition):
         # 找到目标：显式恢复路由到战斗准备，避免之前滑动分支的 override 残留
         context.override_next(argv.node_name, ["EventStage.StagePrepare"])
 
-        logger.info("[活动刷取] 找到关卡 {}，位置: {}", stage_name, player_box)
+        logger.debug("[活动刷取] 找到关卡 {}，位置: {}", stage_name, player_box)
         return CustomRecognition.AnalyzeResult(box=player_box, detail={"status": "found"})

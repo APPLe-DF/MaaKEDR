@@ -96,7 +96,7 @@ class SetBattleCount(CustomAction):
             )
             max_template = MAX_BUTTON_TEMPLATE
 
-        logger.info("[SetBattleCount] 参数: target_count={}, type={}", target_count, type(target_count))
+        logger.debug("[SetBattleCount] 参数: target_count={}, type={}", target_count, type(target_count))
 
         image = context.tasker.controller.cached_image
 
@@ -111,7 +111,7 @@ class SetBattleCount(CustomAction):
                 image,
             )
             if max_detail and max_detail.box:
-                logger.info("[SetBattleCount] 检测到最大按钮，点击设置最大次数: {}", max_detail.box)
+                logger.debug("[SetBattleCount] 检测到最大按钮，点击设置最大次数: {}", max_detail.box)
                 context.run_action_direct(
                     JActionType.Click,
                     JClick(),
@@ -129,7 +129,7 @@ class SetBattleCount(CustomAction):
         if not is_int_value(target_count):
             try:
                 target_count = int(target_count)  # type: ignore[arg-type]
-                logger.info("[SetBattleCount] target_count 由非整数值转换为整数: {}", target_count)
+                logger.debug("[SetBattleCount] target_count 由非整数值转换为整数: {}", target_count)
             except (TypeError, ValueError):
                 logger.error(
                     "[SetBattleCount] target_count 必须是 {}-{} 的整数或 'max'，得到: type={}, value={}",
@@ -167,7 +167,7 @@ class SetBattleCount(CustomAction):
             minus_x, minus_y = coerce_point(
                 params.get("minus_button", MINUS_BUTTON), MINUS_BUTTON, "SetBattleCount", "minus_button"
             )
-            logger.info(
+            logger.debug(
                 "[SetBattleCount] 当前次数 {} > 目标 {}，点击减号 {} 次",
                 current_count,
                 target_count,
@@ -206,7 +206,7 @@ class ReduceBattleCount(CustomAction):
             target: Any = _target if _target is not None else _DEFAULT_TARGET
             if not is_int_value(target):
                 target = _DEFAULT_TARGET
-                logger.info("[ReduceBattleCount] target 未初始化，自动设为 {}", _DEFAULT_TARGET)
+                logger.debug("[ReduceBattleCount] target 未初始化，自动设为 {}", _DEFAULT_TARGET)
 
             if target <= _COUNT_MIN:
                 logger.warning(
@@ -221,13 +221,13 @@ class ReduceBattleCount(CustomAction):
 
             current_count = _read_battle_count(context, count_roi, default=-1)
 
-            logger.info(
+            logger.debug(
                 "[ReduceBattleCount] 当前次数: {}, 新目标次数: {}",
                 current_count,
                 target,
             )
 
-            logger.info("[ReduceBattleCount] 点击减号按钮")
+            logger.debug("[ReduceBattleCount] 点击减号按钮")
             _click_button(context, minus_x, minus_y)
 
             return CustomAction.RunResult(success=True)
