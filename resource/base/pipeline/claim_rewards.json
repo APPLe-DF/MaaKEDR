@@ -715,6 +715,7 @@
     },
     "Mailbox.BackButton": {
         "desc": "点击邮箱界面返回按钮",
+        "max_hit": 5,
         "recognition": "TemplateMatch",
         "roi": [
             1120,
@@ -729,7 +730,8 @@
         },
         "post_wait_freezes": 500,
         "next": [
-            "ClaimRewards.MainHub"
+            "ClaimRewards.MainHub",
+            "Mailbox.BackButton"
         ]
     },
     "DispatchClaim.Start": {
