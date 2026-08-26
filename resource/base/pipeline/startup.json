@@ -49,6 +49,7 @@
         },
         "repeat": 3,
         "post_delay": 4000,
+        "timeout": 30000,
         "next": [
             "DailyLoginReward",
             "CheckHomePage"
