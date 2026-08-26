@@ -1,26 +1,42 @@
 {
     "StaminaInfo": {
-        "desc": "确认在主页后读取体力并输出回满时间（不在主页则点主页按钮自动返回）",
-        "recognition": "TemplateMatch",
-        "roi": [
-            1199,
-            6,
-            77,
-            83
-        ],
-        "template": "main_option.png",
-        "threshold": 0.75,
+        "desc": "入口路由：确认在主界面后读取体力，读取识别最多尝试 3 次，仍失败则任务失败；不在主界面则点主页按钮自动返回（最多 3 次，避免循环）。静态 next 为 override_next 的兜底，运行时由 CheckStaminaPage 按分支覆盖",
+        "recognition": "Custom",
+        "custom_recognition": "CheckStaminaPage",
+        "custom_recognition_param": "{\"home_next\": [\"StaminaInfo.Read\", \"StaminaInfo.ReadRetry\"], \"other_next\": [\"StaminaInfo.ClickHome\", \"StaminaInfo.ClickHomeRetry\"], \"other_max\": 3}",
         "action": {
             "type": "DoNothing"
         },
-        "timeout": 60000,
+        "timeout": 0,
         "next": [
             "StaminaInfo.Read",
-            "StaminaInfo.ClickHome"
+            "StaminaInfo.ReadRetry"
+        ]
+    },
+    "StaminaInfo.Read": {
+        "desc": "读取主界面体力并输出回满时间（识别失败则重试，最多 3 次后任务失败）",
+        "recognition": "Custom",
+        "custom_recognition": "ReadStamina",
+        "custom_recognition_param": "{\"current_roi\": [1120, 512, 38, 44], \"cap_roi\": [1152, 484, 28, 30], \"tilt_angle\": -45.0}",
+        "action": {
+            "type": "DoNothing"
+        }
+    },
+    "StaminaInfo.ReadRetry": {
+        "desc": "读取尝试闸门：DirectHit 每次命中 = 重试一次；max_hit=2 → 读取识别合计最多 3 次，超限后本节点被跳过，列表失败 → 任务失败。timeout=0 保证每轮截图只识别一次",
+        "max_hit": 2,
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "timeout": 0,
+        "next": [
+            "StaminaInfo.Read",
+            "StaminaInfo.ReadRetry"
         ]
     },
     "StaminaInfo.ClickHome": {
-        "desc": "点击主页按钮回到主界面",
+        "desc": "点击主页按钮回到主界面；timeout=0 使返回无效（CheckStaminaPage 放弃）时立即失败，不空转等待",
         "recognition": "TemplateMatch",
         "roi": [
             199,
@@ -35,17 +51,22 @@
             "type": "Click"
         },
         "post_delay": 1000,
+        "timeout": 0,
         "next": [
             "StaminaInfo"
         ]
     },
-    "StaminaInfo.Read": {
-        "desc": "读取主界面体力并输出回满时间（识别失败则任务失败）",
-        "recognition": "Custom",
-        "custom_recognition": "ReadStamina",
-        "custom_recognition_param": "{\"current_roi\": [1120, 512, 38, 44], \"cap_roi\": [1152, 484, 28, 30], \"tilt_angle\": -45.0}",
+    "StaminaInfo.ClickHomeRetry": {
+        "desc": "返回主页尝试闸门：按钮不匹配时重试（max_hit=2 → 合计最多 3 次匹配/点击），超限后本节点被跳过，列表失败 → 任务失败。timeout=0 保证每轮截图只识别一次",
+        "max_hit": 2,
+        "recognition": "DirectHit",
         "action": {
             "type": "DoNothing"
-        }
+        },
+        "timeout": 0,
+        "next": [
+            "StaminaInfo.ClickHome",
+            "StaminaInfo.ClickHomeRetry"
+        ]
     }
 }

@@ -9,7 +9,7 @@ from maa.agent.agent_server import AgentServer
 from maa.context import Context
 from maa.custom_recognition import CustomRecognition
 from maa.define import RectType
-from maa.pipeline import JOCR, JRecognitionType
+from maa.pipeline import JOCR, JRecognitionType, JTemplateMatch
 from utils.logger import logger
 from utils.maa_types import ocr_text
 from utils.params import coerce_roi, parse_params
@@ -70,6 +70,16 @@ def _first_int(text: str) -> int | None:
     """从 OCR 文本中提取第一个正整数；无则返回 None。"""
     match = re.search(r"\d+", text)
     return int(match.group(0)) if match else None
+
+
+def _as_node_list(raw: Any, default: list[str], label: str) -> list[str]:
+    """把节点路由配置规范成节点名列表（兼容单个字符串与列表两种写法）。"""
+    if isinstance(raw, str):
+        return [raw]
+    if isinstance(raw, list) and all(isinstance(item, str) for item in raw):
+        return [str(item) for item in raw]
+    logger.warning("CheckStaminaPage: {} 配置非法（应为字符串或字符串列表），使用默认值 {}", label, default)
+    return list(default)
 
 
 @AgentServer.custom_recognition("ReadStamina")
@@ -178,3 +188,89 @@ class ReadStamina(CustomRecognition):
         if not detail or not detail.box:
             return None
         return _first_int(ocr_text(detail))
+
+
+@AgentServer.custom_recognition("CheckStaminaPage")
+class CheckStaminaPage(CustomRecognition):
+    """体力信息入口路由：确认当前是否在全局主界面。
+
+    - 在主界面（home_template 命中）→ 路由到 home_next
+      （默认 [Read, ReadRetry]：读取体力最多尝试 3 次，见 StaminaInfo.ReadRetry）；
+    - 不在主界面 → 路由到 other_next
+      （默认 [ClickHome, ClickHomeRetry]：点主页按钮最多尝试 3 次，见 StaminaInfo.ClickHomeRetry）；
+    - 连续 other_max 次仍未回主界面 → 放弃返回（返回 None），
+      避免“返回主页按钮点击无效”时陷入点击循环，按 MaaFW 语义以任务失败结束。
+
+    注意：路由必须放在入口节点内（override_next），而不是在父节点 next 列表里
+    并列 Read 与 ClickHome——后者会让 Read 识别失败时顺序回落到 ClickHome，
+    而 ClickHome 在主界面同样命中，形成“读取失败 → 点主页 → 再读取”的无限循环。
+
+    计数为实例状态：识别器实例在 AgentServer 进程内单例注册，计数跨 analyze 调用
+    累积；agent 进程按任务运行（见 agent 启动日志），且命中主界面时即复位。
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._other_count = 0
+
+    def analyze(
+        self, context: Context, argv: CustomRecognition.AnalyzeArg
+    ) -> CustomRecognition.AnalyzeResult | RectType | None:
+        try:
+            params = parse_params(argv.custom_recognition_param)
+        except ValueError as error:
+            logger.error("CheckStaminaPage: {}", error)
+            return None
+
+        home_template = str(params.get("home_template", "main_option.png"))
+        home_roi = coerce_roi(params.get("home_roi", [1199, 6, 77, 83]), [1199, 6, 77, 83], "CheckStaminaPage")
+        home_next = _as_node_list(
+            params.get("home_next"),
+            ["StaminaInfo.Read", "StaminaInfo.ReadRetry"],
+            "home_next",
+        )
+        other_next = _as_node_list(
+            params.get("other_next"),
+            ["StaminaInfo.ClickHome", "StaminaInfo.ClickHomeRetry"],
+            "other_next",
+        )
+        try:
+            other_max = max(int(params.get("other_max", 3)), 1)
+            threshold = float(params.get("threshold", 0.75))
+        except (TypeError, ValueError):
+            logger.warning("CheckStaminaPage: other_max / threshold 参数非法，使用默认值")
+            other_max, threshold = 3, 0.75
+
+        detail = context.run_recognition_direct(
+            JRecognitionType.TemplateMatch,
+            JTemplateMatch(
+                template=[home_template],
+                roi=(home_roi[0], home_roi[1], home_roi[2], home_roi[3]),
+                threshold=[threshold],
+            ),
+            argv.image,
+        )
+        if detail and getattr(detail, "box", None):
+            self._other_count = 0
+            if not context.override_next(argv.node_name, home_next):
+                logger.error("CheckStaminaPage: override_next 失败（{} -> {}）", argv.node_name, home_next)
+                return None
+            logger.info("[体力信息] 已在主界面，路由到 {}", home_next)
+            return CustomRecognition.AnalyzeResult(box=detail.box, detail={"status": "home"})
+
+        self._other_count += 1
+        if self._other_count > other_max:
+            misses = self._other_count - 1
+            logger.warning(
+                "[体力信息] 连续 {} 次不在主界面，放弃自动返回（{}/{}），任务结束为失败",
+                misses,
+                misses,
+                other_max,
+            )
+            return None
+
+        if not context.override_next(argv.node_name, other_next):
+            logger.error("CheckStaminaPage: override_next 失败（{} -> {}）", argv.node_name, other_next)
+            return None
+        logger.info("[体力信息] 不在主界面（第 {}/{} 次），路由到 {}", self._other_count, other_max, other_next)
+        return CustomRecognition.AnalyzeResult(box=(0, 0, 1, 1), detail={"status": "other"})

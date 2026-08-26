@@ -16,14 +16,17 @@ icon: ri:heart-pulse-line
 ## 流程
 
 ```text
-StaminaInfo →（确认主页）→ StaminaInfo.Read → 输出回满信息
-            └─（不在主页）→ StaminaInfo.ClickHome → StaminaInfo
+StaminaInfo（CheckStaminaPage 路由：主界面？）
+  ├─ 是 → StaminaInfo.Read（失败经 ReadRetry 重试，合计最多 3 次）→ 输出回满信息（仍失败 → 任务失败）
+  └─ 否 → StaminaInfo.ClickHome（不匹配经 ClickHomeRetry 重试，合计最多 3 次）→ 重新确认（连续 3 次未回主页 → 任务失败）
 ```
 
 关键约定：
 
-- `StaminaInfo` 用模板 `main_option.png` 确认主界面；匹配失败且 `timeout`（60s）内未到主页时，`StaminaInfo.ClickHome` 点击主页按钮返回后重新确认，保证任务从主页读取体力。
-- `StaminaInfo.Read` 使用自定义识别 `ReadStamina`（`agent/custom/recognition/stamina.py`）。
+- `StaminaInfo` 入口使用自定义识别 `CheckStaminaPage`（`agent/custom/recognition/stamina.py`）路由：用模板 `main_option.png` 确认主界面；在主界面则路由到 `StaminaInfo.Read`，不在主界面则路由到 `StaminaInfo.ClickHome` 点击主页按钮返回后重新确认。
+- 路由通过 `context.override_next` 实现（与 `CheckEventHub` 同模式），避免把 `Read` 与 `ClickHome` 并列在 `next` 列表中——否则 `Read` 识别失败会顺序回落到 `ClickHome`，而 `ClickHome` 在主界面同样命中并点击，形成“读取失败 → 点主页 → 再读取”的无限循环。
+- `StaminaInfo.Read` 使用自定义识别 `ReadStamina`（`agent/custom/recognition/stamina.py`）；识别失败（如识别不到完整体力数值）时最多重试 2 次（合计 3 次读取尝试），仍失败则任务以失败结束、不进入循环。尝试次数由 `StaminaInfo.ReadRetry` 闸门节点控制（`max_hit=2` + `timeout=0`，每轮截图只识别一次），与设备 OCR 速度无关，不会长时间空转。
+- `StaminaInfo.ClickHome` 分支对称地由 `StaminaInfo.ClickHomeRetry` 闸门控制（`max_hit=2` + `timeout=0`）：返回主页按钮不匹配时合计最多尝试 3 次；`other_max`（默认 3）次连续未回主页（点击无效）时 `CheckStaminaPage` 放弃返回（识别失败）。`StaminaInfo` 与 `StaminaInfo.ClickHome` 均设 `timeout=0`，保证放弃判定后立即失败，无额外空转窗口。
 
 ## ReadStamina 识别约定
 
