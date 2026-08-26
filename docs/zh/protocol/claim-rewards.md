@@ -56,21 +56,21 @@ ClaimRewards
 
 ### 日常成就
 
-- `ClaimRewards.Start`：周常入口徽章（**多模板**：`reward_badge.png` + 变体 `reward_badge_1/2.png`，任一命中即可，覆盖入口图标的不同样式/状态）
+- `ClaimRewards.Start`：周常入口有可领取奖励的判定（**ColorMatch**：入口红点颜色匹配，RGB 区间约 [200-255, 60-150, 20-100] 且连通像素数 ≥ 50，命中即视为有可领取奖励；无红点时识别失败，正常跳过该入口）
 - `ConfirmInterface`：奖励界面；`next` 中含 `MedalDisplay`（获得勋章弹窗识别）与 `ExitRewardInterface` 退出
-- `CheckDaily` / `CheckWeekly` / `CheckMilitary`：分栏徽章
+- `CheckDaily` / `CheckWeekly` / `CheckMilitary`：分栏可领取判定（同为 **ColorMatch** 红点颜色匹配）
 - `ClaimButton`：领取按钮；领完后优先处理 `MedalDisplay` 勋章弹窗，再处理 `Common.CheckItemObtained` 物品弹窗
 - `MedalDisplay`：识别"获得勋章"弹窗并点击关闭（见 `claim_rewards/daily/medal_display.png`）
 
 ### 战令
 
-- `BattlePass.Start` / `ClickEntry` / `RetryClickEntry`：战令徽章入口（**多模板**：`battlepass_badge.png` + 变体 `battlepass_badge_1/2.png`，任一命中即可）；入口可改为固定坐标点击（见 pipeline）
-- `CheckTaskComplete`：任务完成页签；识别后可固定坐标切入
+- `BattlePass.Start` / `ClickEntry` / `RetryClickEntry`：战令入口有可领取奖励的判定（**ColorMatch** 红点颜色匹配；`ClickEntry` 入口也可改为固定坐标点击，见 pipeline）
+- `CheckTaskComplete`：任务完成页签（ColorMatch 定位可领红点；识别后可固定坐标切入）
 - `CheckRewardList` / `ClaimRewardButton`：奖励列表领取
 
 ### 派遣
 
-- `DispatchClaim.Start` / `RetryClick`：派遣任务入口（**多模板**：`dispatch_entry.png` + 变体 `dispatch_entry_1/2.png`，任一命中即可）→ `ClaimButton` → `RedeployConfirm`（可选）→ `Exit`
+- `DispatchClaim.Start` / `RetryClick`：派遣入口有可领取奖励的判定（**ColorMatch** 红点颜色匹配）→ `ClaimButton` → `RedeployConfirm`（可选）→ `Exit`
 
 ### 邮箱
 
@@ -81,12 +81,12 @@ ClaimRewards
 默认关闭（`claim_premium_shop`），面向已开通高级账号、每日可领取免费商品的玩家。
 
 ```text
-MainHub → [JumpBack]ClickShopIcon（检测商店红点（可领取状态）后点击进入；max_hit: 1，整个任务只进一次商店）
+MainHub → [JumpBack]ClickShopIcon（ColorMatch 检测商店图标红点（可领取状态），命中后点击进入；max_hit: 1，整个任务只进一次商店）
   → ConfirmShopInterface（确认在商店界面）
-       → ClickPremiumShop：识别"带红点（可领取状态）"的高账入口，命中才点击进入
+       → ClickPremiumShop：ColorMatch 识别"带红点（可领取状态）"的高账入口，命中才点击进入
        → NoPremiumShopEntry（兜底）：入口无红点/未开通 → 提示后返回主页
   → ConfirmPremiumShop（确认在高账商店界面）→ PurchaseHub（购买中枢，DirectHit）
-       → ClickFreeItem：识别"免费商品"按钮，命中点击 → ConfirmPurchase
+       → ClickFreeItem：ColorMatch 识别"免费商品"按钮红点，命中点击 → ConfirmPurchase
             → 确认购买 → [JumpBack]Common.CheckItemObtained（物品弹窗）→ 跳回 PurchaseHub 继续
        → 无免费商品 → ReturnMain
   → ReturnMain → MainHubIdle（回主页后成功退出）
@@ -94,9 +94,9 @@ MainHub → [JumpBack]ClickShopIcon（检测商店红点（可领取状态）后
 
 关键点：
 
-- **红点即可领取**：`premium_shop_entry.png` 模板截的是"有可领取状态"（红点）的入口；无红点时匹配分低于阈值，视为今日已领完/未开通，不进商店。
+- **红点即可领取**：`ClickPremiumShop` 用 **ColorMatch**（红点色区间 RGB [200-255, 60-150, 20-100]、连通像素数 ≥ 50）判定入口是否处于"有可领取状态"；无红点时识别失败，视为今日已领完/未开通，不进商店。
 - **`NoPremiumShopEntry`**：DirectHit 兜底节点，位于 `ConfirmShopInterface.next` 与 `ClickPremiumShop.next` 末尾，命中时 toast「未检测到高账商店可领取提示，请检查是否已开通高级账号」并返回主页——不依赖 `on_error`，无超时等待、不触发错误截图。
-- **红点即可进入**：`shop_icon_reddot.png` 截的是主页商店图标带红点（有可领取内容）的状态，无红点时识别失败、不进商店，直接进入后续轮询；`RetryClickShopIcon` 同模板重试。
+- **红点即可进入**：`ClickShopIcon` / `RetryClickShopIcon` 用 **ColorMatch** 判定主页商店图标带红点（有可领取内容），无红点时识别失败、不进商店，直接进入后续轮询。
 - **`ClickShopIcon` 的 `max_hit: 1`**：商店图标是常驻元素，不加限制会在 `MainHub` 轮询中反复进商店导致死循环。
 
 ### 通用
@@ -104,9 +104,17 @@ MainHub → [JumpBack]ClickShopIcon（检测商店红点（可领取状态）后
 - `Common.CheckItemObtained`：获得物品弹窗
 - `Common.BackButton`：返回键
 
+## 识别方式说明
+
+本任务的"是否有可领取奖励"判定统一使用 **ColorMatch 颜色匹配**，而非小尺寸模板：
+
+- 各入口（每日/每周/军旅分栏、战令、派遣、高账商店、免费商品）的红点/角标通过颜色区间（RGB 下限/上限约 `[200, 60, 20]` ~ `[255, 150, 100]`）识别，`connected: true`（只计连通块）+ `count: 50`（最少像素数）抗误报；
+- 颜色判定对画面轻微变化（UI 动效、抗锯齿、图片压缩处理）不敏感，无需维护多套模板变体；入口图标样式变化不再影响"是否有奖励"的判断；
+- 具体色板取值见 `claim_rewards.json` 中各 `ColorMatch` 节点的 `param.lower/upper`，如遇新入口的红点颜色不同，按实测调整对应节点即可。
+
 ## 图片目录
 
-`resource/base/image/claim_rewards/` 按任务分子目录：`daily/`（含勋章弹窗）、`battlepass/`、`mailbox/`、`dispatch/`、`premium_shop/`；通用图（`back_button.png`、`item_obtained_dialog.png` 等）在 `resource/base/image/` 根目录。
+`resource/base/image/claim_rewards/` 按任务分子目录：`daily/`（含勋章弹窗）、`battlepass/`、`mailbox/`、`dispatch/`、`premium_shop/`；通用图（`back_button.png`、`item_obtained_dialog.png` 等）在 `resource/base/image/` 根目录。红点/角标类元素由 ColorMatch 颜色判定，无专用模板图。
 
 ## 验收清单
 

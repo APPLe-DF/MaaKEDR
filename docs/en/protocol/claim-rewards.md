@@ -53,21 +53,21 @@ Every sub-module entry in `MainHub.next` is a `[JumpBack]` node: once hit and ex
 
 ### Daily / weekly / military
 
-- `ClaimRewards.Start`: weekly entry badge (**multi-template**: `reward_badge.png` + variants `reward_badge_1/2.png`, any match hits — covers different styles/states of the entry icon)
+- `ClaimRewards.Start`: weekly entry — "claimable" is decided by **ColorMatch** (entry red-dot color range RGB ~[200-255, 60-150, 20-100], connected pixels ≥ 50; hit means there is something to claim; miss falls through to the next entry)
 - `ConfirmInterface`: reward interface; `next` includes `MedalDisplay` and `ExitRewardInterface`
-- `CheckDaily` / `CheckWeekly` / `CheckMilitary`: section badges
+- `CheckDaily` / `CheckWeekly` / `CheckMilitary`: section "claimable" checks (also **ColorMatch** red-dot color match)
 - `ClaimButton`: claim button; afterwards handle `MedalDisplay` (medal popup) first, then `Common.CheckItemObtained` (item popup)
 - `MedalDisplay`: recognize and click the "medal obtained" popup (see `claim_rewards/daily/medal_display.png`)
 
 ### Battle pass
 
-- `BattlePass.Start` / `ClickEntry` / `RetryClickEntry`: battle-pass badge entry (**multi-template**: `battlepass_badge.png` + variants `battlepass_badge_1/2.png`, any match hits); entry may click fixed coordinates (see pipeline)
-- `CheckTaskComplete`: task-complete tab; may switch by fixed coordinates
+- `BattlePass.Start` / `ClickEntry` / `RetryClickEntry`: battle-pass entry — "claimable" decided by **ColorMatch** red-dot color match; `ClickEntry` may click fixed coordinates (see pipeline)
+- `CheckTaskComplete`: task-complete tab (ColorMatch locates the claimable red dot; may switch by fixed coordinates)
 - `CheckRewardList` / `ClaimRewardButton`: claim rewards from the list
 
 ### Dispatch
 
-- `DispatchClaim.Start` / `RetryClick`: dispatch entry (**multi-template**: `dispatch_entry.png` + variants `dispatch_entry_1/2.png`, any match hits) → `ClaimButton` → `RedeployConfirm` (optional) → `Exit`
+- `DispatchClaim.Start` / `RetryClick`: dispatch entry — "claimable" decided by **ColorMatch** red-dot color match → `ClaimButton` → `RedeployConfirm` (optional) → `Exit`
 
 ### Mailbox
 
@@ -78,12 +78,12 @@ Every sub-module entry in `MainHub.next` is a `[JumpBack]` node: once hit and ex
 Default off (`claim_premium_shop`); for players with a premium account who can claim a free item daily.
 
 ```text
-MainHub → [JumpBack]ClickShopIcon (click after detecting the shop icon red dot (claimable state); max_hit: 1, enter the shop only once per task)
+MainHub → [JumpBack]ClickShopIcon (ColorMatch detects the shop icon red dot (claimable state), clicks to enter; max_hit: 1, enter the shop only once per task)
   → ConfirmShopInterface (confirm shop UI)
-       → ClickPremiumShop: recognizes the premium-shop entry WITH red dot (claimable state); enters only when hit
+       → ClickPremiumShop: ColorMatch recognizes the premium-shop entry WITH red dot (claimable state); enters only when hit
        → NoPremiumShopEntry (fallback): no red dot / not enabled → notify and return home
   → ConfirmPremiumShop (confirm premium shop UI) → PurchaseHub (DirectHit)
-       → ClickFreeItem: recognizes the "free item" button; click → ConfirmPurchase
+       → ClickFreeItem: ColorMatch recognizes the "free item" button red dot; click → ConfirmPurchase
             → confirm purchase → [JumpBack]Common.CheckItemObtained (item popup) → back to PurchaseHub
        → no free item → ReturnMain
   → ReturnMain → MainHubIdle (success exit after returning home)
@@ -91,9 +91,9 @@ MainHub → [JumpBack]ClickShopIcon (click after detecting the shop icon red dot
 
 Key points:
 
-- **Red dot means claimable**: `premium_shop_entry.png` is captured WITH the red dot (claimable state); without the red dot the match score stays below the threshold and is treated as "already claimed today / not enabled" — the shop is not entered.
+- **Red dot means claimable**: `ClickPremiumShop` uses **ColorMatch** (red-dot color range RGB [200-255, 60-150, 20-100], connected pixels ≥ 50) to decide whether the entry is in a claimable state; without the red dot the recognition fails and is treated as "already claimed today / not enabled" — the shop is not entered.
 - **`NoPremiumShopEntry`**: DirectHit fallback at the end of `ConfirmShopInterface.next` and `ClickPremiumShop.next`; toasts "no claimable premium-shop entry detected, check whether the premium account is enabled" and returns home — no `on_error`, no timeout wait, no error screenshots.
-- **Red dot gates entry**: `shop_icon_reddot.png` is captured with the red dot (claimable content) on the home-screen shop icon; without it the recognition fails and the shop is not entered, falling through to the next poll entries; `RetryClickShopIcon` retries with the same template.
+- **Red dot gates entry**: `ClickShopIcon` / `RetryClickShopIcon` use **ColorMatch** to decide whether the home-screen shop icon carries a red dot (claimable content); without it the recognition fails and the shop is not entered, falling through to the next poll entries.
 - **`ClickShopIcon.max_hit: 1`**: the shop icon is a permanent element; without this cap the `MainHub` poll would keep entering the shop forever (dead loop).
 
 ### Common
@@ -101,9 +101,17 @@ Key points:
 - `Common.CheckItemObtained`: item-obtained popup
 - `Common.BackButton`: back button
 
+## Recognition approach
+
+This task decides "is there anything claimable" with **ColorMatch color matching** instead of small templates:
+
+- Entry red dots / corner badges (daily / weekly / military tabs, battle pass, dispatch, premium shop, free item) are detected by a color range (RGB lower/upper ≈ `[200, 60, 20]` ~ `[255, 150, 100]`); `connected: true` (only connected pixel blocks count) + `count: 50` (minimum pixel count) suppress false positives;
+- Color-based detection is insensitive to subtle visual changes (UI animation, anti-aliasing, image-compression processing) and needs no multi-template variants; entry-icon style changes no longer affect the "claimable or not" decision;
+- Tune the exact color band per node in `claim_rewards.json` (`param.lower`/`param.upper`) if a new entry's red dot has a different color.
+
 ## Image directories
 
-`resource/base/image/claim_rewards/` is organized by sub-module: `daily/` (incl. medal popup), `battlepass/`, `mailbox/`, `dispatch/`, `premium_shop/`; shared templates (`back_button.png`, `item_obtained_dialog.png`, etc.) live in `resource/base/image/`.
+`resource/base/image/claim_rewards/` is organized by sub-module: `daily/` (incl. medal popup), `battlepass/`, `mailbox/`, `dispatch/`, `premium_shop/`; shared templates (`back_button.png`, `item_obtained_dialog.png`, etc.) live in `resource/base/image/`. Red-dot / badge elements are decided by ColorMatch and have no dedicated template images.
 
 ## Acceptance checklist
 
