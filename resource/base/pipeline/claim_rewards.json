@@ -130,17 +130,29 @@
     "ClaimRewards.Start": {
         "desc": "检测并点击周常奖励图标",
         "max_hit": 5,
-        "recognition": "TemplateMatch",
-        "roi": [
-            894,
-            190,
-            48,
-            43
-        ],
-        "template": [
-            "claim_rewards/red_dot.png"
-        ],
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    894,
+                    190,
+                    48,
+                    43
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "Click",
             "param": {
@@ -162,17 +174,29 @@
     },
     "ClaimRewards.RetryClick": {
         "desc": "重试点击周常奖励图标",
-        "recognition": "TemplateMatch",
-        "roi": [
-            894,
-            190,
-            48,
-            43
-        ],
-        "template": [
-            "claim_rewards/red_dot.png"
-        ],
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    894,
+                    190,
+                    48,
+                    43
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "Click",
             "param": {
@@ -218,15 +242,29 @@
     "ClaimRewards.CheckDaily": {
         "desc": "检查每日奖励徽章",
         "max_hit": 5,
-        "recognition": "TemplateMatch",
-        "roi": [
-            498,
-            101,
-            60,
-            38
-        ],
-        "template": "claim_rewards/red_dot.png",
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    498,
+                    101,
+                    60,
+                    38
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "Click"
         },
@@ -239,15 +277,29 @@
     "ClaimRewards.CheckWeekly": {
         "desc": "检查每周奖励徽章",
         "max_hit": 5,
-        "recognition": "TemplateMatch",
-        "roi": [
-            841,
-            103,
-            60,
-            39
-        ],
-        "template": "claim_rewards/red_dot.png",
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    841,
+                    103,
+                    60,
+                    39
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "Click"
         },
@@ -260,15 +312,29 @@
     "ClaimRewards.CheckMilitary": {
         "desc": "检查军旅成就奖励徽章",
         "max_hit": 5,
-        "recognition": "TemplateMatch",
-        "roi": [
-            1176,
-            105,
-            60,
-            39
-        ],
-        "template": "claim_rewards/red_dot.png",
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    1176,
+                    105,
+                    60,
+                    39
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "Click"
         },
@@ -339,17 +405,29 @@
     },
     "BattlePass.Start": {
         "desc": "检查战令通行证徽章",
-        "recognition": "TemplateMatch",
-        "roi": [
-            902,
-            245,
-            33,
-            36
-        ],
-        "template": [
-            "claim_rewards/red_dot.png"
-        ],
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    902,
+                    245,
+                    33,
+                    36
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "DoNothing"
         },
@@ -359,17 +437,29 @@
     },
     "BattlePass.ClickEntry": {
         "desc": "点击战令通行证入口",
-        "recognition": "TemplateMatch",
-        "roi": [
-            902,
-            245,
-            33,
-            36
-        ],
-        "template": [
-            "claim_rewards/red_dot.png"
-        ],
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    902,
+                    245,
+                    33,
+                    36
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "Click",
             "param": {
@@ -390,17 +480,29 @@
     },
     "BattlePass.RetryClickEntry": {
         "desc": "重试点击战令通行证入口",
-        "recognition": "TemplateMatch",
-        "roi": [
-            902,
-            245,
-            33,
-            36
-        ],
-        "template": [
-            "claim_rewards/red_dot.png"
-        ],
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    902,
+                    245,
+                    33,
+                    36
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "Click",
             "param": {
@@ -465,15 +567,29 @@
     "BattlePass.CheckTaskComplete": {
         "desc": "检查战令任务是否有可领取项(识别成功才点击;识别失败则进入奖励列表检查)",
         "max_hit": 1,
-        "recognition": "TemplateMatch",
-        "roi": [
-            731,
-            75,
-            62,
-            51
-        ],
-        "template": "claim_rewards/red_dot.png",
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    731,
+                    75,
+                    62,
+                    51
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "Click",
             "param": {
@@ -513,15 +629,29 @@
     "BattlePass.CheckRewardList": {
         "desc": "检查奖励列表是否有可领取项",
         "max_hit": 5,
-        "recognition": "TemplateMatch",
-        "roi": [
-            600,
-            73,
-            36,
-            39
-        ],
-        "template": "claim_rewards/red_dot.png",
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    600,
+                    73,
+                    36,
+                    39
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "Click",
             "param": {
@@ -726,17 +856,29 @@
     },
     "DispatchClaim.Start": {
         "desc": "检测派遣任务入口红点",
-        "recognition": "TemplateMatch",
-        "roi": [
-            896,
-            285,
-            41,
-            51
-        ],
-        "template": [
-            "claim_rewards/red_dot.png"
-        ],
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    896,
+                    285,
+                    41,
+                    51
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "Click"
         },
@@ -749,17 +891,29 @@
     },
     "DispatchClaim.RetryClick": {
         "desc": "重试点击派遣任务入口",
-        "recognition": "TemplateMatch",
-        "roi": [
-            896,
-            285,
-            41,
-            51
-        ],
-        "template": [
-            "claim_rewards/red_dot.png"
-        ],
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    896,
+                    285,
+                    41,
+                    51
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "Click"
         },
@@ -829,15 +983,29 @@
     "PremiumShop.ClickShopIcon": {
         "desc": "检测商店红点（可领取状态）后点击进入",
         "max_hit": 2,
-        "recognition": "TemplateMatch",
-        "roi": [
-            195,
-            593,
-            58,
-            56
-        ],
-        "template": "claim_rewards/red_dot.png",
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    195,
+                    593,
+                    58,
+                    56
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "Click"
         },
@@ -849,15 +1017,29 @@
     },
     "PremiumShop.RetryClickShopIcon": {
         "desc": "重试检测商店红点并点击",
-        "recognition": "TemplateMatch",
-        "roi": [
-            195,
-            593,
-            58,
-            56
-        ],
-        "template": "claim_rewards/red_dot.png",
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    195,
+                    593,
+                    58,
+                    56
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "pre_delay": 4000,
         "action": {
             "type": "Click"
@@ -889,15 +1071,29 @@
     },
     "PremiumShop.ClickPremiumShop": {
         "desc": "检测高账商店按钮（带红点）并点击",
-        "recognition": "TemplateMatch",
-        "roi": [
-            220,
-            586,
-            42,
-            42
-        ],
-        "template": "claim_rewards/red_dot.png",
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    220,
+                    586,
+                    42,
+                    42
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "Click"
         },
@@ -914,15 +1110,29 @@
     },
     "PremiumShop.RetryClickPremiumShop": {
         "desc": "重试点击高账商店按钮",
-        "recognition": "TemplateMatch",
-        "roi": [
-            220,
-            586,
-            42,
-            42
-        ],
-        "template": "claim_rewards/red_dot.png",
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    220,
+                    586,
+                    42,
+                    42
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "Click"
         },
@@ -971,15 +1181,29 @@
     },
     "PremiumShop.ClickFreeItem": {
         "desc": "检测免费商品按钮（带红点）并点击",
-        "recognition": "TemplateMatch",
-        "roi": [
-            480,
-            171,
-            52,
-            45
-        ],
-        "template": "claim_rewards/red_dot.png",
-        "threshold": 0.8,
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    480,
+                    171,
+                    52,
+                    45
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        },
         "action": {
             "type": "Click"
         },
