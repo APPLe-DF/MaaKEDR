@@ -8,7 +8,7 @@ import os
 import sys
 
 
-def minify_json_file(input_path: str, output_path: str = None) -> bool:
+def minify_json_file(input_path: str, output_path: str | None = None) -> bool:
     """
     压缩 JSON 文件
 
@@ -47,7 +47,7 @@ def main():
             if minify_json_file(target):
                 print(f"Minified: {target}")
     elif os.path.isdir(target):
-        for root, dirs, files in os.walk(target):
+        for root, _dirs, files in os.walk(target):
             for file in files:
                 if file.endswith(".json"):
                     filepath = os.path.join(root, file)

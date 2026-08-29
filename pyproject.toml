@@ -15,6 +15,10 @@ dev = [
     "ruff>=0.11.0",
 ]
 
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [tool.ruff]
 line-length = 120
 target-version = "py313"
@@ -40,7 +44,7 @@ pythonVersion = "3.13"
 typeCheckingMode = "strict"
 exclude = [".venv", "**/__pycache__"]
 extraPaths = ["agent"]
-include = ["agent"]
+include = ["agent", "tools"]
 reportMissingTypeStubs = "none"
 reportUnknownMemberType = "none"
 reportUnknownArgumentType = "none"
@@ -50,7 +54,7 @@ reportUnknownLambdaType = "none"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["agent"]
+pythonpath = [".", "agent"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["agent"]
