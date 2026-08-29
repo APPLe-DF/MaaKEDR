@@ -44,9 +44,6 @@ importers:
       prettier-plugin-multiline-arrays:
         specifier: 4.1.11
         version: 4.1.11(prettier@3.9.6)
-      pyright:
-        specifier: ^1.1.413
-        version: 1.1.413
       sass:
         specifier: ^1.102.0
         version: 1.102.0
@@ -2822,11 +2819,6 @@ packages:
   punycode.js@2.3.1:
     resolution: {integrity: sha512-uxFIHU0YlHYhDQtV4R9J6a52SLx28BCjT+4ieh7IGbgwVJWO+km431c4yRlREUAsAmt/uMjQUyQHNEPf0M39CA==}
     engines: {node: '>=6'}
-
-  pyright@1.1.413:
-    resolution: {integrity: sha512-1lpxKrh0DHHpfAQOfciZo2ojua2jase3wwO9at8kldc+F/p1PBscxA5CQ3G1qg5lMOMhXo6ZaiMLMXEAqADIAg==}
-    engines: {node: '>=14.0.0'}
-    hasBin: true
 
   qrcode@1.5.4:
     resolution: {integrity: sha512-1ca71Zgiu6ORjHqFBDpnSMTR2ReToX4l1Au1VFLyVeBTFavzQnv5JxMFr3ukHVKpSrSA2MCk0lNJSykjUfz7Zg==}
@@ -6646,10 +6638,6 @@ snapshots:
       '@augment-vir/common': 31.73.5
 
   punycode.js@2.3.1: {}
-
-  pyright@1.1.413:
-    optionalDependencies:
-      fsevents: 2.3.3
 
   qrcode@1.5.4:
     dependencies:
