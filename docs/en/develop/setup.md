@@ -83,6 +83,22 @@ uv sync --frozen
 
 > `uv sync --frozen` installs locked versions from `uv.lock` for reproducible builds.
 
+### Sync Runtime and OCR Models
+
+```bash
+pnpm sync:runtime
+```
+
+This downloads the MaaFW runtime and copies the OCR models from the `MaaCommonAssets` submodule into `resource/base/model/ocr/`.
+
+**Required on first setup**: initializing the submodule only fetches the model source; the actual model files are copied during this step. Skipping it fails quietly — every OCR recognition will fail at runtime.
+
+To restore just the models without re-downloading the whole runtime:
+
+```bash
+pnpm dlx create-maa-project@latest --update ocr-models
+```
+
 ### Verify Setup
 
 ```bash
@@ -90,7 +106,7 @@ pnpm check
 pnpm check:py
 ```
 
-> The first run downloads MaaFramework runtime and PaddleOCR models — ensure network connectivity.
+> The first run downloads the MaaFramework runtime — ensure network connectivity.
 
 ## Debugging Tools
 

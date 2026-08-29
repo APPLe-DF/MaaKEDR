@@ -87,6 +87,22 @@ uv sync --frozen
 
 > `uv sync --frozen` 会根据 `uv.lock` 锁定文件安装指定版本的依赖，确保环境一致性。
 
+### 同步运行时与 OCR 模型
+
+```bash
+pnpm sync:runtime
+```
+
+这一步会下载 MaaFW 运行时，并把 OCR 模型从 `MaaCommonAssets` 子模块复制到 `resource/base/model/ocr/`。
+
+**首次搭建必须执行**：子模块初始化只是把模型源文件取到本地，实际的模型文件要等这一步才会复制过去。跳过它不会报错，但运行时所有 OCR 识别都会失败。
+
+如果只是模型目录缺失、不想重新拉取整套运行时，可只复制模型：
+
+```bash
+pnpm dlx create-maa-project@latest --update ocr-models
+```
+
 ### 验证环境
 
 ```bash
