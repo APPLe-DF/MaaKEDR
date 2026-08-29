@@ -45,6 +45,7 @@ CheckHomePage → Entry → CheckBattleInterface
 - **BeginCombat**：一次点击可能无响应；`next` / `on_error` 应允许重试，直到 `CheckInBattle` 成功
 - **BattleLoop**：长超时等待结算；失败可兜底 `ReadResult`
 - **ReadResult**：`ReadPVPResult` 自定义识别，ROI 在 pipeline 的 `custom_recognition_param` 中
+- **高账失败保护判定**：仅以「分数是否变化」为准——分数变化区域 OCR 为空即判定为高级账号首次失败保护（本场不扣分）。实机存在「分数不变但排名仍下降」的情况，因此不能要求排名也无变化，否则这类正常战斗会被误判为保护
 - **挑战上限**：`challenge_limit` 模板命中则 toast/日志提示并退出
 
 ## 图片目录

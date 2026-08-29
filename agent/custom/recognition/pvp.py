@@ -142,17 +142,22 @@ class ReadPVPResult(CustomRecognition):
         score_change_fmt = self._format_change(score_change)
         rank_change_fmt = self._format_change(rank_change)
 
-        # 高级账号失败保护：分数与排名均不变，变化区域 OCR 为空
-        protected = not score_change_fmt and not rank_change_fmt
+        # 高级账号失败保护：仅以分数是否变化为准（分数变化区域 OCR 为空即视为保护）。
+        # 实机存在「分数不变但排名仍下降」的情况，因此不能再要求排名也无变化，
+        # 否则这类正常战斗会被误判为高账保护。
+        protected = not score_change_fmt
         if protected:
-            logger.info("[PVP] 未识别到分数与排名变化，疑似高级账号失败保护")
+            # 判定依据仅记 debug：结果文案会由下方 PVP.ExitResult 的 focus 统一输出一次，
+            # 避免同一条结果在识别器日志与节点 focus 中重复出现。
+            logger.debug("[PVP] 未识别到分数变化，判定为高级账号失败保护")
             result_msg = f"高账失败保护触发：本场不扣分，积分:{current_score or '-'} 排名:{current_rank or '-'}"
         else:
             result_msg = (
                 f"{result_text} 积分:{current_score}({score_change_fmt}) 排名:{current_rank}({rank_change_fmt})"
             )
-        logger.info("[PVP] {}", result_msg)
 
+        # 结果文案只通过节点 focus 输出一次（PVP.ReadResult 自身的 focus 仅提示“详情见日志”，
+        # 详情集中在本节点，避免同一条变化结果打印两次）。
         context.override_pipeline(
             {
                 "PVP.ExitResult": {
