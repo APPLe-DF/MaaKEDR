@@ -51,6 +51,26 @@
         "channel": "stable",
         "version": ""
     },
+    "network": {
+        "mode": "auto"
+    },
+    "ocr": {
+        "files": {
+            "README.md": "ppocr_v6/small/README.md",
+            "det.onnx": "ppocr_v6/small/det.onnx",
+            "keys.txt": "ppocr_v6/small/keys.txt",
+            "rec.onnx": "ppocr_v6/small/rec.onnx"
+        },
+        "source": "submodule",
+        "submodulePath": "MaaCommonAssets/OCR"
+    },
+    "project": {
+        "displayName": "MaaKEDR",
+        "initialTemplate": "pipeline",
+        "interfaceUnmanaged": true,
+        "slug": "maakedr",
+        "version": "0.1.0"
+    },
     "python": {
         "devCommand": [
             "uv",
@@ -60,16 +80,6 @@
         ],
         "recommendedPython": "3.13",
         "requiresPython": ">=3.13,<3.14"
-    },
-    "network": {
-        "mode": "auto"
-    },
-    "project": {
-        "displayName": "MaaKEDR",
-        "initialTemplate": "pipeline",
-        "interfaceUnmanaged": true,
-        "slug": "maakedr",
-        "version": "0.1.0"
     },
     "resources": [
         {

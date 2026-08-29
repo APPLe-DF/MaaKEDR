@@ -60,8 +60,16 @@ pnpm --version
 ### Clone the Project
 
 ```bash
-git clone https://github.com/APPLe-DF/MaaKEDR.git
+git clone --recurse-submodules https://github.com/APPLe-DF/MaaKEDR.git
 cd MaaKEDR
+```
+
+OCR models (`resource/base/model/ocr/`) come from the `MaaCommonAssets` submodule. That directory is git-ignored and populated from the submodule at build time, so **the submodule must be initialized** — otherwise tasks fail because the models are missing.
+
+If you already cloned without the flag:
+
+```bash
+git submodule update --init --recursive
 ```
 
 For pull requests, fork first and clone your fork (see Contributing below).
@@ -75,6 +83,22 @@ uv sync --frozen
 
 > `uv sync --frozen` installs locked versions from `uv.lock` for reproducible builds.
 
+### Sync Runtime and OCR Models
+
+```bash
+pnpm sync:runtime
+```
+
+This downloads the MaaFW runtime and copies the OCR models from the `MaaCommonAssets` submodule into `resource/base/model/ocr/`.
+
+**Required on first setup**: `git submodule update --init --recursive` downloads the full `MaaCommonAssets` submodule (roughly 344 MB), not just the OCR files; during runtime synchronization, only the OCR files are copied into the project. If either this sync or the submodule initialization is skipped, nothing fails loudly — every OCR recognition will fail at runtime.
+
+To restore just the models without re-downloading the whole runtime:
+
+```bash
+pnpm dlx create-maa-project@latest --update ocr-models
+```
+
 ### Verify Setup
 
 ```bash
@@ -82,7 +106,7 @@ pnpm check
 pnpm check:py
 ```
 
-> The first run downloads MaaFramework runtime and PaddleOCR models — ensure network connectivity.
+> The first run downloads the MaaFramework runtime — ensure network connectivity.
 
 ## Debugging Tools
 

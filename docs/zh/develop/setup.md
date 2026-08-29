@@ -64,8 +64,16 @@ pnpm --version
 日常开发可直接克隆主仓库：
 
 ```bash
-git clone https://github.com/APPLe-DF/MaaKEDR.git
+git clone --recurse-submodules https://github.com/APPLe-DF/MaaKEDR.git
 cd MaaKEDR
+```
+
+项目通过 `MaaCommonAssets` 子模块提供 OCR 模型（`resource/base/model/ocr/`）。该目录已被 `.gitignore` 忽略，模型在构建时从子模块复制，因此**必须初始化子模块**，否则运行任务时会因缺少模型而识别失败。
+
+若克隆时忘了加参数，可事后补：
+
+```bash
+git submodule update --init --recursive
 ```
 
 若要提交 PR，请先 Fork 再克隆你的仓库，并使用独立功能分支（见下文「贡献与 PR」）。
@@ -78,6 +86,22 @@ uv sync --frozen
 ```
 
 > `uv sync --frozen` 会根据 `uv.lock` 锁定文件安装指定版本的依赖，确保环境一致性。
+
+### 同步运行时与 OCR 模型
+
+```bash
+pnpm sync:runtime
+```
+
+这一步会下载 MaaFW 运行时，并把 OCR 模型从 `MaaCommonAssets` 子模块复制到 `resource/base/model/ocr/`。
+
+**首次搭建必须执行**：`git submodule update --init --recursive` 会下载完整的 `MaaCommonAssets` 子模块（约 344 MB），而不仅是 OCR 文件；运行时同步期间只会把 OCR 文件复制到项目中。若省略这步同步或子模块初始化，都不会报错，但运行时所有 OCR 识别都会失败。
+
+如果只是模型目录缺失、不想重新拉取整套运行时，可只复制模型：
+
+```bash
+pnpm dlx create-maa-project@latest --update ocr-models
+```
 
 ### 验证环境
 
