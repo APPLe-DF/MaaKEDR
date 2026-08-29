@@ -72,7 +72,8 @@ icon: ri:guide-fill
     </tr>
     <tr>
        <td><div align="center">需安装 Python</div></td>
-        <td colspan="6"><div align="center">压缩包自带，无需其他操作</div></td>
+        <td colspan="4"><div align="center">压缩包自带，无需其他操作</div></td>
+        <td colspan="2"><div align="center">需要 Python 3.13</div></td>
     </tr>
   </tbody>
 </table>
@@ -103,7 +104,7 @@ Windows 用户**必须安装 VCRedist x64**：这是运行 MaaKEDR（无论哪�
 
 #### .NET
 
-使用 **MFAA** 图形界面的用户需要自行安装 .NET 桌面运行时。
+使用 **MFAA** 图形界面的用户需要自行安装 **.NET 10** 桌面运行时。
 
 <details>
   <summary>详细安装方式</summary>
@@ -112,8 +113,8 @@ Windows 用户**必须安装 VCRedist x64**：这是运行 MaaKEDR（无论哪�
     <ul>
       <li>
         自行下载：点击
-        <a href="https://dotnet.microsoft.com/download/dotnet" target="_blank">.NET 官方下载页面</a>
-        ，选择您系统对应的 .NET 桌面运行时版本下载并安装。
+        <a href="https://dotnet.microsoft.com/zh-cn/download/dotnet/10.0" target="_blank">.NET 官方下载页面</a>
+        ，选择您系统对应的 .NET 10 桌面运行时版本下载并安装。
       </li>
       <li>
         （仅 Windows 用户）<code>winget</code> 安装（管理员终端）：
@@ -125,7 +126,7 @@ Windows 用户**必须安装 VCRedist x64**：这是运行 MaaKEDR（无论哪�
 
 #### Python
 
-压缩包已内置 Python 运行环境，无需单独安装。Linux 用户如需自行管理 Python 环境（不推荐），请确保已安装 Python 3.10 及以上版本。
+Windows 与 macOS 压缩包已内置 Python 运行环境，无需单独安装。Linux 压缩包不内置 Python，需自行安装 **Python 3.13**。
 
 ---
 
@@ -287,12 +288,16 @@ MaaKEDR 需正确的 ADB 连接才能在目标模拟器执行任务。绝大多�
 
 MaaKEDR 提供以下自动化任务：
 
-| 任务     | 功能                                             |
-| -------- | ------------------------------------------------ |
-| 启动游戏 | 从启动到登录至主界面                             |
-| 领取奖励 | 日常签到、周常奖励、战令奖励、邮件奖励、派遣奖励 |
-| 刷取资源 | 指定关卡自动刷资源，支持体力管理                 |
-| PVP      | 竞技场自动战斗                                   |
+| 任务         | 功能                                             |
+| ------------ | ------------------------------------------------ |
+| 启动游戏     | 从启动到登录至主界面                             |
+| 领取奖励     | 日常签到、周常奖励、战令奖励、邮件奖励、派遣奖励 |
+| 资源刷取     | 指定关卡自动刷资源，支持体力管理                 |
+| 剩余体力刷取 | 固定清空体力模式，榨干剩余体力                   |
+| 活动关卡刷取 | 活动关卡扫荡（每日 3 次，不消耗体力）            |
+| 活动商店兑换 | 活动商店定额保障商品自动购买                     |
+| PVP          | 竞技场自动战斗                                   |
+| 体力信息     | 读取主界面体力并输出回满时间                     |
 
 > [!IMPORTANT]
 >
@@ -334,4 +339,4 @@ pip 安装相关设置。一般情况下，您无需修改此文件，除非您�
 
 - 确认游戏处于正确的界面（如在主菜单或对应功能页面）
 - 查看 `debug/` 目录下的截图，确认识别区域是否正确
-- 查看 `debug/maafw.log` 日志文件定位问题
+- 查看 `maafw.log` 日志文件（项目根目录）定位问题

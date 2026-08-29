@@ -67,15 +67,15 @@ Each pipeline node defines a recognition → action → transition step:
 
 ## Common Fields
 
-| Field                      | Description                                                   |
-| -------------------------- | ------------------------------------------------------------- |
-| `pre_delay` / `post_delay` | Wait before/after action (ms). Navigation clicks: 1000-2000ms |
-| `post_wait_freezes`        | Wait until screen stops changing (smarter than fixed delay)   |
-| `max_hit`                  | Max hits before skip. For looping UI elements                 |
-| `timeout`                  | Recognition timeout (ms), default 20000                       |
-| `only_rec`                 | Recognition only, no action                                   |
-| `focus`                    | Log notification on hit/failure                               |
-| `color_filter`             | OCR color pre-filter, references a ColorMatch node            |
+| Field                      | Description                                                                                                                  |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `pre_delay` / `post_delay` | Wait before/after action (ms); **avoid** — prefer `pre_wait_freezes` / `post_wait_freezes` or intermediate recognition nodes |
+| `post_wait_freezes`        | Wait until screen stops changing (smarter than fixed delay)                                                                  |
+| `max_hit`                  | Max hits before skip. For looping UI elements                                                                                |
+| `timeout`                  | Recognition timeout (ms), default 20000                                                                                      |
+| `only_rec`                 | Recognition only, no action                                                                                                  |
+| `focus`                    | Log notification on hit/failure                                                                                              |
+| `color_filter`             | OCR color pre-filter, references a ColorMatch node                                                                           |
 
 ## Naming Conventions
 
@@ -213,9 +213,8 @@ Max 5 hits before skip. Counts cross-session.
 
 ## Notes
 
-1. **Sufficient delays** — At least 1000ms after navigation clicks
+1. **Prefer `wait_freezes` over fixed delays** — The screen may still be transitioning after a navigation click; `post_wait_freezes` waits for the screen to settle, which is more reliable than a fixed `post_delay`. Use fixed delays only when a loading animation cannot be frozen
 2. **OCR expected is regex** — `".*"` matches anything, `"^text$"` exact match
 3. **ROI at 1280x720** — coordinates `[x, y, w, h]`
-4. **Always add `on_error`** — For critical navigation nodes
+4. **Fallback strategy** — Put flow fallbacks (expected paths that don't work) at the end of `next`; reserve `on_error` for genuine error states and mark with `[错误兜底]`. See the Fallback Strategy section above
 5. **`next` order matters — highest priority first** — Order `next` by priority: put nodes that must be **excluded first** (pop-ups, error dialogs) before normal branches. Counter-example: if a home-screen node (high match frequency) comes before a pop-up node, the pop-up case matches the home-screen node first and the flow gets stuck on the wrong screen. Within the same priority, sort by match frequency, fastest first
-6. **Use `post_wait_freezes`** — More reliable than fixed `post_delay` for animations

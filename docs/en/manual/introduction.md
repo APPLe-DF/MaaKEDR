@@ -149,9 +149,9 @@ Auto-battle PVP with configurable rounds.
 
 **Options:**
 
-| Option       | Type   | Description |
-| :----------- | :----- | :---------- |
-| Battle Count | Select | 1–5 rounds  |
+| Option       | Type   | Description                                        |
+| :----------- | :----- | :------------------------------------------------- |
+| Battle Count | Select | 1–6 rounds (6 for premium-account fail protection) |
 
 MaaKEDR will automatically:
 

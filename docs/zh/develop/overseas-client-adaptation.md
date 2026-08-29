@@ -14,7 +14,7 @@ icon: "ri:earth-fill"
 
 海外客户端与国服差异通常集中在**启动与登录**环节，核心适配点：
 
-- `resource/<pack>/pipeline/startup.json`、`shutdown.json` — 启动/关闭流程（登录入口、渠道包差异）
+- `resource/<pack>/pipeline/startup.json` — 启动流程（登录入口、渠道包差异）
 - `interface.json` 的 `resource` 列表 — 新增海外渠道资源包（复用 `base` 作为基底，再叠加覆盖）
 - 登录文案 / 入口图 — 模板图与 OCR `expected` 文本
 

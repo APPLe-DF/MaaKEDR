@@ -16,7 +16,7 @@ icon: "ri:paint-brush-fill"
 ## Pipeline 命名
 
 - 节点名称：点分隔层级（`FarmResources.Start`、`ClaimRewards.CheckDaily`）
-- 模板图片：描述性 kebab-case（`quick_battle.png`、`start_battle.png`）
+- 模板图片：描述性 snake_case（`quick_battle.png`、`start_battle.png`）
 - ROI 坐标：`[x, y, w, h]`，1280x720 分辨率
 
 ## JSON 注释

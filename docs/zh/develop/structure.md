@@ -19,13 +19,17 @@ MaaKEDR/
 │   │   ├── startup.json            # 启动游戏
 │   │   ├── claim_rewards.json      # 领取奖励
 │   │   ├── farm_resources.json     # 资源刷取
+│   │   ├── pvp.json                # 玩家对战
+│   │   ├── stamina.json            # 体力信息
 │   │   └── event_stage.json        # 活动关卡与活动商店
 │   ├── image/                      # 模板图片
 │   │   ├── claim_rewards/          # 奖励相关图片
 │   │   ├── farm_resources/         # 刷取相关图片
+│   │   ├── pvp/                    # PVP 相关图片
+│   │   ├── event_stage/            # 活动相关图片
 │   │   └── ...                     # 通用图片
 │   ├── model/ocr/                  # PaddleOCR v5 模型
-│   └── WELCOME.md                  # GUI 欢迎公告
+│   └── announcement/               # GUI 欢迎公告
 │
 ├── agent/                          # Python Agent
 │   ├── bootstrap.py                # 入口：环境检查 → main.py
@@ -33,14 +37,19 @@ MaaKEDR/
 │   ├── agent_runtime.py            # 核心：注册 → AgentServer
 │   ├── custom/
 │   │   ├── recognition/            # 自定义识别
-│   │   └── action/                 # 自定义动作
+│   │   ├── action/                 # 自定义动作
+│   │   └── sink/                   # 自定义事件监听（如分辨率检查）
 │   └── utils/                      # 工具模块
 │
 ├── tasks/                          # 任务入口定义
 │   ├── startup.json                # 启动游戏
 │   ├── claim_rewards.json          # 奖励领取
 │   ├── farm_resources.json         # 资源刷取
-│   └── event_stage.json            # 活动关卡与商店
+│   ├── farm_remaining_stamina.json # 剩余体力刷取
+│   ├── pvp.json                    # 玩家对战
+│   ├── stamina_info.json           # 体力信息
+│   ├── event_stage.json            # 活动关卡与商店
+│   └── preset/                     # 任务预设（Daily / Activity）
 │
 ├── tools/                          # 开发工具
 │   ├── build-release.mjs           # 打包发布

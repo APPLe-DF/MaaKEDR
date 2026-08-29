@@ -14,7 +14,7 @@ Placeholder doc: MaaKEDR currently supports CN channels only (official / bilibil
 
 Differences with the CN client are usually concentrated in **startup & login**:
 
-- `resource/<pack>/pipeline/startup.json`, `shutdown.json` — launch/shutdown flow (login entry, channel differences)
+- `resource/<pack>/pipeline/startup.json` — launch flow (login entry, channel differences)
 - `resource` list in `interface.json` — add an overseas resource pack (reuse `base` as the foundation, overlay changes on top)
 - Login copy / entry images — template images and OCR `expected` text
 

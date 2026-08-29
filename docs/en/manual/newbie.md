@@ -72,7 +72,8 @@ icon: ri:guide-fill
     </tr>
     <tr>
        <td><div align="center">Python</div></td>
-        <td colspan="6"><div align="center">Bundled — no action needed</div></td>
+        <td colspan="4"><div align="center">Bundled — no action needed</div></td>
+        <td colspan="2"><div align="center">Python 3.13 required</div></td>
     </tr>
   </tbody>
 </table>
@@ -103,7 +104,7 @@ Windows users **must install VCRedist x64**. This is required to run MaaKEDR (re
 
 #### .NET
 
-If you use the **MFAA** GUI, you need to install .NET Desktop Runtime.
+If you use the **MFAA** GUI, you need to install **.NET 10** Desktop Runtime.
 
 <details>
   <summary>Installation details</summary>
@@ -112,8 +113,8 @@ If you use the **MFAA** GUI, you need to install .NET Desktop Runtime.
     <ul>
       <li>
         Download from the
-        <a href="https://dotnet.microsoft.com/download/dotnet" target="_blank">.NET official download page</a>
-        — choose the .NET Desktop Runtime for your system.
+        <a href="https://dotnet.microsoft.com/en-us/download/dotnet/10.0" target="_blank">.NET official download page</a>
+        — choose the .NET 10 Desktop Runtime for your system.
       </li>
       <li>
         (Windows only) <code>winget</code> (admin terminal):
@@ -125,7 +126,7 @@ If you use the **MFAA** GUI, you need to install .NET Desktop Runtime.
 
 #### Python
 
-Python is bundled in the release package &mdash; no separate installation required. Linux users who prefer to manage Python themselves (not recommended) should ensure Python 3.10+ is available.
+Python is bundled in the Windows and macOS release packages &mdash; no separate installation required. The Linux release does **not** bundle Python; install **Python 3.13** manually.
 
 ---
 
@@ -284,12 +285,16 @@ MaaKEDR needs a correct ADB connection to your target emulator. In most cases, j
 
 MaaKEDR provides these automation tasks:
 
-| Task           | Description                                         |
-| -------------- | --------------------------------------------------- |
-| Launch Game    | From launcher to main menu                          |
-| Claim Rewards  | Daily check-in, weekly, battle pass, mail, dispatch |
-| Farm Resources | Auto-battle with stamina management                 |
-| PVP            | Arena auto-battle                                   |
+| Task              | Description                                         |
+| ----------------- | --------------------------------------------------- |
+| Launch Game       | From launcher to main menu                          |
+| Claim Rewards     | Daily check-in, weekly, battle pass, mail, dispatch |
+| Farm Resources    | Auto-battle with stamina management                 |
+| Remaining Stamina | Fixed stamina-drain mode to use up leftover stamina |
+| Event Stage       | Event stage sweeps (3/day, no stamina cost)         |
+| Event Shop        | Auto-buy fixed-guarantee items in the event shop    |
+| PVP               | Arena auto-battle                                   |
+| Stamina Info      | Read home-screen stamina and report refill time     |
 
 > [!IMPORTANT]
 >
@@ -331,4 +336,4 @@ pip installation settings. In most cases, no changes are needed.
 
 - Ensure the game is on the correct screen (main menu or target feature page)
 - Check screenshots in the `debug/` directory to verify recognition accuracy
-- Review `debug/maafw.log` for error details
+- Review `maafw.log` (project root) for error details

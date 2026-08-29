@@ -18,13 +18,14 @@ Use when TemplateMatch or OCR can't handle your needs (dynamic ROI, conditional 
 from maa.agent.agent_server import AgentServer
 from maa.custom_recognition import CustomRecognition
 from maa.context import Context
+from maa.define import RectType
 from maa.pipeline import JOCR, JRecognitionType
 from utils.params import parse_params
 
 
 @AgentServer.custom_recognition("MyRecognizer")
 class MyRecognizer(CustomRecognition):
-    def analyze(self, context: Context, argv: CustomRecognition.AnalyzeArg) -> CustomRecognition.AnalyzeResult | None:
+    def analyze(self, context: Context, argv: CustomRecognition.AnalyzeArg) -> CustomRecognition.AnalyzeResult | RectType | None:
         params = parse_params(argv.custom_recognition_param)
         detail = context.run_recognition_direct(
             JRecognitionType.OCR,
@@ -92,6 +93,7 @@ Sinks listen to task events (start, complete, error) for pre-checks, logging, or
 from maa.agent.agent_server import AgentServer
 from maa.event_sink import NotificationType
 from maa.tasker import Tasker, TaskerEventSink
+from utils.logger import logger
 
 
 @AgentServer.tasker_sink()

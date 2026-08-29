@@ -19,7 +19,7 @@ icon: ri:sword-line
 
 ## 选项
 
-战斗次数由任务选项控制（如 1–5 次），通过 Custom（如 `InitPVPBattleCount` / `CheckPVPBattleCount`）维护计数。
+战斗次数由任务选项控制（1–6 次，其中第 6 次用于高级账号首次失败保护），通过 Custom（如 `InitPVPBattleCount` / `CheckPVPBattleCount`）维护计数。
 
 ## 典型流程
 

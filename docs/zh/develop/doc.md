@@ -80,7 +80,7 @@ Plume 支持容器语法：
 
 ## MarkdownLint 规范
 
-文档需符合 **MarkdownLint** 规范，配置见仓库根目录 `docs/.markdownlint.yaml`（规则覆盖、关闭项及原因均在其中注明）。
+文档需符合 **MarkdownLint** 规范，配置见 `docs/.markdownlint.yaml`（规则覆盖、关闭项及原因均在其中注明）。
 
 - 规则说明请参考 [MarkdownLint 规则](https://github.com/DavidAnson/markdownlint/blob/master/docs/RULES.md)
 - 可使用 [VSCode 插件](https://github.com/DavidAnson/vscode-markdownlint) 实时提示（自动读取 `.markdownlint.yaml`）

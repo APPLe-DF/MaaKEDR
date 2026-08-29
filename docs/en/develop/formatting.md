@@ -16,7 +16,7 @@ icon: "ri:paint-brush-fill"
 ## Naming
 
 - Pipeline nodes: Dot-separated hierarchy (`FarmResources.Start`, `ClaimRewards.CheckDaily`)
-- Template images: Descriptive kebab-case (`quick_battle.png`, `start_battle.png`)
+- Template images: Descriptive snake_case (`quick_battle.png`, `start_battle.png`)
 - ROI: `[x, y, w, h]` in pixels at 1280x720 resolution
 
 ## JSON Comments

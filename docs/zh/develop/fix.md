@@ -44,7 +44,7 @@ icon: "ri:bug-fill"
 
 常见原因：`agent/custom/recognition/__init__.py` 的 `RECOGNITION_MODULES` 中没有添加新的模块名。
 
-解决：添加模块名，例如 `RECOGNITION_MODULES = ("farm_resources", "pvp")`。
+解决：添加模块名，例如 `RECOGNITION_MODULES = ("farm_resources", "pvp", "stamina", "event_stage")`（以 `agent/custom/recognition/__init__.py` 实际内容为准）。
 
 ### 运行时类
 
@@ -54,7 +54,7 @@ icon: "ri:bug-fill"
 
 常见原因：
 
-1. **截图过时** — 前一个操作的 `post_delay` 太短，截图时画面还没稳定。加长 `post_delay`（导航后至少 1000ms）
+1. **截图过时** — 前一个操作后画面还没稳定就截图。改用 `post_wait_freezes` 等待画面静止，或补一个中间识别节点确认目标界面出现后再继续
 2. **ROI 不匹配** — 游戏更新后 UI 位置变了，需更新 ROI
 3. **模板图片过时** — 游戏 UI 变更后模板图失效，需重新截图
 4. **节点没有兜底** — 重要的导航节点没加 `on_error`

@@ -18,13 +18,14 @@ MaaKEDR 支持三类自定义模块，通过 `@AgentServer` 装饰器注册。
 from maa.agent.agent_server import AgentServer
 from maa.custom_recognition import CustomRecognition
 from maa.context import Context
+from maa.define import RectType
 from maa.pipeline import JOCR, JRecognitionType
 from utils.params import parse_params
 
 
 @AgentServer.custom_recognition("MyRecognizer")
 class MyRecognizer(CustomRecognition):
-    def analyze(self, context: Context, argv: CustomRecognition.AnalyzeArg) -> CustomRecognition.AnalyzeResult | None:
+    def analyze(self, context: Context, argv: CustomRecognition.AnalyzeArg) -> CustomRecognition.AnalyzeResult | RectType | None:
         params = parse_params(argv.custom_recognition_param)
         # OCR 识别
         detail = context.run_recognition_direct(
@@ -95,6 +96,7 @@ Sink 用于监听任务事件（开始、完成、错误等），适合做前置
 from maa.agent.agent_server import AgentServer
 from maa.event_sink import NotificationType
 from maa.tasker import Tasker, TaskerEventSink
+from utils.logger import logger
 
 
 @AgentServer.tasker_sink()

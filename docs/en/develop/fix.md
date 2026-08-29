@@ -44,7 +44,7 @@ Error: Custom action/recognition returns `success: false`
 
 Cause: Module not added to `RECOGNITION_MODULES` in `agent/custom/recognition/__init__.py`.
 
-Fix: Add module name, e.g. `RECOGNITION_MODULES = ("farm_resources", "pvp")`.
+Fix: Add module name, e.g. `RECOGNITION_MODULES = ("farm_resources", "pvp", "stamina", "event_stage")` (check `agent/custom/recognition/__init__.py` for the actual list).
 
 ### Runtime Issues
 
@@ -54,7 +54,7 @@ Symptoms: Task hangs on a node until timeout.
 
 Common causes:
 
-1. Stale screenshot — `post_delay` too short. Increase to 1000ms+
+1. Stale screenshot — screen hadn't settled when captured. Use `post_wait_freezes` to wait for the screen to settle, or add an intermediate recognition node to confirm the target screen appeared before continuing
 2. ROI mismatch — Game UI changed, update ROI
 3. Outdated template — UI changed, re-screenshot
 4. Missing fallback — Critical nodes lack `on_error`

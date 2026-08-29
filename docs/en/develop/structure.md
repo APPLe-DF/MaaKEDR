@@ -19,13 +19,17 @@ MaaKEDR/
 │   │   ├── startup.json            # Game startup
 │   │   ├── claim_rewards.json      # Reward claiming
 │   │   ├── farm_resources.json     # Resource farming
-│   │   └── event_stage.json         # Event stages and shop
+│   │   ├── pvp.json                # PVP battles
+│   │   ├── stamina.json            # Stamina info
+│   │   └── event_stage.json        # Event stages and shop
 │   ├── image/                      # Template images
 │   │   ├── claim_rewards/          # Reward images
 │   │   ├── farm_resources/         # Farming images
+│   │   ├── pvp/                    # PVP images
+│   │   ├── event_stage/            # Event images
 │   │   └── ...
 │   ├── model/ocr/                  # PaddleOCR v5 models
-│   └── WELCOME.md                  # GUI welcome page
+│   └── announcement/               # GUI welcome announcement
 │
 ├── agent/                          # Python Agent
 │   ├── bootstrap.py                # Entry: env check → main.py
@@ -33,14 +37,19 @@ MaaKEDR/
 │   ├── agent_runtime.py            # Core: register → AgentServer
 │   ├── custom/
 │   │   ├── recognition/            # Custom recognition
-│   │   └── action/                 # Custom actions
+│   │   ├── action/                 # Custom actions
+│   │   └── sink/                   # Custom event sinks (e.g. aspect-ratio check)
 │   └── utils/                      # Utility modules
 │
 ├── tasks/                          # Task entry definitions
 │   ├── startup.json
 │   ├── claim_rewards.json
 │   ├── farm_resources.json
-│   └── event_stage.json            # Event stages and shop
+│   ├── farm_remaining_stamina.json
+│   ├── pvp.json
+│   ├── stamina_info.json
+│   ├── event_stage.json            # Event stages and shop
+│   └── preset/                     # Task presets (Daily / Activity)
 │
 ├── tools/                          # Dev tools
 │   ├── build-release.mjs           # Release packaging

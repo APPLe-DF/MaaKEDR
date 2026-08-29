@@ -44,7 +44,7 @@ VCRedist is not installed. Download and install [vc_redist.x64.exe](https://aka.
 
 ### App crashes without an error message
 
-Check `debug/maafw.log` for details. Common causes:
+Check `maafw.log` for details. Common causes:
 
 - Path contains non-ASCII characters or spaces → move to a plain English path
 - Incomplete extraction → re-extract
@@ -98,7 +98,7 @@ First launch requires downloading Python dependencies, which may take a while. D
 - Confirm the task is enabled (checkbox checked)
 - Read each task's description and configure options accordingly
 - Ensure the game is on the correct screen (main menu or target feature)
-- Review `debug/maafw.log` for details
+- Review `maafw.log` for details
 
 ### Farm resources stage list is incomplete
 
@@ -110,7 +110,7 @@ Only preset stages are included. To add more stages, refer to the Pipeline guide
 
 ### Where are the logs?
 
-Logs: `debug/maafw.log`. Screenshots: `debug/` directory. Include these files when reporting issues.
+Logs: `maafw.log`. Screenshots: `debug/` directory. Include these files when reporting issues.
 
 ### How to update MaaKEDR?
 
