@@ -95,7 +95,7 @@ pnpm sync:runtime
 
 这一步会下载 MaaFW 运行时，并把 OCR 模型从 `MaaCommonAssets` 子模块复制到 `resource/base/model/ocr/`。
 
-**首次搭建必须执行**：子模块初始化只是把模型源文件取到本地，实际的模型文件要等这一步才会复制过去。跳过它不会报错，但运行时所有 OCR 识别都会失败。
+**首次搭建必须执行**：`git submodule update --init --recursive` 会下载完整的 `MaaCommonAssets` 子模块（约 344 MB），而不仅是 OCR 文件；运行时同步期间只会把 OCR 文件复制到项目中。若省略这步同步或子模块初始化，都不会报错，但运行时所有 OCR 识别都会失败。
 
 如果只是模型目录缺失、不想重新拉取整套运行时，可只复制模型：
 

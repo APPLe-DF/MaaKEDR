@@ -91,7 +91,7 @@ pnpm sync:runtime
 
 This downloads the MaaFW runtime and copies the OCR models from the `MaaCommonAssets` submodule into `resource/base/model/ocr/`.
 
-**Required on first setup**: initializing the submodule only fetches the model source; the actual model files are copied during this step. Skipping it fails quietly — every OCR recognition will fail at runtime.
+**Required on first setup**: `git submodule update --init --recursive` downloads the full `MaaCommonAssets` submodule (roughly 344 MB), not just the OCR files; during runtime synchronization, only the OCR files are copied into the project. If either this sync or the submodule initialization is skipped, nothing fails loudly — every OCR recognition will fail at runtime.
 
 To restore just the models without re-downloading the whole runtime:
 
