@@ -110,7 +110,7 @@ Only preset stages are included. To add more stages, refer to the Pipeline guide
 
 ### Where are the logs?
 
-Logs: `maafw.log`. Screenshots: `debug/` directory. Include these files when reporting issues.
+Logs: `maafw.log` (project root). Screenshots: `debug/` directory. Include these files when reporting issues.
 
 ### How to update MaaKEDR?
 
