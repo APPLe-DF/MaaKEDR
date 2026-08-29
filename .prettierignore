@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .create-maa-project/
+.workbuddy/
 .venv/
 .uv-cache/
 pnpm-lock.yaml

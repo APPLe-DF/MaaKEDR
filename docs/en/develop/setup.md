@@ -60,8 +60,16 @@ pnpm --version
 ### Clone the Project
 
 ```bash
-git clone https://github.com/APPLe-DF/MaaKEDR.git
+git clone --recurse-submodules https://github.com/APPLe-DF/MaaKEDR.git
 cd MaaKEDR
+```
+
+OCR models (`resource/base/model/ocr/`) come from the `MaaCommonAssets` submodule. That directory is git-ignored and populated from the submodule at build time, so **the submodule must be initialized** — otherwise tasks fail because the models are missing.
+
+If you already cloned without the flag:
+
+```bash
+git submodule update --init --recursive
 ```
 
 For pull requests, fork first and clone your fork (see Contributing below).

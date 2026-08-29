@@ -64,8 +64,16 @@ pnpm --version
 日常开发可直接克隆主仓库：
 
 ```bash
-git clone https://github.com/APPLe-DF/MaaKEDR.git
+git clone --recurse-submodules https://github.com/APPLe-DF/MaaKEDR.git
 cd MaaKEDR
+```
+
+项目通过 `MaaCommonAssets` 子模块提供 OCR 模型（`resource/base/model/ocr/`）。该目录已被 `.gitignore` 忽略，模型在构建时从子模块复制，因此**必须初始化子模块**，否则运行任务时会因缺少模型而识别失败。
+
+若克隆时忘了加参数，可事后补：
+
+```bash
+git submodule update --init --recursive
 ```
 
 若要提交 PR，请先 Fork 再克隆你的仓库，并使用独立功能分支（见下文「贡献与 PR」）。

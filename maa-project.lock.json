@@ -147,11 +147,11 @@
             "templateHash": "73a7c9e794094326764331ef81841f10534d74e083609773d064cfbe2ce4b072"
         },
         ".github/workflows/release.yml": {
-            "hash": "66388d636c32654ca987bafad8b1762ebd5b64089d40604c5f25ee68568005cf",
+            "hash": "17b023780326f61af3f416d16348f678d2619e3db9ec216705beb76b5d897218",
             "templateHash": "1948c8135358e77ebb874e0b99952b6f592f093b50efe9c4fa515786f6074172"
         },
         ".github/workflows/schema-sync.yml": {
-            "hash": "12ef01465c8a4cd331c3036de7d7667a1ae12707a8d110547b76a01044310844",
+            "hash": "ca29338782ff0dab0bf4b4f0a297739bac600e0aa2e11a5ec84d03aa722f2cb3",
             "templateHash": "49bb37756a12155cfe4fdbdc7fd0d9a619f1b4b6f7271d12e0cf0ca7d552a261"
         },
         ".node-version": {
