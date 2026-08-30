@@ -25,7 +25,9 @@ from utils.params import parse_params
 
 @AgentServer.custom_recognition("MyRecognizer")
 class MyRecognizer(CustomRecognition):
-    def analyze(self, context: Context, argv: CustomRecognition.AnalyzeArg) -> CustomRecognition.AnalyzeResult | RectType | None:
+    def analyze(
+        self, context: Context, argv: CustomRecognition.AnalyzeArg
+    ) -> CustomRecognition.AnalyzeResult | RectType | None:
         params = parse_params(argv.custom_recognition_param)
         # OCR 识别
         detail = context.run_recognition_direct(
