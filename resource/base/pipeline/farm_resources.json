@@ -284,11 +284,12 @@
             "type": "DoNothing"
         },
         "next": [
-            "FarmResources.CheckSkillLocked"
+            "FarmResources.CheckSkillLocked",
+            "FarmResources.ClickSkillStage"
         ]
     },
     "FarmResources.CheckSkillLocked": {
-        "desc": "检查技能关卡是否被锁定(roi由选项动态设置)。识别成功=锁定停止;识别失败=未锁可点。因属于\"否定检查\"模式(成功=停,失败=进),只能用 on_error 实现流程兜底",
+        "desc": "检查技能关卡是否被锁定(roi由选项动态设置)。识别成功=锁定停止;识别失败=未锁可点。采用并列候选模式：CheckSkillLocked 位于 SelectSkillStage.next 首位（命中即锁定停止），未命中时由 next 列表自动回落到 ClickSkillStage 点击进入——不能在候选位置用 on_error 兜底（候选识别失败不触发自身 on_error，实机已验证会死循环超时）",
         "recognition": "TemplateMatch",
         "template": "farm_resources/skill_lock_icon.png",
         "threshold": 0.8,
@@ -297,9 +298,6 @@
             "type": "DoNothing"
         },
         "timeout": 5000,
-        "on_error": [
-            "FarmResources.ClickSkillStage"
-        ],
         "focus": {
             "Node.Recognition.Succeeded": "关卡未解锁，请先解锁后再尝试",
             "Node.Recognition.Failed": {

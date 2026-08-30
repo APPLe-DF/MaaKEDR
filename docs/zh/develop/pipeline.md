@@ -279,15 +279,24 @@ JOCR(roi=(x, y, w, h), color_filter="GoldTextFilter")
 
 这类节点触发时说明遇到了预期外的 UI 状态，`on_error` 截图对调试有价值，应保留。
 
-### 特殊情况：否定检查模式
+### 特殊情况：否定检查模式（并列候选）
 
-对于"识别到 X 就停止，没识别到就继续"的节点（如"检查关卡是否锁住"），MaaFW 没有 `on_failure` 路由，只能用 `on_error` 实现流程兜底：
+对于"识别到 X 就停止，没识别到就继续"的节点（如"检查关卡是否锁住"），**不要依赖候选自身的 `on_error` 兜底**：当该节点是父节点 `next` 列表中的候选时，识别失败只表示"候选未命中"，**不会触发节点自身的 `on_error`**，列表若无后续候选会整列表失败并重试，造成死循环超时（实机验证：`FarmResources.SelectSkillStage` 曾因此循环 21 次 × 20s 后任务失败）。
+
+正确写法是**并列候选模式**——把"继续"节点放在 `next` 列表中、检查节点之后，让它自然回落：
 
 ```json
+"SelectStage": {
+    "recognition": "DirectHit",
+    "next": [
+        "CheckLocked",   // 命中=锁定停止；未命中→回落下一候选
+        "ClickStage"     // 未命中时的继续分支（实际点击进入）
+    ]
+},
 "CheckLocked": {
     "recognition": "TemplateMatch",
     "template": "lock_icon.png",
-    "on_error": ["ProceedNode"],  // 没找到锁 → 继续
+    // 不设 on_error（候选位置不生效，保留反而误导）
     "focus": {
         "Node.Recognition.Succeeded": "已锁，停止",
         "Node.Recognition.Failed": "未锁，继续"
@@ -295,7 +304,7 @@ JOCR(roi=(x, y, w, h), color_filter="GoldTextFilter")
 }
 ```
 
-这种节点在 `desc` 中注明"否定检查"以辅助理解。
+注意：`CheckLocked` 作为候选时会先评估一次，失败后自动尝试下一个候选（`ClickStage`），两者都失败才整列表失败。这种节点在 `desc` 中注明"否定检查（并列候选）"以辅助理解。
 
 ## 注意事项
 

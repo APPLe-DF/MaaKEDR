@@ -64,7 +64,7 @@ farm_category（刷取板块）
 | 基础技能演练 | `farm_skill_stage_1` | 基础训练 1–3 |
 | 专业技能演练 | `farm_skill_stage_2` | 专业训练 1–3 |
 
-通过 `ClickSkillStage` 的 ROI + OCR `expected` 定位；锁定态用 `CheckSkillLocked`。
+通过 `ClickSkillStage` 的 ROI + OCR `expected` 定位；锁定态用 `CheckSkillLocked`。`SelectSkillStage` 的 `next` 采用**并列候选**（`CheckSkillLocked` → `ClickSkillStage`）：命中锁图标=锁定停止，未命中=自动回落到 `ClickSkillStage` 点击进入；不在候选节点上依赖 `on_error` 兜底（候选识别失败不触发自身 on_error，会导致死循环超时，见 `docs/*/develop/pipeline.md`）。
 
 ## 战斗模式
 

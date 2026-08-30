@@ -211,6 +211,33 @@ Can override `next`, `roi`, `threshold`, `custom_action_param`, etc.
 
 Max 5 hits before skip. Counts cross-session.
 
+### Negative Check (Parallel Candidates)
+
+For a node meant to "stop when X is recognized, continue when it is not" (e.g., checking whether a stage is locked), **do not rely on the node's own `on_error` for fallback**: when the node is a candidate in a parent's `next` list, a recognition miss only means "this candidate did not match" — it does **not** trigger the candidate's own `on_error`. If the list has no further candidate, the whole list fails and retries, causing a timeout loop (verified in production: `FarmResources.SelectSkillStage` looped 21 attempts × 20s and failed the task).
+
+The correct pattern is **parallel candidates** — put the "continue" node after the check node in the `next` list so it falls through naturally:
+
+```json
+"SelectStage": {
+    "recognition": "DirectHit",
+    "next": [
+        "CheckLocked",   // hit = locked, stop; miss = fall through to next candidate
+        "ClickStage"     // continue branch (actually clicks into the stage)
+    ]
+},
+"CheckLocked": {
+    "recognition": "TemplateMatch",
+    "template": "lock_icon.png",
+    // No on_error (does not fire in candidate position; keeping it only misleads)
+    "focus": {
+        "Node.Recognition.Succeeded": "Locked, stop",
+        "Node.Recognition.Failed": "Unlocked, continue"
+    }
+}
+```
+
+`CheckLocked` is evaluated once as a candidate; on miss the framework tries the next candidate (`ClickStage`). Only when all candidates miss does the whole list fail. Mark such nodes with "negative check (parallel candidates)" in `desc`.
+
 ## Notes
 
 1. **Prefer `wait_freezes` over fixed delays** — The screen may still be transitioning after a navigation click; `post_wait_freezes` waits for the screen to settle, which is more reliable than a fixed `post_delay`. Use fixed delays only when a loading animation cannot be frozen
