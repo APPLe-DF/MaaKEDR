@@ -149,7 +149,7 @@
         },
         "post_delay": 1000,
         "next": [
-            "[JumpBack]PVP.CheckChallengeLimit",
+            "PVP.CheckChallengeLimit",
             "PVP.StartBattle"
         ]
     },
@@ -170,7 +170,7 @@
         ]
     },
     "PVP.CheckChallengeLimit": {
-        "desc": "检测今日挑战次数是否用完",
+        "desc": "检测今日挑战次数是否用完；命中则返回主界面并结束本次任务",
         "recognition": "TemplateMatch",
         "roi": [
             311,
