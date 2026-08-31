@@ -16,8 +16,10 @@ from utils.params import (
     parse_params,
 )
 
-# agent 进程由 MaaFW 按任务逐次启动，进程内仅存在单一 tasker；
-# 此模块级变量天然限定在单次任务生命周期内，无跨任务干扰风险。
+# 注意：该 agent 进程在 MaaFW 生命周期内常驻，会跨任务（含同一次队列中的多次刷取）
+# 存活，模块级 _target 存在跨任务残留风险，不能假设“按任务逐次启动”。
+# ReduceBattleCount 每次执行都会用 OCR 读到的屏幕当前次数重新校准 _target，
+# 仅在 OCR 读取失败时回退到该跟踪值（有界单调递减，见 _next_target）。
 _target: int | None = None
 
 COUNT_ROI = [903, 441, 27, 43]
@@ -60,6 +62,27 @@ def _click_button(context: Context, x: int, y: int) -> None:
         (x, y, 10, 10),
         "",
     )
+
+
+def _next_target(current_count: int, tracked: int | None) -> int | None:
+    """计算「再减少一次」后的目标次数；返回 None 表示已到最小（1），无法继续。
+
+    - current_count >= 1：以屏幕实际次数为准（target = current_count - 1），
+      并以此修正跨任务残留的 tracked 值。回归场景：同一次队列中的第二次
+      「剩余体力刷取」进入关卡时次数已重置为 6，而 tracked 仍是上一轮耗尽
+      后的 1，旧实现因此误判「已到最小」直接放弃，导致本轮一场未打。
+    - current_count < 1：OCR 读取失败，回退到 tracked（有界单调递减），
+      避免无法读取时盲点减号或无限循环。
+    """
+    if current_count >= _COUNT_MIN:
+        if current_count <= _COUNT_MIN:
+            return None
+        return current_count - 1
+
+    target = tracked if tracked is not None else _DEFAULT_TARGET
+    if target <= _COUNT_MIN:
+        return None
+    return target - 1
 
 
 @AgentServer.custom_action("SetBattleCount")
@@ -187,6 +210,10 @@ class ReduceBattleCount(CustomAction):
     参数：
     - minus_button: 减号按钮位置 [x, y]
     - count_roi: 次数显示区域 [x, y, w, h]
+
+    目标次数优先取自屏幕 OCR 的当前次数（每次只减 1），并随读数重新校准进程内
+    跟踪值 _target；OCR 读取失败时才回退到跟踪值（有界递减）。返回失败表示已到
+    最小次数（1），由管道 on_error 走 NoStamina 退出本次刷取。
     """
 
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
@@ -203,23 +230,19 @@ class ReduceBattleCount(CustomAction):
             count_roi = coerce_roi(params.get("count_roi", COUNT_ROI), COUNT_ROI, "ReduceBattleCount")
 
             global _target
-            target: Any = _target if _target is not None else _DEFAULT_TARGET
-            if not is_int_value(target):
-                target = _DEFAULT_TARGET
-                logger.debug("[ReduceBattleCount] target 未初始化，自动设为 {}", _DEFAULT_TARGET)
 
-            if target <= _COUNT_MIN:
+            current_count = _read_battle_count(context, count_roi, default=-1)
+            target = _next_target(current_count, _target)
+            if target is None:
                 logger.warning(
-                    "[ReduceBattleCount] 目标次数已到最小({}≤{})，无法继续",
-                    target,
+                    "[ReduceBattleCount] 无法继续减少：当前次数={}, 跟踪目标={}（已到最小 {}）",
+                    current_count,
+                    _target,
                     _COUNT_MIN,
                 )
                 return CustomAction.RunResult(success=False)
 
-            target -= 1
             _target = target
-
-            current_count = _read_battle_count(context, count_roi, default=-1)
 
             logger.debug(
                 "[ReduceBattleCount] 当前次数: {}, 新目标次数: {}",
