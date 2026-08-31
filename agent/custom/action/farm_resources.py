@@ -20,6 +20,8 @@ from utils.params import (
 # 存活，模块级 _target 存在跨任务残留风险，不能假设“按任务逐次启动”。
 # ReduceBattleCount 每次执行都会用 OCR 读到的屏幕当前次数重新校准 _target，
 # 仅在 OCR 读取失败时回退到该跟踪值（有界单调递减，见 _next_target）。
+# 每次进入关卡界面时由 SetBattleCount 调用 _reset_target 清零该值（见下），
+# 使首次减次的 OCR 失败回退不会用到上一任务耗尽后的残留值（1）。
 _target: int | None = None
 
 COUNT_ROI = [903, 441, 27, 43]
@@ -85,6 +87,21 @@ def _next_target(current_count: int, tracked: int | None) -> int | None:
     return target - 1
 
 
+def _reset_target() -> None:
+    """重置跨任务残留的模块级跟踪值 _target。
+
+    agent 进程在 MaaFW 生命周期内常驻，模块级 _target 会跨任务存活：
+    上一任务清空体力结束后其值为 1，若本任务首次减次前不重置，一旦 OCR
+    读取失败就会回退到该残留值，被误判「已到最小」返回失败，触发 on_error
+    走 NoStamina 退出，导致本轮一场未打（与已修复的 ReduceBattleCount
+    跨任务残留问题同源，见 5dbef88）。
+    调用方 SetBattleCount 在两种刷取任务（资源刷取/剩余体力刷取）的任何模式下
+    都先于首次减次执行，且不会出现在减次循环内部，是安全的任务入口重置点。
+    """
+    global _target
+    _target = None
+
+
 @AgentServer.custom_action("SetBattleCount")
 class SetBattleCount(CustomAction):
     """
@@ -103,6 +120,11 @@ class SetBattleCount(CustomAction):
         except ValueError as error:
             logger.error("SetBattleCount: {}", error)
             return CustomAction.RunResult(success=False)
+
+        # 进入关卡界面即视为新任务开始：清零跨任务残留的跟踪值，
+        # 否则上一任务耗尽后的残留值（1）会在本任务首次减次 OCR 失败时
+        # 被回退使用，导致误判「已到最小」提前退出（见 _reset_target）。
+        _reset_target()
 
         target_count: Any = params["target_count"]
         count_roi = coerce_roi(params.get("count_roi", COUNT_ROI), COUNT_ROI, "SetBattleCount")
