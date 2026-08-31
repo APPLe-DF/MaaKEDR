@@ -27,36 +27,48 @@ class InitPVPBattleCount(CustomAction):
             logger.error("InitPVPBattleCount: {}", error)
             return CustomAction.RunResult(success=False)
 
-        target: Any = params["target_count"]
-        if not is_int_value(target):
-            try:
-                target = int(target)  # type: ignore[arg-type]
-                logger.info("InitPVPBattleCount: target_count 由非整数值转换为整数: {}", target)
-            except (TypeError, ValueError):
-                logger.error("InitPVPBattleCount: target_count 必须是整数，得到: {}", type(target).__name__)
-                return CustomAction.RunResult(success=False)
+        try:
+            target: Any = params["target_count"]
+            if not is_int_value(target):
+                try:
+                    target = int(target)  # type: ignore[arg-type]
+                    logger.info("InitPVPBattleCount: target_count 由非整数值转换为整数: {}", target)
+                except (TypeError, ValueError):
+                    logger.error("InitPVPBattleCount: target_count 必须是整数，得到: {}", type(target).__name__)
+                    return CustomAction.RunResult(success=False)
 
-        global _remaining
-        _remaining = target
-        logger.info("[PVP] 剩余战斗次数: {}", target)
-        return CustomAction.RunResult(success=True)
+            global _remaining
+            _remaining = target
+            logger.info("[PVP] 剩余战斗次数: {}", target)
+            return CustomAction.RunResult(success=True)
+        except Exception:
+            # ctypes 回调中未捕获的异常会被 MaaFW 静默吞掉并误判为成功，
+            # 这里显式捕获并返回失败。
+            logger.exception("InitPVPBattleCount: run 异常，按动作失败处理")
+            return CustomAction.RunResult(success=False)
 
 
 @AgentServer.custom_action("CheckPVPBattleCount")
 class CheckPVPBattleCount(CustomAction):
     def run(self, context: Context, argv: CustomAction.RunArg) -> CustomAction.RunResult:
-        global _remaining
-        if _remaining is None:
-            logger.error("CheckPVPBattleCount: remaining 未初始化，请先调用 InitPVPBattleCount")
-            return CustomAction.RunResult(success=False)
+        try:
+            global _remaining
+            if _remaining is None:
+                logger.error("CheckPVPBattleCount: remaining 未初始化，请先调用 InitPVPBattleCount")
+                return CustomAction.RunResult(success=False)
 
-        _remaining -= 1
+            _remaining -= 1
 
-        if _remaining <= 0:
-            logger.info("[PVP] 战斗次数已用完，返回主界面")
-            _remaining = None
-            context.override_pipeline({"PVP.CheckBattleCount": {"next": ["PVP.ReturnMain"]}})
+            if _remaining <= 0:
+                logger.info("[PVP] 战斗次数已用完，返回主界面")
+                _remaining = None
+                context.override_pipeline({"PVP.CheckBattleCount": {"next": ["PVP.ReturnMain"]}})
+                return CustomAction.RunResult(success=True)
+
+            logger.info("[PVP] 剩余战斗次数: {}", _remaining)
             return CustomAction.RunResult(success=True)
-
-        logger.info("[PVP] 剩余战斗次数: {}", _remaining)
-        return CustomAction.RunResult(success=True)
+        except Exception:
+            # ctypes 回调中未捕获的异常会被 MaaFW 静默吞掉并误判为成功，
+            # 这里显式捕获并返回失败。
+            logger.exception("CheckPVPBattleCount: run 异常，按动作失败处理")
+            return CustomAction.RunResult(success=False)
