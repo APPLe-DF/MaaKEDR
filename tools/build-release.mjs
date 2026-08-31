@@ -89,8 +89,10 @@ const GUI_TYPES = {
             const displayName =
                 typeof modified.label === "string" && modified.label.trim() ? modified.label.trim() : slug;
             modified.title = `${displayName} ${ver} | MXU`;
-            // MXU 设置页的「更新」依赖 mirrorchyan_rid；占位 rid 用于展示 UI 并通过 github 回退下载。
-            // 正式接入 Mirror 酱后可在平台登记同名/专用 rid。
+            // MXU 设置页的「更新」依赖 mirrorchyan_rid，已通过 Mirror 酱平台正式登记（rid=MaaKEDR-MXU），
+            // 由 .github/workflows/mirrorchyan_release.yml 上传分发；用户软件内更新可正常拉取到 MXU 包。
+            // 注意 MXU 不产出 linux-aarch64 平台包（无对应运行时，打包阶段即跳过，GitHub Releases 亦无该资产），
+            // mirrorchyan 上传矩阵与 MFAA 的 6 平台差异即源于此；该平台用户请改用 MFAA 发行版。
             modified.mirrorchyan_rid = "MaaKEDR-MXU";
             modified.mirrorchyan_multiplatform = true;
             if (Array.isArray(modified.agent) && modified.agent[0]) {

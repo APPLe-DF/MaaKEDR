@@ -59,6 +59,9 @@ jobs:
     runs-on: ubuntu-latest
     # Mirror酱为第三方分发服务，请先联系开通后再使用
     # https://mirrorchyan.com/
+    # 注意：MXU 不产出 linux-aarch64 平台包（无对应运行时，打包阶段即跳过，GitHub Releases 亦无该资产），
+    # 因此仅上传上表列出的 5 个平台；与 MFAA job 的 6 平台矩阵差异是有意的，非遗漏。
+    # 该平台用户请改用 MFAA 发行版。
     if: ${{ github.repository_owner == 'APPLe-DF' }}
     strategy:
       fail-fast: false
