@@ -179,7 +179,7 @@
             "templateHash": "5c158bda7393675ec21f0fe0239400a8683cfbc7a509410dc3fd06cc556a766c"
         },
         "tools/schema/interface.schema.json": {
-            "hash": "0add059a88074e9b96cb14fcc829042abb1ac1b83438395613ff677f792f568d",
+            "hash": "d09965733a2c682af4e408e7092e7ea624a07209c79d5d5d6efe39ec865cc938",
             "templateHash": "4305d4cb804c1598feef224457d428a9b8acde58b868845c850eb124930d9ef5"
         },
         "tools/schema/interface_config.schema.json": {
@@ -187,7 +187,7 @@
             "templateHash": "af6fcc7d76b5da0292e67b615e52edf98e541be75f9becbd3cbcdc7710b521b6"
         },
         "tools/schema/interface_import.schema.json": {
-            "hash": "3fccaa1a4a65832af3a57638bf2be8884e2fc732c7aa8b2c9aa537805bac809f",
+            "hash": "606ab104b9423b936ce1b5cd349e2d4653f446baac5b37e0b05eafda1243da5f",
             "templateHash": "3fccaa1a4a65832af3a57638bf2be8884e2fc732c7aa8b2c9aa537805bac809f"
         },
         "tools/schema/pipeline.schema.json": {
@@ -195,7 +195,7 @@
             "templateHash": "022dbdb5b8030d8aa5802a40d59c46255546be13bda781d3fd1baba7a90f1bf8"
         },
         "tools/schema/schema-manifest.json": {
-            "hash": "cdf249b1035e8e5ebf233948f012abd5fde466020df1ee3f159956956965ddf8",
+            "hash": "499a7793284aa4c35cac372b849a5206d9d32d224a656842f416de0e1dbda87d",
             "templateHash": "3d74d39a564dec1648a0aa1b945bc48ca5607e4a73e3ce7af433b362c7f63493"
         },
         "tools/sync-schema.mjs": {
