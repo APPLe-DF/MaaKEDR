@@ -80,7 +80,176 @@
         },
         "post_delay": 2000,
         "next": [
+            "PVP.SeasonReset.ClickContinue",
             "PVP.CheckBattleInterface"
+        ]
+    },
+    "PVP.SeasonReset.ClickContinue": {
+        "desc": "赛季重置：识别\"点击任意处继续\"提示并点击继续（并列候选：优先排除赛季重置弹窗，未命中回落 CheckBattleInterface）",
+        "recognition": "OCR",
+        "roi": [
+            552,
+            640,
+            176,
+            31
+        ],
+        "expected": "点击任意处继续",
+        "only_rec": true,
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "PVP.SeasonReset.CheckEnterFormation",
+            "PVP.SeasonReset.ClickContinue"
+        ]
+    },
+    "PVP.SeasonReset.CheckEnterFormation": {
+        "desc": "赛季重置：识别\"进入布阵\"确认在布阵界面，不做动作",
+        "recognition": "OCR",
+        "roi": [
+            1078,
+            659,
+            97,
+            27
+        ],
+        "expected": "进入布阵",
+        "only_rec": true,
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "PVP.SeasonReset.ClickEdit",
+            "PVP.SeasonReset.CheckEnterFormation"
+        ]
+    },
+    "PVP.SeasonReset.ClickEdit": {
+        "desc": "赛季重置：识别\"编辑\"并点击进入编队界面",
+        "recognition": "OCR",
+        "roi": [
+            265,
+            141,
+            54,
+            29
+        ],
+        "expected": "编辑",
+        "only_rec": true,
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "PVP.SeasonReset.ClickQuickFormation",
+            "PVP.SeasonReset.ClickEdit"
+        ]
+    },
+    "PVP.SeasonReset.ClickQuickFormation": {
+        "desc": "赛季重置：识别\"快速编队\"并点击",
+        "recognition": "OCR",
+        "roi": [
+            101,
+            441,
+            85,
+            25
+        ],
+        "expected": "快速编队",
+        "only_rec": true,
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "PVP.SeasonReset.CheckFormationCount",
+            "PVP.SeasonReset.ClickQuickFormation"
+        ]
+    },
+    "PVP.SeasonReset.CheckFormationCount": {
+        "desc": "赛季重置：识别编队人数数字出现，不做动作",
+        "recognition": "OCR",
+        "roi": [
+            203,
+            561,
+            22,
+            18
+        ],
+        "expected": "\\d",
+        "only_rec": true,
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "PVP.SeasonReset.ClickSave",
+            "PVP.SeasonReset.CheckFormationCount"
+        ]
+    },
+    "PVP.SeasonReset.ClickSave": {
+        "desc": "赛季重置：识别\"保存\"并点击保存编队",
+        "recognition": "OCR",
+        "roi": [
+            1140,
+            442,
+            41,
+            22
+        ],
+        "expected": "保存",
+        "only_rec": true,
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "PVP.SeasonReset.ClickEnterFormation",
+            "PVP.SeasonReset.ClickSave"
+        ]
+    },
+    "PVP.SeasonReset.ClickEnterFormation": {
+        "desc": "赛季重置：识别\"进入布阵\"并点击进入布阵界面",
+        "recognition": "OCR",
+        "roi": [
+            1078,
+            659,
+            97,
+            27
+        ],
+        "expected": "进入布阵",
+        "only_rec": true,
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "PVP.SeasonReset.ClickSavePosition",
+            "PVP.SeasonReset.ClickEnterFormation"
+        ]
+    },
+    "PVP.SeasonReset.ClickSavePosition": {
+        "desc": "赛季重置：识别\"保存\"确认保存部署位置界面，点击确认",
+        "recognition": "OCR",
+        "roi": [
+            1153,
+            626,
+            49,
+            26
+        ],
+        "expected": "保存",
+        "only_rec": true,
+        "threshold": 0.8,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "PVP.CheckBattleInterface",
+            "PVP.SeasonReset.ClickSavePosition"
         ]
     },
     "PVP.CheckBattleInterface": {
