@@ -75,8 +75,10 @@
         "devCommand": [
             "uv",
             "run",
+            "--frozen",
             "python",
-            "agent/bootstrap.py"
+            "-u",
+            "./agent/bootstrap.py"
         ],
         "recommendedPython": "3.13",
         "requiresPython": ">=3.13,<3.14"
