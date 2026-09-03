@@ -15,7 +15,7 @@
         "sass": "^1.103.1",
         "sass-embedded": "^1.103.1",
         "typescript": "^5.9.3",
-        "vue": "^3.5.41",
+        "vue": "^3.5.42",
         "vuepress": "2.0.0-rc.30",
         "vuepress-theme-plume": "1.0.0-rc.205"
     },
