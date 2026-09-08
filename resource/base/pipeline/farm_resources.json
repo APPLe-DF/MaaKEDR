@@ -238,7 +238,8 @@
         ]
     },
     "FarmResources.SelectBasicSkill": {
-        "desc": "选择基础技能演练",
+        "desc": "选择基础技能演练（点击已生效但游戏未响应时，由 next 首位重试自身，最多 5 次）",
+        "max_hit": 5,
         "recognition": "TemplateMatch",
         "roi": [
             358,
@@ -254,11 +255,13 @@
         },
         "post_delay": 1000,
         "next": [
+            "FarmResources.SelectBasicSkill",
             "FarmResources.SelectSkillStage"
         ]
     },
     "FarmResources.SelectAdvancedSkill": {
-        "desc": "选择专业技能演练",
+        "desc": "选择专业技能演练（点击已生效但游戏未响应时，由 next 首位重试自身，最多 5 次）",
+        "max_hit": 5,
         "recognition": "TemplateMatch",
         "roi": [
             722,
@@ -274,6 +277,7 @@
         },
         "post_delay": 1000,
         "next": [
+            "FarmResources.SelectAdvancedSkill",
             "FarmResources.SelectSkillStage"
         ]
     },
