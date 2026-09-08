@@ -1,0 +1,12 @@
+{
+    "task": [
+        {
+            "name": "仓库材料识别",
+            "entry": "WarehouseInventory",
+            "group": [
+                "Daily"
+            ],
+            "description": "进入仓库，识别目标材料（第二版能元、训练用器材、低级/中级/高级考核材料自选包、基础技能材料自选包、优秀毕业证书）的数量，并保存到 config/warehouse_inventory.json"
+        }
+    ]
+}

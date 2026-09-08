@@ -1,0 +1,95 @@
+{
+    "task": [
+        {
+            "name": "仓库材料均衡刷取",
+            "entry": "WarehouseFarm",
+            "group": [
+                "Daily"
+            ],
+            "description": "智能均衡刷取：先扫描仓库现有数量，再按顺序刷取目标材料直到达到你设定的库存数量（每材料按关卡固定掉落计算场次，复用资源刷取流程）",
+            "option": [
+                "wf_targets"
+            ]
+        }
+    ],
+    "option": {
+        "wf_targets": {
+            "type": "input",
+            "label": "目标库存数量",
+            "description": "每个材料维持的目标库存：当前数量低于目标时自动刷取补足，达到后停止。填 0 表示不关注该材料。",
+            "inputs": [
+                {
+                    "name": "wf_energy",
+                    "label": "第二版能元",
+                    "description": "主要来源：特别军费行动 1-3（单场固定 27000）",
+                    "default": "300000",
+                    "pipeline_type": "int",
+                    "verify": "^\\d+$"
+                },
+                {
+                    "name": "wf_training",
+                    "label": "训练用器材",
+                    "description": "主要来源：作战体能训练 2-3（单场固定 4860，忽略其他关卡掉落）",
+                    "default": "50000",
+                    "pipeline_type": "int",
+                    "verify": "^\\d+$"
+                },
+                {
+                    "name": "wf_low_exam",
+                    "label": "低级考核材料自选包",
+                    "description": "主要来源：兵种能力评级 3-1（单场固定 6）",
+                    "default": "30",
+                    "pipeline_type": "int",
+                    "verify": "^\\d+$"
+                },
+                {
+                    "name": "wf_mid_exam",
+                    "label": "中级考核材料自选包",
+                    "description": "主要来源：兵种能力评级 3-2（单场固定 4）",
+                    "default": "30",
+                    "pipeline_type": "int",
+                    "verify": "^\\d+$"
+                },
+                {
+                    "name": "wf_high_exam",
+                    "label": "高级考核材料自选包",
+                    "description": "主要来源：兵种能力评级 3-3（单场固定 2）",
+                    "default": "30",
+                    "pipeline_type": "int",
+                    "verify": "^\\d+$"
+                },
+                {
+                    "name": "wf_basic_pack",
+                    "label": "基础技能材料自选包",
+                    "description": "主要来源：技能演练 基础训练1（单场固定 4）",
+                    "default": "30",
+                    "pipeline_type": "int",
+                    "verify": "^\\d+$"
+                },
+                {
+                    "name": "wf_certificate",
+                    "label": "优秀毕业证书",
+                    "description": "主要来源：技能演练 专业训练1（单场固定 2）",
+                    "default": "30",
+                    "pipeline_type": "int",
+                    "verify": "^\\d+$"
+                }
+            ],
+            "pipeline_override": {
+                "WarehouseFarm.Battle": {
+                    "custom_action_param": {
+                        "targets": {
+                            "第二版能元": "「wf_energy」",
+                            "训练用器材": "「wf_training」",
+                            "低级考核材料自选包": "「wf_low_exam」",
+                            "中级考核材料自选包": "「wf_mid_exam」",
+                            "高级考核材料自选包": "「wf_high_exam」",
+                            "基础技能材料自选包": "「wf_basic_pack」",
+                            "优秀毕业证书": "「wf_certificate」"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,183 @@
+{
+    "WarehouseInventory": {
+        "next": [
+            "WarehouseInventory.EnsureHome",
+            "WarehouseInventory.CheckMainInterface",
+            "WarehouseInventory.ReturnMain"
+        ]
+    },
+    "WarehouseInventory.Done": {
+        "desc": "仓库材料识别任务完成",
+        "action": {
+            "type": "DoNothing"
+        }
+    },
+    "WarehouseInventory.EnsureHome": {
+        "desc": "确认在游戏主页，不在主页则点主页按钮回到主页后再开始",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1199,
+            6,
+            77,
+            83
+        ],
+        "template": "main_option.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "timeout": 60000,
+        "next": [
+            "WarehouseInventory.CheckMainInterface",
+            "WarehouseInventory.ClickHome"
+        ]
+    },
+    "WarehouseInventory.ClickHome": {
+        "desc": "点击主页按钮回到主界面",
+        "recognition": "TemplateMatch",
+        "roi": [
+            199,
+            26,
+            85,
+            52
+        ],
+        "template": "return_main.png",
+        "threshold": 0.75,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1000,
+        "next": [
+            "WarehouseInventory.EnsureHome"
+        ]
+    },
+    "WarehouseInventory.CheckMainInterface": {
+        "desc": "确认在主界面",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1199,
+            6,
+            77,
+            83
+        ],
+        "template": "main_option.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "Click",
+            "param": {
+                "target": [
+                    588,
+                    369,
+                    9,
+                    11
+                ]
+            }
+        },
+        "repeat": 2,
+        "repeat_delay": 500,
+        "timeout": 5000,
+        "next": [
+            "WarehouseInventory.EnterWarehouse",
+            "WarehouseInventory.EnsureHome"
+        ]
+    },
+    "WarehouseInventory.EnterWarehouse": {
+        "desc": "主界面右上角识别仓库图标并点击进入",
+        "recognition": "TemplateMatch",
+        "roi": [
+            960,
+            0,
+            300,
+            110
+        ],
+        "template": "warehouse_entry.png",
+        "threshold": 0.9,
+        "pre_delay": 500,
+        "action": {
+            "type": "Click"
+        },
+        "post_delay": 1500,
+        "next": [
+            "WarehouseInventory.ConfirmInterface",
+            "WarehouseInventory.EnsureHome"
+        ]
+    },
+    "WarehouseInventory.ConfirmInterface": {
+        "desc": "确认已进入仓库界面（右上角识别“所有物品”筛选下拉）",
+        "recognition": {
+            "type": "OCR",
+            "param": {
+                "roi": [
+                    1090,
+                    25,
+                    190,
+                    60
+                ],
+                "expected": "所有物品"
+            }
+        },
+        "next": [
+            "WarehouseInventory.Scan",
+            "WarehouseInventory.EnsureHome"
+        ]
+    },
+    "WarehouseInventory.Scan": {
+        "desc": "扫描仓库：匹配目标材料图标并识别数量，落盘 config/warehouse_inventory.json",
+        "action": {
+            "type": "Custom",
+            "param": {
+                "custom_action": "WarehouseInventoryScan"
+            }
+        },
+        "next": [
+            "WarehouseInventory.Exit"
+        ]
+    },
+    "WarehouseInventory.Exit": {
+        "desc": "点击返回按钮退出仓库",
+        "recognition": {
+            "type": "DirectHit"
+        },
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "WarehouseInventory.AtMain",
+            "[JumpBack]Common.BackButton"
+        ]
+    },
+    "WarehouseInventory.AtMain": {
+        "desc": "确认已回到主界面",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1199,
+            6,
+            77,
+            83
+        ],
+        "template": "main_option.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "WarehouseInventory.Done",
+            "[JumpBack]WarehouseInventory.Exit"
+        ]
+    },
+    "WarehouseInventory.ReturnMain": {
+        "desc": "返回主界面（任务开始前兜底）",
+        "max_hit": 3,
+        "recognition": {
+            "type": "DirectHit"
+        },
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "WarehouseInventory.CheckMainInterface",
+            "[JumpBack]Common.BackButton"
+        ]
+    }
+}

@@ -72,6 +72,8 @@
         "./tasks/pvp.json",
         "./tasks/claim_rewards.json",
         "./tasks/stamina_info.json",
+        "./tasks/warehouse.json",
+        "./tasks/warehouse_farm.json",
         "./tasks/preset/Daily.json",
         "./tasks/preset/Activity.json"
     ]
