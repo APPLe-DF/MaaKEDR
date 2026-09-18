@@ -191,11 +191,11 @@
             "templateHash": "3fccaa1a4a65832af3a57638bf2be8884e2fc732c7aa8b2c9aa537805bac809f"
         },
         "tools/schema/pipeline.schema.json": {
-            "hash": "74e56dc8d8b23f4514c27134ebe09e76b207e6cf8e6c15c2dda21985ffe47b4a",
+            "hash": "1d25296722a05421d725021a9cd74763b0fd9bf2065e3828696f9e89b9027d98",
             "templateHash": "022dbdb5b8030d8aa5802a40d59c46255546be13bda781d3fd1baba7a90f1bf8"
         },
         "tools/schema/schema-manifest.json": {
-            "hash": "e8b68f9091f0f761dcb31f81ac23b23b6147a7608134c1c23ee38a67f2adfccc",
+            "hash": "c618e3bb0caf5b698f2aee6c470bdc249fa3d7e56fa1adf577aeea0e4a8c8bd0",
             "templateHash": "3d74d39a564dec1648a0aa1b945bc48ca5607e4a73e3ce7af433b362c7f63493"
         },
         "tools/sync-schema.mjs": {
