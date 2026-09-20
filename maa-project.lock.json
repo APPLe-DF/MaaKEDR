@@ -131,7 +131,7 @@
             "templateHash": "7a4b8e4c2efa2036473526e0e4de5c09327ff3df189c62b1a1f320a1f23c7692"
         },
         ".github/cliff.toml": {
-            "hash": "be48b8bfea9c1555f2ff1cf00a4f2cc150c3624ad97e3f1ec57a6a905de16aef",
+            "hash": "0db94a4be53d713de734a58a04d79f12cd148475e68c58137e817a0601a4e9c3",
             "templateHash": "1c475f27cd91987b4a8e82a99ee2054f673fe5c344c2c2facc0c4c80778317bc"
         },
         ".github/dependabot.yml": {
