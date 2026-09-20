@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@nekosu/maa-tools':
-        specifier: 1.1.1
-        version: 1.1.1
+        specifier: 1.1.2
+        version: 1.1.2
       '@nekosu/prettier-plugin-maafw-sort':
         specifier: 1.0.6
         version: 1.0.6
@@ -633,17 +633,17 @@ packages:
       '@emnapi/core': ^1.7.1
       '@emnapi/runtime': ^1.7.1
 
-  '@nekosu/maa-locale@1.0.3':
-    resolution: {integrity: sha512-7HNGbhhuKky8kumBxAJXrezSzIPmP1en+DlqENx5r5DZHwJRCDSjzbW7Wi7Zogbo8lpBZNq631kEDspdTbFKIA==}
+  '@nekosu/maa-locale@1.1.0':
+    resolution: {integrity: sha512-bVfUFO47H9Ja1F3ufGf4eTB8fWuo+4uWFvTVZpusVeGvAjo60+5jSTKsxxiv7W7Lj0//tU8gyNxR08m65b72QA==}
 
-  '@nekosu/maa-pipeline-manager@1.0.13':
-    resolution: {integrity: sha512-zgnZXk2HwIIGnTSMqAn36kfg4vVYMc9QfDFx6THz+cngkrNQB20kgK6jBgrUFopokMvEOlRY/KpBZmraJVwATw==}
+  '@nekosu/maa-pipeline-manager@1.0.14':
+    resolution: {integrity: sha512-tJmjik7ObIlQj9LgHP7WoAyKYLa3NmyFn9KQXxFu8MjHP3ln1EmYHyMC8Cq3GflGDNKabPO148v1jkHE4Pg5Qg==}
 
   '@nekosu/maa-tasker@1.0.0':
     resolution: {integrity: sha512-p5SaBJGvAMr5J2uk6imoiK7eIF7yA67HndWyfxddAHHdoyliai2dkHqBhTmDDuRmmAJ/ly4INg5Hnx8CI7Po3A==}
 
-  '@nekosu/maa-tools@1.1.1':
-    resolution: {integrity: sha512-QSSt8ivIDSnVRMaBxpmT+2shrsLGvMkZohYCAesKQg8UOHKw6G/MQhvHgNftY8u/XPwwUiWx0fZ2PxOyl9hZCw==}
+  '@nekosu/maa-tools@1.1.2':
+    resolution: {integrity: sha512-foNLUwcx3+8fqT54/p6PzwqdgzhURZOdo41An0S4sC/PMnjsOFpoBGrlM4WU7UEQ2mdFerAx4JDfyvKEpyE7Nw==}
     hasBin: true
 
   '@nekosu/maa-version-manager@1.1.0':
@@ -1206,8 +1206,8 @@ packages:
     resolution: {integrity: sha512-qRsxPnCrbC/puegGxKuynfnxgLiHqWStrSjxkoB4YKqq3Z3s4cyZyj42ZdWFAEblNP65C+rBH8EuREHIXoi83g==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  '@sigstore/protobuf-specs@0.5.1':
-    resolution: {integrity: sha512-/ScWUhhoFasJsSRGTVBwId1loQjjnjAfE4djL6ZhrXRpNCmPTnUKF5Jokd58ILseOMjzET3UrMOtJPS9sYeI0g==}
+  '@sigstore/protobuf-specs@0.5.2':
+    resolution: {integrity: sha512-SQqvFMt4V78fdjcDdYX6HbiVSOR4QK3ZgwCa2KOsopAgPIHy1rU5UDUmzLl02r5oyyaYcYHR1hpwDRk/yUe+Mw==}
     engines: {node: ^18.17.0 || >=20.5.0}
 
   '@sigstore/sign@4.1.1':
@@ -1733,8 +1733,8 @@ packages:
   boolbase@1.0.0:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
 
-  brace-expansion@5.0.9:
-    resolution: {integrity: sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg==}
+  brace-expansion@5.0.12:
+    resolution: {integrity: sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==}
     engines: {node: 20 || >=22}
 
   browser-or-node@3.0.0:
@@ -1857,6 +1857,10 @@ packages:
   connect-history-api-fallback@2.0.0:
     resolution: {integrity: sha512-U73+6lQFmfiNPrYbXqr6kZ1i1wiRqXnp2nhMsINseWXO8lDau0LGEffJ8kQi4EjLZympVgRdvqjAgiZ1tgzDDA==}
     engines: {node: '>=0.8'}
+
+  content-type@2.1.0:
+    resolution: {integrity: sha512-mj7UPXE0jaqaOsukNZRUEfEi2AcL7C/vwmwcHV0O97eO1E1pxBZuyjlZrx5seTaNBg1U6+o35wpa35Qfcc+7ag==}
+    engines: {node: '>=18'}
 
   corser@2.0.1:
     resolution: {integrity: sha512-utCYNzRSQIZNPIcGZdQc92UVJYAhtGAteCFg0yRaFm8f0P+CPtyGyHXJcGXnffjCybUCEx3FQ2G7U3/o9eIkVQ==}
@@ -2210,8 +2214,8 @@ packages:
     resolution: {integrity: sha512-IBTdIkzZNOpqm7q3dRqJvMaldXjDHWkEDfrwGEQTs5eaQMWV+djAhR+wahyNNMAa+qpbDUhBMVt4ZKNwpPm7xQ==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  ip-address@10.5.0:
-    resolution: {integrity: sha512-R5SnVLJmgYYvf2F2ZgwSBnelz5G4q5AxIC277GDfUaNbrZKNANcBC7RHqYYePlszf4kBolVkJauG0ZjHHFh55g==}
+  ip-address@10.7.2:
+    resolution: {integrity: sha512-7H/2gFSIitxc0hG3nOI1glS8QLo/EHBFFLk8vEUjXY/xu0AdL8jZ9U1IzO2PUm0d2D/ofQcAifb0g6OBkt8U7w==}
     engines: {node: '>= 12'}
 
   is-extendable@0.1.1:
@@ -2610,9 +2614,9 @@ packages:
     engines: {node: ^22 || ^24 || >=26}
     hasBin: true
 
-  negotiator@1.0.0:
-    resolution: {integrity: sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==}
-    engines: {node: '>= 0.6'}
+  negotiator@1.1.0:
+    resolution: {integrity: sha512-NMPBRMJgiQHjbd8phG3Vebdx4kZ1H121rbl5IkMqeOsahptB9BKo/d7oJ3zTXqTgagn2bWlNSXkh0QUGM31RYg==}
+    engines: {node: '>=18'}
 
   node-addon-api@7.1.1:
     resolution: {integrity: sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==}
@@ -2697,6 +2701,10 @@ packages:
 
   p-map@7.0.6:
     resolution: {integrity: sha512-I4Prw6ivkd6p8PiYR1tXASOAOBzIJwu0TB7fqaX0c/8c3QAehNYmX57EijyGGGBt3c/BIowGwV03RVBtXvHEVg==}
+    engines: {node: '>=18'}
+
+  p-map@7.0.8:
+    resolution: {integrity: sha512-MitaVsCuCFIvOLLPIU7NnfrZvS9H9h7kwMUkDo+T2pEISaJD48IV9S8iIdXB7PsvvdxyYcsSTTrr90XKsbulNw==}
     engines: {node: '>=18'}
 
   p-try@2.2.0:
@@ -3105,8 +3113,8 @@ packages:
     resolution: {integrity: sha512-HehCEsotFqbPW9sJ8WVYB6UbmIMv7kUUORIF2Nncq4VQvBfNBLibW9YZR5dlYCSUhwcD628pRllm7n+E+YTzJw==}
     engines: {node: '>= 14'}
 
-  socks@2.8.9:
-    resolution: {integrity: sha512-LJhUYUvItdQ0LkJTmPeaEObWXAqFyfmP85x0tch/ez9cahmhlBBLbIqDFnvBnUJGagb0JbIQrkBs1wJ+yRYpEw==}
+  socks@2.8.10:
+    resolution: {integrity: sha512-e0VyvkVTwVYViNovRkZ9aodhxVlyoMn7eJhVUPxZ+eK9P/7CBkxvvsBOHqFPEH416726W8tLXXXjKwqgTErrCQ==}
     engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
 
   source-map-js@1.2.1:
@@ -3122,8 +3130,8 @@ packages:
   spdx-expression-parse@4.0.0:
     resolution: {integrity: sha512-Clya5JIij/7C6bRR22+tnGXbc4VKlibKSVj2iHvVeX5iMW7s1SIQlqu699JkODJJIhh/pUu8L0/VLh8xflD+LQ==}
 
-  spdx-license-ids@3.0.23:
-    resolution: {integrity: sha512-CWLcCCH7VLu13TgOH+r8p1O/Znwhqv/dbb6lqWy67G+pT1kHmeD/+V36AVb/vq8QMIQwVShJ6Ssl5FPh0fuSdw==}
+  spdx-license-ids@3.0.24:
+    resolution: {integrity: sha512-cLS9TtWkIQFyLkJ3/5aFQAOHOSKTlOs/7WDut/XPSdjom1fJhUdkepeJAKXa9Y05+FabHd0sti+Et559vDtkpQ==}
 
   sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
@@ -3252,8 +3260,8 @@ packages:
   undici-types@8.3.0:
     resolution: {integrity: sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ==}
 
-  undici@6.28.0:
-    resolution: {integrity: sha512-LIY910g9TI13YS95lrMFrs8Rm/u/irgHeTWoKCoteeJ04CUJ92eEfj0rVn+7VKMPBpUPiUoBKfhNyLI23EE/KA==}
+  undici@6.28.1:
+    resolution: {integrity: sha512-zWpdTVD54H48CIybL0rWQ3ukpb9d23wM7eH5RtfdmeP70cWHNjtfo7P4vZX+5CoDcO53J4Pu5uXp7lNfjc6DRA==}
     engines: {node: '>=18.17'}
 
   undici@7.28.0:
@@ -3632,7 +3640,7 @@ snapshots:
   '@actions/http-client@4.0.1':
     dependencies:
       tunnel: 0.0.6
-      undici: 6.28.0
+      undici: 6.28.1
 
   '@actions/io@3.0.2': {}
 
@@ -4125,11 +4133,11 @@ snapshots:
       '@tybys/wasm-util': 0.10.3
     optional: true
 
-  '@nekosu/maa-locale@1.0.3': {}
+  '@nekosu/maa-locale@1.1.0': {}
 
-  '@nekosu/maa-pipeline-manager@1.0.13':
+  '@nekosu/maa-pipeline-manager@1.0.14':
     dependencies:
-      '@nekosu/maa-locale': 1.0.3
+      '@nekosu/maa-locale': 1.1.0
       '@nekosu/maa-tasker': 1.0.0
       chokidar: 5.0.0
       jsonc-parser: 3.3.1
@@ -4138,11 +4146,11 @@ snapshots:
     dependencies:
       '@nekosu/simple-parser': 1.0.0
 
-  '@nekosu/maa-tools@1.1.1':
+  '@nekosu/maa-tools@1.1.2':
     dependencies:
       '@actions/core': 3.0.1
-      '@nekosu/maa-locale': 1.0.3
-      '@nekosu/maa-pipeline-manager': 1.0.13
+      '@nekosu/maa-locale': 1.1.0
+      '@nekosu/maa-pipeline-manager': 1.0.14
       '@nekosu/maa-version-manager': 1.1.0
       chalk: 5.6.2
       jiti: 2.7.0
@@ -4559,18 +4567,18 @@ snapshots:
 
   '@sigstore/bundle@4.0.0':
     dependencies:
-      '@sigstore/protobuf-specs': 0.5.1
+      '@sigstore/protobuf-specs': 0.5.2
 
   '@sigstore/core@3.2.1': {}
 
-  '@sigstore/protobuf-specs@0.5.1': {}
+  '@sigstore/protobuf-specs@0.5.2': {}
 
   '@sigstore/sign@4.1.1':
     dependencies:
       '@gar/promise-retry': 1.0.3
       '@sigstore/bundle': 4.0.0
       '@sigstore/core': 3.2.1
-      '@sigstore/protobuf-specs': 0.5.1
+      '@sigstore/protobuf-specs': 0.5.2
       make-fetch-happen: 15.0.6
       proc-log: 6.1.0
     transitivePeerDependencies:
@@ -4578,7 +4586,7 @@ snapshots:
 
   '@sigstore/tuf@4.0.2':
     dependencies:
-      '@sigstore/protobuf-specs': 0.5.1
+      '@sigstore/protobuf-specs': 0.5.2
       tuf-js: 4.1.0
     transitivePeerDependencies:
       - supports-color
@@ -4587,7 +4595,7 @@ snapshots:
     dependencies:
       '@sigstore/bundle': 4.0.0
       '@sigstore/core': 3.2.1
-      '@sigstore/protobuf-specs': 0.5.1
+      '@sigstore/protobuf-specs': 0.5.2
 
   '@tufjs/canonical-json@2.0.0': {}
 
@@ -5447,7 +5455,7 @@ snapshots:
 
   boolbase@1.0.0: {}
 
-  brace-expansion@5.0.9:
+  brace-expansion@5.0.12:
     dependencies:
       balanced-match: 4.0.4
 
@@ -5475,7 +5483,7 @@ snapshots:
       minipass-collect: 2.0.1
       minipass-flush: 1.0.7
       minipass-pipeline: 1.2.4
-      p-map: 7.0.6
+      p-map: 7.0.8
       ssri: 13.0.1
 
   call-bind-apply-helpers@1.0.2:
@@ -5573,6 +5581,8 @@ snapshots:
   confbox@0.2.4: {}
 
   connect-history-api-fallback@2.0.0: {}
+
+  content-type@2.1.0: {}
 
   corser@2.0.1: {}
 
@@ -5952,7 +5962,7 @@ snapshots:
 
   ini@6.0.0: {}
 
-  ip-address@10.5.0: {}
+  ip-address@10.7.2: {}
 
   is-extendable@0.1.1: {}
 
@@ -6120,7 +6130,7 @@ snapshots:
       minipass-fetch: 5.0.2
       minipass-flush: 1.0.7
       minipass-pipeline: 1.2.4
-      negotiator: 1.0.0
+      negotiator: 1.1.0
       proc-log: 6.1.0
       ssri: 13.0.1
     transitivePeerDependencies:
@@ -6350,7 +6360,7 @@ snapshots:
 
   minimatch@10.2.6:
     dependencies:
-      brace-expansion: 5.0.9
+      brace-expansion: 5.0.12
 
   minimist@1.2.8: {}
 
@@ -6407,7 +6417,9 @@ snapshots:
 
   nanoid@6.0.1: {}
 
-  negotiator@1.0.0: {}
+  negotiator@1.1.0:
+    dependencies:
+      content-type: 2.1.0
 
   node-addon-api@7.1.1:
     optional: true
@@ -6422,7 +6434,7 @@ snapshots:
       semver: 7.8.5
       tar: 7.5.22
       tinyglobby: 0.2.17
-      undici: 6.28.0
+      undici: 6.28.1
       which: 6.0.1
 
   node-releases@2.0.51: {}
@@ -6515,6 +6527,8 @@ snapshots:
       p-limit: 2.3.0
 
   p-map@7.0.6: {}
+
+  p-map@7.0.8: {}
 
   p-try@2.2.0: {}
 
@@ -6977,7 +6991,7 @@ snapshots:
     dependencies:
       '@sigstore/bundle': 4.0.0
       '@sigstore/core': 3.2.1
-      '@sigstore/protobuf-specs': 0.5.1
+      '@sigstore/protobuf-specs': 0.5.2
       '@sigstore/sign': 4.1.1
       '@sigstore/tuf': 4.0.2
       '@sigstore/verify': 3.1.1
@@ -6997,13 +7011,13 @@ snapshots:
     dependencies:
       agent-base: 7.1.4
       debug: 4.4.3
-      socks: 2.8.9
+      socks: 2.8.10
     transitivePeerDependencies:
       - supports-color
 
-  socks@2.8.9:
+  socks@2.8.10:
     dependencies:
-      ip-address: 10.5.0
+      ip-address: 10.7.2
       smart-buffer: 4.2.0
 
   source-map-js@1.2.1: {}
@@ -7015,9 +7029,9 @@ snapshots:
   spdx-expression-parse@4.0.0:
     dependencies:
       spdx-exceptions: 2.5.0
-      spdx-license-ids: 3.0.23
+      spdx-license-ids: 3.0.24
 
-  spdx-license-ids@3.0.23: {}
+  spdx-license-ids@3.0.24: {}
 
   sprintf-js@1.0.3: {}
 
@@ -7134,7 +7148,7 @@ snapshots:
 
   undici-types@8.3.0: {}
 
-  undici@6.28.0: {}
+  undici@6.28.1: {}
 
   undici@7.28.0: {}
 
