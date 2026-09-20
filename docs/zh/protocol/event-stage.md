@@ -5,16 +5,16 @@ icon: ri:fire-line
 
 # 活动关卡与活动商店协议
 
-本页记录耀斑活动的两个每日任务：活动关卡刷取与活动商店兑换。任务定义位于 `tasks/event_stage.json`，共用入口先检查活动主页，再检查游戏主页；两个任务结束后都必须返回游戏主页。
+本页记录耀斑活动的两个每日任务：活动关卡刷取与活动商店兑换。任务定义位于 `tasks/event_stage.json`，入口分别为 `EventStage.EventHub`（关卡）与 `EventStage.EventHubShop`（商店）——两者都先检查活动主页，再检查游戏主页；两个任务结束后都必须返回游戏主页。
 
 ## 任务入口与选项
 
-| 任务         | 入口                  | 选项                               |
-| ------------ | --------------------- | ---------------------------------- |
-| 活动关卡刷取 | `EventStage.EventHub` | `event_stage`、`event_sweep_count` |
-| 活动商店兑换 | `EventStage.EventHub` | 无额外选项，自动处理定额保障商品   |
+| 任务         | 入口                      | 选项                               |
+| ------------ | ------------------------- | ---------------------------------- |
+| 活动关卡刷取 | `EventStage.EventHub`     | `event_stage`、`event_sweep_count` |
+| 活动商店兑换 | `EventStage.EventHubShop` | 无额外选项，自动处理定额保障商品   |
 
-活动关卡当前支持 `EX2-1`、`EX2-2`、`EX3-1`、`EX4-1`。`event_sweep_count` 支持 1、2、3 次及最大次数；活动关卡每日扫荡上限为 3，且不消耗普通体力。两个活动任务都从 `EventStage.EventHub` 开始：先用活动按钮文字（「踏上征途」或「战果上报」）确认当前已在活动主页；未命中时再用一次固定区域模板确认游戏主页；两者都未命中则进入门节点 `EventStage.EnsureHome`（商店任务为 `EventStage.EnsureHomeShop`），由通用回主页枢纽 `Common.EnsureHome` 返回主页后重试。
+活动关卡当前支持 `EX2-1`、`EX2-2`、`EX3-1`、`EX4-1`。`event_sweep_count` 支持 1、2、3 次及最大次数；活动关卡每日扫荡上限为 3，且不消耗普通体力。两个活动任务分别从 `EventStage.EventHub`（关卡）与 `EventStage.EventHubShop`（商店）开始：先用活动按钮文字（「踏上征途」或「战果上报」）确认当前已在活动主页；未命中时再用一次固定区域模板确认游戏主页；两者都未命中则进入门节点 `EventStage.EnsureHome`（商店任务为 `EventStage.EnsureHomeShop`），由通用回主页枢纽 `Common.EnsureHome` 返回主页后重试。
 
 ## 活动关卡刷取流程
 
@@ -26,7 +26,7 @@ EventHub（活动文字命中）→ ClickJourney
   → 次数耗尽/回到地图 → ReturnMainFromStage → CheckReturnedHome
 
 EventHub（未命中）→ CheckHomePage（主页模板命中）→ Start → EventHub
-EventHub、CheckHomePage 均未命中 → ReturnToHome → CheckHomePage
+EventHub、CheckHomePage 均未命中 → EnsureHome（门节点）→ Common.EnsureHome（通用回主页枢纽）→ 回到主页后重试
 ```
 
 关键约定：
@@ -39,16 +39,16 @@ EventHub、CheckHomePage 均未命中 → ReturnToHome → CheckHomePage
 
 ## 活动商店清空
 
-任务选项将 `EventStage.EventHub` 路由到 `ClickBattleReport`，进入活动商店的「定额保障」页：
+活动商店任务的入口为 `EventStage.EventHubShop`，由它路由到 `ClickBattleReport`，进入活动商店的「定额保障」页：
 
 ```text
-EventHub（活动文字命中）→ ClickBattleReport
+EventHubShop（活动文字命中）→ ClickBattleReport
   → SelectFixedGuarantee → CheckAllSoldOut
   → CheckSoldOut1 … CheckSoldOut10
   → 购买可用商品（设置 MAX → 确认购买）
   → ReturnMainFromShop → CheckReturnedHome
 
-活动入口识别失败时，`EventStage.Start` 也会走 `EventStage.ReturnMain`，避免停在非主页状态。
+活动入口识别失败时，`EventStage.Start` / `EventStage.StartShop` 也会走 `EventStage.ReturnMain`，避免停在非主页状态。
 ```
 
 - `CheckAllSoldOut` 在商店区域 `[0,180,1280,540]` OCR「已售罄」；确认达到快捷判断阈值时提示全部售罄并返回主页，否则进入逐件检查。

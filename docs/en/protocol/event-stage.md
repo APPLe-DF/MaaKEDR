@@ -5,16 +5,16 @@ icon: ri:fire-line
 
 # Event Stage and Event Shop Protocol
 
-This page documents the two daily tasks for the Flare event: farming event stages and clearing the event shop. The task definition is `tasks/event_stage.json`; both tasks share `EventStage.CheckHomePage` as their entry.
+This page documents the two daily tasks for the Flare event: farming event stages and clearing the event shop. The task definition is `tasks/event_stage.json`; the two tasks enter at `EventStage.EventHub` (stage) and `EventStage.EventHubShop` (shop) respectively, both check the activity home first and the game home second, and both must return to the game home when finished.
 
 ## Entries and options
 
-| Task                | Entry                      | Options                                                                |
-| ------------------- | -------------------------- | ---------------------------------------------------------------------- |
-| Event stage farming | `EventStage.CheckHomePage` | `event_stage`, `event_sweep_count`                                     |
-| Event shop clearing | `EventStage.CheckHomePage` | No additional options; fixed-guarantee items are handled automatically |
+| Task                | Entry                     | Options                                                                |
+| ------------------- | ------------------------- | ---------------------------------------------------------------------- |
+| Event stage farming | `EventStage.EventHub`     | `event_stage`, `event_sweep_count`                                     |
+| Event shop clearing | `EventStage.EventHubShop` | No additional options; fixed-guarantee items are handled automatically |
 
-Supported stages are `EX2-1`, `EX2-2`, `EX3-1`, and `EX4-1`. `event_sweep_count` supports 1, 2, 3, or maximum sweeps. Event stages do not consume normal stamina and have a daily sweep limit of 3. If the task starts away from the home screen, `EventStage.CheckHomePage` falls through to the gate node `EventStage.EnsureHome` (the shop task uses `EventStage.EnsureHomeShop`), which hands over to the shared return-to-home hub `Common.EnsureHome` before retrying.
+Supported stages are `EX2-1`, `EX2-2`, `EX3-1`, and `EX4-1`. `event_sweep_count` supports 1, 2, 3, or maximum sweeps. Event stages do not consume normal stamina and have a daily sweep limit of 3. If the entry cannot confirm the activity home or the game home, it routes to the gate node `EventStage.EnsureHome` (the shop task uses `EventStage.EnsureHomeShop`), which hands over to the shared return-to-home hub `Common.EnsureHome` before retrying.
 
 ## Event stage farming
 
@@ -36,10 +36,10 @@ Key conventions:
 
 ## Clearing the event shop
 
-The shop task overrides `EventStage.EventHub` to `ClickBattleReport` and opens the `定额保障` (fixed-guarantee) tab:
+The shop task's entry is `EventStage.EventHubShop`, which routes to `ClickBattleReport` and opens the `定额保障` (fixed-guarantee) tab:
 
 ```text
-CheckHomePage → Start → EventHub → ClickBattleReport
+EventHubShop (activity text hit) → ClickBattleReport
   → SelectFixedGuarantee → CheckAllSoldOut
   → CheckSoldOut1 … CheckSoldOut10
   → buy available items (set MAX → confirm)

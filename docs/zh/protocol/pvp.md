@@ -7,11 +7,11 @@ icon: ri:sword-line
 
 ## 任务入口
 
-| 项     | 值                                         |
-| ------ | ------------------------------------------ |
-| 任务名 | 见 `tasks/pvp.json`                        |
-| entry  | 以该文件中定义为准（通常自检主页后进对战） |
-| 流程   | `resource/base/pipeline/pvp.json`          |
+| 项     | 值                                |
+| ------ | --------------------------------- |
+| 任务名 | 见 `tasks/pvp.json`               |
+| entry  | `PVP.EnsureHome`（恒命中门节点）  |
+| 流程   | `resource/base/pipeline/pvp.json` |
 
 ## 任务前置条件
 

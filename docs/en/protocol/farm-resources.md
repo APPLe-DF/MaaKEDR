@@ -7,7 +7,7 @@ icon: ri:treasure-map-line
 
 | Item     | Value                                        |
 | -------- | -------------------------------------------- |
-| Entry    | `FarmResources.CheckHomePage`                |
+| Entry    | `FarmResources.EnsureHome`                   |
 | Task     | `tasks/farm_resources.json`                  |
 | Pipeline | `resource/base/pipeline/farm_resources.json` |
 
@@ -29,10 +29,10 @@ icon: ri:treasure-map-line
 
 ## Remaining Stamina
 
-| Item  | Value                                            |
-| ----- | ------------------------------------------------ |
-| Task  | `tasks/farm_remaining_stamina.json`              |
-| Entry | `FarmResources.CheckHomePage` (reuses farm flow) |
+| Item  | Value                                         |
+| ----- | --------------------------------------------- |
+| Task  | `tasks/farm_remaining_stamina.json`           |
+| Entry | `FarmResources.EnsureHome` (reuses farm flow) |
 
 A copy of Farm Resources locked to **drain-stamina** mode: the task-level `pipeline_override` carries max count (`SetBattleCountMax`), stamina-low count reduction (`CheckStamina → CheckCountOCR / ReduceCount`) and the exit path. It uses its own independent option set `remaining_farm_category` (category → resource type → stage, separate from `farm_resources`), meant to drain whatever stamina is left at that point, usually enabled via task presets rather than checked by default.
 

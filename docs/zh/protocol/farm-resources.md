@@ -10,7 +10,7 @@ icon: ri:treasure-map-line
 | 项     | 值                                           |
 | ------ | -------------------------------------------- |
 | 任务名 | 资源刷取                                     |
-| entry  | `FarmResources.CheckHomePage`                |
+| entry  | `FarmResources.EnsureHome`                   |
 | 定义   | `tasks/farm_resources.json`                  |
 | 流程   | `resource/base/pipeline/farm_resources.json` |
 
@@ -28,11 +28,11 @@ farm_category（刷取板块）
 
 ## 剩余体力刷取
 
-| 项     | 值                                            |
-| ------ | --------------------------------------------- |
-| 任务名 | 剩余体力刷取                                  |
-| entry  | `FarmResources.CheckHomePage`（复用刷取流程） |
-| 定义   | `tasks/farm_remaining_stamina.json`           |
+| 项     | 值                                             |
+| ------ | ---------------------------------------------- |
+| 任务名 | 剩余体力刷取                                   |
+| entry  | `FarmResources.EnsureHome`（复用刷取流程入口） |
+| 定义   | `tasks/farm_remaining_stamina.json`            |
 
 固定为「清空体力」模式的资源刷取：任务级 `pipeline_override` 直接携带最大次数（`SetBattleCountMax`）、体力不足减次数（`CheckStamina → CheckCountOCR / ReduceCount`）与退出路径。使用一套与「资源刷取」**各自独立**的选项 `remaining_farm_category`（刷取板块 → 资源类型 → 关卡），用于榨干执行到此步时的剩余体力，通常在任务预设中启用，默认不勾选。
 

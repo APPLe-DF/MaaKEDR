@@ -272,10 +272,10 @@ JOCR(roi=(x, y, w, h), color_filter="GoldTextFilter")
 
 ```json
 "FarmResources.Start": {
-    "desc": "从主页进入作战界面 [错误兜底: ReturnMain]",
+    "desc": "从主页进入作战界面 [错误兜底: FarmResources.EnsureHome]",
     "recognition": "TemplateMatch",
-    "template": "battle_entry.png",
-    "on_error": ["ReturnMain"]
+    "template": "farm_resources/battle_entry.png",
+    "on_error": ["FarmResources.EnsureHome"]
 }
 ```
 

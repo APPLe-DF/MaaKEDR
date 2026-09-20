@@ -65,14 +65,14 @@ icon: "ri:home-4-fill"
 
 ## 已接入的任务
 
-| 任务                    | 入口                                        | 说明                                                                 |
-| ----------------------- | ------------------------------------------- | -------------------------------------------------------------------- |
-| 资源刷取 / 剩余体力刷取 | `FarmResources.EnsureHome`                  | 流程中段的 `FarmResources.Start` 失败时也回到该门重试                |
-| 领取奖励                | `ClaimRewards`（入口本身即 DirectHit 列表） | 枢纽挂在列表末位                                                     |
-| 玩家对战                | `PVP.EnsureHome`                            | —                                                                    |
-| 体力信息                | `StaminaInfo.EnsureHome`                    | 自定义识别放弃后由枢纽接管，不再直接判任务失败                       |
-| 活动关卡 / 活动商店     | `EventStage.EnsureHome` / `EnsureHomeShop`  | 由 `CheckEventHub` 的 `other_next` 路由进入，任务入口仍为 `EventHub` |
-| 启动游戏                | 不接入                                      | 启动阶段游戏可能尚未进入游戏内，按返回键有退出游戏的风险             |
+| 任务                    | 入口                                              | 说明                                                                                           |
+| ----------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| 资源刷取 / 剩余体力刷取 | `FarmResources.EnsureHome`                        | 流程中段的 `FarmResources.Start` 失败时也回到该门重试                                          |
+| 领取奖励                | `ClaimRewards`（入口本身即 DirectHit 列表）       | 枢纽挂在列表末位                                                                               |
+| 玩家对战                | `PVP.EnsureHome`                                  | —                                                                                              |
+| 体力信息                | `StaminaInfo.EnsureHome`                          | 自定义识别放弃后由枢纽接管，不再直接判任务失败                                                 |
+| 活动关卡 / 活动商店     | `EventStage.EventHub` / `EventStage.EventHubShop` | 门节点 `EnsureHome` / `EnsureHomeShop` 是内部路由目标，由 `CheckEventHub` 的 `other_next` 进入 |
+| 启动游戏                | 不接入                                            | 启动阶段游戏可能尚未进入游戏内，按返回键有退出游戏的风险                                       |
 
 ## 新增界面时
 

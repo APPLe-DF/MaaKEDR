@@ -65,14 +65,14 @@ Reserve `on_error` for genuine failure fallbacks, for example "the stage-exit bu
 
 ## Tasks already wired up
 
-| Task                                | Entry                                      | Notes                                                                       |
-| ----------------------------------- | ------------------------------------------ | --------------------------------------------------------------------------- |
-| Resource farming / leftover stamina | `FarmResources.EnsureHome`                 | Mid-flow `FarmResources.Start` failures also return to this gate            |
-| Reward claiming                     | `ClaimRewards` (already a DirectHit list)  | The hub sits last in that list                                              |
-| PVP battles                         | `PVP.EnsureHome`                           | —                                                                           |
-| Stamina info                        | `StaminaInfo.EnsureHome`                   | After the custom recognition gives up the hub takes over                    |
-| Event stage / event shop            | `EventStage.EnsureHome` / `EnsureHomeShop` | Reached via `CheckEventHub`'s `other_next`; the task entry stays `EventHub` |
-| Game startup                        | Not wired                                  | The game may not be in-game yet; the back key could exit the app            |
+| Task                                | Entry                                             | Notes                                                                                                                  |
+| ----------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Resource farming / leftover stamina | `FarmResources.EnsureHome`                        | Mid-flow `FarmResources.Start` failures also return to this gate                                                       |
+| Reward claiming                     | `ClaimRewards` (already a DirectHit list)         | The hub sits last in that list                                                                                         |
+| PVP battles                         | `PVP.EnsureHome`                                  | —                                                                                                                      |
+| Stamina info                        | `StaminaInfo.EnsureHome`                          | After the custom recognition gives up the hub takes over                                                               |
+| Event stage / event shop            | `EventStage.EventHub` / `EventStage.EventHubShop` | The gate nodes `EnsureHome` / `EnsureHomeShop` are internal routing targets reached via `CheckEventHub`'s `other_next` |
+| Game startup                        | Not wired                                         | The game may not be in-game yet; the back key could exit the app                                                       |
 
 ## Adding a new screen
 
