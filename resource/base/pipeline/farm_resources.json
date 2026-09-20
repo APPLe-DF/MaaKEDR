@@ -631,7 +631,8 @@
         }
     },
     "FarmResources.ExitStageConfirm": {
-        "desc": "点击关卡界面退出键（等待界面冻结后再识别，规避加载/过渡动画期间的识别失败）",
+        "desc": "点击关卡界面退出键（点击范围收紧到 ✕ 中心；✕ 仍在即上次未生效，重试自身，上限 5 次）",
+        "max_hit": 5,
         "recognition": "TemplateMatch",
         "roi": [
             1070,
@@ -649,10 +650,22 @@
             "timeout": 8000
         },
         "action": {
-            "type": "Click"
+            "type": "Click",
+            "param": {
+                "target_offset": [
+                    11,
+                    11,
+                    -22,
+                    -22
+                ]
+            }
         },
         "next": [
+            "FarmResources.ExitStageConfirm",
             "FarmResources.ReturnMainFromFarm"
+        ],
+        "on_error": [
+            "FarmResources.PressBackToHome"
         ]
     },
     "FarmResources.ReturnMainFromFarm": {
@@ -670,6 +683,22 @@
         "action": {
             "type": "Click"
         }
+    },
+    "FarmResources.PressBackToHome": {
+        "desc": "兜底回主页：连发系统返回键（KEYCODE_BACK=4）逐层退出，最多 3 次",
+        "max_hit": 3,
+        "recognition": "DirectHit",
+        "action": {
+            "type": "ClickKey",
+            "param": {
+                "key": 4
+            }
+        },
+        "post_wait_freezes": 500,
+        "next": [
+            "FarmResources.CheckHomePage",
+            "FarmResources.PressBackToHome"
+        ]
     },
     "FarmResources.StartBattle": {
         "desc": "点击开始战斗",
