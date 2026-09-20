@@ -359,6 +359,7 @@
         },
         "post_wait_freezes": 500,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "ClaimRewards.MainHub",
             "[JumpBack]Common.BackButton"
         ]
