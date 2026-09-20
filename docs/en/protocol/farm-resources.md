@@ -7,7 +7,7 @@ icon: ri:treasure-map-line
 
 | Item     | Value                                        |
 | -------- | -------------------------------------------- |
-| Entry    | `FarmResources.CheckHomePage`                |
+| Entry    | `FarmResources.EnsureHome`                   |
 | Task     | `tasks/farm_resources.json`                  |
 | Pipeline | `resource/base/pipeline/farm_resources.json` |
 
@@ -29,10 +29,10 @@ icon: ri:treasure-map-line
 
 ## Remaining Stamina
 
-| Item  | Value                                            |
-| ----- | ------------------------------------------------ |
-| Task  | `tasks/farm_remaining_stamina.json`              |
-| Entry | `FarmResources.CheckHomePage` (reuses farm flow) |
+| Item  | Value                                         |
+| ----- | --------------------------------------------- |
+| Task  | `tasks/farm_remaining_stamina.json`           |
+| Entry | `FarmResources.EnsureHome` (reuses farm flow) |
 
 A copy of Farm Resources locked to **drain-stamina** mode: the task-level `pipeline_override` carries max count (`SetBattleCountMax`), stamina-low count reduction (`CheckStamina → CheckCountOCR / ReduceCount`) and the exit path. It uses its own independent option set `remaining_farm_category` (category → resource type → stage, separate from `farm_resources`), meant to drain whatever stamina is left at that point, usually enabled via task presets rather than checked by default.
 
@@ -40,7 +40,7 @@ Skill training: basic / advanced stages via OCR + lock checks. Custom actions: b
 
 ## Precondition
 
-The task entry is `FarmResources.CheckHomePage`. The game should normally start on the main screen. If home recognition fails, the pipeline uses `FarmResources.ReturnToHome` to find and click the back button, then checks the home screen again; the task fails only if home still cannot be confirmed.
+The task entry is `FarmResources.EnsureHome`, an always-matching gate node. The game should normally start on the main screen. When home cannot be confirmed, the shared return-to-home hub `Common.EnsureHome` takes over: it dismisses the "item obtained" overlay, clicks the top home button, clicks the generic back button, and finally sends the system back key. Once home is reached the original flow is retried, so the entry itself never fails just because the game is not on the main screen. The hub tries up to 10 rounds; the task fails only if home still cannot be reached.
 
 ## Acceptance checklist
 

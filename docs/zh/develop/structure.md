@@ -16,6 +16,7 @@ MaaKEDR/
 ├── resource/base/
 │   ├── default_pipeline.json       # 全局默认参数
 │   ├── pipeline/                   # Pipeline 节点定义
+│   │   ├── common.json             # 跨任务通用节点（Common.EnsureHome 回主页枢纽等）
 │   │   ├── startup.json            # 启动游戏
 │   │   ├── claim_rewards.json      # 领取奖励
 │   │   ├── farm_resources.json     # 资源刷取

@@ -10,7 +10,7 @@ icon: ri:treasure-map-line
 | 项     | 值                                           |
 | ------ | -------------------------------------------- |
 | 任务名 | 资源刷取                                     |
-| entry  | `FarmResources.CheckHomePage`                |
+| entry  | `FarmResources.EnsureHome`                   |
 | 定义   | `tasks/farm_resources.json`                  |
 | 流程   | `resource/base/pipeline/farm_resources.json` |
 
@@ -28,11 +28,11 @@ farm_category（刷取板块）
 
 ## 剩余体力刷取
 
-| 项     | 值                                            |
-| ------ | --------------------------------------------- |
-| 任务名 | 剩余体力刷取                                  |
-| entry  | `FarmResources.CheckHomePage`（复用刷取流程） |
-| 定义   | `tasks/farm_remaining_stamina.json`           |
+| 项     | 值                                             |
+| ------ | ---------------------------------------------- |
+| 任务名 | 剩余体力刷取                                   |
+| entry  | `FarmResources.EnsureHome`（复用刷取流程入口） |
+| 定义   | `tasks/farm_remaining_stamina.json`            |
 
 固定为「清空体力」模式的资源刷取：任务级 `pipeline_override` 直接携带最大次数（`SetBattleCountMax`）、体力不足减次数（`CheckStamina → CheckCountOCR / ReduceCount`）与退出路径。使用一套与「资源刷取」**各自独立**的选项 `remaining_farm_category`（刷取板块 → 资源类型 → 关卡），用于榨干执行到此步时的剩余体力，通常在任务预设中启用，默认不勾选。
 
@@ -89,7 +89,7 @@ farm_category（刷取板块）
 
 ## 任务前置条件
 
-任务以 `FarmResources.CheckHomePage` 为入口：开始前通常应处于游戏主界面。若主页识别失败，Pipeline 会通过 `FarmResources.ReturnToHome` 尝试识别并点击返回按钮，再回到主页重新检查；如果仍无法确认主页，任务才会失败。
+任务以 `FarmResources.EnsureHome` 为入口（恒命中门节点）：开始前通常应处于游戏主界面。未确认到主页时，由通用回主页枢纽 `Common.EnsureHome` 接管——依次尝试关闭「获得物品」弹窗、点击顶部主页按钮、点击通用返回按钮，最后发送系统返回键；回到主页后自动重试原流程，因此任务入口本身不会因为「不在主页」而失败。枢纽最多尝试 10 轮，仍无法回到主页时任务才会失败。
 
 ## 关键节点
 

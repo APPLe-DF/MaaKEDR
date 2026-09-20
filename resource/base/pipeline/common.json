@@ -1,0 +1,67 @@
+{
+    "Common.EnsureHome": {
+        "desc": "通用回主页枢纽（兜底用，须放调用方 next 末位：DirectHit 会压制其后候选）",
+        "max_hit": 10,
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "timeout": 30000,
+        "next": [
+            "[JumpBack]Common.CheckItemObtained",
+            "[JumpBack]Common.ClickHomeButton",
+            "[JumpBack]Common.BackButton",
+            "Common.CheckHomePage",
+            "Common.PressBackToHome"
+        ]
+    },
+    "Common.CheckHomePage": {
+        "desc": "全局主页标记（main_option.png）：命中即视为已回主页。叶子节点，是 EnsureHome 的循环出口",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1199,
+            6,
+            77,
+            83
+        ],
+        "template": "main_option.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        }
+    },
+    "Common.ClickHomeButton": {
+        "desc": "点击顶部主页按钮（return_main.png）",
+        "max_hit": 5,
+        "recognition": "TemplateMatch",
+        "roi": [
+            199,
+            26,
+            85,
+            52
+        ],
+        "template": "return_main.png",
+        "threshold": 0.8,
+        "action": {
+            "type": "Click"
+        },
+        "post_wait_freezes": 500
+    },
+    "Common.PressBackToHome": {
+        "desc": "系统返回键（KEYCODE_BACK）兜底（DirectHit 例外：须排在枢纽收敛判定之后、next 末位）：每次按键后重新判定主页，未回到则由 next 末位重按，最多 5 次",
+        "max_hit": 5,
+        "recognition": "DirectHit",
+        "action": {
+            "type": "ClickKey",
+            "param": {
+                "key": 4
+            }
+        },
+        "post_wait_freezes": 500,
+        "next": [
+            "Common.CheckHomePage",
+            "Common.ClickHomeButton",
+            "Common.PressBackToHome"
+        ]
+    }
+}

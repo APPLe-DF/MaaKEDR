@@ -174,7 +174,9 @@ Pipeline 节点支持两类注释/占位字段（schema 已支持，不会报错
 
 `[JumpBack]` 节点命中后执行动作，然后**跳回父节点**重新尝试 next 列表。只有非 JumpBack 节点能退出循环。
 
-**JumpBack 节点不能有 `next` 字段**——路由由父节点的 `next` 控制。
+**JumpBack 叶子节点不要带 `next` 字段**——执行完即回跳，路由由父节点的 `next` 控制。若该节点确实需要子链（例如枢纽节点本身），其 `next` 会被正常展开，整条子链执行完毕后才会回跳；命中节点「动作失败」时走 `on_error` 且不回跳（详见[官方协议](https://maafw.com/docs/3.1-PipelineProtocol#jump-back-jumpback)）。
+
+本项目在此基础上提供了跨任务复用的**通用回主页枢纽**（`Common.EnsureHome`）：把已知界面的处理节点放进枢纽的 `next`，调用方在 `next` 末位挂 `[JumpBack]Common.EnsureHome`，即可获得「卡在任何界面都能回主页再继续」的能力。枢纽定义、四条约束与已接入的任务见[通用节点与回主页枢纽](./common.md)。
 
 ### 战斗循环
 
@@ -270,10 +272,10 @@ JOCR(roi=(x, y, w, h), color_filter="GoldTextFilter")
 
 ```json
 "FarmResources.Start": {
-    "desc": "从主页进入作战界面 [错误兜底: ReturnMain]",
+    "desc": "从主页进入作战界面 [错误兜底: FarmResources.EnsureHome]",
     "recognition": "TemplateMatch",
-    "template": "battle_entry.png",
-    "on_error": ["ReturnMain"]
+    "template": "farm_resources/battle_entry.png",
+    "on_error": ["FarmResources.EnsureHome"]
 }
 ```
 

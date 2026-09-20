@@ -137,7 +137,7 @@ Reads the current stamina and cap on the home screen, then reports when it will 
 
 It automatically:
 
-1. Confirms it is on the home screen (taps the home button if not)
+1. Confirms it is on the home screen (returns home automatically if not: home button / generic back / system back key)
 2. Reads the home-screen stamina digits
 3. Computes and reports the refill time (once at the natural-recovery cap, stamina no longer refills over time and the task reports so)
 
