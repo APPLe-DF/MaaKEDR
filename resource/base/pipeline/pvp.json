@@ -431,8 +431,9 @@
             "type": "DoNothing"
         },
         "next": [
-            "PVP.Speed2x",
-            "[JumpBack]PVP.BeginCombat"
+            "[JumpBack]PVP.Speed2x",
+            "[JumpBack]PVP.BeginCombat",
+            "PVP.BattleLoop"
         ],
         "focus": {
             "Node.Recognition.Succeeded": {
@@ -444,7 +445,8 @@
         }
     },
     "PVP.Speed2x": {
-        "desc": "点击2倍速",
+        "desc": "点击2倍速。JumpBack 叶子：命中即点并回跳调用方，由调用方重新评估 next；max_hit: 1 保证同一场只点一次（回跳后重复命中会被计数挡住），每场结束后由 PVP.BackToBattleInterface 重置计数，使下一场重新可点",
+        "max_hit": 1,
         "recognition": "TemplateMatch",
         "roi": [
             1188,
@@ -457,10 +459,7 @@
         "pre_delay": 500,
         "action": {
             "type": "Click"
-        },
-        "next": [
-            "PVP.BattleLoop"
-        ]
+        }
     },
     "PVP.BattleLoop": {
         "desc": "战斗循环：等待战斗结束",
@@ -545,13 +544,21 @@
         ]
     },
     "PVP.BackToBattleInterface": {
-        "desc": "确认回到对战界面",
+        "desc": "确认回到对战界面，并重置 PVP.Speed2x 的命中计数（每场一次，保证下一场还能点一次 2 倍速）",
         "recognition": "TemplateMatch",
         "template": "pvp/battle_interface.png",
         "threshold": 0.8,
         "pre_delay": 500,
         "action": {
-            "type": "DoNothing"
+            "type": "Custom",
+            "param": {
+                "custom_action": "ResetCount",
+                "custom_action_param": {
+                    "nodes": [
+                        "PVP.Speed2x"
+                    ]
+                }
+            }
         },
         "next": [
             "PVP.CheckBattleCount"

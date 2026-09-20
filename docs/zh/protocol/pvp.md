@@ -30,10 +30,13 @@ CheckHomePage → Entry → CheckBattleInterface
        → CheckChallengeLimit（今日次数用尽则回主页）
        → StartBattle
        → BeginCombat（可重试直至进入战斗）
-       → CheckInBattle → Speed2x
-       → BattleLoop → CheckBattleEnd（OCR「跳过」）
+       → CheckInBattle
+            → [JumpBack]Speed2x（命中即点 2 倍速，随后回跳本列表）
+            → [JumpBack]BeginCombat（战斗未真正开始时再点一次）
+            → BattleLoop（恒命中收敛，保证进入战斗循环）
+       → CheckBattleEnd（OCR「跳过」）
        → WaitSettlement → ReadResult（Custom 读分/排名）
-       → ExitResult → BackToBattleInterface
+       → ExitResult → BackToBattleInterface（ResetCount 重置倍速命中计数）
        → CheckBattleCount
             → 未满：SelectOpponent
             → 已满：ReturnMain
@@ -43,6 +46,7 @@ CheckHomePage → Entry → CheckBattleInterface
 
 - **SelectOpponent**：`SelectPVPOpponent` 自定义识别，对 3 个对手区域分别 OCR 提取等级，选择等级最低的对手点击。ROI 和点击位置在 pipeline 的 `custom_recognition_param` 中配置
 - **BeginCombat**：一次点击可能无响应；`next` / `on_error` 应允许重试，直到 `CheckInBattle` 成功
+- **Speed2x**：`[JumpBack]` 叶子节点（不带 `next`），命中后点击 2 倍速并回跳 `CheckInBattle` 重新评估其 `next`。为了**每场恰好点一次**、且不依赖「点击后按钮外观会不会变」，用 `max_hit: 1` 挡住回跳后的重复命中（否则会连点，甚至把倍速来回切），再由每场战斗结束后必经的 `PVP.BackToBattleInterface`（动作改为 `ResetCount`）清空 `PVP.Speed2x` 的命中计数——`max_hit` 是任务内累计计数、不按场重置，不清理的话第 2 场起就点不到了。`CheckInBattle.next` 末位的 `BattleLoop`（DirectHit）是收敛出口——**即使倍速按钮没有识别到或已达 `max_hit` 被跳过，也一定会进入战斗循环**，不会像以前那样在 20s 超时后直接判任务失败
 - **BattleLoop**：长超时等待结算；失败可兜底 `ReadResult`
 - **ReadResult**：`ReadPVPResult` 自定义识别，ROI 在 pipeline 的 `custom_recognition_param` 中
 - **高账失败保护判定**：仅以「分数是否变化」为准——分数变化区域 OCR 为空即判定为高级账号首次失败保护（本场不扣分）。实机存在「分数不变但排名仍下降」的情况，因此不能要求排名也无变化，否则这类正常战斗会被误判为保护
@@ -62,6 +66,7 @@ CheckHomePage → Entry → CheckBattleInterface
 4. 今日挑战次数用尽时正确提示并回主页
 5. 战斗失败 / 断线等异常结算有兜底路径
 6. 全量回归：与其它任务（启动、领取奖励、刷取）组合跑一遍无冲突
+7. 倍速：每场战斗恰好一次 `PVP.Speed2x` 命中，点击后紧接 `BattleLoop`，同一场不出现第二次（回到对战界面时会看到 `PVP.BackToBattleInterface` 执行 `ResetCount`，把计数清零供下一场使用）；把 `PVP.Speed2x` 临时置为 `enabled: false` 时仍能进入战斗循环，而不是直接判任务失败
 
 ## 说明
 
