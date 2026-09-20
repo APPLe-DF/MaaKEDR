@@ -16,6 +16,7 @@ MaaKEDR/
 ├── resource/base/
 │   ├── default_pipeline.json       # Global defaults
 │   ├── pipeline/                   # Pipeline node definitions
+│   │   ├── common.json             # Shared cross-task nodes (Common.EnsureHome hub, etc.)
 │   │   ├── startup.json            # Game startup
 │   │   ├── claim_rewards.json      # Reward claiming
 │   │   ├── farm_resources.json     # Resource farming

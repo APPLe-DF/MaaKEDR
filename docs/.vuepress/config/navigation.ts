@@ -25,6 +25,7 @@ const zh: NavigationConfig = {
       sidebar: [
         'setup.md',
         'pipeline.md',
+        'common.md',
         'custom.md',
         'vibe-coding.md',
         'fix.md',
@@ -71,6 +72,7 @@ const en: NavigationConfig = {
       sidebar: [
         'setup.md',
         'pipeline.md',
+        'common.md',
         'custom.md',
         'vibe-coding.md',
         'fix.md',

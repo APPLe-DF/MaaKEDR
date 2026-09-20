@@ -1,4 +1,28 @@
 {
+    "EventStage.EnsureHome": {
+        "desc": "活动入口/回主页：在全局主页则确认后进入活动；不在主页由通用枢纽回主页后重试",
+        "max_hit": 6,
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckHomePage",
+            "[JumpBack]Common.EnsureHome"
+        ]
+    },
+    "EventStage.EnsureHomeShop": {
+        "desc": "活动商店入口/回主页：在全局主页则确认后进入商店；不在主页由通用枢纽回主页后重试",
+        "max_hit": 6,
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "EventStage.CheckHomePageShop",
+            "[JumpBack]Common.EnsureHome"
+        ]
+    },
     "EventStage.CheckHomePage": {
         "desc": "快速确认当前是否为全局主页",
         "max_hit": 3,
@@ -15,10 +39,8 @@
         "post_delay": 0,
         "timeout": 0,
         "next": [
-            "EventStage.Start"
-        ],
-        "on_error": [
-            "EventStage.ReturnToHome"
+            "EventStage.Start",
+            "[JumpBack]Common.EnsureHome"
         ]
     },
     "EventStage.Start": {
@@ -52,7 +74,7 @@
         "desc": "点击活动入口后等待加载并确认活动首页",
         "recognition": "Custom",
         "custom_recognition": "CheckEventHub",
-        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.ReturnToHome\",\"activity_only\":\"true\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.EnsureHome\",\"activity_only\":\"true\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
         "pre_delay": 0,
         "action": {
             "type": "DoNothing"
@@ -62,14 +84,14 @@
             "EventStage.ClickJourney"
         ],
         "on_error": [
-            "EventStage.ReturnToHome"
+            "EventStage.EnsureHome"
         ]
     },
     "EventStage.EventHub": {
         "desc": "三态确认入口：活动首页、全局主页或其他页面",
         "recognition": "Custom",
         "custom_recognition": "CheckEventHub",
-        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.ReturnToHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.EnsureHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
         "pre_delay": 0,
         "action": {
             "type": "DoNothing"
@@ -79,14 +101,14 @@
             "EventStage.ClickJourney"
         ],
         "on_error": [
-            "EventStage.CheckHomePage"
+            "EventStage.EnsureHome"
         ]
     },
     "EventStage.EventHubRetry": {
         "desc": "入口识别超时后额外重试5秒",
         "recognition": "Custom",
         "custom_recognition": "CheckEventHub",
-        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.ReturnToHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.EnsureHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
         "pre_delay": 0,
         "action": {
             "type": "DoNothing"
@@ -96,7 +118,7 @@
             "EventStage.ClickJourney"
         ],
         "on_error": [
-            "EventStage.ReturnToHome"
+            "EventStage.EnsureHome"
         ]
     },
     "EventStage.ClickJourney": {
@@ -2019,52 +2041,6 @@
             "EventStage.ReturnMain"
         ]
     },
-    "EventStage.ReturnToHome": {
-        "desc": "任务开始前不在主页时点击返回按钮回到主页",
-        "max_hit": 3,
-        "recognition": "TemplateMatch",
-        "roi": [
-            199,
-            26,
-            85,
-            52
-        ],
-        "template": "return_main.png",
-        "threshold": 0.8,
-        "pre_delay": 500,
-        "action": {
-            "type": "Click"
-        },
-        "post_delay": 0,
-        "timeout": 15000,
-        "next": [
-            "EventStage.CheckHomePageRecovered"
-        ],
-        "on_error": []
-    },
-    "EventStage.CheckHomePageRecovered": {
-        "desc": "确认返回主页后重新进入关卡活动",
-        "recognition": "TemplateMatch",
-        "roi": [
-            1199,
-            6,
-            77,
-            83
-        ],
-        "template": "main_option.png",
-        "threshold": 0.8,
-        "pre_delay": 0,
-        "action": {
-            "type": "DoNothing"
-        },
-        "timeout": 30000,
-        "next": [
-            "EventStage.Start"
-        ],
-        "on_error": [
-            "EventStage.ReturnToHome"
-        ]
-    },
     "EventStage.CheckHomePageShop": {
         "desc": "商店恢复异常时快速确认当前是否已在全局主页",
         "recognition": "TemplateMatch",
@@ -2080,57 +2056,9 @@
         "post_delay": 0,
         "timeout": 0,
         "next": [
-            "EventStage.StartShop"
-        ],
-        "on_error": [
-            "EventStage.ReturnToHomeShop"
+            "EventStage.StartShop",
+            "[JumpBack]Common.EnsureHome"
         ]
-    },
-    "EventStage.CheckHomePageRecoveredShop": {
-        "desc": "确认返回主页后重新进入活动商店",
-        "recognition": "TemplateMatch",
-        "roi": [
-            1199,
-            6,
-            77,
-            83
-        ],
-        "template": "main_option.png",
-        "threshold": 0.8,
-        "pre_delay": 0,
-        "action": {
-            "type": "DoNothing"
-        },
-        "timeout": 30000,
-        "next": [
-            "EventStage.StartShop"
-        ],
-        "on_error": [
-            "EventStage.ReturnToHomeShop"
-        ]
-    },
-    "EventStage.ReturnToHomeShop": {
-        "desc": "商店任务通过 HOME 按钮返回主页并等待恢复",
-        "max_hit": 3,
-        "recognition": "TemplateMatch",
-        "roi": [
-            199,
-            26,
-            85,
-            52
-        ],
-        "template": "return_main.png",
-        "threshold": 0.8,
-        "pre_delay": 500,
-        "action": {
-            "type": "Click"
-        },
-        "post_delay": 0,
-        "timeout": 15000,
-        "next": [
-            "EventStage.CheckHomePageRecoveredShop"
-        ],
-        "on_error": []
     },
     "EventStage.ClickEP1": {
         "desc": "先单击 EP.1 标签切回最左章节（进入地图默认停在 EP.4 时单击 EP.4 无响应，需先切离再切回）",
@@ -2182,7 +2110,7 @@
         "desc": "商店任务入口：快速确认活动首页或主页",
         "recognition": "Custom",
         "custom_recognition": "CheckEventHub",
-        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickBattleReport\",\"global_next\":\"EventStage.StartShop\",\"other_next\":\"EventStage.ReturnToHomeShop\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickBattleReport\",\"global_next\":\"EventStage.StartShop\",\"other_next\":\"EventStage.EnsureHomeShop\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
         "pre_delay": 0,
         "action": {
             "type": "DoNothing"
@@ -2192,7 +2120,7 @@
             "EventStage.ClickBattleReport"
         ],
         "on_error": [
-            "EventStage.CheckHomePageShop"
+            "EventStage.EnsureHomeShop"
         ]
     },
     "EventStage.StartShop": {
@@ -2226,7 +2154,7 @@
         "desc": "商店任务点击入口后等待活动首页",
         "recognition": "Custom",
         "custom_recognition": "CheckEventHub",
-        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickBattleReport\",\"global_next\":\"EventStage.StartShop\",\"other_next\":\"EventStage.ReturnToHomeShop\",\"activity_only\":\"true\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickBattleReport\",\"global_next\":\"EventStage.StartShop\",\"other_next\":\"EventStage.EnsureHomeShop\",\"activity_only\":\"true\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
         "pre_delay": 0,
         "action": {
             "type": "DoNothing"
@@ -2236,7 +2164,7 @@
             "EventStage.ClickBattleReport"
         ],
         "on_error": [
-            "EventStage.ReturnToHomeShop"
+            "EventStage.EnsureHomeShop"
         ]
     }
 }

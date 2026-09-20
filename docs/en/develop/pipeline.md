@@ -172,6 +172,10 @@ Suitable for repeating sub-module visits (e.g., reward claim loop):
 
 `[JumpBack]` nodes return to the parent after execution. Only non-JumpBack nodes can exit the loop.
 
+**A JumpBack leaf node should not carry a `next` field** — it returns as soon as it finishes, and routing is controlled by the parent's `next`. If such a node genuinely needs a sub-chain (for example a hub node itself), its `next` is expanded normally and the jump-back happens only after the whole sub-chain completes; when the matched node's action fails, the flow goes to `on_error` and does not jump back (see the [official protocol](https://maafw.com/docs/3.1-PipelineProtocol#jump-back-jumpback)).
+
+On top of this pattern the project provides a reusable **return-to-home hub** (`Common.EnsureHome`): put handlers for known screens into the hub's `next` and attach `[JumpBack]Common.EnsureHome` last in the caller's `next` to recover from a stuck screen and continue. See [Shared Nodes & Return-to-Home Hub](./common.md) for the hub definition, the four rules and the tasks already wired up.
+
 ### Battle Loop
 
 ```json

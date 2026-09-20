@@ -4,11 +4,11 @@
             "ClaimRewards.EnsureHome",
             "ClaimRewards.CheckMainInterface",
             "ClaimRewards.MainHub",
-            "[JumpBack]ClaimRewards.ReturnMain"
+            "[JumpBack]Common.EnsureHome"
         ]
     },
     "ClaimRewards.EnsureHome": {
-        "desc": "确认在游戏主页，不在主页则点主页按钮回到主页后再开始",
+        "desc": "确认在游戏主页；未确认到主页则由通用枢纽回主页后重试",
         "recognition": "TemplateMatch",
         "roi": [
             1199,
@@ -24,39 +24,7 @@
         "timeout": 60000,
         "next": [
             "ClaimRewards.CheckMainInterface",
-            "ClaimRewards.ClickHome"
-        ]
-    },
-    "ClaimRewards.ClickHome": {
-        "desc": "点击主页按钮回到主界面",
-        "recognition": "TemplateMatch",
-        "roi": [
-            199,
-            26,
-            85,
-            52
-        ],
-        "template": "return_main.png",
-        "threshold": 0.75,
-        "pre_delay": 500,
-        "action": {
-            "type": "Click"
-        },
-        "post_delay": 1000,
-        "next": [
-            "ClaimRewards.EnsureHome"
-        ]
-    },
-    "ClaimRewards.ReturnMain": {
-        "desc": "返回主界面（任务开始前）",
-        "max_hit": 3,
-        "recognition": "DirectHit",
-        "action": {
-            "type": "DoNothing"
-        },
-        "next": [
-            "ClaimRewards.CheckMainInterface",
-            "[JumpBack]Common.BackButton"
+            "[JumpBack]Common.EnsureHome"
         ]
     },
     "ClaimRewards.MainHub": {

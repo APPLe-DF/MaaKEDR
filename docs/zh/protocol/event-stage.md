@@ -14,7 +14,7 @@ icon: ri:fire-line
 | 活动关卡刷取 | `EventStage.EventHub` | `event_stage`、`event_sweep_count` |
 | 活动商店兑换 | `EventStage.EventHub` | 无额外选项，自动处理定额保障商品   |
 
-活动关卡当前支持 `EX2-1`、`EX2-2`、`EX3-1`、`EX4-1`。`event_sweep_count` 支持 1、2、3 次及最大次数；活动关卡每日扫荡上限为 3，且不消耗普通体力。两个活动任务都从 `EventStage.EventHub` 开始：先用活动按钮文字（「踏上征途」或「战果上报」）确认当前已在活动主页；未命中时再用一次固定区域模板确认游戏主页；两者都未命中才通过 `EventStage.ReturnToHome` 返回主页后重试。
+活动关卡当前支持 `EX2-1`、`EX2-2`、`EX3-1`、`EX4-1`。`event_sweep_count` 支持 1、2、3 次及最大次数；活动关卡每日扫荡上限为 3，且不消耗普通体力。两个活动任务都从 `EventStage.EventHub` 开始：先用活动按钮文字（「踏上征途」或「战果上报」）确认当前已在活动主页；未命中时再用一次固定区域模板确认游戏主页；两者都未命中则进入门节点 `EventStage.EnsureHome`（商店任务为 `EventStage.EnsureHomeShop`），由通用回主页枢纽 `Common.EnsureHome` 返回主页后重试。
 
 ## 活动关卡刷取流程
 

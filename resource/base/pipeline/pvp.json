@@ -29,6 +29,18 @@
         "connected": false,
         "count": 1000
     },
+    "PVP.EnsureHome": {
+        "desc": "任务入口：在主页则确认后进入对战流程；不在主页由通用枢纽回主页后重试",
+        "max_hit": 6,
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "PVP.CheckHomePage",
+            "[JumpBack]Common.EnsureHome"
+        ]
+    },
     "PVP.CheckHomePage": {
         "desc": "确认当前是否在游戏主页",
         "recognition": "TemplateMatch",
@@ -57,10 +69,7 @@
         "timeout": 5000,
         "next": [
             "PVP.Entry",
-            "[JumpBack]PVP.ReturnMain"
-        ],
-        "on_error": [
-            "PVP.ReturnToHome"
+            "[JumpBack]Common.EnsureHome"
         ]
     },
     "PVP.Entry": {
@@ -578,25 +587,5 @@
         "action": {
             "type": "Click"
         }
-    },
-    "PVP.ReturnToHome": {
-        "desc": "任务开始前不在主页时点击返回按钮回到主页",
-        "max_hit": 3,
-        "recognition": "TemplateMatch",
-        "roi": [
-            199,
-            26,
-            85,
-            52
-        ],
-        "template": "return_main.png",
-        "threshold": 0.8,
-        "pre_delay": 500,
-        "action": {
-            "type": "Click"
-        },
-        "next": [
-            "PVP.CheckHomePage"
-        ]
     }
 }

@@ -2,7 +2,7 @@
     "task": [
         {
             "name": "剩余体力刷取",
-            "entry": "FarmResources.CheckHomePage",
+            "entry": "FarmResources.EnsureHome",
             "default_check": false,
             "group": [
                 "Daily"
@@ -46,7 +46,8 @@
                 },
                 "FarmResources.ExitStageConfirm": {
                     "next": [
-                        "FarmResources.ReturnMainFromFarm"
+                        "FarmResources.ReturnMainFromFarm",
+                        "Common.CheckHomePage"
                     ]
                 }
             }

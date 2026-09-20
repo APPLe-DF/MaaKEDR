@@ -14,7 +14,7 @@ This page documents the two daily tasks for the Flare event: farming event stage
 | Event stage farming | `EventStage.CheckHomePage` | `event_stage`, `event_sweep_count`                                     |
 | Event shop clearing | `EventStage.CheckHomePage` | No additional options; fixed-guarantee items are handled automatically |
 
-Supported stages are `EX2-1`, `EX2-2`, `EX3-1`, and `EX4-1`. `event_sweep_count` supports 1, 2, 3, or maximum sweeps. Event stages do not consume normal stamina and have a daily sweep limit of 3. If the task starts away from the home screen, `EventStage.CheckHomePage` uses `EventStage.ReturnToHome` to try to return home before checking again.
+Supported stages are `EX2-1`, `EX2-2`, `EX3-1`, and `EX4-1`. `event_sweep_count` supports 1, 2, 3, or maximum sweeps. Event stages do not consume normal stamina and have a daily sweep limit of 3. If the task starts away from the home screen, `EventStage.CheckHomePage` falls through to the gate node `EventStage.EnsureHome` (the shop task uses `EventStage.EnsureHomeShop`), which hands over to the shared return-to-home hub `Common.EnsureHome` before retrying.
 
 ## Event stage farming
 
