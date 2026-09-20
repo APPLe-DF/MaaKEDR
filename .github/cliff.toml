@@ -22,6 +22,10 @@ body = """
         {%- endif %}
 {% endmacro -%}
 
+{% if version == "v1.5.5" %}\
+> **建议完整更新 | Full update recommended**：本版本修复了 Agent 运行时依赖版本不一致问题，请下载完整安装包并替换旧目录，不建议直接覆盖旧版本目录。
+{% endif %}\
+
 {% if version %}\
     ## {{ version | trim_start_matches(pat="v") }} ({{ timestamp | date(format="%Y-%m-%d") }})
 {% else %}\
