@@ -48,7 +48,7 @@
         "post_wait_freezes": 500
     },
     "Common.PressBackToHome": {
-        "desc": "系统返回键（KEYCODE_BACK）兜底：每次按键后重新判定主页，未回到则由 next 末位重按，最多 5 次",
+        "desc": "系统返回键（KEYCODE_BACK）兜底（DirectHit 例外：须排在枢纽收敛判定之后、next 末位）：每次按键后重新判定主页，未回到则由 next 末位重按，最多 5 次",
         "max_hit": 5,
         "recognition": "DirectHit",
         "action": {

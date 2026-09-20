@@ -10,14 +10,14 @@ icon: "ri:home-4-fill"
 
 ## Node inventory
 
-| Node                       | Type          | Purpose                                                                           |
-| -------------------------- | ------------- | --------------------------------------------------------------------------------- |
-| `Common.EnsureHome`        | DirectHit     | Return-to-home hub: handles known overlays/sub-pages until the home marker hits   |
-| `Common.CheckHomePage`     | TemplateMatch | Global home marker (`main_option.png`, threshold 0.75). Leaf, the hub's exit      |
-| `Common.ClickHomeButton`   | TemplateMatch | Clicks the top home button (`return_main.png`)                                    |
-| `Common.PressBackToHome`   | DirectHit     | System back key (`KEYCODE_BACK`): re-checks home after each press                 |
-| `Common.CheckItemObtained` | TemplateMatch | Full-screen "item obtained" overlay (defined in `claim_rewards.json`, cross-file) |
-| `Common.BackButton`        | TemplateMatch | Generic back arrow (defined in `claim_rewards.json`)                              |
+| Node                       | Type          | Purpose                                                                                                                                                        |
+| -------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Common.EnsureHome`        | DirectHit     | Return-to-home hub: handles known overlays/sub-pages until the home marker hits                                                                                |
+| `Common.CheckHomePage`     | TemplateMatch | Global home marker (`main_option.png`, threshold 0.75). Leaf, the hub's exit                                                                                   |
+| `Common.ClickHomeButton`   | TemplateMatch | Clicks the top home button (`return_main.png`)                                                                                                                 |
+| `Common.PressBackToHome`   | DirectHit     | **Deliberate DirectHit fallback exception**: sits after `Common.CheckHomePage` and last in the hub's `next`; its nested `next` re-checks home after each press |
+| `Common.CheckItemObtained` | TemplateMatch | Full-screen "item obtained" overlay (defined in `claim_rewards.json`, cross-file)                                                                              |
+| `Common.BackButton`        | TemplateMatch | Generic back arrow (defined in `claim_rewards.json`)                                                                                                           |
 
 ## Hub definition
 
@@ -56,7 +56,7 @@ When the task entry cannot confirm the home screen, the task no longer fails out
 
 1. **Always keep the `[JumpBack]` prefix**: the hub's exit `Common.CheckHomePage` is a leaf, and the jump-back is what hands control back to the caller. Without it the hub ends the flow and the task "succeeds" without doing anything.
 2. **Always place the hub last**: it is a `DirectHit` node, so anything after it would never be evaluated.
-3. **Handlers inside the hub must be leaves and must not be `DirectHit`**; an always-matching fallback (`PressBackToHome`) may only appear as a non-JumpBack child after the convergence check, otherwise it starves the check.
+3. **`[JumpBack]` handlers inside the hub must be leaves and must not be `DirectHit`**, otherwise they starve the convergence check. The single deliberate exception is the back-key fallback `Common.PressBackToHome`: it is `DirectHit` **by design** and is **not** a `[JumpBack]` handler; it must sit _after_ `Common.CheckHomePage` as the **last** entry of the hub's `next`, and its own nested `next` (`Common.CheckHomePage` → `Common.ClickHomeButton` → itself) re-checks home after every press so the retry chain stays bounded (`max_hit: 5`). Moving it before the convergence check, or turning it into a `[JumpBack]` child, breaks the hub.
 4. **List order**: `[JumpBack]` handlers first, the non-JumpBack convergence check next, an always-matching fallback last. A node's `next` and `on_error` are counted together, so the same target must not appear twice (`pnpm check:maa` reports `duplicate-next`).
 
 ## When to use on_error
