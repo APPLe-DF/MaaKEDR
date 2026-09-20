@@ -94,7 +94,8 @@ jobs:
             if ($agent.child_exec -ne $expectedChildExec) {
               throw "Unexpected Agent child_exec in ${packageName}: $($agent.child_exec)"
             }
-            if (($agent.child_args -join ' ') -ne '-u agent/bootstrap.py') {
+            $expectedChildArgs = if ($packageName -eq 'package-mxu') { '-u ./agent/main.py' } else { '-u agent/bootstrap.py' }
+            if (($agent.child_args -join ' ') -ne $expectedChildArgs) {
               throw "Unexpected Agent child_args in ${packageName}: $($agent.child_args -join ' ')"
             }
 
