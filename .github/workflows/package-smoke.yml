@@ -90,7 +90,8 @@ jobs:
             $packageRoot = (Resolve-Path -LiteralPath (Join-Path dist $packageName)).Path
             $interface = Get-Content -LiteralPath (Join-Path $packageRoot 'interface.json') -Raw | ConvertFrom-Json
             $agent = $interface.agent[0]
-            if ($agent.child_exec -ne 'python/python.exe') {
+            $expectedChildExec = if ($packageName -eq 'package-mxu') { './python/python.exe' } else { 'python/python.exe' }
+            if ($agent.child_exec -ne $expectedChildExec) {
               throw "Unexpected Agent child_exec in ${packageName}: $($agent.child_exec)"
             }
             if (($agent.child_args -join ' ') -ne '-u agent/bootstrap.py') {
