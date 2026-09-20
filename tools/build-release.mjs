@@ -37,7 +37,7 @@ if (!isReleaseVersion(sourceVersion)) {
     throw new Error("interface.json version must be a release tag such as v0.1.0");
 }
 
-const releaseTag = detectReleaseTag();
+const releaseTag = detectExplicitReleaseTag() ?? detectReleaseTag();
 if (!dryRun && !releaseTag) {
     throw new Error("release build requires a SemVer Git tag such as v0.1.0");
 }
@@ -680,6 +680,16 @@ function releaseAgentChildArgs() {
 
 function isRecord(value) {
     return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function detectExplicitReleaseTag() {
+    const index = process.argv.indexOf("--release-tag");
+    if (index === -1) return undefined;
+    const value = process.argv[index + 1];
+    if (!value || value.startsWith("--")) {
+        throw new Error("--release-tag requires a SemVer tag");
+    }
+    return value;
 }
 
 function detectReleaseTag() {

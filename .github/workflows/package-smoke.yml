@@ -1,0 +1,119 @@
+name: Package Smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "agent/**"
+      - "interface.json"
+      - "maa-project.json"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pyproject.toml"
+      - "requirements.txt"
+      - "uv.lock"
+      - "tools/build-release.mjs"
+      - "tools/sync-runtime.mjs"
+      - ".github/workflows/package-smoke.yml"
+      - ".github/workflows/release.yml"
+  pull_request:
+    paths:
+      - "agent/**"
+      - "interface.json"
+      - "maa-project.json"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pyproject.toml"
+      - "requirements.txt"
+      - "uv.lock"
+      - "tools/build-release.mjs"
+      - "tools/sync-runtime.mjs"
+      - ".github/workflows/package-smoke.yml"
+      - ".github/workflows/release.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: package-smoke-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package:
+    name: windows-x64 package smoke
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+      - uses: actions/setup-python@v7
+        if: hashFiles('pyproject.toml') != ''
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v9.0.0
+        if: hashFiles('pyproject.toml') != ''
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm sync:runtime
+        env:
+          CREATE_MAA_PROJECT_MAX_EXTRACTED_BYTES: "2147483648"
+          CREATE_MAA_PROJECT_RUNTIME_PLATFORM: win-x64
+          GITHUB_TOKEN: ${{ github.token }}
+      - run: node tools/build-release.mjs --release-tag v0.0.0-package-smoke
+        env:
+          CREATE_MAA_PROJECT_RUNTIME_PLATFORM: win-x64
+      - name: Verify packaged agent
+        shell: pwsh
+        run: |
+          $project = Get-Content -LiteralPath 'maa-project.json' -Raw | ConvertFrom-Json
+          $expected = @()
+          if ($project.runtime.mfa.enabled -ne $false) { $expected += 'package-mfaa' }
+          if ($project.runtime.mxu.enabled -ne $false) { $expected += 'package-mxu' }
+
+          $actual = @(
+            Get-ChildItem -LiteralPath dist -Directory |
+              Where-Object Name -Like 'package-*' |
+              ForEach-Object Name |
+              Sort-Object
+          )
+          $difference = Compare-Object -ReferenceObject ($expected | Sort-Object) -DifferenceObject $actual
+          if ($difference) {
+            throw "Expected package directories $($expected -join ', '), got $($actual -join ', ')"
+          }
+
+          foreach ($packageName in $expected) {
+            $packageRoot = (Resolve-Path -LiteralPath (Join-Path dist $packageName)).Path
+            $interface = Get-Content -LiteralPath (Join-Path $packageRoot 'interface.json') -Raw | ConvertFrom-Json
+            $agent = $interface.agent[0]
+            if ($agent.child_exec -ne 'python/python.exe') {
+              throw "Unexpected Agent child_exec in ${packageName}: $($agent.child_exec)"
+            }
+            if (($agent.child_args -join ' ') -ne '-u agent/bootstrap.py') {
+              throw "Unexpected Agent child_args in ${packageName}: $($agent.child_args -join ' ')"
+            }
+
+            $python = Join-Path $packageRoot 'python\python.exe'
+            if (-not (Test-Path -LiteralPath $python -PathType Leaf)) {
+              throw "Embedded Python is missing: $python"
+            }
+
+            Push-Location $packageRoot
+            try {
+              & $python -I -c 'import sys; sys.path.insert(0, "agent"); import loguru, maa, numpy; import agent_runtime, custom; custom.register_all(); print("embedded Python imports passed")'
+              if ($LASTEXITCODE -ne 0) {
+                throw "Embedded Python import smoke failed in $packageName"
+              }
+              & $python -I -m compileall -q agent
+              if ($LASTEXITCODE -ne 0) {
+                throw "Agent compile smoke failed in $packageName"
+              }
+            } finally {
+              Pop-Location
+            }
+            Write-Host "[OK] $packageName"
+          }
