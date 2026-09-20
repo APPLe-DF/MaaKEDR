@@ -11,6 +11,7 @@
             "[JumpBack]Common.CheckItemObtained",
             "[JumpBack]Common.ClickHomeButton",
             "[JumpBack]Common.BackButton",
+            "[JumpBack]FarmResources.ExitStageConfirm",
             "Common.CheckHomePage",
             "Common.PressBackToHome"
         ]
