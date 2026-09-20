@@ -6,7 +6,7 @@ loguru==0.7.3
     # via maakedr
 maaagentbinary==1.0.1
     # via maafw
-maafw==5.12.3
+maafw==5.13.1
     # via maakedr
 numpy==2.5.1
     # via maafw

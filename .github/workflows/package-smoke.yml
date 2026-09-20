@@ -86,6 +86,12 @@ jobs:
             throw "Expected package directories $($expected -join ', '), got $($actual -join ', ')"
           }
 
+           $expectedMaafwVersion = (Get-Content -LiteralPath 'requirements.txt' |
+             Where-Object { $_ -match '^maafw==' } |
+             Select-Object -First 1) -replace '^maafw==', ''
+           if ([string]::IsNullOrWhiteSpace($expectedMaafwVersion)) {
+             throw 'Could not determine expected maafw version from requirements.txt'
+           }
           foreach ($packageName in $expected) {
             $packageRoot = (Resolve-Path -LiteralPath (Join-Path dist $packageName)).Path
             $interface = Get-Content -LiteralPath (Join-Path $packageRoot 'interface.json') -Raw | ConvertFrom-Json
@@ -102,6 +108,13 @@ jobs:
             $python = Join-Path $packageRoot 'python\python.exe'
             if (-not (Test-Path -LiteralPath $python -PathType Leaf)) {
               throw "Embedded Python is missing: $python"
+            }
+            $actualMaafwVersion = (& $python -I -c 'import importlib.metadata as metadata; print(metadata.version("maafw"))' | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0) {
+              throw "Could not read embedded maafw version in $packageName"
+            }
+            if ($actualMaafwVersion -ne $expectedMaafwVersion) {
+              throw "Embedded maafw version mismatch in ${packageName}: expected $expectedMaafwVersion, got $actualMaafwVersion"
             }
 
             Push-Location $packageRoot
