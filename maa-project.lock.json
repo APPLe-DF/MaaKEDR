@@ -179,7 +179,7 @@
             "templateHash": "5c158bda7393675ec21f0fe0239400a8683cfbc7a509410dc3fd06cc556a766c"
         },
         "tools/schema/interface.schema.json": {
-            "hash": "55c52510ffcca6a981d8640fdb5bc406cbfcc375b8a4b5bc43eea488d9aa45ec",
+            "hash": "282f810d48628634d1708b7678faccd0e6d77cd1f40a5c391a13f5908f19f950",
             "templateHash": "4305d4cb804c1598feef224457d428a9b8acde58b868845c850eb124930d9ef5"
         },
         "tools/schema/interface_config.schema.json": {
@@ -195,7 +195,7 @@
             "templateHash": "022dbdb5b8030d8aa5802a40d59c46255546be13bda781d3fd1baba7a90f1bf8"
         },
         "tools/schema/schema-manifest.json": {
-            "hash": "c618e3bb0caf5b698f2aee6c470bdc249fa3d7e56fa1adf577aeea0e4a8c8bd0",
+            "hash": "09a915bebba7a5fbb99d75c1033a13caa1680a39ec82a629a3dba7431d085772",
             "templateHash": "3d74d39a564dec1648a0aa1b945bc48ca5607e4a73e3ce7af433b362c7f63493"
         },
         "tools/sync-schema.mjs": {
