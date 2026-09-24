@@ -39,11 +39,11 @@ importers:
         specifier: 0.18.4
         version: 0.18.4
       prettier:
-        specifier: 3.9.6
-        version: 3.9.6
+        specifier: 3.9.8
+        version: 3.9.8
       prettier-plugin-multiline-arrays:
         specifier: 4.1.11
-        version: 4.1.11(prettier@3.9.6)
+        version: 4.1.11(prettier@3.9.8)
       sass:
         specifier: ^1.104.1
         version: 1.104.1
@@ -2791,8 +2791,8 @@ packages:
     peerDependencies:
       prettier: '>=3.0.0 <4.0.0'
 
-  prettier@3.9.6:
-    resolution: {integrity: sha512-OpN0zzVdiaiAhxpuuj5efpIS4sY9j7bY6uR5mnj5yPzGkdkjNKSJeUThPb60Jw29QuAZgA4o+/iB49kFiaBX6g==}
+  prettier@3.9.8:
+    resolution: {integrity: sha512-WRFq3Wn3WId7LLROfMLdH7xaFr2jR62wU8nLO6rQUOLOxNZUviyJQs1M0iIhLexSFy+L+w0ch66wtoO2jRjG0A==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -6552,14 +6552,14 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  prettier-plugin-multiline-arrays@4.1.11(prettier@3.9.6):
+  prettier-plugin-multiline-arrays@4.1.11(prettier@3.9.8):
     dependencies:
       '@augment-vir/assert': 32.2.1
       '@augment-vir/common': 32.2.1
-      prettier: 3.9.6
+      prettier: 3.9.8
       proxy-vir: 2.0.3
 
-  prettier@3.9.6: {}
+  prettier@3.9.8: {}
 
   proc-log@6.1.0: {}
 
