@@ -30,7 +30,7 @@ docs/
 
 - 三个自定义区块在 `docs/.vuepress/components/`：`HomeDownload`（快捷下载）、`HomeStats`（项目规模）、`HomePointerField`（背景的识别框装饰层）。必须先在同目录的 `client.ts` 里注册，`config` 中的 `type:` 才认得它们
 - 首页专属样式只有 `docs/.vuepress/styles/home-hero.css` 一个文件，其中的**规则选择器**一律以 `.vp-home` 开头，以免漏到文档页上；只有 `--vp-home-*` 命名的 CSS 变量例外，它们必须声明在全局 `:root` / `html[data-theme="dark"]` 上才能被继承，靠命名前缀保证不与主题自带变量撞名
-- `docs/.vuepress/data/*.json` 是构建期生成的：`pnpm docs:build` / `docs:dev` 会先跑 `tools/gen-docs-downloads.mjs` 和 `tools/gen-docs-stats.mjs` 写出 release 资产和仓库规模统计。取不到数据（例如无网络的全新 clone）时脚本会写占位文件（空 assets / 全零），两个区块降级成一行提示而不是把构建带崩。**不要手改**，改了也会被下次构建覆盖
+- `docs/.vuepress/data/*.json` 是构建期生成的：`pnpm docs:build` / `docs:dev` 会先跑 `tools/gen-docs-downloads.mjs` 和 `tools/gen-docs-stats.mjs` 写出 release 资产和仓库规模统计。取不到数据（例如无网络的全新 clone）时脚本会写占位文件（空 assets / 全零），两个区块降级成一行提示而不是把构建带崩；上一次留下的文件如果解析不出、或缺了首页要用的字段，也会被占位覆盖而不是继续沿用。**不要手改**，改了也会被下次构建覆盖
 - `HomePointerField` 里的节点名标签是从 `resource/base/pipeline/*.json` 抄来的一份静态快照，重命名或删除 pipeline 节点不会自动反映到首页
 
 ## Frontmatter

@@ -7,6 +7,54 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
 const OUT = resolve(ROOT, "docs", ".vuepress", "data", "project-stats.json");
 
+const FIGURES = [
+    "tasks",
+    "pipelineFiles",
+    "pipelineNodes",
+    "customActions",
+    "customRecognitions",
+    "templateImages",
+    "docPagesZh",
+    "docPagesEn",
+];
+
+// 和 gen-docs-downloads 一样：统计出问题不能把文档构建带崩，留着上一次的结果，留不住就补全零占位。
+const zeroed = {generatedAt: null};
+for (const key of FIGURES) zeroed[key] = 0;
+const PLACEHOLDER = `${JSON.stringify(zeroed, null, 4)}\n`;
+
+// 首页把每个数字都当 number 直接相加/渲染，所以「能 parse」还不够，缺键或类型不对都算坏文件。
+function isUsableStats(value) {
+    if (!value || typeof value !== "object") return false;
+    if (value.generatedAt !== null && typeof value.generatedAt !== "string") return false;
+    return FIGURES.every((key) => Number.isInteger(value[key]) && value[key] >= 0);
+}
+
+function readPrevious() {
+    try {
+        return JSON.parse(readFileSync(OUT, "utf8"));
+    } catch {
+        // 全新 clone 没有上一次的文件；半截 JSON 也走这里，不能当成“有旧数据”。
+        return null;
+    }
+}
+
+function keep(reason) {
+    const previous = readPrevious();
+    if (isUsableStats(previous)) {
+        console.warn(`[gen-docs-stats] ${reason} — keeping the previously generated file`);
+        return;
+    }
+    // 组件是静态 import 这份 JSON 的，缺文件或坏文件都会让整站构建失败，所以必须落成能用的占位。
+    // 提示要分清「全新 clone」和「上次留下了坏文件」，否则排查时看不出是后者。
+    const hadFile = existsSync(OUT);
+    mkdirSync(dirname(OUT), {recursive: true});
+    writeFileSync(OUT, PLACEHOLDER, "utf8");
+    console.warn(
+        `[gen-docs-stats] ${reason} — ${hadFile ? "replaced the unusable previous file" : "wrote a zeroed placeholder"} so the docs build still resolves`,
+    );
+}
+
 function walk(dir, acc = []) {
     if (!existsSync(dir)) return acc;
     for (const entry of readdirSync(dir, {withFileTypes: true})) {
@@ -111,22 +159,7 @@ let stats;
 try {
     stats = main();
 } catch (error) {
-    // 和 gen-docs-downloads 一样：统计出问题不能把文档构建带崩，留着上一次的结果。
-    console.warn(
-        `[gen-docs-stats] ${error instanceof Error ? error.message : error} — keeping the previously generated file`,
-    );
-    // 全新 clone 没有上一次的结果，组件的静态 import 会失败，所以补一份全零占位、由首页降级显示。
-    try {
-        readFileSync(OUT);
-    } catch {
-        mkdirSync(dirname(OUT), {recursive: true});
-        writeFileSync(
-            OUT,
-            `${JSON.stringify({generatedAt: null, tasks: 0, pipelineFiles: 0, pipelineNodes: 0, customActions: 0, customRecognitions: 0, templateImages: 0, docPagesZh: 0, docPagesEn: 0}, null, 4)}\n`,
-            "utf8",
-        );
-        console.warn("[gen-docs-stats] wrote a zeroed placeholder so the docs build still resolves");
-    }
+    keep(error instanceof Error ? error.message : String(error));
     process.exit(0);
 }
 

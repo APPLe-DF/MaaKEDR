@@ -1,4 +1,4 @@
-import {mkdirSync, readFileSync, writeFileSync} from "node:fs";
+import {existsSync, mkdirSync, readFileSync, writeFileSync} from "node:fs";
 import {dirname, resolve} from "node:path";
 import {fileURLToPath} from "node:url";
 
@@ -24,17 +24,40 @@ const UI_ORDER = [
 // Never fail the docs build over a release lookup: fall back to the committed file.
 const PLACEHOLDER = `${JSON.stringify({version: null, publishedAt: null, releasePage: null, assets: []}, null, 4)}\n`;
 
-function keep(reason) {
-    console.warn(`[gen-docs-downloads] ${reason} — keeping the previously generated file`);
-    // 全新 clone 没有“上一次的文件”可留，而组件是静态 import 这份 JSON 的，缺文件会让整站构建失败。
-    // 所以补一份空数据，首页自己降级成“暂无发布数据”。
-    try {
-        readFileSync(OUT);
-    } catch {
-        mkdirSync(dirname(OUT), {recursive: true});
-        writeFileSync(OUT, PLACEHOLDER, "utf8");
-        console.warn("[gen-docs-downloads] wrote an empty placeholder so the docs build still resolves");
+// 首页在 assets 非空时直接读 version 和 publishedAt.slice(0, 10)，所以「能 parse」不等于「能用」。
+function isUsableRelease(value) {
+    if (!value || typeof value !== "object") return false;
+    if (!Array.isArray(value.assets)) return false;
+    if (!value.assets.every((asset) => asset && typeof asset.name === "string" && typeof asset.url === "string")) {
+        return false;
     }
+    if (value.assets.length === 0) return value.version === null && value.publishedAt === null;
+    return typeof value.version === "string" && typeof value.publishedAt === "string";
+}
+
+function readPrevious() {
+    try {
+        return JSON.parse(readFileSync(OUT, "utf8"));
+    } catch {
+        // 全新 clone 没有上一次的文件；半截 JSON 也走这里，不能当成“有旧数据”。
+        return null;
+    }
+}
+
+function keep(reason) {
+    const previous = readPrevious();
+    if (isUsableRelease(previous)) {
+        console.warn(`[gen-docs-downloads] ${reason} — keeping the previously generated file`);
+        return;
+    }
+    // 组件是静态 import 这份 JSON 的，缺文件或坏文件都会让整站构建失败，所以必须落成能用的占位。
+    // 提示要分清「全新 clone」和「上次留下了坏文件」，否则排查时看不出是后者。
+    const hadFile = existsSync(OUT);
+    mkdirSync(dirname(OUT), {recursive: true});
+    writeFileSync(OUT, PLACEHOLDER, "utf8");
+    console.warn(
+        `[gen-docs-downloads] ${reason} — ${hadFile ? "replaced the unusable previous file" : "wrote an empty placeholder"} so the docs build still resolves`,
+    );
 }
 
 async function fetchLatest() {
