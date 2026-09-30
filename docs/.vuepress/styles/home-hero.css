@@ -1,0 +1,439 @@
+/* Plume 的 `type: hero` 块不渲染 hero.image，logo 只能挂在这里。 */
+.vp-home-hero .hero-content::before {
+    content: "";
+    display: block;
+    width: 112px;
+    height: 112px;
+    margin: 0 auto 20px;
+    background: url("/images/maakedr-logo_512x512.png") center / contain no-repeat;
+    /* 支点放在挂绳处，摆起来才是“吊着晃”而不是“整块平移”。 */
+    transform-origin: 50% 6%;
+    animation: hero-logo-swing 9s ease-in-out infinite;
+}
+
+/* 衰减式轻摆，末尾留一段静止再重来。首尾都回到 0deg 很关键：
+   主题的 prefers-reduced-motion 兜底会把动画压成 1ms 跑完，停在的必须是正位而不是歪着。 */
+@keyframes hero-logo-swing {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    8% {
+        transform: rotate(1.8deg);
+    }
+
+    18% {
+        transform: rotate(-1.2deg);
+    }
+
+    27% {
+        transform: rotate(0.7deg);
+    }
+
+    35% {
+        transform: rotate(-0.3deg);
+    }
+
+    42%,
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+@media (min-width: 640px) {
+    .vp-home-hero .hero-content::before {
+        width: 176px;
+        height: 176px;
+        margin-bottom: 28px;
+    }
+}
+
+/* hero 定高 100vh 又居中对齐，按钮变多后矮屏上会溢出压住下一块；改成可长高的下限。
+   .hero-container 的 height:100% 在 auto 高度父级下会塌陷成内容高，导致内容顶格、下方空一片，
+   所以这里要给它同样的下限。!important 是为了盖过主题 scoped 样式的选择器权重。 */
+.vp-home-hero.full {
+    height: auto !important;
+    min-height: 100vh;
+}
+
+.vp-home-hero.full .hero-container {
+    min-height: 100vh;
+}
+
+/* 彩虹只留给标题：渐变铺两遍，位移一格即走完一个周期，所以循环没有接缝。 */
+.vp-home-hero .hero-content .hero-name {
+    --vp-bg-home-hero-name: linear-gradient(
+        100deg,
+        #ff8fab,
+        #ffb86b,
+        #ffe066,
+        #7ee081,
+        #56cfe1,
+        #9d7bff,
+        #ff8fab,
+        #ffb86b,
+        #ffe066,
+        #7ee081,
+        #56cfe1,
+        #9d7bff
+    );
+    background-size: 200% 100%;
+    animation: hero-name-rainbow 7s linear infinite;
+}
+
+@keyframes hero-name-rainbow {
+    from {
+        background-position: 0% 50%;
+    }
+    to {
+        background-position: 100% 50%;
+    }
+}
+
+/* 整页底色：淡粉蓝图网格，和上面那层指针粒子是同一个语言（识别、坐标、720p 基准）。
+   z-index:0 让 .vp-home 自己成层叠上下文，::before 用 -1 才能既浮在正文下方、又不被 body 底色盖掉。 */
+.vp-home {
+    position: relative;
+    z-index: 0;
+}
+
+.vp-home::before {
+    content: "";
+    position: fixed;
+    /* 顶部多留 130px：动画向下平移正好一个大格 120px，有余量才不会在边缘露白。
+       不用 mask 做淡出：遮罩会跟着 transform 一起平移，淡出边界会跟着整整挪一个大格再跳回，
+       而且 fixed 层上的边界等于粘在视口顶部，滚动时网格会变成一条跟着走的横带。 */
+    top: -130px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+        linear-gradient(to right, var(--vp-home-grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--vp-home-grid) 1px, transparent 1px),
+        linear-gradient(to right, var(--vp-home-grid-major) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--vp-home-grid-major) 1px, transparent 1px);
+    background-size:
+        24px 24px,
+        24px 24px,
+        120px 120px,
+        120px 120px;
+    animation: vp-home-grid-drift 14s linear infinite;
+}
+
+:root {
+    --vp-home-grid: color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent);
+    --vp-home-grid-major: color-mix(in srgb, var(--vp-c-brand-1) 14%, transparent);
+}
+
+/* 深色下底色深、粉线本来就跳，压一档才不至于盖过正文。 */
+html[data-theme="dark"] {
+    --vp-home-grid: color-mix(in srgb, var(--vp-c-brand-1) 7%, transparent);
+    --vp-home-grid-major: color-mix(in srgb, var(--vp-c-brand-1) 13%, transparent);
+}
+
+/* 位移量正好等于一个大格，且 120 是 24 的整数倍 —— 两层网格同时无缝循环。
+   用 transform 而不是旧那套 background-position：后者每帧重绘整屏，前者交给合成层。 */
+@keyframes vp-home-grid-drift {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        transform: translate3d(0, 120px, 0);
+    }
+}
+
+/* 触屏没有指针来驱动粒子层，这层网格也就只是背景，没必要一直占一个合成线程。 */
+@media (hover: none), (pointer: coarse) {
+    .vp-home::before {
+        animation: none;
+    }
+}
+
+/* 功能卡片是 7 张，在 2 列区间会剩一张半宽的孤儿，让它通栏收尾。 */
+@media (min-width: 640px) and (max-width: 959.98px) {
+    .vp-home-features .items .item.grid-4:last-child:nth-child(odd) {
+        width: 100%;
+    }
+}
+
+/* 主题给按钮和卡片只做了颜色过渡（VPButton.vue:68、VPHomeFeature.vue:72），位移是空的，
+   所以 hover 抬起来不会和它抢同一个属性。
+   但主题的 transition 是 shorthand，会把 transition-property 重置成 all 再收窄到三个颜色属性，
+   这里必须把颜色属性一起重列，否则改一次 transition 就把原来的颜色渐变弄丢了。
+   :active 那条同理，是为了压过 VPButton.vue 里同名规则、让松开时位移也能缓动回去。
+   选择器多带一层 .vp-home 把权重抬到 (0,4,0)，不依赖打包顺序。 */
+.vp-home .vp-button,
+.vp-home .vp-button:active {
+    transition:
+        border var(--vp-t-color),
+        color var(--vp-t-color),
+        background-color var(--vp-t-color),
+        transform 0.2s ease;
+}
+
+.vp-home .vp-button:hover {
+    transform: translateY(-2px);
+}
+
+.vp-home .vp-button:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* 主 CTA 的呼吸光晕放在伪元素里，而不是直接动画按钮自己的 box-shadow：
+   动画在级联里压过 transition，两者抢同一个属性的话 hover 加亮永远不生效。
+   outset box-shadow 不会画进自己的 border-box，所以伪元素即便盖在按钮背景之上
+   也不会糊住文字——发光只出现在外圈。 */
+.vp-home .vp-button {
+    position: relative;
+}
+
+.vp-home .vp-button.brand::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow:
+        0 0 20px 2px color-mix(in srgb, var(--vp-c-brand-1) 70%, transparent),
+        0 0 44px 10px color-mix(in srgb, var(--vp-c-brand-1) 32%, transparent);
+    /* 静止态就是 0.55：主题的 reduced-motion 兜底把动画压成 1ms 后停在首尾帧，
+       首尾都写 0.55，所以关掉动效时留下的是常态光晕而不是灭掉。 */
+    opacity: 0.55;
+    animation: brand-glow 3.6s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* hover 时直接撤掉动画、由声明接管亮度。从动画切到 none 是瞬变不是补间，
+   但“一碰就亮”读起来正是该有的响应感。 */
+.vp-home .vp-button.brand:hover::before {
+    animation: none;
+    opacity: 1;
+}
+
+@keyframes brand-glow {
+    0%,
+    100% {
+        opacity: 0.55;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+.vp-home .vp-home-feature {
+    transition:
+        border-color var(--vp-t-color),
+        background-color var(--vp-t-color),
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.vp-home .vp-home-feature .title,
+.vp-home .vp-home-feature .details {
+    transition: color var(--vp-t-color);
+}
+
+/* 功能列表的卡片已经没有 link，也就拿不到 .link 类，所以这里不能再按 .link 过滤，
+   否则三类卡片只有两类有响应。多带一层 .vp-home-box 把权重抬到 (0,5,0)，
+   压过主题的 .vp-home-feature.link[data-v-*]:hover（同为 (0,4,0) 会打平靠打包顺序）。
+   border-color 也得自己写：主题那条 .link:hover 只给带链接的卡片上色边框。 */
+.vp-home .vp-home-box.vp-home-features .vp-home-feature:hover {
+    border-color: var(--vp-c-brand-1);
+    transform: translateY(-3px);
+    /* 抬起时也要留着上沿那道内高光，所以把它并列进同一条 box-shadow 里，
+       而不是让投影把玻璃高光整条顶掉。兜底用的中性阴影在前，
+       下一行浏览器支持 color-mix 时覆盖成掺主色的暖影。 */
+    box-shadow:
+        var(--vp-home-glass-spec),
+        0 12px 24px -16px rgb(0 0 0 / 0.35);
+    box-shadow:
+        var(--vp-home-glass-spec),
+        0 12px 24px -16px color-mix(in srgb, var(--vp-c-brand-1) 55%, transparent);
+}
+
+.vp-home .vp-home-box.vp-home-features .vp-home-feature:hover .title {
+    color: var(--vp-c-brand-1);
+}
+
+.vp-home .vp-home-box.vp-home-features .vp-home-feature:hover .details {
+    color: var(--vp-c-text-1);
+}
+
+/* 抬起 + 变蓝本身就在说“我可点”，而功能列表恰恰不可点。给它一条只在 hover 时
+   从左扫出来的品牌色顶边作为补偿动效，同时和真正带链接的卡片区分开。
+   overflow: hidden 只裁自己的内容，outset box-shadow 不受影响；12px 圆角把顶边两端裁圆。 */
+.vp-home .vp-home-box.vp-home-features .vp-home-feature:not(.link) {
+    position: relative;
+    overflow: hidden;
+}
+
+.vp-home .vp-home-box.vp-home-features .vp-home-feature:not(.link)::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: linear-gradient(90deg, var(--vp-c-brand-1), var(--vp-c-brand-3));
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.35s ease;
+}
+
+.vp-home .vp-home-box.vp-home-features .vp-home-feature:not(.link):hover::after {
+    transform: scaleX(1);
+}
+
+.vp-home .vp-home-feature .icon {
+    transition:
+        background-color var(--vp-t-color),
+        color var(--vp-t-color),
+        transform 0.25s ease;
+}
+
+.vp-home .vp-home-box.vp-home-features .vp-home-feature:hover .icon {
+    /* 图标跟着歪一点，卡片才像是被整块托起来而不是贴图平移。 */
+    transform: scale(1.08) rotate(-5deg);
+    color: var(--vp-c-brand-1);
+    background-color: var(--vp-c-brand-soft);
+}
+
+/* hero 的 #quick-download 是页内锚点，直接跳会让 100vh 的 hero 瞬间消失；
+   用 :has 限定只在首页平滑滚动，别影响文档页的目录跳转。 */
+@media (prefers-reduced-motion: no-preference) {
+    html:has(.vp-home) {
+        scroll-behavior: smooth;
+    }
+}
+
+/* Plume 的 home 布局只给非 features/custom 的块外面套一层 .layout 并刷成实色 --vp-c-bg。
+   网格层是 .vp-home::before，被这层实色盖住后会在快捷下载处出现一条没有网格的死色带，
+   和上下透明的区块对不上。!important 是为了压过主题同权重且可能更靠后的 nth-child 规则。 */
+.vp-home .layout {
+    background-color: transparent !important;
+}
+
+/* 区块标题和副标题在窄屏容易被截成难看的两行。只取 VPHomeBox 容器直下的那两级，
+   否则会连卡片内部的 h2.title 一起命中。 */
+.vp-home-features .container > .title,
+.vp-home-features .container > .description {
+    text-wrap: balance;
+}
+
+/* 五个区块标题（快捷下载 / 项目规模 / 功能列表 / 文档导航 / 社区与鸣谢）都是
+   .container 直下的 h2，卡片标题挂在 .box 下面，所以这条不会误伤卡片。 */
+.vp-home .container > .title::after {
+    content: "";
+    display: block;
+    width: 56px;
+    height: 3px;
+    margin: 12px auto 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--vp-c-brand-1), var(--vp-c-brand-3));
+}
+
+/* 副标题原本和标题同色，只靠 24px 对 18px 拉层级；压到 text-2 之后标题才真的压得住。
+   多带 .vp-home 是为了压过主题同权重的 .description[data-v-*]。 */
+.vp-home .vp-home-box .description {
+    color: var(--vp-c-text-2);
+}
+
+/* hero 副标题是整页第二重的文字（64px/900），纯灰显得没吃完这套配色。
+   这里用同色族的粉渐变而不是再叠一层彩虹——彩虹已经在 .hero-name 上了。
+   background-clip: text 之后 text-shadow 会透过透明字身糊成一片，所以光晕走 drop-shadow。
+   必须多带一层 .vp-home-hero：主题那条 .hero-tagline[data-v-*] 是 (0,2,0)，
+   打平靠打包顺序赌不得——一旦 color: transparent 输了，渐变底就会变成一整块粉字底。 */
+.vp-home .vp-home-hero .hero-tagline {
+    background: linear-gradient(100deg, var(--vp-c-brand-1), var(--vp-c-brand-3) 55%, var(--vp-c-brand-1));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 22px color-mix(in srgb, var(--vp-c-brand-1) 22%, transparent));
+}
+
+/* ── 磨砂玻璃 ────────────────────────────────────────────────────────────────
+   第一版把主题的实色面板按 62% 压透明，结果两个主题都完全看不出来：深色下 bg-soft(#202127)
+   和页面底色(#1b1b1f) 只差 5/255，浅色下 #f6f6f7 压在白上更差不到 10 —— 透不透都是同一个颜色。
+   所以深色改成往上叠白（玻璃该有的"抬亮"），浅色才沿用 bg-soft 那套减法。
+   真正让人认出材质的是内高光 + 发丝边，不是模糊：底色再透，背后是一片平色也显不出名堂，
+   全靠面板上沿起那一道亮和一圈描边把形状撑住。模糊只留 3px 做一点折射感，
+   再大就开始把网格糊成奶白，读起来是毛玻璃而不是玻璃。
+   注意这些 var 挂在 :root 上，文档页也会拿到，但只有首页的这些规则在消费它们。 */
+:root {
+    --vp-home-glass-bg: color-mix(in srgb, var(--vp-c-bg-soft) 26%, transparent);
+    --vp-home-glass-btn: color-mix(in srgb, var(--vp-c-default-3) 36%, transparent);
+    --vp-home-glass-btn-hover: color-mix(in srgb, var(--vp-c-default-2) 55%, transparent);
+    --vp-home-glass-edge: color-mix(in srgb, var(--vp-c-text-1) 14%, transparent);
+    /* 关闭态写成全透明零阴影而不是 none：这条要和 hover 的投影拼在同一个 box-shadow 列表里，
+       而 none 不能出现在逗号列表中，否则整条声明作废、hover 投影也一起没了。 */
+    --vp-home-glass-spec: inset 0 1px 0 rgb(255 255 255 / 0.85);
+    --vp-home-glass-blur: blur(3px) saturate(1.25);
+}
+
+/* 选择器权重刻意压在 (0,1,1)：比 :root 高一级，好让下面两个降级块能盖回来。 */
+html[data-theme="dark"] {
+    --vp-home-glass-bg: color-mix(in srgb, var(--vp-c-white) 2.5%, transparent);
+    --vp-home-glass-btn: color-mix(in srgb, var(--vp-c-white) 4.5%, transparent);
+    --vp-home-glass-btn-hover: color-mix(in srgb, var(--vp-c-white) 7%, transparent);
+    --vp-home-glass-edge: color-mix(in srgb, var(--vp-c-white) 12%, transparent);
+    --vp-home-glass-spec: inset 0 1px 0 rgb(255 255 255 / 0.16);
+}
+
+/* 触屏滚动时 backdrop-filter 每帧都要重算背后那块模糊，代价直接体现在掉帧上；
+   何况手机上既没有指针驱动粒子层，底下也就是张静态网格，不值得为它冒这个险。
+   这里两个选择器都要：:root 兜住没有 data-theme 的情况，后面那条压过深色块。 */
+@media (hover: none), (pointer: coarse) {
+    :root,
+    html[data-theme="dark"] {
+        --vp-home-glass-bg: var(--vp-c-bg-soft);
+        --vp-home-glass-btn: var(--vp-c-default-3);
+        --vp-home-glass-btn-hover: var(--vp-c-default-2);
+        --vp-home-glass-edge: var(--vp-c-bg-soft);
+        --vp-home-glass-spec: 0 0 0 0 rgb(0 0 0 / 0);
+        --vp-home-glass-blur: none;
+    }
+}
+
+/* 高对比模式下掺透明的底色会被系统配色顶掉，与其留一块模模糊糊的面板，不如直接回到实色。 */
+@media (forced-colors: active) {
+    :root,
+    html[data-theme="dark"] {
+        --vp-home-glass-bg: Canvas;
+        --vp-home-glass-btn: Canvas;
+        --vp-home-glass-btn-hover: Canvas;
+        --vp-home-glass-edge: CanvasText;
+        --vp-home-glass-spec: 0 0 0 0 rgb(0 0 0 / 0);
+        --vp-home-glass-blur: none;
+    }
+}
+
+/* 主题给卡片的是实色 --vp-c-bg-soft（.vp-home-feature[data-v-*] 权重 (0,2,0)），
+   这里带满四层 class 抬到 (0,4,0) 才稳，不靠打包顺序赌。
+   边框原来是同色实色，换成掺白的发丝边才是玻璃的边缘，而不是套了个框。 */
+.vp-home .vp-home-box.vp-home-features .vp-home-feature {
+    background-color: var(--vp-home-glass-bg);
+    border-color: var(--vp-home-glass-edge);
+    box-shadow: var(--vp-home-glass-spec);
+    -webkit-backdrop-filter: var(--vp-home-glass-blur);
+    backdrop-filter: var(--vp-home-glass-blur);
+}
+
+/* 只给三个 alt 按钮上玻璃：brand 那颗是整页主 CTA，实心粉底 + 白字是它对比度最高的一档，
+   透明化以后在浅底上会糊；它自己还带着呼吸光晕，够抢眼了，不必再叠一层质感。
+   主题的 .vp-button.alt[data-v-*] 是 (0,3,0)，:hover 那条 (0,4,0)，
+   所以下面必须分别到 (0,4,0)/(0,5,0)，否则 hover 一回实色灰就把玻璃顶掉了。 */
+.vp-home .vp-home-hero .vp-button.alt {
+    background-color: var(--vp-home-glass-btn);
+    border-color: var(--vp-home-glass-edge);
+    box-shadow: var(--vp-home-glass-spec);
+    -webkit-backdrop-filter: var(--vp-home-glass-blur);
+    backdrop-filter: var(--vp-home-glass-blur);
+}
+
+.vp-home .vp-home-hero .vp-button.alt:hover {
+    background-color: var(--vp-home-glass-btn-hover);
+}
+
+.vp-home .vp-home-hero .vp-button.alt:active {
+    background-color: var(--vp-c-default-1);
+}

@@ -8,7 +8,7 @@ dir:
 
 # Protocol Docs
 
-Task, resource, and UI-flow conventions for MaaKEDR (_Cedar_). For the shared project interface, see [Project Interface V2](https://maafw.com/docs/3.3-ProjectInterfaceV2).
+Task, resource, and UI-flow conventions for MaaKEDR (_雪松 / KEDR_). For the shared project interface, see [Project Interface V2](https://maafw.com/docs/3.3-ProjectInterfaceV2).
 
 ## Contents
 

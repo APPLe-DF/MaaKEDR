@@ -1,0 +1,18 @@
+/* 主题主色：淡粉。覆盖 --vp-c-brand-*（而不是主题里的 --vp-c-turquoise-*）即可，
+   因为 tip/note 徽章、按钮、行内代码、搜索高亮、hero 标题色都从它派生。
+   选择器一律带 html 前缀：主题的 :root/[data-theme="dark"] 规则权重是 (0,1,0)，
+   加上类型选择器后是 (0,1,1)，这样不依赖打包顺序也一定能盖过。
+   浅色下 1 号色要当正文链接用，所以取深玫红而不是浅粉，保证对比度。 */
+html:root {
+    --vp-c-brand-1: #be185d;
+    --vp-c-brand-2: #db2777;
+    --vp-c-brand-3: #f472b6;
+    --vp-c-brand-soft: rgb(236 72 153 / 0.14);
+}
+
+html[data-theme="dark"] {
+    --vp-c-brand-1: #f9a8d4;
+    --vp-c-brand-2: #f472b6;
+    --vp-c-brand-3: #db2777;
+    --vp-c-brand-soft: rgb(249 168 212 / 0.24);
+}

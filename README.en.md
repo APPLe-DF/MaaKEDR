@@ -5,7 +5,7 @@
 
 # MaaKEDR
 
-Cedar Automation Assistant. Image recognition + simulated control, free your hands!  
+KEDR Automation Assistant. Image recognition + simulated control, free your hands!  
 Powered by [MaaFramework](https://github.com/MaaXYZ/MaaFramework)!  
 <a href="https://github.com/APPLe-DF/MaaKEDR" target="_blank" style="font-weight: bold;">🔗 GitHub Repository</a><br>
 🌟 Star us on the top-right of the repo if you like this project! 🌟

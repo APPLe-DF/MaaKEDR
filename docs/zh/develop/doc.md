@@ -24,6 +24,15 @@ docs/
 - 侧边栏在 `docs/.vuepress/config/navigation.ts` 的 `collections.sidebar` 中维护
 - 新增页面后请同步修改 **中英文** sidebar（若有英文对照）
 
+## 首页
+
+两份首页（`docs/zh/README.md`、`docs/en/README.md`）用的是 Plume 的 `home` frontmatter，`config` 里的区块顺序就是页面顺序。
+
+- 三个自定义区块在 `docs/.vuepress/components/`：`HomeDownload`（快捷下载）、`HomeStats`（项目规模）、`HomePointerField`（背景的识别框装饰层）。必须先在同目录的 `client.ts` 里注册，`config` 中的 `type:` 才认得它们
+- 首页专属样式只有 `docs/.vuepress/styles/home-hero.css` 一个文件，其中的**规则选择器**一律以 `.vp-home` 开头，以免漏到文档页上；只有 `--vp-home-*` 命名的 CSS 变量例外，它们必须声明在全局 `:root` / `html[data-theme="dark"]` 上才能被继承，靠命名前缀保证不与主题自带变量撞名
+- `docs/.vuepress/data/*.json` 是构建期生成的：`pnpm docs:build` / `docs:dev` 会先跑 `tools/gen-docs-downloads.mjs` 和 `tools/gen-docs-stats.mjs` 写出 release 资产和仓库规模统计。取不到数据（例如无网络的全新 clone）时脚本会写占位文件（空 assets / 全零），两个区块降级成一行提示而不是把构建带崩；上一次留下的文件如果解析不出、或缺了首页要用的字段，也会被占位覆盖而不是继续沿用。**不要手改**，改了也会被下次构建覆盖
+- `HomePointerField` 里的节点名标签是从 `resource/base/pipeline/*.json` 抄来的一份静态快照，重命名或删除 pipeline 节点不会自动反映到首页
+
 ## Frontmatter
 
 常用字段：
@@ -84,6 +93,7 @@ Plume 支持容器语法：
 
 - 规则说明请参考 [MarkdownLint 规则](https://github.com/DavidAnson/markdownlint/blob/master/docs/RULES.md)
 - 可使用 [VSCode 插件](https://github.com/DavidAnson/vscode-markdownlint) 实时提示（自动读取 `.markdownlint.yaml`）
+- 仓库目前**没有**把 MarkdownLint 接进 `pnpm check` 或 CI，也没有装相关依赖 —— 它靠编辑器插件在本地生效，所以不要期待有一条失败的 CI 来提醒你
 - 与 Prettier 的分工：**Prettier 负责格式**（缩进、换行、表格对齐），**MarkdownLint 负责规范**（标题层级、列表正确性、链接有效性等）。两者不冲突：`.markdownlint.yaml` 中已关闭与 Prettier 无关的噪音规则（如 MD013 行长）
 
 ## 写作要求
@@ -101,6 +111,10 @@ pnpm docs:build
 ```
 
 构建产物在 `docs/.vuepress/dist`（已 gitignore）。
+
+- `pnpm docs:preview` 目前和站点的 `base: /MaaKEDR/` 对不上，直接开根路径会 404；要看效果请用 `pnpm docs:dev`
+- 绕开 pnpm 直接跑 `vuepress dev docs` 会跳过数据生成，`docs/.vuepress/data/` 不存在时首页两个区块会直接构建失败
+- `pnpm docs:build` 带 `--clean-cache --clean-temp`，会顺手清掉正在跑的 dev server，两者不要同时开
 
 ## 参考
 
