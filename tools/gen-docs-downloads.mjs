@@ -90,19 +90,19 @@ async function fetchLatest() {
     return await res.json();
 }
 
-async function main() {
-    let release;
-    try {
-        release = await fetchLatest();
-    } catch (error) {
-        keep(`GitHub API unreachable (${error instanceof Error ? error.message : error})`);
-        return;
-    }
+/**
+ * 2xx 也可能是形状不对的 JSON（assets 不可迭代、资源没有下载地址……），而这段在 fetch 的 try/catch 之外，
+ * 抛出去会直接让 docs:build 挂掉，所以坏载荷和网络失败走同一条回退路径，返回 null 表示不可用。
+ */
+function buildRelease(release) {
+    if (!release || typeof release !== "object" || !Array.isArray(release.assets)) return null;
 
     const assets = [];
-    for (const item of release.assets ?? []) {
+    for (const item of release.assets) {
+        if (!item || typeof item !== "object") continue;
         const m = ASSET.exec(item.name ?? "");
-        if (!m) continue;
+        // 名字不匹配命名规则、或没有下载地址的资源都进不了首页，宁可不收。
+        if (!m || typeof item.browser_download_url !== "string") continue;
         const {os, arch, ui, ext} = m.groups;
         assets.push({
             name: item.name,
@@ -115,11 +115,6 @@ async function main() {
         });
     }
 
-    if (!assets.length) {
-        keep(`no asset matched the naming scheme in release ${release.tag_name ?? "?"}`);
-        return;
-    }
-
     assets.sort(
         (a, b) =>
             OS_ORDER.indexOf(a.os) - OS_ORDER.indexOf(b.os) ||
@@ -127,16 +122,40 @@ async function main() {
             UI_ORDER.indexOf(a.ui) - UI_ORDER.indexOf(b.ui),
     );
 
-    const next = `${JSON.stringify(
-        {
-            version: release.tag_name,
-            publishedAt: release.published_at,
-            releasePage: release.html_url,
-            assets,
-        },
-        null,
-        4,
-    )}\n`;
+    return {
+        version: release.tag_name,
+        publishedAt: release.published_at,
+        releasePage: release.html_url,
+        assets,
+    };
+}
+
+async function main() {
+    let release;
+    try {
+        release = await fetchLatest();
+    } catch (error) {
+        keep(`GitHub API call failed (${error instanceof Error ? error.message : error})`);
+        return;
+    }
+
+    const tag = release?.tag_name ?? "?";
+    const next = buildRelease(release);
+    if (!next) {
+        keep(`GitHub API replied with an unusable payload for release ${tag}`);
+        return;
+    }
+    if (!next.assets.length) {
+        keep(`no asset matched the naming scheme in release ${tag}`);
+        return;
+    }
+    // 写出去的文件必须能通过同一套校验，否则下一次构建会把它当坏文件再覆盖一遍。
+    if (!isUsableRelease(next)) {
+        keep(`release ${tag} is missing metadata the homepage needs`);
+        return;
+    }
+
+    const body = `${JSON.stringify(next, null, 4)}\n`;
 
     let previous = null;
     try {
@@ -145,15 +164,15 @@ async function main() {
         /* first run */
     }
 
-    if (next === previous) {
-        console.log(`[gen-docs-downloads] ${assets.length} assets for ${release.tag_name} — unchanged`);
+    if (body === previous) {
+        console.log(`[gen-docs-downloads] ${next.assets.length} assets for ${next.version} — unchanged`);
         return;
     }
 
     mkdirSync(dirname(OUT), {recursive: true});
-    writeFileSync(OUT, next, "utf8");
+    writeFileSync(OUT, body, "utf8");
     console.log(
-        `[gen-docs-downloads] wrote ${assets.length} assets for ${release.tag_name} to docs/.vuepress/data/latest-release.json`,
+        `[gen-docs-downloads] wrote ${next.assets.length} assets for ${next.version} to docs/.vuepress/data/latest-release.json`,
     );
 }
 

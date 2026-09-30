@@ -309,6 +309,8 @@ function onPointerMove(e: PointerEvent) {
 
 function onPointerLeave() {
     pointer.inside = false;
+    // 指针可能在空闲停绘之后才离开（此时最后一帧是带准星的），不唤醒就会把那帧永远留在屏上。
+    wake();
 }
 
 function onClick(e: MouseEvent) {
