@@ -52,7 +52,10 @@ test_*.json
 
 # VuePress temp
 docs/.vuepress/.temp/
+docs/.vuepress/.cache/
 docs/.vuepress/dist/
+# 首页数据（docs:build / docs:dev 前置脚本生成，含时间戳，勿手改勿提交）
+docs/.vuepress/data/
 
 # Node.js
 node_modules/
@@ -63,6 +66,9 @@ PROJECT_SUMMARY.md
 # Reasonix 工具配置
 .reasonix/
 reasonix.toml
+
+# 本地助手记忆（仅本地保留）
+.workbuddy/
 
 # 系统文件
 .DS_Store
