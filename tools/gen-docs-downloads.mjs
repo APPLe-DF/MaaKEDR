@@ -22,8 +22,19 @@ const UI_ORDER = [
 ];
 
 // Never fail the docs build over a release lookup: fall back to the committed file.
+const PLACEHOLDER = `${JSON.stringify({version: null, publishedAt: null, releasePage: null, assets: []}, null, 4)}\n`;
+
 function keep(reason) {
     console.warn(`[gen-docs-downloads] ${reason} — keeping the previously generated file`);
+    // 全新 clone 没有“上一次的文件”可留，而组件是静态 import 这份 JSON 的，缺文件会让整站构建失败。
+    // 所以补一份空数据，首页自己降级成“暂无发布数据”。
+    try {
+        readFileSync(OUT);
+    } catch {
+        mkdirSync(dirname(OUT), {recursive: true});
+        writeFileSync(OUT, PLACEHOLDER, "utf8");
+        console.warn("[gen-docs-downloads] wrote an empty placeholder so the docs build still resolves");
+    }
 }
 
 async function fetchLatest() {

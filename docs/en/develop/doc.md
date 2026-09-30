@@ -21,8 +21,8 @@ Add new pages to **both** locale sidebars when applicable.
 Both homepages (`docs/zh/README.md`, `docs/en/README.md`) use Plume's `home` frontmatter; the order of the `config` entries is the order on the page.
 
 - Three custom blocks live in `docs/.vuepress/components/`: `HomeDownload`, `HomeStats` and `HomePointerField` (the drifting detection-box layer behind the content). They must be registered in `client.ts` before `config` can reference them by `type:`
-- All homepage-only CSS sits in the single file `docs/.vuepress/styles/home-hero.css`, and every selector there starts with `.vp-home` so it cannot leak into doc pages
-- `docs/.vuepress/data/*.json` is generated at build time — `pnpm docs:build` / `docs:dev` run `tools/gen-docs-downloads.mjs` and `tools/gen-docs-stats.mjs` first. Never edit those files by hand
+- All homepage-only CSS sits in the single file `docs/.vuepress/styles/home-hero.css`. Every **rule selector** in it starts with `.vp-home` so it cannot leak into doc pages; the only exception is the `--vp-home-*` custom properties, which have to be declared on the global `:root` / `html[data-theme="dark"]` to be inherited at all — the prefix is what keeps them from colliding with the theme's own variables
+- `docs/.vuepress/data/*.json` is generated at build time — `pnpm docs:build` / `docs:dev` run `tools/gen-docs-downloads.mjs` and `tools/gen-docs-stats.mjs` first. When the data cannot be fetched (a fresh clone with no network, for instance) the scripts write a placeholder (empty assets / zeroed figures) and both blocks degrade to a one-line notice instead of breaking the build. Never edit those files by hand
 - The node-name labels in `HomePointerField` are a static snapshot taken from `resource/base/pipeline/*.json`; renaming or dropping a pipeline node does not update the homepage
 
 ## Frontmatter

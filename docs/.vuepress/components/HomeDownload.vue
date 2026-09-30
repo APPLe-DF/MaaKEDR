@@ -34,6 +34,8 @@ const TEXT = {
         published: "发布于",
         allVersions: "全部版本",
         mirror: "Mirror酱 高速下载",
+        unavailable: "发布数据暂不可用（构建时取不到 GitHub Release），请到",
+        unavailableTail: "页面查看最新版本。",
     },
     en: {
         hint: "MFAA and MXU differ only in appearance, features are identical, so pick either one.",
@@ -41,6 +43,8 @@ const TEXT = {
         published: "published",
         allVersions: "All versions",
         mirror: "Mirror酱 fast download",
+        unavailable: "Release data is unavailable right now (the build could not reach GitHub). See the",
+        unavailableTail: "page for the latest version.",
     },
 };
 
@@ -51,6 +55,8 @@ const GROUPS = [
 ];
 
 const assets = release.assets as Asset[];
+// 生成脚本取不到 release 且没有旧数据可留时会写空占位，这里降级成一行提示，而不是摆一排空分组。
+const available = assets.length > 0 && Boolean(release.version);
 const t = computed(() => TEXT[props.lang]);
 
 const groups = GROUPS.map((group) => ({
@@ -72,7 +78,7 @@ function mb(bytes: number): string {
         <div class="container">
             <h2 v-if="title" class="title">{{ title }}</h2>
 
-            <p class="meta">
+            <p v-if="available" class="meta">
                 <span>{{ t.version }}</span>
                 <code class="version">{{ release.version }}</code>
                 <span class="dot">·</span>
@@ -89,9 +95,17 @@ function mb(bytes: number): string {
                 >
             </p>
 
-            <p class="hint">{{ t.hint }}</p>
+            <p v-else class="meta">
+                <span>{{ t.unavailable }}</span>
+                <a href="https://github.com/APPLe-DF/MaaKEDR/releases" target="_blank" rel="noopener noreferrer"
+                    >Releases</a
+                >
+                <span>{{ t.unavailableTail }}</span>
+            </p>
 
-            <div class="grid">
+            <p v-if="available" class="hint">{{ t.hint }}</p>
+
+            <div v-if="available" class="grid">
                 <div v-for="group in groups" :key="group.os" class="group">
                     <p class="group-head">
                         <VPIcon :name="group.icon" :size="20" />

@@ -115,6 +115,18 @@ try {
     console.warn(
         `[gen-docs-stats] ${error instanceof Error ? error.message : error} — keeping the previously generated file`,
     );
+    // 全新 clone 没有上一次的结果，组件的静态 import 会失败，所以补一份全零占位、由首页降级显示。
+    try {
+        readFileSync(OUT);
+    } catch {
+        mkdirSync(dirname(OUT), {recursive: true});
+        writeFileSync(
+            OUT,
+            `${JSON.stringify({generatedAt: null, tasks: 0, pipelineFiles: 0, pipelineNodes: 0, customActions: 0, customRecognitions: 0, templateImages: 0, docPagesZh: 0, docPagesEn: 0}, null, 4)}\n`,
+            "utf8",
+        );
+        console.warn("[gen-docs-stats] wrote a zeroed placeholder so the docs build still resolves");
+    }
     process.exit(0);
 }
 

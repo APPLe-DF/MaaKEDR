@@ -27,6 +27,7 @@ const TEXT = {
         docs: "双语文档",
         docsNote: (perLocale: number) => `中英各 ${perLocale} 页`,
         source: "以上数字由构建脚本从仓库源码实时统计，随每次发布重新计算。截至",
+        unavailable: "项目规模统计暂不可用（构建脚本未能完成统计）。",
     },
     en: {
         tasks: "Tasks",
@@ -40,6 +41,7 @@ const TEXT = {
         docs: "Docs pages",
         docsNote: (perLocale: number) => `${perLocale} per locale`,
         source: "Every figure above is counted from the repository by a build script and recomputed on each release. As of",
+        unavailable: "Project scale figures are unavailable right now (the stats script did not complete).",
     },
 };
 
@@ -61,7 +63,9 @@ const items = computed(() => {
     ];
 });
 
-const asOf = computed(() => stats.generatedAt.slice(0, 10));
+const asOf = computed(() => (stats.generatedAt ? stats.generatedAt.slice(0, 10) : ""));
+// 统计脚本失败时会写全零占位，这时候整排 0 比不写更容易误导，直接降级成一行说明。
+const available = computed(() => stats.pipelineNodes > 0);
 </script>
 
 <template>
@@ -69,7 +73,7 @@ const asOf = computed(() => stats.generatedAt.slice(0, 10));
         <div class="container">
             <h2 v-if="title" class="title">{{ title }}</h2>
 
-            <div class="row">
+            <div v-if="available" class="row">
                 <div v-for="item in items" :key="item.key" class="stat">
                     <p class="value">{{ item.value }}</p>
                     <p class="label">{{ item.label }}</p>
@@ -77,7 +81,8 @@ const asOf = computed(() => stats.generatedAt.slice(0, 10));
                 </div>
             </div>
 
-            <p class="source">{{ t.source }} {{ asOf }}</p>
+            <p v-if="available" class="source">{{ t.source }} {{ asOf }}</p>
+            <p v-else class="source">{{ t.unavailable }}</p>
         </div>
     </section>
 </template>
