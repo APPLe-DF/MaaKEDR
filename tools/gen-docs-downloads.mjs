@@ -24,15 +24,29 @@ const UI_ORDER = [
 // Never fail the docs build over a release lookup: fall back to the committed file.
 const PLACEHOLDER = `${JSON.stringify({version: null, publishedAt: null, releasePage: null, assets: []}, null, 4)}\n`;
 
-// 首页在 assets 非空时直接读 version 和 publishedAt.slice(0, 10)，所以「能 parse」不等于「能用」。
+function isNonEmptyString(value) {
+    return typeof value === "string" && value.length > 0;
+}
+
+// 一个 asset 缺 os/arch/ui 会让首页静默少一行，size 不是数字会渲染成“NaN MB”，所以逐个字段对齐 HomeDownload 的读法。
+function isUsableAsset(asset) {
+    if (!asset || typeof asset !== "object") return false;
+    if (!isNonEmptyString(asset.name) || !isNonEmptyString(asset.url)) return false;
+    if (!isNonEmptyString(asset.os) || !isNonEmptyString(asset.arch) || !isNonEmptyString(asset.ui)) return false;
+    return Number.isFinite(asset.size) && asset.size >= 0;
+}
+
+// 首页还会直接读版本元数据（publishedAt 要 slice(0, 10)，releasePage 当链接），所以「能 parse」不等于「能用」。
 function isUsableRelease(value) {
     if (!value || typeof value !== "object") return false;
     if (!Array.isArray(value.assets)) return false;
-    if (!value.assets.every((asset) => asset && typeof asset.name === "string" && typeof asset.url === "string")) {
-        return false;
+    if (!value.assets.every(isUsableAsset)) return false;
+    if (value.assets.length === 0) {
+        return value.version === null && value.publishedAt === null && value.releasePage === null;
     }
-    if (value.assets.length === 0) return value.version === null && value.publishedAt === null;
-    return typeof value.version === "string" && typeof value.publishedAt === "string";
+    return (
+        isNonEmptyString(value.version) && isNonEmptyString(value.publishedAt) && isNonEmptyString(value.releasePage)
+    );
 }
 
 function readPrevious() {
