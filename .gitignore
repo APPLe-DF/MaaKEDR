@@ -69,7 +69,10 @@ reasonix.toml
 
 # 本地助手记忆（仅本地保留）
 .workbuddy/
+.workbuddy-ai/
 
 # 系统文件
 .DS_Store
 Thumbs.db
+# OCR models are copied from the MaaCommonAssets submodule and must not be committed.
+resource/base/model/ocr/

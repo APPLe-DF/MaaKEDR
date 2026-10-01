@@ -41,6 +41,8 @@ ignore = [
 
 [tool.pyright]
 pythonVersion = "3.13"
+venvPath = "."
+venv = ".venv"
 typeCheckingMode = "strict"
 exclude = [".venv", "**/__pycache__"]
 extraPaths = ["agent"]
