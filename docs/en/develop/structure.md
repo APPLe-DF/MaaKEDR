@@ -29,13 +29,16 @@ MaaKEDR/
 │   │   ├── pvp/                    # PVP images
 │   │   ├── event_stage/            # Event images
 │   │   └── ...
-│   ├── model/ocr/                  # PaddleOCR v5 models
-│   └── announcement/               # GUI welcome announcement
+│   ├── model/ocr/                  # PP-OCRv6 models
+│   └── ...                         # config/ debug/ and other runtime dirs
+│
+├── resource/announcement/          # GUI welcome announcement (interface.json → welcome)
 │
 ├── agent/                          # Python Agent
 │   ├── bootstrap.py                # Entry: env check → main.py
-│   ├── main.py                     # Shim → run_agent()
-│   ├── agent_runtime.py            # Core: register → AgentServer
+│   ├── main.py                     # Version guard + resolve native lib → run_agent()
+│   ├── maafw_paths.py              # Locate the client native runtime, set MAAFW_BINARY_PATH
+│   ├── agent_runtime.py            # Core: log version → register → AgentServer
 │   ├── custom/
 │   │   ├── recognition/            # Custom recognition
 │   │   ├── action/                 # Custom actions
