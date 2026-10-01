@@ -38,5 +38,5 @@ Pipeline 文件和 task 文件支持 `//` 注释（JSON-with-Comments）。
 | `pnpm check:maa`           | 仅检查 pipeline                             |
 | `pnpm check:py`            | Python 类型和 lint 检查                     |
 | `pnpm format`              | 格式化所有文件                              |
-| `pnpm run release:dry-run` | 模拟打包                                    |
+| `pnpm run release:dry-run` | 仅校验版本与产物名（不打包、不冒烟）        |
 | `pnpm run sync:runtime`    | 同步运行时                                  |

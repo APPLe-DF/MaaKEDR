@@ -37,5 +37,5 @@ Pipeline and task files support `//` comments (JSON-with-Comments).
 | `pnpm check`               | Full validation (format + schema + maa + lint) |
 | `pnpm check:py`            | Python type + lint check                       |
 | `pnpm format`              | Format all files                               |
-| `pnpm run release:dry-run` | Simulate release packaging                     |
+| `pnpm run release:dry-run` | Validate version and names only (no packaging) |
 | `pnpm run sync:runtime`    | Sync MaaFW runtime                             |

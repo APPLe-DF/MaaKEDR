@@ -21,7 +21,7 @@ This project is generated from the create-maa-project pipeline template and uses
 }
 ```
 
-This is structurally equivalent to the nested v2 style (`recognition: {"type": ..., "param": {...}}`) in the official docs. The runtime channel is MaaFramework **stable** (see the `maafw` field in `maa-project.json`; the version follows the channel automatically and the packaged runtime is authoritative); field validity is governed by the schemas in `tools/schema/` and `pnpm check:schema`. For generic protocol details see the [MaaFramework Pipeline Protocol](https://maafw.com/docs/3.1-PipelineProtocol).
+This is structurally equivalent to the nested v2 style (`recognition: {"type": ..., "param": {...}}`) in the official docs. The runtime channel is MaaFramework **stable** (see the `maafw` field in `maa-project.json`; the version follows the channel automatically, and because the package reuses the client's native runtime the `runtimes/` copy and the `maafw` pin in `pyproject.toml` must match); field validity is governed by the schemas in `tools/schema/` and `pnpm check:schema`. For generic protocol details see the [MaaFramework Pipeline Protocol](https://maafw.com/docs/3.1-PipelineProtocol).
 
 ## Node Structure
 

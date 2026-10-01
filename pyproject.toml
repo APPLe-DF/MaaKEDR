@@ -5,7 +5,7 @@ description = "MaaKEDR — MaaFramework KEDR automation project"
 requires-python = ">=3.13,<3.14"
 dependencies = [
     "loguru",
-    "maafw==5.13.1",
+    "maafw==5.14.2",
 ]
 
 [dependency-groups]
@@ -41,6 +41,8 @@ ignore = [
 
 [tool.pyright]
 pythonVersion = "3.13"
+venvPath = "."
+venv = ".venv"
 typeCheckingMode = "strict"
 exclude = [".venv", "**/__pycache__"]
 extraPaths = ["agent"]

@@ -52,6 +52,16 @@ icon: ri:book-open-line
 开发态常见配置：`uv run python -u ./agent/bootstrap.py`。  
 发布包会改为内嵌 `python/python.exe` 启动（见 `tools/build-release.mjs`）。
 
+发布包**不再自带** MaaFramework 原生库：打包时会剥离内嵌解释器中的
+`python/Lib/site-packages/maa/bin/`，Agent 改为复用客户端那一份
+（MFAA 在 `runtimes/<platform>/native`，MXU 在 `maafw/`），单包因此省下数十 MiB。
+`agent/main.py` 在导入任何 `maa` 之前调用 `agent/maafw_paths.py` 的
+`ensure_maafw_binary_path()` 把 `MAAFW_BINARY_PATH` 指向该目录；若这个变量已被外部设置
+（例如 Android runner 指向 APK 的 nativeLibraryDir），则保持不动。
+
+因此 **`runtimes/` 与 `pyproject.toml` 里 pin 的 `maafw` 必须版本一致**，否则 Agent 会加载
+到与 Python 绑定不匹配的原生库。`pnpm run sync:runtime` 之后请核对两者版本。
+
 自定义模块注册：`agent/custom/` 下 action / recognition，并在对应 `__init__.py` 注册。
 
 ## 设计约定（与 AGENTS.md 一致）

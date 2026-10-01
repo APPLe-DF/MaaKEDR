@@ -86,9 +86,11 @@ jobs:
             throw "Expected package directories $($expected -join ', '), got $($actual -join ', ')"
           }
 
-           $expectedMaafwVersion = (Get-Content -LiteralPath 'requirements.txt' |
+           # maafw 的 wheel 可能把 METADATA 的 Version 写成带 v 前缀的非规范形式（5.14.2 即 v5.14.2），
+           # 而 requirements.txt 存的是规范化版本；比对前统一去掉前缀。
+           $expectedMaafwVersion = ((Get-Content -LiteralPath 'requirements.txt' |
              Where-Object { $_ -match '^maafw==' } |
-             Select-Object -First 1) -replace '^maafw==', ''
+             Select-Object -First 1) -replace '^maafw==', '') -replace '^v', ''
            if ([string]::IsNullOrWhiteSpace($expectedMaafwVersion)) {
              throw 'Could not determine expected maafw version from requirements.txt'
            }
@@ -109,7 +111,7 @@ jobs:
             if (-not (Test-Path -LiteralPath $python -PathType Leaf)) {
               throw "Embedded Python is missing: $python"
             }
-            $actualMaafwVersion = (& $python -I -c 'import importlib.metadata as metadata; print(metadata.version("maafw"))' | Out-String).Trim()
+            $actualMaafwVersion = ((& $python -I -c 'import importlib.metadata as metadata; print(metadata.version("maafw"))' | Out-String).Trim()) -replace '^v', ''
             if ($LASTEXITCODE -ne 0) {
               throw "Could not read embedded maafw version in $packageName"
             }
@@ -119,7 +121,7 @@ jobs:
 
             Push-Location $packageRoot
             try {
-              & $python -I -c 'import sys; sys.path.insert(0, "agent"); import loguru, maa, numpy; import agent_runtime, custom; custom.register_all(); print("embedded Python imports passed")'
+              & $python -I -c 'import sys; sys.path.insert(0, "agent"); import maafw_paths; resolved = maafw_paths.ensure_maafw_binary_path(); assert resolved, "client MaaFramework runtime was not resolved"; import loguru, maa, numpy; import agent_runtime, custom; custom.register_all(); from maa.library import Library; print("embedded Python smoke passed:", Library.version(), Library.framework_libpath)'
               if ($LASTEXITCODE -ne 0) {
                 throw "Embedded Python import smoke failed in $packageName"
               }

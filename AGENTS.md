@@ -48,6 +48,7 @@ MaaKEDR/
 - `agent/custom/action/` —— custom MaaFW actions, one file per feature group
 - `agent/custom/recognition/` —— custom MaaFW recognitions
 - `agent/utils/` —— reusable helpers (logging, HTTP, scaling, etc.)
+- `agent/maafw_paths.py` —— locates the client MaaFW native runtime and sets `MAAFW_BINARY_PATH`. **Must run before anything that imports `maa`** (`main.py` calls it before `agent_runtime`, and `utils` pulls in `maa`), which is why it lives at the top level of `agent/` instead of under `utils/`. Release packages no longer bundle their own native libs — see `tools/build-release.mjs`.
 
 **When working on a specific area, consult the relevant docs first:**
 

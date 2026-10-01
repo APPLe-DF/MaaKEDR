@@ -21,7 +21,7 @@ icon: "ri:git-branch-fill"
 }
 ```
 
-它与官方文档中 v2 协议的嵌套写法（`recognition: {"type": ..., "param": {...}}`）结构等价。运行渠道为 MaaFramework **stable**（见 `maa-project.json` 的 `maafw` 字段，版本随渠道自动更新，以发布包内置运行时为准），字段合法性以 `tools/schema/` 的 schema 与 `pnpm check:schema` 为准；通用协议细节可对照 [MaaFramework Pipeline 协议](https://maafw.com/docs/3.1-PipelineProtocol)。
+它与官方文档中 v2 协议的嵌套写法（`recognition: {"type": ..., "param": {...}}`）结构等价。运行渠道为 MaaFramework **stable**（见 `maa-project.json` 的 `maafw` 字段，版本随渠道自动更新；发布包复用客户端那份原生库，故 `runtimes/` 与 `pyproject.toml` 里 pin 的 `maafw` 版本须保持一致），字段合法性以 `tools/schema/` 的 schema 与 `pnpm check:schema` 为准；通用协议细节可对照 [MaaFramework Pipeline 协议](https://maafw.com/docs/3.1-PipelineProtocol)。
 
 ## 节点结构
 
