@@ -119,7 +119,7 @@ jobs:
 
             Push-Location $packageRoot
             try {
-              & $python -I -c 'import sys; sys.path.insert(0, "agent"); import loguru, maa, numpy; import agent_runtime, custom; custom.register_all(); print("embedded Python imports passed")'
+              & $python -I -c 'import sys; sys.path.insert(0, "agent"); import maafw_paths; resolved = maafw_paths.ensure_maafw_binary_path(); assert resolved, "client MaaFramework runtime was not resolved"; import loguru, maa, numpy; import agent_runtime, custom; custom.register_all(); from maa.library import Library; print("embedded Python smoke passed:", Library.version(), Library.framework_libpath)'
               if ($LASTEXITCODE -ne 0) {
                 throw "Embedded Python import smoke failed in $packageName"
               }

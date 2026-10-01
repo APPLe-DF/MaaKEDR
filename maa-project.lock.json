@@ -167,7 +167,7 @@
             "templateHash": "2cb187d1bc4a6a2ad18145adc161dc58c61545208e2e407087aa2570a4e01646"
         },
         "tools/build-release.mjs": {
-            "hash": "39728237983965a40f7e1291d5ffd4d5156a3305995d9cb251034b55eb996cfa",
+            "hash": "3deae584fc16e149b575835a69ed78973d7be0e29eb294b150d5aa5e90a27ae2",
             "templateHash": "7fd7683a60d650f1a3625faaa8a71010a18eba226a28ee6c4ccbbeab64a4b8a2"
         },
         "tools/check-project.mjs": {
