@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@nekosu/maa-tools':
-        specifier: 1.1.2
-        version: 1.1.2
+        specifier: 1.1.3
+        version: 1.1.3
       '@nekosu/prettier-plugin-maafw-sort':
         specifier: 1.0.6
         version: 1.0.6
@@ -633,17 +633,17 @@ packages:
       '@emnapi/core': ^1.7.1
       '@emnapi/runtime': ^1.7.1
 
-  '@nekosu/maa-locale@1.1.0':
-    resolution: {integrity: sha512-bVfUFO47H9Ja1F3ufGf4eTB8fWuo+4uWFvTVZpusVeGvAjo60+5jSTKsxxiv7W7Lj0//tU8gyNxR08m65b72QA==}
+  '@nekosu/maa-locale@1.2.0':
+    resolution: {integrity: sha512-fzuC4yeOhQAMJVMEC0SN6SePDvmtiKrsNIUubHrYfVJc9FHi/VooQy7Mx3y14+T7fX3thIo7cF3O1/2oV/yzKQ==}
 
-  '@nekosu/maa-pipeline-manager@1.0.14':
-    resolution: {integrity: sha512-tJmjik7ObIlQj9LgHP7WoAyKYLa3NmyFn9KQXxFu8MjHP3ln1EmYHyMC8Cq3GflGDNKabPO148v1jkHE4Pg5Qg==}
+  '@nekosu/maa-pipeline-manager@1.1.0':
+    resolution: {integrity: sha512-JCB7gaHBnl2Iet5F9hb/ATiAukkyPIfSzlNmvc5O5j55qBZAxH6lqyK3rU0Etg/XMQVtCVnhGMFhPPxqrYAYXQ==}
 
   '@nekosu/maa-tasker@1.0.0':
     resolution: {integrity: sha512-p5SaBJGvAMr5J2uk6imoiK7eIF7yA67HndWyfxddAHHdoyliai2dkHqBhTmDDuRmmAJ/ly4INg5Hnx8CI7Po3A==}
 
-  '@nekosu/maa-tools@1.1.2':
-    resolution: {integrity: sha512-foNLUwcx3+8fqT54/p6PzwqdgzhURZOdo41An0S4sC/PMnjsOFpoBGrlM4WU7UEQ2mdFerAx4JDfyvKEpyE7Nw==}
+  '@nekosu/maa-tools@1.1.3':
+    resolution: {integrity: sha512-SK0lBDnR/tDFjWQbfhvLNbjQx+VZQYed7Rvjecow7dG+ZdWheTosq1rYI9VypNRptjOV2Bg0lS5FvDwQMx3xBQ==}
     hasBin: true
 
   '@nekosu/maa-version-manager@1.1.0':
@@ -2379,6 +2379,10 @@ packages:
     resolution: {integrity: sha512-4pfM1Ff0x50o0tQwb5ucw/RzNyD0/YJME6IVcStalZuMWxdt3sR3huStTtxz4PUmvZfRguvDejasvQ2kifR11g==}
     engines: {node: 20 || >=22}
 
+  lru-cache@11.5.3:
+    resolution: {integrity: sha512-U4N8FgzmWxc8k1VH8Kr6lQg18U7Fjvby6wXHVRX/ZZ7IwWbRMgrRbP0Wrb5q5NVinryp4SQampHKdvtecItxUg==}
+    engines: {node: 20 || >=22}
+
   luxon@3.7.2:
     resolution: {integrity: sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew==}
     engines: {node: '>=12'}
@@ -3242,8 +3246,8 @@ packages:
   undici-types@8.3.0:
     resolution: {integrity: sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ==}
 
-  undici@6.28.1:
-    resolution: {integrity: sha512-zWpdTVD54H48CIybL0rWQ3ukpb9d23wM7eH5RtfdmeP70cWHNjtfo7P4vZX+5CoDcO53J4Pu5uXp7lNfjc6DRA==}
+  undici@6.29.0:
+    resolution: {integrity: sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==}
     engines: {node: '>=18.17'}
 
   undici@7.28.0:
@@ -3614,7 +3618,7 @@ snapshots:
   '@actions/http-client@4.0.1':
     dependencies:
       tunnel: 0.0.6
-      undici: 6.28.1
+      undici: 6.29.0
 
   '@actions/io@3.0.2': {}
 
@@ -4107,11 +4111,11 @@ snapshots:
       '@tybys/wasm-util': 0.10.3
     optional: true
 
-  '@nekosu/maa-locale@1.1.0': {}
+  '@nekosu/maa-locale@1.2.0': {}
 
-  '@nekosu/maa-pipeline-manager@1.0.14':
+  '@nekosu/maa-pipeline-manager@1.1.0':
     dependencies:
-      '@nekosu/maa-locale': 1.1.0
+      '@nekosu/maa-locale': 1.2.0
       '@nekosu/maa-tasker': 1.0.0
       chokidar: 5.0.0
       jsonc-parser: 3.3.1
@@ -4120,11 +4124,11 @@ snapshots:
     dependencies:
       '@nekosu/simple-parser': 1.0.0
 
-  '@nekosu/maa-tools@1.1.2':
+  '@nekosu/maa-tools@1.1.3':
     dependencies:
       '@actions/core': 3.0.1
-      '@nekosu/maa-locale': 1.1.0
-      '@nekosu/maa-pipeline-manager': 1.0.14
+      '@nekosu/maa-locale': 1.2.0
+      '@nekosu/maa-pipeline-manager': 1.1.0
       '@nekosu/maa-version-manager': 1.1.0
       chalk: 5.6.2
       jiti: 2.7.0
@@ -4154,7 +4158,7 @@ snapshots:
       agent-base: 7.1.4
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
-      lru-cache: 11.5.2
+      lru-cache: 11.5.3
       socks-proxy-agent: 8.0.5
     transitivePeerDependencies:
       - supports-color
@@ -4168,7 +4172,7 @@ snapshots:
       '@gar/promise-retry': 1.0.3
       '@npmcli/promise-spawn': 9.0.1
       ini: 6.0.0
-      lru-cache: 11.5.2
+      lru-cache: 11.5.3
       npm-pick-manifest: 11.0.3
       proc-log: 6.1.0
       semver: 7.8.5
@@ -5388,7 +5392,7 @@ snapshots:
       '@npmcli/fs': 5.0.0
       fs-minipass: 3.0.3
       glob: 13.0.6
-      lru-cache: 11.5.2
+      lru-cache: 11.5.3
       minipass: 7.1.3
       minipass-collect: 2.0.1
       minipass-flush: 1.0.7
@@ -5793,7 +5797,7 @@ snapshots:
 
   hosted-git-info@9.0.3:
     dependencies:
-      lru-cache: 11.5.2
+      lru-cache: 11.5.3
 
   html-encoding-sniffer@3.0.0:
     dependencies:
@@ -6018,6 +6022,8 @@ snapshots:
   longest-streak@3.1.0: {}
 
   lru-cache@11.5.2: {}
+
+  lru-cache@11.5.3: {}
 
   luxon@3.7.2: {}
 
@@ -6346,7 +6352,7 @@ snapshots:
       semver: 7.8.5
       tar: 7.5.22
       tinyglobby: 0.2.17
-      undici: 6.28.1
+      undici: 6.29.0
       which: 6.0.1
 
   node-releases@2.0.51: {}
@@ -6487,7 +6493,7 @@ snapshots:
 
   path-scurry@2.0.2:
     dependencies:
-      lru-cache: 11.5.2
+      lru-cache: 11.5.3
       minipass: 7.1.3
 
   pathe@2.0.3: {}
@@ -7066,7 +7072,7 @@ snapshots:
 
   undici-types@8.3.0: {}
 
-  undici@6.28.1: {}
+  undici@6.29.0: {}
 
   undici@7.28.0: {}
 
