@@ -4,12 +4,9 @@
             "name": "剩余体力刷取",
             "entry": "FarmResources.EnsureHome",
             "default_check": false,
+            "description": "仅刷剩余体力（固定清空体力模式）：刷到体力不足自动减次退出，榨干剩余体力。需选择刷取板块",
             "group": [
                 "Daily"
-            ],
-            "description": "仅刷剩余体力（固定清空体力模式）：刷到体力不足自动减次退出，榨干剩余体力。需选择刷取板块",
-            "option": [
-                "remaining_farm_category"
             ],
             "pipeline_override": {
                 "FarmResources.QuickBattle": {
@@ -50,14 +47,16 @@
                         "Common.CheckHomePage"
                     ]
                 }
-            }
+            },
+            "option": [
+                "remaining_farm_category"
+            ]
         }
     ],
     "option": {
         "remaining_farm_category": {
             "type": "select",
             "label": "刷取板块",
-            "default_case": "资源收集",
             "cases": [
                 {
                     "name": "资源收集",
@@ -87,12 +86,12 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "资源收集"
         },
         "remaining_farm_resource_type": {
             "type": "select",
             "label": "资源类型",
-            "default_case": "特别军费行动",
             "cases": [
                 {
                     "name": "特别军费行动",
@@ -150,12 +149,12 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "特别军费行动"
         },
         "remaining_farm_skill_type": {
             "type": "select",
             "label": "技能类型",
-            "default_case": "基础技能演练",
             "cases": [
                 {
                     "name": "基础技能演练",
@@ -185,12 +184,12 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "基础技能演练"
         },
         "remaining_farm_resource_stage_1": {
             "type": "select",
             "label": "关卡选择",
-            "default_case": "1-1",
             "cases": [
                 {
                     "name": "1-1",
@@ -247,12 +246,12 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "1-1"
         },
         "remaining_farm_resource_stage_2": {
             "type": "select",
             "label": "关卡选择",
-            "default_case": "2-1",
             "cases": [
                 {
                     "name": "2-1",
@@ -295,12 +294,12 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "2-1"
         },
         "remaining_farm_resource_stage_3": {
             "type": "select",
             "label": "关卡选择",
-            "default_case": "3-1",
             "cases": [
                 {
                     "name": "3-1",
@@ -343,12 +342,12 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "3-1"
         },
         "remaining_farm_resource_stage_4": {
             "type": "select",
             "label": "关卡选择",
-            "default_case": "4-1",
             "cases": [
                 {
                     "name": "4-1",
@@ -405,12 +404,12 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "4-1"
         },
         "remaining_farm_skill_stage_1": {
             "type": "select",
             "label": "关卡选择",
-            "default_case": "基础训练1",
             "cases": [
                 {
                     "name": "基础训练1",
@@ -479,12 +478,12 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "基础训练1"
         },
         "remaining_farm_skill_stage_2": {
             "type": "select",
             "label": "关卡选择",
-            "default_case": "专业训练1",
             "cases": [
                 {
                     "name": "专业训练1",
@@ -553,7 +552,8 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "专业训练1"
         }
     }
 }

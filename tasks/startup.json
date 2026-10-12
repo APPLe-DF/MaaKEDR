@@ -4,8 +4,8 @@
             "name": "启动游戏",
             "entry": "LaunchGame",
             "default_check": true,
-            "group": ["Daily"],
-            "description": "自动启动游戏并进入主界面。包含游戏进程启动、开始游戏点击、每日登录奖励处理"
+            "description": "自动启动游戏并进入主界面。包含游戏进程启动、开始游戏点击、每日登录奖励处理",
+            "group": ["Daily"]
         }
     ]
 }

@@ -4,8 +4,8 @@
             "name": "领取奖励",
             "entry": "ClaimRewards",
             "default_check": true,
-            "group": ["Daily"],
             "description": "一键领取各类奖励。包含每日/每周/军旅成就奖励、战令通行证奖励、邮箱奖励、资源派遣奖励、高级账号商店每日奖励。支持各奖励类型独立开关",
+            "group": ["Daily"],
             "option": [
                 "claim_dispatch",
                 "claim_daily_rewards",
@@ -19,7 +19,6 @@
         "claim_dispatch": {
             "type": "switch",
             "label": "派遣任务领取",
-            "default_case": "Yes",
             "cases": [
                 {
                     "name": "Yes",
@@ -35,13 +34,13 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "Yes"
         },
         "dispatch_redeploy": {
             "type": "switch",
             "label": "再次派遣",
             "description": "领取奖励后选择再次派遣，否则直接关闭",
-            "default_case": "Yes",
             "cases": [
                 {
                     "name": "Yes"
@@ -67,12 +66,12 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "Yes"
         },
         "claim_daily_rewards": {
             "type": "switch",
             "label": "每日/每周/军旅成就奖励",
-            "default_case": "Yes",
             "cases": [
                 {
                     "name": "Yes"
@@ -85,12 +84,12 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "Yes"
         },
         "claim_battle_pass": {
             "type": "switch",
             "label": "战令通行证奖励",
-            "default_case": "Yes",
             "cases": [
                 {
                     "name": "Yes"
@@ -103,12 +102,12 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "Yes"
         },
         "claim_mailbox": {
             "type": "switch",
             "label": "邮箱奖励",
-            "default_case": "Yes",
             "cases": [
                 {
                     "name": "Yes"
@@ -121,12 +120,12 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "Yes"
         },
         "claim_premium_shop": {
             "type": "switch",
             "label": "高级账号商店每日奖励",
-            "default_case": "No",
             "cases": [
                 {
                     "name": "No",
@@ -139,7 +138,8 @@
                 {
                     "name": "Yes"
                 }
-            ]
+            ],
+            "default_case": "No"
         }
     }
 }

@@ -4,13 +4,9 @@
             "name": "活动关卡刷取",
             "entry": "EventStage.EventHub",
             "default_check": false,
+            "description": "自动刷取活动关卡（雪松）。活动关卡不消耗体力，每日扫荡次数上限为 3。当前支持 EX2-1 / EX2-2 / EX3-1 / EX4-1，需要先完成耀斑活动全部关卡（含EX）。",
             "group": [
                 "Daily"
-            ],
-            "description": "自动刷取活动关卡（雪松）。活动关卡不消耗体力，每日扫荡次数上限为 3。当前支持 EX2-1 / EX2-2 / EX3-1 / EX4-1，需要先完成耀斑活动全部关卡（含EX）。",
-            "option": [
-                "event_stage",
-                "event_sweep_count"
             ],
             "pipeline_override": {
                 "EventStage.EventHub": {
@@ -19,23 +15,26 @@
                         "EventStage.ClickJourney"
                     ]
                 }
-            }
+            },
+            "option": [
+                "event_stage",
+                "event_sweep_count"
+            ]
         },
         {
             "name": "活动商店兑换",
             "entry": "EventStage.EventHubShop",
             "default_check": false,
+            "description": "进入活动商店兑换定额保障商品，自动跳过已售罄商品并依次确认购买。",
             "group": [
                 "Daily"
-            ],
-            "description": "进入活动商店兑换定额保障商品，自动跳过已售罄商品并依次确认购买。"
+            ]
         }
     ],
     "option": {
         "event_stage": {
             "type": "select",
             "label": "活动关卡",
-            "default_case": "EX2-1",
             "cases": [
                 {
                     "name": "EX2-1",
@@ -91,12 +90,12 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "EX2-1"
         },
         "event_sweep_count": {
             "type": "select",
             "label": "扫荡次数",
-            "default_case": "3次",
             "cases": [
                 {
                     "name": "1次",
@@ -134,7 +133,8 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "3次"
         }
     }
 }
