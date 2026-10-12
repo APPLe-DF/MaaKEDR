@@ -2,12 +2,12 @@
     "interface_version": 2,
     "name": "maakedr",
     "label": "MaaKEDR",
-    "version": "v1.5.6",
+    "title": "MaaKEDR v1.5.6",
     "icon": "logo.ico",
-    "github": "https://github.com/APPLe-DF/MaaKEDR",
     "mirrorchyan_rid": "MaaKEDR",
     "mirrorchyan_multiplatform": true,
-    "title": "MaaKEDR v1.5.6",
+    "github": "https://github.com/APPLe-DF/MaaKEDR",
+    "version": "v1.5.6",
     "contact": "CONTACT",
     "license": "LICENSE",
     "welcome": "./resource/announcement/1.简介.md",
@@ -45,12 +45,6 @@
             ]
         }
     ],
-    "group": [
-        {
-            "name": "Daily",
-            "label": "日常任务"
-        }
-    ],
     "agent": [
         {
             "child_exec": "uv",
@@ -62,6 +56,12 @@
                 "./agent/bootstrap.py"
             ],
             "identifier": "maakedr_agent"
+        }
+    ],
+    "group": [
+        {
+            "name": "Daily",
+            "label": "日常任务"
         }
     ],
     "import": [

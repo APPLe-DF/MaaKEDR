@@ -4,8 +4,8 @@
             "name": "玩家对战",
             "entry": "PVP.EnsureHome",
             "default_check": true,
-            "group": ["Daily"],
             "description": "自动进行玩家对战。支持多场次循环，识别战斗结果、积分和排名变化",
+            "group": ["Daily"],
             "option": [
                 "pvp_battle_count"
             ]
@@ -16,7 +16,6 @@
             "type": "select",
             "label": "战斗次数",
             "description": "每天 5 次 PVP 机会；高级账号含首次失败保护（首次失败不消耗次数），最多可打 6 场，打满请选「6次」",
-            "default_case": "1次",
             "cases": [
                 {
                     "name": "1次",
@@ -85,7 +84,8 @@
                         }
                     }
                 }
-            ]
+            ],
+            "default_case": "1次"
         }
     }
 }
