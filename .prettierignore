@@ -2,11 +2,17 @@ node_modules/
 dist/
 .create-maa-project/
 .workbuddy/
+.workbuddy-ai/
 .venv/
 .uv-cache/
 pnpm-lock.yaml
 uv.lock
+.pytest_cache/
+.ruff_cache/
 MaaCommonAssets/
+_evidence/
+# Android 客户端工程（独立子模块，有自己的格式化规则，不参与本仓库格式化）
+Android/
 resource/base/model/ocr/
 tools/schema/interface.schema.json
 tools/schema/interface_config.schema.json

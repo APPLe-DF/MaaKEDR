@@ -22,7 +22,8 @@ build-backend = "hatchling.build"
 [tool.ruff]
 line-length = 120
 target-version = "py313"
-exclude = [".venv", "agent/__pycache__"]
+# Android/MaaFwApp 是上游 git 子模块，其脚本不属于本仓库的 lint 范围
+exclude = [".venv", "agent/__pycache__", "Android/MaaFwApp"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "SIM"]
