@@ -145,7 +145,7 @@ MaaKEDR 下载地址：[GitHub 发布页](https://github.com/APPLe-DF/MaaKEDR/re
 |   前端   |  后缀   | 说明                                         |
 | :------: | :-----: | :------------------------------------------- |
 | **MFAA** | `-MFAA` | 图形界面，需安装 .NET 桌面运行时，界面更丰富 |
-| **MXU**  | `-MXU`  | 图形界面（Unity 版），无需额外依赖           |
+| **MXU**  | `-MXU`  | 图形界面（Tauri + React），无需额外依赖      |
 
 </div>
 
