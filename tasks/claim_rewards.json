@@ -13,6 +13,22 @@
                 "claim_mailbox",
                 "claim_premium_shop"
             ]
+        },
+        {
+            "name": "剩余奖励领取",
+            "entry": "ClaimRewards",
+            "default_check": false,
+            "group": [
+                "Daily"
+            ],
+            "description": "任务链后段的补充领取：领取进行中新获得的奖励（如 PVP 奖励，通常进邮箱）。与「领取奖励」配合，在任务链中前后各执行一次",
+            "option": [
+                "claim_dispatch",
+                "claim_daily_rewards",
+                "claim_battle_pass",
+                "claim_mailbox",
+                "claim_premium_shop"
+            ]
         }
     ],
     "option": {
