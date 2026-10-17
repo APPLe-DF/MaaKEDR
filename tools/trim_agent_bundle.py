@@ -125,9 +125,10 @@ def trim_bundle(bundle_dir: Path) -> tuple[int, int]:
     total += t
     removed |= r
 
-    # lib-dynload 里的 _sqlite3 扩展模块
-    dynload = bundle_dir / "prefix" / "lib" / "python3.13" / "lib-dynload"
-    if dynload.is_dir():
+    # lib-dynload 里的 _sqlite3 扩展模块。路径带 Python 版本号（python3.13），
+    # 写死会让内核升到 3.14 后这步静默失效——按目录实际名字找。
+    lib_root = bundle_dir / "prefix" / "lib"
+    for dynload in sorted(lib_root.glob("python3.*/lib-dynload")):
         for path in dynload.glob("_sqlite3*.so"):
             total += path.stat().st_size
             removed.add(path.name)
