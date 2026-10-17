@@ -76,3 +76,10 @@ reasonix.toml
 Thumbs.db
 # OCR models are copied from the MaaCommonAssets submodule and must not be committed.
 resource/base/model/ocr/
+
+# Android packaging products (see docs/zh/develop/android.md)
+/logo.png
+/Android/agent-dist/
+
+# Local evidence reports produced by maa-evidence during log analysis
+/_evidence/

@@ -6,6 +6,10 @@ on:
       tag:
         default: ""
         required: false
+      android:
+        description: "一并上传 Android 的三个 APK（universal + 双 ABI）"
+        type: boolean
+        default: false
   repository_dispatch:
     types: [mirrorchyan-upload]
   release:
@@ -91,6 +95,46 @@ jobs:
           tag: ${{ inputs.tag || github.event.client_payload.tag }}
 
           os: ${{ matrix.os }}
+          arch: ${{ matrix.arch }}
+
+          owner: APPLe-DF
+          repo: MaaKEDR
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upload_token: ${{ secrets.MirrorChyanUploadToken }}
+
+  # Android 的「可执行包」流：与桌面 MFAA/MXU 两条资源流不是同一个 rid。
+  # 桌面包是「资源包」（用户已有 GUI，只换资源）；Android APK 自带 GUI 与运行时，
+  # 在 Mirror酱 上是独立的产品条目，必须单独申请 rid。
+  # 触发：release.yml 建完 Release 后统一派发（client_payload.android=true），
+  # 或手动 dispatch 勾选 android。
+  mirrorchyan_android:
+    runs-on: ubuntu-latest
+    # Mirror酱为第三方分发服务，请先联系开通后再使用
+    # https://mirrorchyan.com/
+    if: ${{ github.repository_owner == 'APPLe-DF' && (inputs.android == true || github.event.inputs.android == 'true' || github.event.client_payload.android == 'true') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: any
+            suffix: universal
+          - arch: arm64
+            suffix: arm64-v8a
+          - arch: x64
+            suffix: x86_64
+    steps:
+      - uses: MirrorChyan/uploading-action@v1
+        with:
+          filetype: latest-release
+          filename: ${{ format('*-android-{0}-*.apk', matrix.suffix) }}
+          # 待申请：Android 包需要独立的 rid（参照 M9A 的 M9A_exec 与桌面的 M9A 分开）。
+          # 在 Mirror酱 后台开通并拿到 rid 前，本 job 上传必然失败（rid 不存在）。
+          # 开通后把下面的占位换成真实 rid，并同步 Android/profile.yaml 的 update.mirrorchyanRid。
+          # 在此之前保持 android 输入为 false（默认），本 job 不会被触发。
+          mirrorchyan_rid: MaaKEDR-Android-PENDING
+          tag: ${{ inputs.tag || github.event.client_payload.tag }}
+
+          os: android
           arch: ${{ matrix.arch }}
 
           owner: APPLe-DF

@@ -1,0 +1,81 @@
+# Android 打包配方（MaaFwApp）。相对路径相对本文件所在目录（Android/）。
+#
+# 布局：MaaKEDR 的 PI 扁平放在仓库根（interface.json、tasks/、resource/、agent/ 等），
+# 与 MAA1999/M9A 同构，因此 `assets: ..` 直接引用，无需 staging 脚本。
+# MaaFwApp 以子模块形式放在 Android/MaaFwApp，本地与 CI 共用同一份配方。
+#
+# 组件版本对齐（.so 与 agent 内核必须同版本）：
+#   MaaFramework        v5.14.2        ← setup_maa_framework.py --tag v5.14.2
+#   Agent 内核          3.13.15-maafw5.14.2  ← build_agent_bundle.py --core-tag 3.13.15-maafw5.14.2
+#   （桌面端 pin 的 maafw==5.14.2 与内核的 maafw5.14.2 段一致；桌面端的
+#     requirements.txt 里 maafw 条目会被 build_agent_bundle.py 丢弃，改用内核自带 maa 源码）
+
+# 含 interface.json 的那一层（仓库根）
+assets: ..
+
+# 进包白名单，相对 assets 目录；写了即整体替换默认值。
+# 注意 agent/** 与 logo.png 不在 MaaFwApp 默认白名单里，必须显式列出。
+include:
+  - interface.json
+  - tasks/**
+  - resource/**
+  - agent/**
+  - logo.png
+  - CONTACT
+  - LICENSE
+
+# 默认白名单之外的目录（docs/、tools/、MaaCommonAssets/ 等）本就不进包。
+# .git 目录 / node_modules / .venv / __pycache__ 由 MaaFwApp 构建期强制剔除。
+exclude: []
+
+# agent 运行时（在 Android/MaaFwApp 下执行）：
+#   python scripts/setup_maa_framework.py --abi arm64-v8a --tag v5.14.2
+#   python scripts/build_agent_bundle.py --out ../agent-dist \
+#       --core-tag 3.13.15-maafw5.14.2 --abi arm64-v8a \
+#       --requirements ../../requirements.txt
+agent:
+  sourceDir: agent-dist
+  # 不写死 abi：外壳按 agent-dist 里实际建出的运行时打包（等价于 ["*"]）。
+  # 建哪些 ABI 由 build_agent_bundle 的 --abi 决定，必须与 APK 的
+  # build.debugAbi / build.releaseAbi 对齐，否则 APK 会宣称支持一个不带运行时的架构。
+  runtimes:
+    # 条数须与 interface.json 的 agent[] 一一对应；MaaKEDR 只有一个 agent。
+    # 实际命令 = executable + args + identifier，工作目录为资源解包根。
+    # 注意入口是 agent/main.py 而非 agent/bootstrap.py：bootstrap 的 Linux venv
+    # 分支会在 Android（sys.platform == "android"）误触发，且设备上无法 pip install。
+    - location: bundle
+      executable: bin/python3
+      args: [-u, agent/main.py]
+      env:
+        PYTHONHOME: "{bundle}/prefix"
+        PYTHONPATH: "{bundle}/site-packages/pure.zip:{bundle}/site-packages"
+        LD_LIBRARY_PATH: "{bundle}/prefix/lib:{nativeLibs}"
+        MAAFW_BINARY_PATH: "{nativeLibs}"
+
+# agent 的日志由仓库 config/ 写 debug/custom/*.log（utils 的 sink），在资源解包根的 debug/ 下，
+# 默认 include 已经覆盖；写到别处的在这里改。
+# logs:
+#   include:
+#     - debug/**/*.log
+
+# 运行屏：默认前台+后台（720P@240dpi / 1080P@280dpi）与 PI controller 的
+# display_short_side: 720 一致，无需覆盖。
+# display:
+#   foreground: true
+
+# 应用内更新默认查 PI 的 mirrorchyan_rid（MaaKEDR），不另写 update 段。
+# MaaFwApp 暂不支持 Mirror酱 CDN，仅按 rid 查询更新信息。
+#
+# 待办：Android 包在 Mirror酱 上应是独立产品条目（桌面包只换资源、APK 自带 GUI 与运行时），
+# 需要单独申请 rid，参照 M9A 的 M9A_exec 与桌面的 M9A 分开。拿到后在这里写：
+#   update:
+#     mirrorchyanRid: <申请的 rid>
+# 它会压过 PI 的 mirrorchyan_rid，桌面端不受影响。
+# 未申请前不要写死——rid 不存在时 App 的更新检查会报 MISSING/失败。
+
+# 包名拼成 com.aliothmoon.maafw.maakedr；图标须 png/webp，
+# 由 tools/make_android_icon.py 从根目录 logo.ico 转出（产物 logo.png，已 gitignore）。
+app:
+  id: maakedr
+  label: MaaKEDR
+  icon: ../logo.png

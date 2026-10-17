@@ -19,5 +19,6 @@ dir:
 - [格式化规范](./formatting.md) — 代码风格与工具配置
 - [项目结构说明](./structure.md) — 目录结构与模块组织
 - [文档编写](./doc.md) — 文档站结构与写作约定
+- [安卓打包（MaaFwApp）](./android.md) — 通过 MaaFwApp 子模块与打包配方产出 Android APK
 
 任务与资源约定见 [协议文档](../protocol/)。

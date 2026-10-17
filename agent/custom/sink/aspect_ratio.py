@@ -57,6 +57,15 @@ class AspectRatioChecker(TaskerEventSink):
 
         controller = tasker.controller
 
+        # Controller.resolution 返回的是原始分辨率，maa 绑定在首次截图完成前
+        # 固定返回 (0, 0)（见 maa.controller.Controller.resolution 文档字符串）。
+        # 桌面 GUI（MFAA/MXU）连上设备后就有预览截图兜底，而 MaaFwApp 等外壳
+        # 在任务开始时还没截过图，必须先主动截一张再查。
+        try:
+            controller.post_screencap().wait()
+        except Exception as exc:
+            logger.warning("AspectRatioChecker: 截图失败，分辨率查询可能无效: {}", exc)
+
         try:
             width, height = controller.resolution
         except Exception as exc:
