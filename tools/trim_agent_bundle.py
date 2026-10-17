@@ -100,7 +100,7 @@ def dt_needed(path: Path) -> list[str]:
     for tag, val in entries:
         if tag == 1:
             end = data.index(b"\x00", str_off + val)
-            needed.append(data[str_off + val:end].decode("utf-8", "ignore"))
+            needed.append(data[str_off + val : end].decode("utf-8", "ignore"))
     return needed
 
 
