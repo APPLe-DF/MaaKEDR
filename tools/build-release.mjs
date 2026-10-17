@@ -503,8 +503,8 @@ function smokeReleasePackage(gui, root, packagePaths, runtimePlatform) {
         if (hasEmbeddedPythonRuntime(runtimePlatform) && !existsSync(join(root, ...childExec.split("/")))) {
             throw new Error(`release package smoke failed: Agent Python entrypoint is missing: ${childExec}`);
         }
-        if (!existsSync(join(root, "agent", "bootstrap.py"))) {
-            throw new Error("release package smoke failed: Agent bootstrap is missing");
+        if (!existsSync(join(root, "agent", "main.py"))) {
+            throw new Error("release package smoke failed: Agent entrypoint agent/main.py is missing");
         }
     }
     assertUnixExecutablePermissions(root, runtimePlatform);
@@ -767,7 +767,7 @@ function releaseAgentChildExec(runtimePlatform) {
 function releaseAgentChildArgs() {
     return [
         "-u",
-        "agent/bootstrap.py",
+        "agent/main.py",
     ];
 }
 

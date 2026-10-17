@@ -102,7 +102,8 @@ jobs:
             if ($agent.child_exec -ne $expectedChildExec) {
               throw "Unexpected Agent child_exec in ${packageName}: $($agent.child_exec)"
             }
-            $expectedChildArgs = if ($packageName -eq 'package-mxu') { '-u ./agent/main.py' } else { '-u agent/bootstrap.py' }
+            # 两条 GUI 现在都用 agent/main.py，只有路径前缀不同（MXU 带 ./）
+            $expectedChildArgs = if ($packageName -eq 'package-mxu') { '-u ./agent/main.py' } else { '-u agent/main.py' }
             if (($agent.child_args -join ' ') -ne $expectedChildArgs) {
               throw "Unexpected Agent child_args in ${packageName}: $($agent.child_args -join ' ')"
             }

@@ -50,10 +50,8 @@
             "child_exec": "uv",
             "child_args": [
                 "run",
-                "--frozen",
                 "python",
-                "-u",
-                "./agent/bootstrap.py"
+                "agent/main.py"
             ],
             "identifier": "maakedr_agent"
         }
