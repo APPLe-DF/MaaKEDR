@@ -83,3 +83,7 @@ resource/base/model/ocr/
 
 # Local evidence reports produced by maa-evidence during log analysis
 /_evidence/
+
+# Android signing material — never commit (see docs/zh/develop/android.md)
+*.jks
+*.keystore
