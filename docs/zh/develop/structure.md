@@ -35,8 +35,7 @@ MaaKEDR/
 ├── resource/announcement/          # GUI 欢迎公告（interface.json 的 welcome 指向此处）
 │
 ├── agent/                          # Python Agent
-│   ├── bootstrap.py                # 入口：环境检查 → main.py
-│   ├── main.py                     # 版本校验 + 解析原生库 → run_agent()
+│   ├── main.py                     # 入口：版本校验 + 解析原生库 → run_agent()
 │   ├── maafw_paths.py              # 定位客户端原生库，设置 MAAFW_BINARY_PATH
 │   ├── agent_runtime.py            # 核心：记录版本 → 注册 → AgentServer
 │   ├── custom/

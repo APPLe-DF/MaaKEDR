@@ -8,11 +8,10 @@ icon: "ri:bug-fill"
 
 ## Log Files
 
-| File                        | Description                             |
-| --------------------------- | --------------------------------------- |
-| `debug/agent-bootstrap.log` | Agent startup log                       |
-| `maafw.log`                 | MaaFramework runtime log (project root) |
-| `debug/`                    | Debug screenshots                       |
+| File        | Description                             |
+| ----------- | --------------------------------------- |
+| `maafw.log` | MaaFramework runtime log (project root) |
+| `debug/`    | Debug screenshots                       |
 
 ## Log Analysis Tools
 
