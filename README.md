@@ -82,9 +82,11 @@
 
 ### 环境要求
 
+本项目支持 Windows / macOS / Linux，详细安装步骤见[新手指南](docs/zh/manual/newbie.md)。
+
 - Windows 10+
 - [VC++ Redistributable 2015+](https://aka.ms/vs/17/release/vc_redist.x64.exe)
-- .NET Desktop Runtime 8.0+（MFAAvalonia 需要）
+- [.NET Desktop Runtime 10.0](https://dotnet.microsoft.com/download/dotnet/10.0)（MFAAvalonia 需要）
 - ADB 已配置（用于连接 Android 设备或模拟器）
 
 ### 下载安装
@@ -129,6 +131,7 @@ MaaKEDR/
 │   ├── pvp.json                 #   玩家对战
 │   ├── claim_rewards.json       #   领取奖励
 │   ├── farm_resources.json      #   资源刷取
+│   ├── farm_remaining_stamina.json # 剩余体力刷取
 │   ├── event_stage.json         #   活动关卡与活动商店
 │   └── stamina_info.json        #   体力信息
 ├── resource/base/               # 核心资源
@@ -152,11 +155,13 @@ MaaKEDR/
 
 详细的项目开发文档请参见 [docs/](docs/README.md)，包含：
 
+- [环境搭建与开发入门](docs/zh/develop/setup.md)
 - [Pipeline 编写指南](docs/zh/develop/pipeline.md)
 - [Custom 识别与动作开发](docs/zh/develop/custom.md)
 - [项目结构说明](docs/zh/develop/structure.md)
 - [格式化规范](docs/zh/develop/formatting.md)
 - [Bug 排查](docs/zh/develop/fix.md)
+- [海外客户端适配](docs/zh/develop/overseas-client-adaptation.md)
 - [Vibe Coding 开发说明](docs/zh/develop/vibe-coding.md)
 
 ---

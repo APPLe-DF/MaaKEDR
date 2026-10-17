@@ -97,11 +97,13 @@ Download the latest release from [GitHub Releases](https://github.com/APPLe-DF/M
 # Install runtime dependencies
 DependencySetup_依赖库安装_win.bat
 
-# Launch the GUI
-MFAAvalonia.exe
+# Launch the GUI (pick one)
+MFAAvalonia.exe     # Avalonia UI version
+# or
+mxu.exe             # Tauri + React version
 ```
 
-Select tasks and configure options in the MFAAvalonia UI to start automation.
+Select tasks and configure options in the GUI to start automation.
 
 ---
 
@@ -109,28 +111,39 @@ Select tasks and configure options in the MFAAvalonia UI to start automation.
 
 ```bash
 pnpm install          # Install dev dependencies
-pnpm check            # Lint + typecheck
-pnpm format:all       # Format all files
+pnpm check            # Code check (format + schema + MaaFW + lint)
+pnpm check:py         # Python code check (ruff + pyright)
+pnpm format           # Format all files
+pnpm format:py        # Format Python files
 ```
 
 ### Project Structure
 
 ```
 MaaKEDR/
+├── interface.json           # Project entry config
+├── tasks/                   # Task definitions (task list shown in the GUI)
+│   ├── startup.json         #   Game launch
+│   ├── pvp.json             #   PVP
+│   ├── claim_rewards.json   #   Claim rewards
+│   ├── farm_resources.json  #   Resource farming
+│   ├── farm_remaining_stamina.json # Remaining stamina farming
+│   ├── event_stage.json     #   Event stages & shop
+│   └── stamina_info.json    #   Stamina info
 ├── resource/base/           # Core resources
-│   ├── pipeline/            # Pipeline definitions
-│   ├── image/               # Template images
-│   └── model/ocr/           # PaddleOCR models
+│   ├── pipeline/            #   Pipeline definitions
+│   ├── image/               #   Template images
+│   └── model/ocr/           #   PaddleOCR models
 ├── agent/                   # Python Agent (custom recognition/actions)
 │   └── custom/
-│       ├── recognition/     # Custom recognition
-│       └── action/          # Custom actions
-├── tasks/                   # Task entry points
+│       ├── recognition/     #   Custom recognition
+│       └── action/          #   Custom actions
+├── docs/                    # Development docs
 ├── tools/                   # Dev tools
-└── interface.json           # MaaFramework project definition
+└── .github/workflows/       # CI/CD config
 ```
 
-For more documentation, visit the [MaaFramework](https://github.com/MaaXYZ/MaaFramework) main repository.
+For more documentation, see [docs/](docs/README.md).
 
 ---
 
@@ -138,11 +151,13 @@ For more documentation, visit the [MaaFramework](https://github.com/MaaXYZ/MaaFr
 
 See [docs/](docs/README.md) for detailed development documentation:
 
+- [Setup & Development Quickstart](docs/en/develop/setup.md)
 - [Pipeline Guide](docs/en/develop/pipeline.md)
 - [Custom Recognition & Action](docs/en/develop/custom.md)
 - [Project Structure](docs/en/develop/structure.md)
 - [Formatting](docs/en/develop/formatting.md)
 - [Troubleshooting](docs/en/develop/fix.md)
+- [Overseas Client Adaptation](docs/en/develop/overseas-client-adaptation.md)
 - [Vibe Coding Development](docs/en/develop/vibe-coding.md)
 
 ---

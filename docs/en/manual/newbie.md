@@ -143,7 +143,7 @@ Download MaaKEDR from the [GitHub Releases page](https://github.com/APPLe-DF/Maa
 | Frontend | Suffix  | Description                                          |
 | :------: | :-----: | :--------------------------------------------------- |
 | **MFAA** | `-MFAA` | GUI, requires .NET Desktop Runtime, richer interface |
-| **MXU**  | `-MXU`  | GUI (Unity), no additional dependencies              |
+| **MXU**  | `-MXU`  | GUI (Tauri + React), no additional dependencies      |
 
 </div>
 

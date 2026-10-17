@@ -178,6 +178,7 @@
         },
         "post_wait_freezes": 500,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "ClaimRewards.ConfirmInterface"
         ]
     },
@@ -238,6 +239,7 @@
         },
         "timeout": 5000,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "ClaimRewards.ClaimButton",
             "[JumpBack]ClaimRewards.CheckWeekly"
         ]
@@ -273,6 +275,7 @@
         },
         "timeout": 5000,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "ClaimRewards.ClaimButton",
             "[JumpBack]ClaimRewards.CheckMilitary"
         ]
@@ -307,6 +310,7 @@
             "type": "Click"
         },
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "ClaimRewards.ClaimButton",
             "[JumpBack]ClaimRewards.ExitRewardInterface"
         ]
@@ -369,6 +373,7 @@
         },
         "post_wait_freezes": 500,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "ClaimRewards.ConfirmInterface"
         ]
     },
@@ -485,6 +490,7 @@
         },
         "post_wait_freezes": 500,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "BattlePass.ConfirmInterface",
             "ClaimRewards.MainHub"
         ]
@@ -634,6 +640,7 @@
         },
         "timeout": 5000,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "BattlePass.ClaimRewardButton",
             "BattlePass.ConfirmInterface"
         ]
@@ -760,6 +767,7 @@
         },
         "post_wait_freezes": 500,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "Mailbox.ConfirmInterface"
         ]
     },
@@ -888,6 +896,7 @@
         },
         "post_wait_freezes": 500,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "DispatchClaim.ClaimButton"
         ]
     },
@@ -1014,6 +1023,7 @@
             "type": "Click"
         },
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "PremiumShop.ConfirmShopInterface"
         ]
     },
@@ -1108,6 +1118,7 @@
         "post_wait_freezes": 500,
         "timeout": 5000,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "PremiumShop.ConfirmPremiumShop"
         ],
         "on_error": [
@@ -1179,6 +1190,7 @@
         "post_wait_freezes": 500,
         "timeout": 5000,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "PremiumShop.ConfirmPurchase"
         ]
     },
