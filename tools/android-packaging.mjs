@@ -47,6 +47,8 @@ const CHAQUOPY_FIXTURE_ENV = "ANDROID_PACKAGING_CHAQUOPY_FIXTURE";
 const CORE_MAAFW_PATTERN = /^(\d[\w.]*)-maafw([\w.]+)$/;
 const REQUIREMENT_PIN_PATTERN = /^maafw==([0-9][^\s;]*)/m;
 const SAFE_PREFIX_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+// PEP 440 版本段的白名单：数字 / 字母 / . _ + ! 与预发布分隔符；挡的是 shell 元字符
+const SAFE_VERSION_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._+!-]*$/;
 // requirements 行首的「包名==精确版本」；uv export 的 --hash 续行（缩进 + --）、注释、-r / -e
 // 与非精确行（比较符不是 ==）都不匹配。uv export 恒为精确钉版，非精确行没有比对的基准
 const REQUIREMENT_ENTRY_PATTERN = /^([A-Za-z0-9][A-Za-z0-9._-]*)==([^\s;]+)/;
@@ -108,18 +110,34 @@ function envTrim(name) {
     return (process.env[name] ?? "").trim();
 }
 
+/** 拉取 releases，翻页直到取完。只看第一页的话，配对版本落在 100 条之外的内核就找不到，
+ *  解析器会误报"没有配对"或退到更旧的回退版。GitHub 每页上限 100，页数上限兜住异常仓库。 */
 async function githubReleases(repo, perPage = 100) {
     const headers = {
         Accept: "application/vnd.github+json",
         "User-Agent": "android-packaging-resolver",
     };
     if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
-    const response = await fetch(`https://api.github.com/repos/${repo}/releases?per_page=${perPage}`, {headers});
-    if (!response.ok) {
-        const hint = response.status === 403 ? "（可能是 API 限流，确认 GITHUB_TOKEN 已传入）" : "";
-        throw new Error(`查询 ${repo} 的 releases 失败：HTTP ${response.status}${hint}`);
+
+    const releases = [];
+    // 50 页 = 5000 条，远超任何真实项目；防的是接口异常返回满页的死循环
+    for (let page = 1; page <= 50; page += 1) {
+        // 无超时的话 GitHub API 卡住会把解析器一直挂到外层 90 分钟超时；
+        // 同文件的 Chaquopy 请求已有 20s 超时，这里补上同一口径。
+        const response = await fetch(`https://api.github.com/repos/${repo}/releases?per_page=${perPage}&page=${page}`, {
+            headers,
+            signal: AbortSignal.timeout(20000),
+        });
+        if (!response.ok) {
+            const hint = response.status === 403 ? "（可能是 API 限流，确认 GITHUB_TOKEN 已传入）" : "";
+            throw new Error(`查询 ${repo} 的 releases 失败：HTTP ${response.status}${hint}`);
+        }
+        const batch = await response.json();
+        if (!Array.isArray(batch)) throw new Error(`查询 ${repo} 的 releases 返回了非数组`);
+        releases.push(...batch);
+        if (batch.length < perPage) break;
     }
-    return response.json();
+    return releases;
 }
 
 async function loadFixture() {
@@ -172,7 +190,7 @@ function parseMaafwVersion(text) {
     return {release: match[1].split(".").map(Number), suffix: match[2].replace(/^[-.]/, "")};
 }
 
-/** 同一条线内无后缀（正式版）大于带后缀（预发布），后缀之间按字符串比；解析不了退回纯数字比较 */
+/** 同一条线内无后缀（正式版）大于带后缀（预发布）；后缀之间按 compareSuffix 逐段比（数字段按数值）；解析不了退回纯数字比较 */
 function compareMaafwVersions(left, right) {
     const a = parseMaafwVersion(left);
     const b = parseMaafwVersion(right);
@@ -182,7 +200,34 @@ function compareMaafwVersions(left, right) {
     if (a.suffix === b.suffix) return 0;
     if (a.suffix === "") return 1;
     if (b.suffix === "") return -1;
-    return a.suffix < b.suffix ? -1 : 1;
+    return compareSuffix(a.suffix, b.suffix);
+}
+
+/** 后缀切成「字母段 / 数字段」交替的 token：b2 → ["b", 2]、beta.10 → ["beta", 10]。
+ *  只按 . 和 - 切不够——"b2" 会整段落进字典序，于是 b10 < b2 又回来了。 */
+function suffixTokens(text) {
+    return text
+        .split(/[.\-]/)
+        .flatMap((segment) => segment.match(/[a-zA-Z]+|\d+/g) ?? [])
+        .map((token) => (/^\d+$/.test(token) ? Number(token) : token));
+}
+
+function compareSuffix(left, right) {
+    const a = suffixTokens(left);
+    const b = suffixTokens(right);
+    for (let i = 0; i < Math.max(a.length, b.length); i += 1) {
+        const x = a[i];
+        const y = b[i];
+        if (x === undefined) return -1;
+        if (y === undefined) return 1;
+        if (x === y) continue;
+        if (typeof x === "number" && typeof y === "number") return x - y;
+        // 数字段排在字母段之前（1.0b2 的 b 在 1.0b 之后无数字，属边角）
+        if (typeof x === "number") return -1;
+        if (typeof y === "number") return 1;
+        return x < y ? -1 : 1;
+    }
+    return 0;
 }
 
 /** candidate 的发布线不高于 pin：`5.13.0b6` 与 `5.13.0` 算同一条线，固定预发布版时同线正式版可用 */
@@ -194,21 +239,51 @@ function releaseAtMost(candidate, pin) {
 }
 
 /** 某个 maafw 配对下的内核 tag：tag 第一段是 CPython 版本，同配对有多个 CPython 线时取最高的 */
-function coreTagFor(coreTags, maafwVersion) {
+/** 某个 maafw 配对下的内核 tag：tag 第一段是 CPython 版本，同配对有多个 CPython 线时取最高的。
+ *  只取最高会把项目不支持的线也选中——agent/main.py 明确拒绝 3.14，必须按声明的
+ *  Python 范围过滤（allowedMinor 为空数组表示未声明、不限制）。 */
+function coreTagFor(coreTags, maafwVersion, allowedMinor = []) {
     const pattern = new RegExp(`^(\\d[\\w.]*)-maafw${escapeRegExp(maafwVersion)}$`);
     return coreTags
         .map((tag) => pattern.exec(tag))
         .filter((match) => match !== null)
         .map((match) => match[1])
+        .filter((cpython) => allowedMinor.length === 0 || allowedMinor.includes(cpythonMinor(cpython)))
         .sort(compareVersions)
         .at(-1);
+}
+
+/** 内核 tag 第一段是 CPython 版本（3.13.15-maafw5.14.2），取 major.minor */
+function cpythonMinor(cpython) {
+    return cpython.split(".").slice(0, 2).join(".");
+}
+
+/** pyproject.toml 的 requires-python（>=3.13,<3.14）展开成允许的 major.minor 列表。
+ *  只解析 >=X.Y,<X.Z 这一常见写法；解析不出来返回空数组（不限制）。 */
+function allowedPythonMinors(requiresPython) {
+    if (typeof requiresPython !== "string" || requiresPython.trim() === "") return [];
+    const lower = />=\s*(\d+)\.(\d+)/.exec(requiresPython);
+    const upper = /<\s*(\d+)\.(\d+)/.exec(requiresPython);
+    if (lower === null) return [];
+    const startMajor = Number(lower[1]);
+    const startMinor = Number(lower[2]);
+    const endMajor = upper === null ? startMajor + 1 : Number(upper[1]);
+    const endMinor = upper === null ? startMinor : Number(upper[2]);
+    const allowed = [];
+    for (let major = startMajor; major <= endMajor && allowed.length < 20; major += 1) {
+        for (let minor = major === startMajor ? startMinor : 0; minor <= 99; minor += 1) {
+            if (major > endMajor || (major === endMajor && minor >= endMinor)) break;
+            allowed.push(major + "." + minor);
+        }
+    }
+    return allowed;
 }
 
 /** 挑可用的配对内核：绑定与原生库必须同版本，所以 client 原生库总跟着选中的绑定走。
  *  优先精确配对；内核还没跟上上游补丁（requirements 已 bump、配对还没发）时降级到不高于固定
  *  版本的最高配对——APK 里前后端仍同版本，漂移的只是相对 requirements 的版本差。固定版本比内核
  *  全部配对都旧时不做「升级」猜测（那多半是版本写错了），仍报错并列出现有配对 */
-function pickPackagingCore(coreTags, requested) {
+function pickPackagingCore(coreTags, requested, allowedMinor = []) {
     const pairings = availablePairings(coreTags);
     const eligible = pairings.filter((version) => releaseAtMost(version, requested)).sort(compareMaafwVersions);
     const chosen = pairings.includes(requested) ? requested : eligible.at(-1);
@@ -221,7 +296,7 @@ function pickPackagingCore(coreTags, requested) {
         );
     }
     return {
-        coreTag: `${coreTagFor(coreTags, chosen)}-maafw${chosen}`,
+        coreTag: `${coreTagFor(coreTags, chosen, allowedMinor)}-maafw${chosen}`,
         maafwVersion: chosen,
         degraded: chosen !== requested,
     };
@@ -362,6 +437,14 @@ async function chaquopyPins(indexUrl, entries, cpTag) {
         }
         if (version !== undefined && versions.has(version)) continue;
         const best = [...versions].sort(compareVersions).at(-1);
+        // 版本段来自外部索引的 wheel 文件名，会被拼进 workflow 的 shell 命令；
+        // 不放行就可能有 `; rm -rf` 这类内容被当命令执行（索引被投毒时）
+        if (!SAFE_VERSION_PATTERN.test(best)) {
+            throw new Error(
+                `Chaquopy 索引给的 ${name} 版本段含非法字符：${JSON.stringify(best)}；` +
+                    `wheel 文件名不符合预期，索引可能有问题，到上游确认`,
+            );
+        }
         args.push(`--exclude ${name}`, `--require ${name}==${best}`);
     }
     return args.join(" ");
@@ -403,6 +486,8 @@ async function resolvePackaging(root) {
     const hasOcr = project.ocr !== undefined;
     const prefix = artifactPrefix(project);
     const {version: declaredVersion, channel: declaredChannel} = declaredSection(project);
+    // 选内核 CPython 配对时要用到项目声明的 Python 范围（agent/main.py 会拒绝 3.14）
+    const allowedMinor = allowedPythonMinors(project.python?.requiresPython);
     const warnings = [];
 
     // MaaFW 版本来源链（适配点见文件头 1）：requirements 钉版 > maa-project.json 精确版本 >
@@ -449,7 +534,7 @@ async function resolvePackaging(root) {
                 maafwVersion = match[2];
             }
         } else {
-            const picked = pickPackagingCore(await fetchCoreTags(), maafwVersion);
+            const picked = pickPackagingCore(await fetchCoreTags(), maafwVersion, allowedMinor);
             coreTag = picked.coreTag;
             if (picked.degraded) {
                 coreFallback = `maafw${maafwVersion} → maafw${picked.maafwVersion}`;
