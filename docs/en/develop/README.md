@@ -19,5 +19,6 @@ Welcome to the MaaKEDR development documentation.
 - [Formatting](./formatting.md) — Code style and tool configuration
 - [Project Structure](./structure.md) — Directory structure and module organization
 - [Writing Docs](./doc.md) — Docs site conventions
+- [Android Packaging (MaaFwApp)](./android.md) — Building an Android APK via the MaaFwApp submodule and packaging recipe
 
 Task and resource conventions: [Protocol](../protocol/).
