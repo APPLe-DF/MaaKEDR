@@ -146,9 +146,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MAAFW_TAG: ${{ inputs.maafw_tag || steps.maafw.outputs.maafw_tag }}
+          CORE_TAG: ${{ steps.maafw.outputs.core_tag }}
         run: |
           TAG_ARG=""
           if [ -n "$MAAFW_TAG" ] && [ "$MAAFW_TAG" != "latest" ]; then
+            # 手动覆盖只换 client 侧 .so，agent 内核仍由 resolver 选：两者不同版本时
+            # APK 内前后端协议不一致，任务会在设备上失败。这里只告警——应急通道要能用。
+            CORE_MAAFW="${CORE_TAG##*-maafw}"
+            if [ -n "$CORE_MAAFW" ] && [ "$MAAFW_TAG" != "v$CORE_MAAFW" ]; then
+              echo "::warning::maafw_tag=$MAAFW_TAG 与内核 $CORE_TAG 不配对：APK 内前后端版本不一致，仅作应急"
+            fi
             TAG_ARG="--tag $MAAFW_TAG"
           fi
           ABIS="arm64-v8a"
@@ -230,7 +237,7 @@ jobs:
             exit 0
           fi
           JKS="${{ github.workspace }}/release.jks"
-          echo "$KEYSTORE_BASE64" | base64 -d > "$JKS"
+          echo "$KEYSTORE_BASE64" | base64 --decode > "$JKS"
           echo "path=$JKS" >> "$GITHUB_OUTPUT"
 
       - name: Build Debug APK
@@ -251,6 +258,19 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew clean assembleRelease
+
+      # dex 重压缩：AGP 9 把 dex 以 STORED 写入，本步改 deflate 再 zipalign + 重签。
+      # 不跑这一步，CI 出的包比文档宣称的大 3-4M（本地流程的第 7 步就是这个脚本）。
+      # 缺 KEYSTORE_PATH 时脚本只跳过签名、照常重压缩（未签名包装不上，体积收益仍在）。
+      - name: Shrink Release APK
+        if: env.ASSEMBLE == 'release'
+        env:
+          KEYSTORE_PATH: ${{ steps.keystore.outputs.path }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          python tools/shrink_apk.py Android/MaaFwApp/app/build/outputs/apk/release/app-release.apk
 
       - name: Rename Release APK
         id: rename
@@ -396,9 +416,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MAAFW_TAG: ${{ inputs.maafw_tag || steps.maafw.outputs.maafw_tag }}
+          CORE_TAG: ${{ steps.maafw.outputs.core_tag }}
         run: |
           TAG_ARG=""
           if [ -n "$MAAFW_TAG" ] && [ "$MAAFW_TAG" != "latest" ]; then
+            # 手动覆盖只换 client 侧 .so，agent 内核仍由 resolver 选：两者不同版本时
+            # APK 内前后端协议不一致，任务会在设备上失败。这里只告警——应急通道要能用。
+            CORE_MAAFW="${CORE_TAG##*-maafw}"
+            if [ -n "$CORE_MAAFW" ] && [ "$MAAFW_TAG" != "v$CORE_MAAFW" ]; then
+              echo "::warning::maafw_tag=$MAAFW_TAG 与内核 $CORE_TAG 不配对：APK 内前后端版本不一致，仅作应急"
+            fi
             TAG_ARG="--tag $MAAFW_TAG"
           fi
           python scripts/setup_maa_framework.py --abi "$ABI" $TAG_ARG
@@ -455,7 +482,7 @@ jobs:
             exit 0
           fi
           JKS="${{ github.workspace }}/release.jks"
-          echo "$KEYSTORE_BASE64" | base64 -d > "$JKS"
+          echo "$KEYSTORE_BASE64" | base64 --decode > "$JKS"
           echo "path=$JKS" >> "$GITHUB_OUTPUT"
 
       - name: Build Release APK
@@ -468,6 +495,15 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew clean assembleRelease
+
+      - name: Shrink Release APK
+        env:
+          KEYSTORE_PATH: ${{ steps.keystore.outputs.path }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          python tools/shrink_apk.py Android/MaaFwApp/app/build/outputs/apk/release/app-release.apk
 
       - name: Rename Release APK
         id: rename

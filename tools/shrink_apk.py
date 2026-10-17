@@ -46,13 +46,25 @@ def read_local_properties(path: Path) -> dict[str, str]:
 
 
 def find_android_tools(props: dict[str, str]) -> tuple[Path, Path]:
-    """定位 zipalign 与 apksigner。"""
+    """定位 zipalign 与 apksigner。
+
+    Windows 上是 ``zipalign.exe`` / ``apksigner.bat``，macOS / Linux 上是不带扩展名的
+    可执行文件——CI 的 release 跑在 macos-latest，写死 .exe 会让那一步直接报"缺少工具"。
+    """
     sdk = props.get("sdk.dir") or os.environ.get("ANDROID_HOME") or os.environ.get("ANDROID_SDK_ROOT")
     if not sdk:
         raise SystemExit("找不到 Android SDK：请在 local.properties 配 sdk.dir 或设置 ANDROID_HOME")
-    build_tools = sorted((Path(sdk) / "build-tools").glob("*"))[-1]
-    zipalign = build_tools / "zipalign.exe"
-    apksigner = build_tools / "apksigner.bat"
+    # 空目录时 [-1] 会抛 IndexError，报错指向 glob 而不是"没装 build-tools"，很难懂
+    candidates = sorted((Path(sdk) / "build-tools").glob("*"))
+    if not candidates:
+        raise SystemExit(f"{sdk} 下没有 build-tools：用 sdkmanager 装一个（如 build-tools;37.0.0）")
+    build_tools = candidates[-1]
+
+    if sys.platform.startswith("win"):
+        zipalign, apksigner = build_tools / "zipalign.exe", build_tools / "apksigner.bat"
+    else:
+        zipalign, apksigner = build_tools / "zipalign", build_tools / "apksigner"
+
     if not zipalign.is_file() or not apksigner.is_file():
         raise SystemExit(f"build-tools 目录缺少 zipalign/apksigner: {build_tools}")
     return zipalign, apksigner
@@ -112,10 +124,12 @@ def main() -> int:
     props = read_local_properties(LOCAL_PROPERTIES)
     zipalign, apksigner = find_android_tools(props)
 
-    keystore = props.get("KEYSTORE_PATH")
-    if not keystore:
-        print("local.properties 缺少 KEYSTORE_PATH，无法重签名", file=sys.stderr)
-        return 1
+    # 签名材料：环境变量优先，其次 local.properties（与 MaaFwApp 的 signingSetting 同序）。
+    # CI 里没有 local.properties 的 KEYSTORE_PATH——keystore 由 secrets 解出来后经 env 传入。
+    def setting(name: str, default: str = "") -> str:
+        return os.environ.get(name) or props.get(name) or default
+
+    keystore = setting("KEYSTORE_PATH")
 
     aligned = src.with_suffix(".aligned.apk")
     tmp = src.with_suffix(".repacked.apk")
@@ -124,24 +138,44 @@ def main() -> int:
     verify(src, tmp)
 
     subprocess.run([str(zipalign), "-p", "-f", "4", str(tmp), str(aligned)], check=True)
-    subprocess.run(
-        [
-            str(apksigner),
-            "sign",
-            "--ks",
-            keystore,
-            "--ks-pass",
-            f"pass:{props.get('KEYSTORE_PASSWORD', 'android')}",
-            "--key-pass",
-            f"pass:{props.get('KEY_PASSWORD', 'android')}",
-            "--ks-key-alias",
-            props.get("KEY_ALIAS", "androiddebugkey"),
-            str(aligned),
-        ],
-        check=True,
-    )
-    subprocess.run([str(apksigner), "verify", str(aligned)], check=True, capture_output=True)
-    print("签名验证通过")
+
+    # 没有签名材料时不中止：重压缩与对齐仍然有价值（未签名包只是装不上，体积收益照拿）。
+    # 之前的写法直接 return 1，会让文档第 7-8 步在未配 keystore 的机器上整段跑不下去。
+    if not keystore:
+        print(
+            "未配置 KEYSTORE_PATH（env 与 local.properties 都没有），跳过签名——"
+            "产物为未签名包，不能安装，体积收益已生效",
+            file=sys.stderr,
+        )
+    else:
+        # 密码走 apksigner 的 env:<name> 形式，不进 argv：`pass:<明文>` 会让密码出现在
+        # 进程参数里（ps / 日志 / CI 的 step 回显都能看到）。apksigner 支持 env: 形式，
+        # 我们把值塞进子进程环境再让它按名字读。
+        ks_env = "APKSIGNER_KS_PASS"
+        key_env = "APKSIGNER_KEY_PASS"
+        subprocess.run(
+            [
+                str(apksigner),
+                "sign",
+                "--ks",
+                keystore,
+                "--ks-pass",
+                f"env:{ks_env}",
+                "--key-pass",
+                f"env:{key_env}",
+                "--ks-key-alias",
+                setting("KEY_ALIAS", "androiddebugkey"),
+                str(aligned),
+            ],
+            check=True,
+            env={
+                **os.environ,
+                ks_env: setting("KEYSTORE_PASSWORD", "android"),
+                key_env: setting("KEY_PASSWORD", "android"),
+            },
+        )
+        subprocess.run([str(apksigner), "verify", str(aligned)], check=True, capture_output=True)
+        print("签名验证通过")
 
     shutil.move(str(aligned), dst)
     tmp.unlink(missing_ok=True)
