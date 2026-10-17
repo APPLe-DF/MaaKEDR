@@ -148,6 +148,11 @@ def main() -> int:
             file=sys.stderr,
         )
     else:
+        # 密码走 apksigner 的 env:<name> 形式，不进 argv：`pass:<明文>` 会让密码出现在
+        # 进程参数里（ps / 日志 / CI 的 step 回显都能看到）。apksigner 支持 env: 形式，
+        # 我们把值塞进子进程环境再让它按名字读。
+        ks_env = "APKSIGNER_KS_PASS"
+        key_env = "APKSIGNER_KEY_PASS"
         subprocess.run(
             [
                 str(apksigner),
@@ -155,14 +160,19 @@ def main() -> int:
                 "--ks",
                 keystore,
                 "--ks-pass",
-                f"pass:{setting('KEYSTORE_PASSWORD', 'android')}",
+                f"env:{ks_env}",
                 "--key-pass",
-                f"pass:{setting('KEY_PASSWORD', 'android')}",
+                f"env:{key_env}",
                 "--ks-key-alias",
                 setting("KEY_ALIAS", "androiddebugkey"),
                 str(aligned),
             ],
             check=True,
+            env={
+                **os.environ,
+                ks_env: setting("KEYSTORE_PASSWORD", "android"),
+                key_env: setting("KEY_PASSWORD", "android"),
+            },
         )
         subprocess.run([str(apksigner), "verify", str(aligned)], check=True, capture_output=True)
         print("签名验证通过")
