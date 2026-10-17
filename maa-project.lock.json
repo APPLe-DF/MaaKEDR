@@ -167,11 +167,11 @@
             "templateHash": "2cb187d1bc4a6a2ad18145adc161dc58c61545208e2e407087aa2570a4e01646"
         },
         "tools/build-release.mjs": {
-            "hash": "3deae584fc16e149b575835a69ed78973d7be0e29eb294b150d5aa5e90a27ae2",
+            "hash": "c17da41156aad21849f951338e4b9f7c49a004faa6e71c3734a400832d281471",
             "templateHash": "7fd7683a60d650f1a3625faaa8a71010a18eba226a28ee6c4ccbbeab64a4b8a2"
         },
         "tools/check-project.mjs": {
-            "hash": "7b597295b6bdd2726e40d0baf7015c21ecc44d1b2cb3897df1a2bf3f549ee91b",
+            "hash": "0b9c445f581b71ac2be313757579512f9b50e37ed3a0eec0c1b1eb945724c501",
             "templateHash": "064d87915d7b877ca6ccfadb143f3e3d77a4cfcf29cf65952fb031f12a4cbe6d"
         },
         "tools/optimize-images.mjs": {
