@@ -35,8 +35,7 @@ MaaKEDR/
 ├── resource/announcement/          # GUI welcome announcement (interface.json → welcome)
 │
 ├── agent/                          # Python Agent
-│   ├── bootstrap.py                # Entry: env check → main.py
-│   ├── main.py                     # Version guard + resolve native lib → run_agent()
+│   ├── main.py                     # Entry: version check + resolve native libs → run_agent()                     # Version guard + resolve native lib → run_agent()
 │   ├── maafw_paths.py              # Locate the client native runtime, set MAAFW_BINARY_PATH
 │   ├── agent_runtime.py            # Core: log version → register → AgentServer
 │   ├── custom/

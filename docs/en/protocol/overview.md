@@ -37,7 +37,7 @@ Task presets: `tasks/preset/Daily.json` (daily) and `tasks/preset/Activity.json`
 
 ## Agent
 
-Common dev invocation: `uv run python -u ./agent/bootstrap.py`.  
+Common dev invocation: `uv run python agent/main.py`.  
 Release packages switch to the embedded `python/python.exe` (see `tools/build-release.mjs`).
 
 Release packages **no longer bundle** the MaaFramework native runtime: packaging strips

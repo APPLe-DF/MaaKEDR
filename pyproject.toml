@@ -22,8 +22,10 @@ build-backend = "hatchling.build"
 [tool.ruff]
 line-length = 120
 target-version = "py313"
-# Android/MaaFwApp 是上游 git 子模块，其脚本不属于本仓库的 lint 范围
-exclude = [".venv", "agent/__pycache__", "Android/MaaFwApp"]
+# Android/MaaFwApp 是上游 git 子模块，其脚本不属于本仓库的 lint 范围。
+# 用 extend-exclude 而不是 exclude：后者会覆盖 ruff 的默认排除列表（.git / node_modules
+# 等随之失效），这里只需要在默认之上追加。与 create-maa-project 的 --add android 同写法。
+extend-exclude = ["Android/MaaFwApp"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "SIM"]

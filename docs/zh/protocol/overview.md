@@ -49,7 +49,7 @@ icon: ri:book-open-line
 
 ## Agent
 
-开发态常见配置：`uv run python -u ./agent/bootstrap.py`。  
+开发态常见配置：`uv run python agent/main.py`。  
 发布包会改为内嵌 `python/python.exe` 启动（见 `tools/build-release.mjs`）。
 
 发布包**不再自带** MaaFramework 原生库：打包时会剥离内嵌解释器中的
