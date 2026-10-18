@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import stats from "../data/project-stats.json";
-import {computed} from "vue";
+import {computed, onBeforeUnmount, onMounted, ref} from "vue";
 
 const props = withDefaults(
     defineProps<{
@@ -66,6 +66,69 @@ const items = computed(() => {
 const asOf = computed(() => (stats.generatedAt ? stats.generatedAt.slice(0, 10) : ""));
 // 统计脚本失败时会写全零占位，这时候整排 0 比不写更容易误导，直接降级成一行说明。
 const available = computed(() => stats.pipelineNodes > 0);
+
+/**
+ * 数字滚入视口时从 0 数到目标值。
+ * SSR 和首帧渲染的都是真实值，只有挂载之后、元素真的进入视口才清零重数——
+ * 这样 JS 没跑、动画被禁用、或者用户直接停在页面底部时，看到的始终是正确数字，
+ * 不会出现一排 0 等着数。
+ */
+const displayed = ref<number[] | null>(null);
+const row = ref<HTMLDivElement | null>(null);
+let observer: IntersectionObserver | null = null;
+let raf = 0;
+let started = false;
+
+function animateCounts() {
+    if (started) return;
+    started = true;
+    const targets = items.value.map((item) => item.value);
+    const duration = 1100;
+    const startAt = performance.now();
+    displayed.value = targets.map(() => 0);
+
+    const tick = (now: number) => {
+        const t = Math.min(1, (now - startAt) / duration);
+        // 末尾收得慢一点，读数停下来时不突兀。
+        const eased = 1 - (1 - t) ** 3;
+        displayed.value = targets.map((target) => Math.round(target * eased));
+        if (t < 1) raf = requestAnimationFrame(tick);
+        else displayed.value = targets;
+    };
+    raf = requestAnimationFrame(tick);
+}
+
+onMounted(() => {
+    if (!available.value) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (typeof IntersectionObserver === "undefined") return;
+
+    const el = row.value;
+    if (!el) return;
+    observer = new IntersectionObserver(
+        (entries) => {
+            for (const entry of entries) {
+                if (!entry.isIntersecting) continue;
+                observer?.disconnect();
+                observer = null;
+                animateCounts();
+            }
+        },
+        {threshold: 0.4},
+    );
+    observer.observe(el);
+});
+
+onBeforeUnmount(() => {
+    observer?.disconnect();
+    observer = null;
+    cancelAnimationFrame(raf);
+});
+
+function valueOf(index: number, fallback: number): number {
+    const shown = displayed.value?.[index];
+    return shown === undefined ? fallback : shown;
+}
 </script>
 
 <template>
@@ -73,9 +136,9 @@ const available = computed(() => stats.pipelineNodes > 0);
         <div class="container">
             <h2 v-if="title" class="title">{{ title }}</h2>
 
-            <div v-if="available" class="row">
-                <div v-for="item in items" :key="item.key" class="stat">
-                    <p class="value">{{ item.value }}</p>
+            <div v-if="available" ref="row" class="row">
+                <div v-for="(item, i) in items" :key="item.key" class="stat">
+                    <p class="value">{{ valueOf(i, item.value) }}</p>
                     <p class="label">{{ item.label }}</p>
                     <p class="note">{{ item.note }}</p>
                 </div>
