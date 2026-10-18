@@ -15,6 +15,11 @@ type Asset = {
 };
 
 type Os = "win" | "macos" | "linux" | "android";
+/**
+ * 高熵提示给出的线索。"32 位"必须作为独立信号传下去，不能塌缩成 null ——
+ * 塌缩后调用方会继续走 UA 推断，把 32 位 x86 又判成 x86_64，护栏等于没装。
+ */
+type ArchHint = {arch: "aarch64" | "x86_64"; bitness: "32" | "64" | "unknown"};
 // 桌面是 x86_64 / aarch64；安卓包按 ABI 命名（arm64-v8a / x86_64），另有 universal 全量包。
 type Arch = "x86_64" | "aarch64" | "arm64-v8a" | "universal";
 /**
@@ -65,6 +70,7 @@ const TEXT = {
         macArm: "下载 Apple 芯片版",
         macIntel: "下载 Intel 芯片版",
         unknownArch: "未能识别架构，已按兼容性推荐",
+        bits32Note: "检测到 32 位设备，只能安装通用包（universal）。",
     },
     en: {
         hint: "MFAA and MXU differ only in appearance, features are identical, so pick either one.",
@@ -89,6 +95,7 @@ const TEXT = {
         macArm: "Download Apple silicon",
         macIntel: "Download Intel",
         unknownArch: "Architecture not detected — showing the most compatible build",
+        bits32Note: "32-bit device detected — only the universal package can be installed.",
     },
 };
 
@@ -128,6 +135,12 @@ const groups = GROUPS.map((group) => ({
  * 同一份完整列表，不会产生 hydration 失配；JS 没跑时页面就是原来的完整列表。
  */
 const detected = ref<Detected | null>(null);
+/**
+ * 设备位宽。只在浏览器明确告知是 32 位时才为 "32"。
+ * 单独存是因为 arch 已经用于"能不能精确匹配 ABI"，而 32 位设备的关键信息是
+ * "只能装 universal"——它并不是"架构未知"，是"架构已知但无单 ABI 包可装"。
+ */
+const deviceBits = ref<"32" | "64" | "unknown">("unknown");
 // 界面版本默认 MFAA；用户切到 MXU 后推荐项跟着换。
 // 若当前架构没有 MFAA（极端情况），recommended 的兜底会选中实际存在的那个。
 const uiChoice = ref<Asset["ui"]>("MFAA");
@@ -182,6 +195,10 @@ const recommendedApk = computed<Asset | null>(() => {
     if (!apks.length) return null;
     // 已有精确匹配时交给 recommended，这里不重复推荐。
     if (recommended.value?.os === "android") return null;
+    // 32 位设备：单 ABI 包（arm64-v8a / x86_64）一律装不上，只有 universal
+    // 同时含两个 ABI，所以只认它。没有 universal 就返回 null，交给完整列表，
+    // 不要硬塞一个装不上的包。
+    if (deviceBits.value === "32") return apks.find((a) => a.arch === "universal") ?? null;
     return apks.find((a) => a.arch === "arm64-v8a") ?? apks.find((a) => a.arch === "universal") ?? apks[0] ?? null;
 });
 
@@ -191,6 +208,14 @@ const primary = computed<Asset | null>(() => recommended.value ?? recommendedApk
 /** 安卓 ABI 未知：走覆盖面兜底，UI 上标注一句"未能识别架构"。 */
 const crossArchUnknown = computed(
     () => detected.value?.os === "android" && detected.value.arch === "unknown" && recommendedApk.value !== null,
+);
+
+/**
+ * 32 位安卓设备：只推 universal 包，提示要说明原因。
+ * 和上面的"未能识别架构"区分开——这里架构其实是知道的，只是没有能装上的单 ABI 包。
+ */
+const bits32Note = computed(
+    () => detected.value?.os === "android" && deviceBits.value === "32" && recommendedApk.value !== null,
 );
 
 /**
@@ -269,12 +294,17 @@ const crossArch = computed(() => {
 
 /** macOS 识别不出芯片时，给两颗按钮让用户自己选，而不是猜一个可能是错的。 */
 const needsArchChoice = computed(() => detected.value?.os === "macos" && detected.value.arch === "unknown");
-const macArmBuild = computed(() =>
-    assets.find((a) => a.os === "macos" && a.arch === "aarch64" && a.ui === uiChoice.value),
-);
-const macIntelBuild = computed(() =>
-    assets.find((a) => a.os === "macos" && a.arch === "x86_64" && a.ui === uiChoice.value),
-);
+/**
+ * macOS 两颗按钮的候选包。
+ * 优先当前界面版本，没有就退到该架构下任意界面版本 —— 否则上游某天
+ * 只发 MXU 时，两颗按钮会一起消失（和 availableUis 想防的是同一类问题）。
+ */
+function macBuildFor(arch: "aarch64" | "x86_64"): Asset | undefined {
+    const candidates = assets.filter((a) => a.os === "macos" && a.arch === arch);
+    return candidates.find((a) => a.ui === uiChoice.value) ?? candidates[0];
+}
+const macArmBuild = computed(() => macBuildFor("aarch64"));
+const macIntelBuild = computed(() => macBuildFor("x86_64"));
 
 function isPicked(asset: Asset): boolean {
     return primary.value?.name === asset.name;
@@ -331,20 +361,27 @@ function gpuRenderer(): string {
  * 取舍：猜对的收益只是省一次点击，猜错的代价是让用户下到一个装不上/跑不起来的包。
  * 所以这里只在有确凿证据（高熵提示、UA 里明确写出的架构、macOS 的 GPU 名）时才表态。
  */
-async function detectArch(os: Os, ua: string, uaData?: UaData): Promise<Arch | "unknown"> {
+async function detectArch(os: Os, ua: string, uaData?: UaData, knownHint?: ArchHint | null): Promise<Arch | "unknown"> {
     // 1. Chromium 的高熵提示最可靠：Windows ARM64 的 UA 依然写 x64，只有这里能拆穿。
-    const hint = await highEntropyArch(uaData);
+    //    knownHint 由调用方预先取好时直接复用，避免重复请求高熵提示。
+    const hint = knownHint !== undefined ? knownHint : await highEntropyArch(uaData);
     if (hint) {
-        if (os === "android") return hint === "aarch64" ? "arm64-v8a" : "x86_64";
-        return hint;
+        // 32 位设备装不了 64 位包。安卓侧除了 universal（同时含两个 ABI）之外，
+        // 没有哪个单 ABI 包能覆盖 32 位设备，所以这里返回 unknown 让覆盖面兜底 +
+        // 「未能识别架构」提示接管；桌面侧 32 位浏览器已近乎绝迹，同样按未知处理。
+        if (hint.bitness === "32") return "unknown";
+        if (os === "android") return hint.arch === "aarch64" ? "arm64-v8a" : "x86_64";
+        return hint.arch;
     }
 
     // 2. 安卓：UA 里通常能看出模拟器的 ABI（"sdk_gphone64_x86_64"、
     //    "Android SDK built for x86_64"）。真机 UA 一般不写架构，那就不表态——
-    //    交给推荐逻辑按覆盖面选 ARM64 包（见 preferredApk）。
+    //    交给推荐逻辑按覆盖面选 ARM64 包（见 recommendedApk）。
+    //    只认 "x86_64"/"arm64"/"aarch64"，不认裸 "x86"/"arm"：UA 里出现裸 x86
+    //    往往就是 32 位模拟器（"Android SDK built for x86"），给它 x86_64 包装不上。
     if (os === "android") {
         const s = ua.toLowerCase();
-        if (/x86_64|x86|intel/.test(s)) return "x86_64";
+        if (/x86_64/.test(s)) return "x86_64";
         if (/arm64|aarch64|armv8/.test(s)) return "arm64-v8a";
         return "unknown";
     }
@@ -376,8 +413,8 @@ async function detectArch(os: Os, ua: string, uaData?: UaData): Promise<Arch | "
     return "unknown";
 }
 
-/** 读高熵提示里的 architecture；浏览器拒绝或超时都返回 null。 */
-async function highEntropyArch(uaData?: UaData): Promise<Arch | null> {
+/** 读高熵提示里的 architecture + bitness；浏览器拒绝或超时都返回 null。 */
+async function highEntropyArch(uaData?: UaData): Promise<ArchHint | null> {
     if (!uaData?.getHighEntropyValues) return null;
     try {
         const v = await uaData.getHighEntropyValues([
@@ -385,12 +422,10 @@ async function highEntropyArch(uaData?: UaData): Promise<Arch | null> {
             "bitness",
             "platform",
         ]);
-        // 32 位设备（armeabi-v7a / x86）装不了 arm64-v8a 或 x64 包。
-        // 这里返回 null 让调用方走"未知"路径：安卓侧交给覆盖面兜底并标注
-        // 「未能识别架构」，桌面侧交给 macOS 双按钮或完整列表，都不至于硬塞一个装不上的包。
-        if (v.bitness === "32") return null;
-        if (v.architecture === "arm") return "aarch64";
-        if (v.architecture === "x86") return "x86_64";
+        const arch = v.architecture === "arm" ? "aarch64" : v.architecture === "x86" ? "x86_64" : null;
+        if (!arch) return null;
+        const bitness = v.bitness === "32" ? "32" : v.bitness === "64" ? "64" : "unknown";
+        return {arch, bitness};
     } catch {
         // 有的浏览器暴露了 userAgentData 却拒绝高熵提示，退回 UA 判断。
     }
@@ -404,7 +439,10 @@ async function detectDevice() {
     const ua = nav.userAgent ?? "";
     const os = detectOs(platform, ua, nav.maxTouchPoints ?? 0, Boolean(uaData));
     if (!os) return;
-    detected.value = {os, arch: await detectArch(os, ua, uaData)};
+    // 先单独取一次位宽：arch 会被"32 位"折成 unknown，位宽不能跟着丢。
+    const hint = await highEntropyArch(uaData);
+    deviceBits.value = hint?.bitness ?? "unknown";
+    detected.value = {os, arch: await detectArch(os, ua, uaData, hint)};
 }
 
 onMounted(() => {
@@ -469,7 +507,7 @@ function mb(bytes: number): string {
                         role="group"
                         :aria-label="t.uiLabel">
                         <button
-                            v-for="ui in UI_OPTIONS"
+                            v-for="ui in availableUis"
                             :key="ui"
                             type="button"
                             class="picked-ui-btn"
@@ -531,6 +569,7 @@ function mb(bytes: number): string {
                     <VPIcon name="ri:error-warning-line" :size="14" />
                     <span>{{ t.crossArch }}</span>
                 </p>
+                <p v-else-if="bits32Note" class="picked-note">{{ t.bits32Note }}</p>
                 <p v-else-if="crossArchUnknown" class="picked-note">{{ t.unknownArch }}</p>
             </div>
 
