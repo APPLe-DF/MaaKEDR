@@ -106,8 +106,8 @@
     content: "";
     position: fixed;
     /* 顶部多留 130px：动画向下平移正好一个大格 120px，有余量才不会在边缘露白。
-       不用 mask 做淡出：遮罩会跟着 transform 一起平移，淡出边界会跟着整整挪一个大格再跳回，
-       而且 fixed 层上的边界等于粘在视口顶部，滚动时网格会变成一条跟着走的横带。 */
+       纵向淡出不用 mask：遮罩会跟着 transform 一起平移，淡出边界会跟着整整挪一个
+       大格再跳回；横向淡出可以放心用 mask，因为横向没有位移。 */
     top: -130px;
     right: 0;
     bottom: 0;
@@ -124,12 +124,36 @@
         24px 24px,
         120px 120px,
         120px 120px;
+    /* 横向渐隐：只软化最外侧 8%，让网格在视口边缘"化开"而不是被硬切一刀。
+       第一版做到 18% 太狠，两侧整片空掉反而更像"没画完"，所以收窄。 */
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 92%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 92%, transparent 100%);
     animation: vp-home-grid-drift 14s linear infinite;
 }
 
 :root {
     --vp-home-grid: color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent);
     --vp-home-grid-major: color-mix(in srgb, var(--vp-c-brand-1) 14%, transparent);
+}
+
+/* 首页专属的底色层：只作用于 .vp-home，不碰 --vp-c-bg（那是全站的，改了文档页也会变）。
+   浅色模式的问题不是"元素太少"，而是整片区域只有一个亮度 —— 白底 + 淡网格，
+   卡片浮在上面像贴纸。这里做两件事：
+     1. 极淡的暖粉径向光，从视口底部往上打，给"下方还有内容"的暗示；
+     2. 左右两侧轻微压暗（vignette），把视线收拢到中央正文列。
+   两者都用一张 fixed 的固定层，没有位移动画，不占合成线程。 */
+.vp-home {
+    background-color: var(--vp-home-page-bg);
+}
+
+:root {
+    /* 极淡的暖白：和纯白只差几个色阶，但卡片（纯白）能明显浮起来。 */
+    --vp-home-page-bg: #fdf9fb;
+}
+
+html[data-theme="dark"] {
+    /* 深色模式已经很成体系，这里保持主题原色，只让下方光晕更收敛一点。 */
+    --vp-home-page-bg: var(--vp-c-bg);
 }
 
 /* 深色下底色深、粉线本来就跳，压一档才不至于盖过正文。 */
@@ -266,27 +290,13 @@ html[data-theme="dark"] {
     color: var(--vp-c-text-1);
 }
 
-/* 抬起 + 变蓝本身就在说“我可点”，而功能列表恰恰不可点。给它一条只在 hover 时
-   从左扫出来的品牌色顶边作为补偿动效，同时和真正带链接的卡片区分开。
-   overflow: hidden 只裁自己的内容，outset box-shadow 不受影响；12px 圆角把顶边两端裁圆。 */
+/* 功能卡片和文档导航卡片保持同一套 hover 表现：抬起 + 描边变色 + 指针光斑。
+   这里曾经给"不带链接"的卡片额外加了一条 hover 时从左扫出的顶边，
+   但功能列表 7 张全都不带链接，等于只有这一类卡片多长了一条边，反而和
+   其余卡片不一致，所以去掉。position: relative 要留着——指针光斑的
+   ::before 需要它定位。 */
 .vp-home .vp-home-box.vp-home-features .vp-home-feature:not(.link) {
     position: relative;
-    overflow: hidden;
-}
-
-.vp-home .vp-home-box.vp-home-features .vp-home-feature:not(.link)::after {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto;
-    height: 3px;
-    background: linear-gradient(90deg, var(--vp-c-brand-1), var(--vp-c-brand-3));
-    transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform 0.35s ease;
-}
-
-.vp-home .vp-home-box.vp-home-features .vp-home-feature:not(.link):hover::after {
-    transform: scaleX(1);
 }
 
 .vp-home .vp-home-feature .icon {
@@ -324,6 +334,115 @@ html[data-theme="dark"] {
 .vp-home-features .container > .description {
     text-wrap: balance;
 }
+
+/* 页脚：主题给它的是实色 --vp-c-bg（纯白）+ 一条 1px 上边框。
+   首页底色是暖白（--vp-home-page-bg）且带网格/光晕，页脚一进来就变成
+   纯白色块，上半部分的所有层次在这里被一刀切断 —— 这就是"页尾很突兀"的来源。
+   只改首页：html.layout-home 是主题给首页布局加的类，文档页保持原样。
+
+   不直接把页脚也刷成暖白：页脚是 vp-layout 的兄弟节点（不在 .vp-home 里），
+   它内部没有网格层，两块暖白接在一起仍然会看出"网格到这儿停了"。
+   所以这里做的是"从透明渐变到底色"——上沿完全透出页面底色，往下逐渐收成
+   一块略深的同色系，读起来是页面自然收尾，而不是贴了一张白纸。 */
+html.layout-home .vp-footer {
+    background-color: transparent;
+    border-top-color: transparent;
+}
+
+html.layout-home .vp-footer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    /* 从上到下：透明 → 暖白 → 略深的暖白。
+       最下面那 12% 掺一点品牌色，给页尾一个"落定"的收口。 */
+    background-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        var(--vp-home-page-bg) 58%,
+        color-mix(in srgb, var(--vp-home-page-bg) 92%, var(--vp-c-brand-1)) 100%
+    );
+}
+
+/* 页脚自己要有层叠上下文，否则 ::before 的 z-index:-1 会跑到 .vp-footer
+   的父级背景后面去（被 body 底色盖掉）。 */
+html.layout-home .vp-footer {
+    isolation: isolate;
+}
+
+/* 深色主题本来就没有这个接缝（页脚和背景同色），不施加任何补丁。 */
+html[data-theme="dark"].layout-home .vp-footer::before {
+    background-image: none;
+}
+
+/* 区块分隔：每块内容顶部一条极细的横线，中央留一个小缺口并放一枚菱形刻度。
+   原来各区块之间是"硬切"——上一块的留白直接接下一块的留白，中间什么都没有，
+   浅色模式下会读成一整片空白。加这条线之后，视觉上有了"章节"的呼吸。
+   线本身用渐变从两侧淡入到中央，避免横贯整屏的僵硬感；缺口靠两个
+   linear-gradient 的色标让出，菱形是一枚 5px 的旋转方块。
+   hero 之后的每个内容块都有，hero 自己不需要。 */
+
+/* 三个宿主都要求 position: relative —— .vp-home-box 主题已经给了，另外两个组件
+   自己没设，这里补上（它们内部没有依赖 static 的绝对定位元素）。 */
+.home-download,
+.home-stats {
+    position: relative;
+}
+
+/* 分隔线放在区块容器自身的 ::before 上：不占文档流，也不影响任何既有间距的测量。
+   位置压在区块内边距的上沿，读起来是"上一块结束、新一块开始"。 */
+.vp-home-box::before,
+.home-download::before,
+.home-stats::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 1px;
+    pointer-events: none;
+    background-image: linear-gradient(
+        90deg,
+        transparent 0,
+        var(--vp-home-divider) 18%,
+        var(--vp-home-divider) 47%,
+        transparent 50%,
+        transparent 50%,
+        var(--vp-home-divider) 53%,
+        var(--vp-home-divider) 82%,
+        transparent 100%
+    );
+}
+
+/* 中央菱形刻度：用同一个伪元素的背景图做不出来（需要另占一层），
+   所以挂在 ::after 上，尺寸小、开销可忽略。 */
+.vp-home-box::after,
+.home-download::after,
+.home-stats::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    pointer-events: none;
+    background-color: var(--vp-home-divider-strong);
+    transform: translate(-50%, -2px) rotate(45deg);
+}
+
+:root {
+    /* 分隔线是纯装饰，浅色下取主色的低透明度，深色下反而要更亮一点才看得见。 */
+    --vp-home-divider: color-mix(in srgb, var(--vp-c-brand-1) 16%, transparent);
+    --vp-home-divider-strong: color-mix(in srgb, var(--vp-c-brand-1) 34%, transparent);
+}
+
+html[data-theme="dark"] {
+    --vp-home-divider: color-mix(in srgb, var(--vp-c-brand-1) 14%, transparent);
+    --vp-home-divider-strong: color-mix(in srgb, var(--vp-c-brand-1) 30%, transparent);
+}
+
+/* featured 区块自己没有 .title 的兄弟结构差异，统一靠上面的容器伪元素，不需要额外规则。 */
 
 /* 五个区块标题（快捷下载 / 项目规模 / 功能列表 / 文档导航 / 社区与鸣谢）都是
    .container 直下的 h2，卡片标题挂在 .box 下面，所以这条不会误伤卡片。 */
@@ -365,19 +484,23 @@ html[data-theme="dark"] {
    再大就开始把网格糊成奶白，读起来是毛玻璃而不是玻璃。
    注意这些 var 挂在 :root 上，文档页也会拿到，但只有首页的这些规则在消费它们。 */
 :root {
-    --vp-home-glass-bg: color-mix(in srgb, var(--vp-c-bg-soft) 26%, transparent);
+    /* 26% 太透：底层那层识别框（HomePointerField）的字会直接透进卡片。
+       抬到 44% 之后仍然能看见背后的网格在动，但文字已经被糊掉了。 */
+    --vp-home-glass-bg: color-mix(in srgb, var(--vp-c-bg-soft) 44%, transparent);
     --vp-home-glass-btn: color-mix(in srgb, var(--vp-c-default-3) 36%, transparent);
     --vp-home-glass-btn-hover: color-mix(in srgb, var(--vp-c-default-2) 55%, transparent);
     --vp-home-glass-edge: color-mix(in srgb, var(--vp-c-text-1) 14%, transparent);
     /* 关闭态写成全透明零阴影而不是 none：这条要和 hover 的投影拼在同一个 box-shadow 列表里，
        而 none 不能出现在逗号列表中，否则整条声明作废、hover 投影也一起没了。 */
     --vp-home-glass-spec: inset 0 1px 0 rgb(255 255 255 / 0.85);
-    --vp-home-glass-blur: blur(3px) saturate(1.25);
+    /* 模糊从 3px 提到 6px：3px 只够让网格线变软，挡不住 10px 的小字。 */
+    --vp-home-glass-blur: blur(6px) saturate(1.25);
 }
 
 /* 选择器权重刻意压在 (0,1,1)：比 :root 高一级，好让下面两个降级块能盖回来。 */
 html[data-theme="dark"] {
-    --vp-home-glass-bg: color-mix(in srgb, var(--vp-c-white) 2.5%, transparent);
+    /* 深色下同理：2.5% 白几乎等于全透，识别框文字会浮在卡片上。 */
+    --vp-home-glass-bg: color-mix(in srgb, var(--vp-c-white) 7%, transparent);
     --vp-home-glass-btn: color-mix(in srgb, var(--vp-c-white) 4.5%, transparent);
     --vp-home-glass-btn-hover: color-mix(in srgb, var(--vp-c-white) 7%, transparent);
     --vp-home-glass-edge: color-mix(in srgb, var(--vp-c-white) 12%, transparent);
@@ -736,15 +859,26 @@ html[data-theme="dark"] .vp-home-hero::after {
 
 /* 颗粒噪点：给整页垫一层极淡的胶片颗粒，压住大色块之间的塑料感。
    fixed 层不随滚动重绘，tile 只有 140px，成本可以忽略。 */
+/* 这一层同时承担两件事，因为 .vp-home 只剩这一个伪元素可用
+   （::before 是网格，::after 本来被噪点占着）：
+     1. 颗粒噪点（fixed，铺满视口）
+     2. 底部暖光（fixed，贴着视口下沿）
+   把暖光做成 fixed 而不是绝对定位在页面底部，是为了避免它跟着页面长度被拉长；
+   5% 的浓度只在页面最底部明显，滚动时不会把整页染粉。 */
 .vp-home::after {
     content: "";
     position: fixed;
     inset: 0;
     z-index: -1;
     pointer-events: none;
+    /* 整个层的不透明度只有 0.035（噪点需要的浓度），所以光晕必须写成
+       "目标浓度 ÷ 0.035" 才能真的被看见：想让光晕落地约 4%，这里就得给到 ~100%。
+       好在它是纯装饰的径向渐变，颜色算错也只是深浅差别，不会有硬边。 */
     opacity: 0.035;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-repeat: repeat;
+    background-image:
+        radial-gradient(70% 34% at 50% 104%, color-mix(in srgb, var(--vp-c-brand-2) 70%, transparent), transparent 72%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: no-repeat, repeat;
 }
 
 html[data-theme="dark"] .vp-home::after {
