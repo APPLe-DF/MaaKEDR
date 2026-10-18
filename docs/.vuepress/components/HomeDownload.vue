@@ -106,6 +106,11 @@ const assets = release.assets as Asset[];
 const available = assets.length > 0 && Boolean(release.version);
 const t = computed(() => TEXT[props.lang]);
 
+/**
+ * 按平台分组。**过滤掉没有资产的分组**——否则当前版本还没发 APK 时，
+ * 展开「其他平台与架构」会看到一个只有标题、没有任何下载项的 Android 空卡片。
+ * （v1.5.6 就是这种情况，截图里能直接看到那个空块。）
+ */
 const groups = GROUPS.map((group) => ({
     ...group,
     rows: [...new Set(assets.filter((a) => a.os === group.os).map((a) => a.arch))].map((arch) => ({
@@ -113,7 +118,7 @@ const groups = GROUPS.map((group) => ({
         label: ARCH_LABEL[arch] ?? arch,
         uis: assets.filter((a) => a.os === group.os && a.arch === arch),
     })),
-}));
+})).filter((group) => group.rows.length > 0);
 
 /**
  * 设备识别结果只在挂载后写入：SSR 阶段 detected 是 null，服务端和客户端首帧都渲染
@@ -289,10 +294,18 @@ async function detectArch(os: Os, ua: string, uaData?: UaData): Promise<Arch | "
 
     // 3. macOS：UA 无论 Intel 还是 Apple 芯片都写 "Intel Mac OS X"，只能靠 GPU。
     //    GPU 名也拿不到（隐私模式、驱动屏蔽）时返回 unknown，由 UI 给出两颗按钮。
+    //
+    //    顺序很关键：**先认 Intel/AMD，再认 Apple**。
+    //    Chrome 在 macOS 上的渲染器字符串是 "ANGLE (Apple, ANGLE Metal Renderer: <真实GPU>)"
+    //    —— 前缀恒为 Apple（那是 ANGLE 的后端名），真正的芯片名在后半段。
+    //    Intel Mac 上这个字符串同时含 "apple" 和 "intel"，先匹配 apple 会把
+    //    Intel 机器判成 Apple 芯片，用户就会下到一个装不上的 ARM 包。
     if (os === "macos") {
         const gpu = gpuRenderer().toLowerCase();
-        if (gpu.includes("apple")) return "aarch64";
+        // Intel / AMD / N 卡：明确是 x86 机器。
         if (/intel|amd|radeon|nvidia|geforce/.test(gpu)) return "x86_64";
+        // 只有拿不到具体型号、或明确写着 Apple M 系列时，才认为是 Apple 芯片。
+        if (gpu.includes("apple")) return "aarch64";
         return "unknown";
     }
 
