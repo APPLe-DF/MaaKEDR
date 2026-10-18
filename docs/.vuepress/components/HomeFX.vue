@@ -9,14 +9,17 @@ withDefaults(defineProps<{type?: string; index?: number; onlyOnce?: boolean}>(),
 });
 
 /**
- * 首页的三处交互增强，全部与视觉层解耦：
+ * 首页的四项交互增强，全部与视觉层解耦：
  * 1. 顶部滚动进度条（fixed，2px，不占文档流）
  * 2. 功能卡片里的指针光斑（把鼠标坐标写进 --hp-mx / --hp-my，绘制交给 CSS）
  * 3. hero 滚出视口后停掉首屏常驻动画（data-hp-hero-away）
  * 4. 卡片滚动进场（data-hp-reveal + is-revealed）
  *
- * 三条都只在有精细指针、且用户没要求减少动效时才启用；
- * 关掉时页面回到纯 CSS 的静态样子，不会缺任何内容。
+ * 启用条件分两类：
+ *   - 进度条、hero 离屏暂停、滚动进场：只要求用户没开「减少动效」，
+ *     触屏同样启用（它们与指针无关，且滚动进场是内容呈现的一部分）；
+ *   - 指针光斑：额外要求有精细指针——触屏没有鼠标，这层没有意义。
+ * 全部关闭时页面回到纯 CSS 的静态样子，不会缺任何内容。
  */
 /** 进度条节点在挂载时创建、卸载时移除：SSR 里根本不存在，也就不会有 hydration 失配。 */
 let progress: HTMLDivElement | null = null;
@@ -170,6 +173,10 @@ function setupReveal(root: HTMLElement) {
 
     // 最后一道保险：进场只影响位移，但万一某张卡因为异常路径永远收不到 is-revealed，
     // 它就会一直偏 22px。滚动结束时把当前视口内的卡片无条件放行，代价只是少一次动画。
+    // 注意：这里每帧对 pending 逐个 getBoundingClientRect，是一次强制布局。
+    // pending 只包含"还没进过场"的卡片（首屏之外的那部分，通常 ≤ 十几张），
+    // 且每张一旦进场就移出 pending，所以开销随滚动递减。
+    // 如果以后首页卡片数量大幅增加（比如上百张），应改为节流或用 IntersectionObserver 兜底。
     const flushVisible = () => {
         for (const el of pending) {
             const rect = el.getBoundingClientRect();

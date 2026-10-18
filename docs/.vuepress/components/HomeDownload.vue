@@ -60,6 +60,7 @@ const TEXT = {
         otherTitle: "其他平台与架构",
         otherHint: "识别有误或想下别的包？点开选择",
         crossArch: "该构建与当前系统架构不一致，可能无法运行。如装不上，请展开下方列表选择对应架构。",
+        missingArch: "这个版本没有发布适配你当前架构的安装包。请展开下方列表，选择其他架构的包。",
         macHint: "无法自动识别 Mac 芯片类型。在「关于本机」中查看芯片，或点下面任一项：",
         macArm: "下载 Apple 芯片版",
         macIntel: "下载 Intel 芯片版",
@@ -82,6 +83,8 @@ const TEXT = {
         otherHint: "Wrong match, or need a different build? Open to pick",
         crossArch:
             "This build does not match your architecture and may not run. If it fails, open the list below and pick the right one.",
+        missingArch:
+            "This release has no build for your architecture. Open the list below to pick another architecture.",
         macHint: "Could not detect your Mac chip type. Check “About This Mac”, or pick one below:",
         macArm: "Download Apple silicon",
         macIntel: "Download Intel",
@@ -126,6 +129,7 @@ const groups = GROUPS.map((group) => ({
  */
 const detected = ref<Detected | null>(null);
 // 界面版本默认 MFAA；用户切到 MXU 后推荐项跟着换。
+// 若当前架构没有 MFAA（极端情况），recommended 的兜底会选中实际存在的那个。
 const uiChoice = ref<Asset["ui"]>("MFAA");
 
 const deviceLabel = computed(() => {
@@ -190,11 +194,64 @@ const crossArchUnknown = computed(
 );
 
 /**
+ * 当前平台/架构下可选的界面版本。
+ *
+ * 从实际资产推导，而不是写死 ["MFAA","MXU"]：上游某些版本的 macOS ARM64 只发
+ * MFAA（没有 MXU），写死的话切到 MXU 会让按钮静默消失，界面上没有任何解释。
+ */
+const availableUis = computed<Asset["ui"][]>(() => {
+    const d = detected.value;
+    if (!d || d.os === "android" || d.arch === "unknown") return [];
+    const uis = assets.filter((a) => a.os === d.os && a.arch === d.arch && a.ui !== "").map((a) => a.ui as Asset["ui"]);
+    return UI_OPTIONS.filter((ui) => uis.includes(ui));
+});
+
+/**
+ * 是否显示界面版本切换。
+ * 安卓端只有一个壳，MFAA/MXU 之分不成立；架构未知时不知道该比哪些包；
+ * 只有当前架构真的存在两个界面版本时才值得给切换控件。
+ */
+const showUiChoice = computed(() => availableUis.value.length > 1);
+
+/**
+ * 是否隐藏「MFAA 与 MXU 只有界面外观的区别」这句说明。
+ * 安卓设备被推荐的是 APK，说明和他的选择无关；整份 release 里没有桌面包时
+ * 更是无稽之谈。识别失败、尚未挂载时 detected 为 null，此时保留说明——
+ * 完整列表里确实有 MFAA/MXU 两列。
+ */
+const hideUiHint = computed(() => {
+    const d = detected.value;
+    if (!d) return assets.length > 0 && assets.every((a) => a.os === "android");
+    return d.os === "android";
+});
+
+/**
+ * 桌面端"本机架构没有对应包"的情况。
+ *
+ * 桌面刻意不跨架构回退（见 recommended），所以当某个平台上没有本机架构的构建时，
+ * primary 是 null，推荐卡不出现——用户看到的是完整列表，但**不知道原因**。
+ * 这里把原因说明出来，而不是静默退回：
+ *   例：Linux ARM64 用户碰上只发了 x86_64 的版本。
+ * 安卓不走这条（它有自己的覆盖面兜底）。
+ */
+const missingArch = computed(() => {
+    const d = detected.value;
+    if (!d || d.os === "android" || d.arch === "unknown") return null;
+    // macOS 架构未知时走 needsArchChoice 的双按钮，不走这条。
+    if (needsArchChoice.value) return null;
+    const sameOs = assets.filter((a) => a.os === d.os);
+    // 整个平台都没包时不算"架构缺失"——那是 release 数据不全，交给完整列表/占位文案。
+    if (!sameOs.length) return null;
+    if (sameOs.some((a) => a.arch === d.arch)) return null;
+    return {os: d.os, arch: d.arch};
+});
+
+/**
  * 推荐卡是否该出现。macOS 架构未知时没有"唯一正确包"，但仍要展示两颗按钮；
  * 安卓 ABI 未知时也要展示覆盖面推荐；其余情况看 primary 是否非空。
  */
 const showCard = computed(
-    () => available && (primary.value !== null || needsArchChoice.value || crossArchUnknown.value),
+    () => available && (primary.value !== null || needsArchChoice.value || missingArch.value !== null),
 );
 
 /**
@@ -328,6 +385,10 @@ async function highEntropyArch(uaData?: UaData): Promise<Arch | null> {
             "bitness",
             "platform",
         ]);
+        // 32 位设备（armeabi-v7a / x86）装不了 arm64-v8a 或 x64 包。
+        // 这里返回 null 让调用方走"未知"路径：安卓侧交给覆盖面兜底并标注
+        // 「未能识别架构」，桌面侧交给 macOS 双按钮或完整列表，都不至于硬塞一个装不上的包。
+        if (v.bitness === "32") return null;
         if (v.architecture === "arm") return "aarch64";
         if (v.architecture === "x86") return "x86_64";
     } catch {
@@ -402,7 +463,11 @@ function mb(bytes: number): string {
                 </p>
 
                 <div class="picked-body">
-                    <div v-if="showUiChoice" class="picked-ui" role="group" :aria-label="t.uiLabel">
+                    <div
+                        v-if="showUiChoice && (primary || needsArchChoice)"
+                        class="picked-ui"
+                        role="group"
+                        :aria-label="t.uiLabel">
                         <button
                             v-for="ui in UI_OPTIONS"
                             :key="ui"
@@ -439,7 +504,14 @@ function mb(bytes: number): string {
                         </a>
                     </template>
 
-                    <a v-else class="picked-dl" :href="primary.url" target="_blank" rel="noopener noreferrer">
+                    <!-- primary 可能为 null：桌面端本机架构没有对应包时，卡片只负责
+                         说明原因（走上面的 missingArch 提示），不提供下载按钮。 -->
+                    <a
+                        v-else-if="primary"
+                        class="picked-dl"
+                        :href="primary.url"
+                        target="_blank"
+                        rel="noopener noreferrer">
                         <VPIcon name="ri:download-2-line" :size="18" />
                         <span class="picked-dl-text">
                             {{ primary.ui ? t.download + " " + primary.ui : t.downloadApk }}
@@ -448,8 +520,13 @@ function mb(bytes: number): string {
                     </a>
                 </div>
 
-                <!-- 两条提示互斥：macOS 先告诉用户怎么选；其余情况提示架构可能不匹配。 -->
+                <!-- 三条提示互斥：macOS 先告诉用户怎么选；架构不匹配给警告；
+                     桌面端本机架构没有对应包时说明原因（而不是静默退回列表）。 -->
                 <p v-if="needsArchChoice" class="picked-note">{{ t.macHint }}</p>
+                <p v-else-if="missingArch" class="picked-note picked-note-warn">
+                    <VPIcon name="ri:error-warning-line" :size="14" />
+                    <span>{{ t.missingArch }}</span>
+                </p>
                 <p v-else-if="crossArch" class="picked-note picked-note-warn">
                     <VPIcon name="ri:error-warning-line" :size="14" />
                     <span>{{ t.crossArch }}</span>
@@ -912,14 +989,6 @@ html[data-theme="dark"] .picked-dl:focus-visible {
     box-shadow: 0 4px 14px -8px color-mix(in srgb, var(--vp-c-brand-1) 55%, transparent);
 }
 
-/* 跨架构提醒：用警示色，但保持小字，不喧宾夺主。 */
-.picked-note-warn {
-    display: flex;
-    gap: 6px;
-    align-items: flex-start;
-    color: var(--vp-c-warning-1);
-}
-
 .picked-note {
     margin-top: 10px;
     font-size: 12px;
@@ -927,12 +996,19 @@ html[data-theme="dark"] .picked-dl:focus-visible {
     color: var(--vp-c-text-3);
 }
 
+/* 跨架构提醒：用警示色，但保持小字，不喧宾夺主。
+   必须写在 .picked-note 之后 —— 两者特异性同为 (0,1,0)，靠源码顺序决定胜负，
+   放在前面的话 color 会被 .picked-note 的 --vp-c-text-3 覆盖掉，只剩图标是警示色。 */
+.picked-note-warn {
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    color: var(--vp-c-warning-1);
+}
+
 /* 其他平台入口：收成一行，和匹配卡同样宽度对齐，视觉上是一个"折叠尾巴"。
    details/summary 自带展开语义和键盘行为，不需要自己维护 aria-expanded。
-   注意 .grid 是 grid 容器，子项默认 stretch 到整列，所以这里用 justify-self: center
-   把 details 自己收窄居中——光给内部 summary 加 max-width/margin:auto 不管用，
-   因为 details 本身已经是整列宽了。 */
-/* 入口是 .container 的直接子元素（不在 .grid 里），所以它的宽度由自己控制：
+   它是 .container 的直接子元素（不在 .grid 里），所以宽度由自己控制：
    收起时和匹配卡同宽（560px）居中，展开后铺满整行放三列卡片。 */
 .others {
     width: 100%;
