@@ -30,6 +30,31 @@ Both homepages (`docs/zh/README.md`, `docs/en/README.md`) use Plume's `home` fro
 - `docs/.vuepress/data/*.json` is generated at build time — `pnpm docs:build` / `docs:dev` run `tools/gen-docs-downloads.mjs` and `tools/gen-docs-stats.mjs` first. When the data cannot be fetched (a fresh clone with no network, for instance) the scripts write a placeholder (empty assets / zeroed figures) and both blocks degrade to a one-line notice instead of breaking the build; a previously generated file that no longer parses, or is missing a figure the homepage reads, is overwritten by that placeholder rather than kept. Never edit those files by hand
 - The node-name labels in `HomePointerField` are a static snapshot taken from `resource/base/pipeline/*.json`; renaming or dropping a pipeline node does not update the homepage
 
+### Acceptance checklist when changing the homepage
+
+The homepage's custom components (especially `HomeDownload`) mix SSR fallbacks, device detection and conditional rendering, and **some classes of defect slip through every existing gate**. After changing them, work through this table:
+
+| Defect class                                             | `pnpm check` | `docs:build` | Browser console | Output inspection |
+| -------------------------------------------------------- | ------------ | ------------ | --------------- | ----------------- |
+| Template references an undefined binding                 | ❌           | ❌           | ❌              | ❌                |
+| Control condition is always false (button never renders) | ❌           | ❌           | ❌              | ❌                |
+| Runtime exception                                        | ❌           | ❌           | ⚠️ dev only     | ❌                |
+
+The first two have actually happened in this project: a template referenced a variable that was never defined in `script`. That is not a compile error and the build succeeds; Vue's production build strips the “accessed but not defined” warning; and the detection card does not render during SSR because `detected === null`, so the output never shows it either. “Build passes + console is clean” therefore **cannot** cover these.
+
+So beyond checking _which build was recommended_, verify that **the controls themselves exist and respond**:
+
+```js
+// Run in the browser console: confirm the expected number of controls,
+// not just that the recommendation looks right
+document.querySelectorAll(".picked-ui-btn").length; // 2 on desktop (MFAA/MXU); 0 means something is wrong
+document.querySelector(".picked-dl")?.href; // should point at a real asset
+```
+
+Cover every conditional branch: detection succeeded / failed / architecture unknown / no build for this architecture. For each one ask: did the elements that should appear actually appear, and did the ones that should vanish actually vanish?
+
+> The long-term fix is adding `vue-tsc --noEmit` for `.vue` files, which detects undefined bindings statically. It is not wired up yet: it needs a shim declaration for virtual modules such as `@theme/*` and a few pre-existing type errors fixed first. It guards against a low-frequency, low-severity class of bug, so it is not worth the cost today. Revisit if the custom components keep growing or this class of bug shows up a second time.
+
 ## Frontmatter
 
 ```yaml
