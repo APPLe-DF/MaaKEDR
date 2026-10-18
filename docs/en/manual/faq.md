@@ -9,7 +9,7 @@ icon: ph:question-fill
 
 ### What do the filenames mean?
 
-MaaKEDR release archives are named as:
+Desktop builds are named as:
 
 ```text
 MaaKEDR-<os>-<arch>-<version>-<frontend>.<ext>
@@ -22,6 +22,20 @@ For example, `MaaKEDR-win-x86_64-v1.0.2-MFAA.zip`:
 - **Version**: `v1.0.2`
 - **Frontend**: `MFAA` (GUI, requires .NET)
 - **Extension**: `zip`
+
+Android builds use a separate naming scheme and have **no frontend** (there is only one UI):
+
+```text
+MaaKEDR-android-<ABI>-<version>.apk
+```
+
+| ABI in filename | Target devices                                          | Size       |
+| :-------------- | :------------------------------------------------------ | :--------- |
+| `universal`     | Any Android device (contains both ABIs — the safe pick) | Largest    |
+| `arm64-v8a`     | Most phones and tablets (64-bit ARM)                    | About half |
+| `x86_64`        | Android emulators on a PC, rare x86 tablets             | About half |
+
+> Not sure which to pick? Take `universal`. Want to save space on an ordinary phone? Take `arm64-v8a`.
 
 ### Slow download speed?
 

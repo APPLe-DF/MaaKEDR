@@ -7,6 +7,10 @@ icon: mdi:plug
 
 MaaKEDR connects to emulators and Android devices via ADB. Proper connection configuration is essential for task execution.
 
+> [!NOTE]
+>
+> **Readers using the Android APK can skip this page.** The Android build does not go through ADB — Shizuku or root grants screen-capture and tap permissions directly, so there is no connection to configure. This page is for the **desktop build running against an emulator**.
+
 ---
 
 ## Auto Detection

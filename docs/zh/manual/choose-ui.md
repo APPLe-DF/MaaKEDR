@@ -5,6 +5,10 @@ icon: mdi:monitor-dashboard
 
 # 如何选择 UI
 
+> [!NOTE]
+>
+> **本节只适用于桌面版。** 安卓版的 APK 只有一套界面，下载时没有 MFAA / MXU 之分，无需在两者间选择。
+
 MaaKEDR 提供两种图形界面前端，可根据个人需求选择。
 
 | 对比项         | MFAA                     | MXU                        |

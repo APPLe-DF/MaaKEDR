@@ -13,18 +13,19 @@ icon: ri:guide-fill
 
 <div align="center">
 
-|              |      Windows      |      macOS       |       Linux        | Android |
-| :----------: | :---------------: | :--------------: | :----------------: | :-----: |
-|   系统要求   | Windows 10 及以上 |     自行尝试     |      自行尝试      | 不推荐  |
-| 需要配置环境 |        是         |        是        |         是         |   是    |
-|  需要模拟器  |        是         |        是        | 模拟器或容器化安卓 |   否    |
-|   使用方式   | 图形界面或命令行  | 图形界面或命令行 |  图形界面或命令行  | 命令行  |
+|              |      Windows      |      macOS       |       Linux        |            Android            |
+| :----------: | :---------------: | :--------------: | :----------------: | :---------------------------: |
+|   系统要求   | Windows 10 及以上 |     自行尝试     |      自行尝试      |      Android 8.0 及以上       |
+| 需要配置环境 |        是         |        是        |         是         |              否               |
+|  需要模拟器  |        是         |        是        | 模拟器或容器化安卓 |              否               |
+|   使用方式   | 图形界面或命令行  | 图形界面或命令行 |  图形界面或命令行  |           图形界面            |
+|   额外要求   |        无         |        无        |         无         | Shizuku 或 root（见下方说明） |
 
 |              | 备注                                                                                                                                                                     |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Windows 用户 | 绝大部分情况请下载 x86_64 架构                                                                                                                                           |
 | Mac 用户     | MaaKEDR 同时支持搭载 Apple Silicon 和 Intel 芯片的 Mac 电脑<br>但更推荐搭载 Intel 芯片的 Mac 电脑使用 Mac 自带的多系统安装 Windows<br>并使用 Windows 版 MaaKEDR 和模拟器 |
-| Android 用户 | 请前往 [MaaFramework](https://github.com/MaaXYZ/MaaFramework/) 自行查看<br>此方法较为复杂且具有一定风险，不推荐入门玩家使用此方法                                        |
+| Android 用户 | 提供 APK 安装包，直接装在手机上跑，<strong>不需要电脑和模拟器</strong><br>需要 [Shizuku](https://shizuku.rikka.app/) 授权或 root 权限来获取截屏与点击能力，详见下节      |
 
 </div>
 
@@ -159,6 +160,9 @@ MaaKEDR 下载地址：[GitHub 发布页](https://github.com/APPLe-DF/MaaKEDR/re
 | macOS Apple Silicon | `MaaKEDR-macos-aarch64-v*-MFAA.tar.gz` 或 `-MXU.tar.gz` |
 |    Linux x86_64     | `MaaKEDR-linux-x86_64-v*-MFAA.tar.gz` 或 `-MXU.tar.gz`  |
 |     Linux ARM64     | `MaaKEDR-linux-aarch64-v*-MFAA.tar.gz` 或 `-MXU.tar.gz` |
+|   Android 通用包    | `MaaKEDR-android-universal-v*.apk`（不确定就选它）      |
+| Android ARM64 手机  | `MaaKEDR-android-arm64-v8a-v*.apk`（绝大多数手机）      |
+| Android x86 模拟器  | `MaaKEDR-android-x86_64-v*.apk`（电脑上的安卓模拟器）   |
 
 </div>
 
@@ -184,10 +188,11 @@ MaaKEDR 下载地址：[GitHub 发布页](https://github.com/APPLe-DF/MaaKEDR/re
 
 <div align="center">
 
-|            |    Windows     |     macOS      |  Linux   | Android |
-| :--------: | :------------: | :------------: | :------: | :-----: |
-| 模拟器支持 | 支持主流模拟器 | 支持主流模拟器 | 自行尝试 |    /    |
-|  需要 ADB  |       是       |       是       |    是    |   是    |
+|              |    Windows     |     macOS      |  Linux   | Android |
+| :----------: | :------------: | :------------: | :------: | :-----: |
+|  模拟器支持  | 支持主流模拟器 | 支持主流模拟器 | 自行尝试 |    /    |
+|   需要 ADB   |       是       |       是       |    是    |   否    |
+| 需要 Shizuku |       否       |       否       |    否    |   是    |
 
 </div>
 
@@ -259,6 +264,40 @@ sudo xattr -rd com.apple.quarantine ~/MaaKEDR/maakedr
 #### Linux
 
 同 macOS，下载对应版本的压缩包，解压后运行 `maakedr` 即可。
+
+#### Android
+
+安卓版是**独立的一套**，不需要电脑、不需要模拟器，也不用解压——直接安装 APK 即可。
+
+<div align="center">
+
+<details>
+  <summary>安装与授权步骤（点击展开）</summary>
+  <p></p>
+  <blockquote>
+
+1. **安装 APK**：下载 `MaaKEDR-android-*.apk` 后点击安装。系统提示"未知来源"时，在安装界面允许一次即可。
+
+2. **安装并启动 Shizuku**：从 [Shizuku 官网](https://shizuku.rikka.app/) 或应用商店安装，按应用内指引启动服务。Shizuku 的启动方式取决于系统版本，常见有两种：
+    - **无线调试启动**（Android 11 及以上，无需电脑）：开发者选项里开启「无线调试」，在 Shizuku 中用配对码配对后启动
+    - **电脑 adb 启动**：手机连电脑执行 `adb shell sh /storage/emulated/0/Android/data/moe.shizuku.privileged.api/start.sh`
+
+3. **授予权限**：打开 MaaKEDR，在 Shizuku 的授权弹窗中允许它使用 Shizuku。之前拒绝过的话，去 Shizuku 应用里手动把 MaaKEDR 的权限打开。
+
+4. **游戏与 MaaKEDR 都需要保持运行**：安卓端不走 ADB，而是由 Shizuku（或 root）直接调用系统接口完成截屏与点击，所以**不需要连电脑**，但游戏必须在前台运行。
+
+  </blockquote>
+</details>
+
+</div>
+
+> [!NOTE]
+>
+> 安卓端与桌面端的配置项基本一致，但**资源跟随 APK 打包**，因此不支持热更新，也不支持 Mirror酱 的增量更新——换版本需要重新下载安装 APK。设备上仍显示旧内容时，清除 MaaKEDR 的应用数据再重新打开即可。
+
+> [!WARNING]
+>
+> 没有 Shizuku 也没有 root 时，APK 可以安装但**无法执行任务**（拿不到截屏与点击权限）。这种情况下请改用桌面版。
 
 ---
 
