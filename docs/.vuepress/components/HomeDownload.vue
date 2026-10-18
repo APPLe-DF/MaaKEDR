@@ -17,7 +17,11 @@ type Asset = {
 type Os = "win" | "macos" | "linux" | "android";
 // 桌面是 x86_64 / aarch64；安卓包按 ABI 命名（arm64-v8a / x86_64），另有 universal 全量包。
 type Arch = "x86_64" | "aarch64" | "arm64-v8a" | "universal";
-type Detected = {os: Os; arch: Arch};
+/**
+ * arch 为 "unknown" 表示浏览器没给出可信的架构信息（Safari / Firefox 的 macOS 就是这样）。
+ * 这时不去猜：猜错会让用户下到一个跑不起来的包，宁可把选择权交回去。
+ */
+type Detected = {os: Os; arch: Arch | "unknown"};
 
 const props = withDefaults(
     defineProps<{
@@ -55,6 +59,11 @@ const TEXT = {
         apk: "APK",
         otherTitle: "其他平台与架构",
         otherHint: "识别有误或想下别的包？点开选择",
+        crossArch: "该构建与当前系统架构不一致，可能无法运行。如装不上，请展开下方列表选择对应架构。",
+        macHint: "无法自动识别 Mac 芯片类型。在「关于本机」中查看芯片，或点下面任一项：",
+        macArm: "下载 Apple 芯片版",
+        macIntel: "下载 Intel 芯片版",
+        unknownArch: "未能识别架构，已按兼容性推荐",
     },
     en: {
         hint: "MFAA and MXU differ only in appearance, features are identical, so pick either one.",
@@ -71,6 +80,12 @@ const TEXT = {
         apk: "APK",
         otherTitle: "Other platforms & architectures",
         otherHint: "Wrong match, or need a different build? Open to pick",
+        crossArch:
+            "This build does not match your architecture and may not run. If it fails, open the list below and pick the right one.",
+        macHint: "Could not detect your Mac chip type. Check “About This Mac”, or pick one below:",
+        macArm: "Download Apple silicon",
+        macIntel: "Download Intel",
+        unknownArch: "Architecture not detected — showing the most compatible build",
     },
 };
 
@@ -110,52 +125,102 @@ const uiChoice = ref<Asset["ui"]>("MFAA");
 
 const deviceLabel = computed(() => {
     const d = detected.value;
-    return d ? OS_LABEL[d.os] + " / " + (ARCH_LABEL[d.arch] ?? d.arch) : "";
+    if (!d) return "";
+    // 架构未知时只显示系统名，不写 "unknown" 这种给用户看没有意义的东西。
+    if (d.arch === "unknown") return OS_LABEL[d.os];
+    return OS_LABEL[d.os] + " / " + (ARCH_LABEL[d.arch] ?? d.arch);
 });
 
 /**
- * 推荐项：优先「同系统 + 同架构 + 当前界面版本」，
- * 再退到「同系统 + 同架构」（该架构没有所选界面时，例如 Linux ARM64 只有 MFAA），
- * 最后退到「同系统任意包」。任何一步都找不到就返回 null，卡片整块不渲染。
+ * 桌面推荐项：优先「同系统 + 同架构 + 当前界面版本」，
+ * 再退到「同系统 + 同架构」（该架构没有所选界面时，例如 Linux ARM64 只有 MFAA）。
+ *
+ * **绝不跨架构回退**：上游并没有 Linux aarch64 的 MXU 构建，硬回退会让 ARM 用户
+ * 拿到跑不起来的 x64 包。同架构里一个都没有时返回 null，让 UI 去问用户。
+ * 架构未知（unknown）时也返回 null —— 选择权交回去，不替用户猜。
  */
 const recommended = computed<Asset | null>(() => {
     const d = detected.value;
-    if (!d) return null;
+    if (!d || d.arch === "unknown") return null;
     const sameOs = assets.filter((a) => a.os === d.os);
     if (!sameOs.length) return null;
 
-    // 安卓只有 universal / 单 ABI 之分，没有界面版本，按架构匹配即可。
+    // 安卓只有 ABI 之分，没有界面版本；universal 能覆盖所有设备，放在架构匹配之后。
     if (d.os === "android") {
-        return sameOs.find((a) => a.arch === d.arch) ?? sameOs.find((a) => a.arch === "universal") ?? sameOs[0] ?? null;
+        const exact = sameOs.find((a) => a.arch === d.arch);
+        if (exact) return exact;
+        // 该 ABI 没出包时退到 universal（两个 ABI 都含），再退到 arm64 —— 市面上
+        // 绝大多数是 arm64，x86 安卓设备基本只剩模拟器。
+        return sameOs.find((a) => a.arch === "universal") ?? sameOs.find((a) => a.arch === "arm64-v8a") ?? null;
     }
 
     return (
         sameOs.find((a) => a.arch === d.arch && a.ui === uiChoice.value) ??
         sameOs.find((a) => a.arch === d.arch) ??
-        sameOs.find((a) => a.ui === uiChoice.value) ??
-        sameOs[0] ??
         null
     );
 });
 
-// 界面版本切换只在推荐项确实是桌面包时才显示。
-const showUiChoice = computed(() => recommended.value !== null && recommended.value.os !== "android");
+/**
+ * 安卓设备识别不出 ABI（真机 UA 不写架构）时，仍然可以按覆盖面推荐一版：
+ * arm64-v8a → universal → 第一个。这与 M9A 的策略一致，绝大多数手机都能装。
+ * 桌面不走这条路——桌面上按错架构的包是直接跑不起来的。
+ */
+const recommendedApk = computed<Asset | null>(() => {
+    const d = detected.value;
+    if (d?.os !== "android") return null;
+    const apks = assets.filter((a) => a.os === "android");
+    if (!apks.length) return null;
+    // 已有精确匹配时交给 recommended，这里不重复推荐。
+    if (recommended.value?.os === "android") return null;
+    return apks.find((a) => a.arch === "arm64-v8a") ?? apks.find((a) => a.arch === "universal") ?? apks[0] ?? null;
+});
 
-// MFAA/MXU 的说明只对桌面包成立：
-//   - 访问者被推荐的是 APK（安卓设备）时，说明和他的选择无关；
-//   - 整份 release 里根本没有桌面包时（只发了 APK 的极端情况），说明更是无稽之谈。
-// 识别失败、尚未挂载时 recommended 为 null，这时保留说明：完整列表里确实有 MFAA/MXU 两列。
-const hideUiHint = computed(
-    () => assets.length > 0 && (assets.every((a) => a.os === "android") || recommended.value?.os === "android"),
+/** 实际上是"当前要展示的那一个推荐包"，安卓未知 ABI 时走覆盖面兜底。 */
+const primary = computed<Asset | null>(() => recommended.value ?? recommendedApk.value);
+
+/** 安卓 ABI 未知：走覆盖面兜底，UI 上标注一句"未能识别架构"。 */
+const crossArchUnknown = computed(
+    () => detected.value?.os === "android" && detected.value.arch === "unknown" && recommendedApk.value !== null,
+);
+
+/**
+ * 推荐卡是否该出现。macOS 架构未知时没有"唯一正确包"，但仍要展示两颗按钮；
+ * 安卓 ABI 未知时也要展示覆盖面推荐；其余情况看 primary 是否非空。
+ */
+const showCard = computed(
+    () => available && (primary.value !== null || needsArchChoice.value || crossArchUnknown.value),
+);
+
+/**
+ * 跨架构提示：只在本机架构已知、且与将要下载的包不一致时出现。
+ * 说清楚"可能跑不起来"，比让用户装完才发现好。
+ */
+const crossArch = computed(() => {
+    const d = detected.value;
+    const pick = primary.value;
+    if (!d || d.arch === "unknown" || !pick) return false;
+    // universal 包同时含两个 ABI，装在哪都不会错。
+    if (pick.arch === "universal") return false;
+    return pick.arch !== d.arch;
+});
+
+/** macOS 识别不出芯片时，给两颗按钮让用户自己选，而不是猜一个可能是错的。 */
+const needsArchChoice = computed(() => detected.value?.os === "macos" && detected.value.arch === "unknown");
+const macArmBuild = computed(() =>
+    assets.find((a) => a.os === "macos" && a.arch === "aarch64" && a.ui === uiChoice.value),
+);
+const macIntelBuild = computed(() =>
+    assets.find((a) => a.os === "macos" && a.arch === "x86_64" && a.ui === uiChoice.value),
 );
 
 function isPicked(asset: Asset): boolean {
-    return recommended.value?.name === asset.name;
+    return primary.value?.name === asset.name;
 }
 
 type UaData = {
     platform?: string;
-    getHighEntropyValues?: (hints: string[]) => Promise<{architecture?: string; bitness?: string}>;
+    getHighEntropyValues?: (hints: string[]) => Promise<{architecture?: string; bitness?: string; platform?: string}>;
 };
 
 /**
@@ -198,44 +263,64 @@ function gpuRenderer(): string {
     }
 }
 
-async function detectArch(os: Os, ua: string, uaData?: UaData): Promise<Arch> {
-    // Chromium 的高熵提示最可靠：Windows ARM64 上 UA 依然写 x64，只有这里能拆穿。
-    if (uaData?.getHighEntropyValues) {
-        try {
-            const v = await uaData.getHighEntropyValues([
-                "architecture",
-                "bitness",
-            ]);
-            if (v.architecture === "arm") return "aarch64";
-            if (v.architecture === "x86") return "x86_64";
-        } catch {
-            // 高熵提示被权限策略拒绝时，继续走下面的兜底判断。
-        }
+/**
+ * 判断架构。拿不到可信信息时返回 "unknown"，**不做猜测**。
+ *
+ * 取舍：猜对的收益只是省一次点击，猜错的代价是让用户下到一个装不上/跑不起来的包。
+ * 所以这里只在有确凿证据（高熵提示、UA 里明确写出的架构、macOS 的 GPU 名）时才表态。
+ */
+async function detectArch(os: Os, ua: string, uaData?: UaData): Promise<Arch | "unknown"> {
+    // 1. Chromium 的高熵提示最可靠：Windows ARM64 的 UA 依然写 x64，只有这里能拆穿。
+    const hint = await highEntropyArch(uaData);
+    if (hint) {
+        if (os === "android") return hint === "aarch64" ? "arm64-v8a" : "x86_64";
+        return hint;
     }
 
-    // 安卓：高熵提示能给出 arm / x86；拿不到时按 arm64-v8a 猜——现在市面上的手机
-    // 基本都是 arm64，x86 安卓设备只剩模拟器。模拟器里猜错也无所谓，展开完整列表能改选。
+    // 2. 安卓：UA 里通常能看出模拟器的 ABI（"sdk_gphone64_x86_64"、
+    //    "Android SDK built for x86_64"）。真机 UA 一般不写架构，那就不表态——
+    //    交给推荐逻辑按覆盖面选 ARM64 包（见 preferredApk）。
     if (os === "android") {
-        return "arm64-v8a";
+        const s = ua.toLowerCase();
+        if (/x86_64|x86|intel/.test(s)) return "x86_64";
+        if (/arm64|aarch64|armv8/.test(s)) return "arm64-v8a";
+        return "unknown";
     }
 
-    // macOS 的 UA 无论 Intel 还是 Apple 芯片都写 "Intel Mac OS X"，必须先看 GPU，
-    // 否则会把所有 Apple 芯片的 Mac 判成 x86_64。
+    // 3. macOS：UA 无论 Intel 还是 Apple 芯片都写 "Intel Mac OS X"，只能靠 GPU。
+    //    GPU 名也拿不到（隐私模式、驱动屏蔽）时返回 unknown，由 UI 给出两颗按钮。
     if (os === "macos") {
         const gpu = gpuRenderer().toLowerCase();
         if (gpu.includes("apple")) return "aarch64";
         if (/intel|amd|radeon|nvidia|geforce/.test(gpu)) return "x86_64";
-        // 都判不出来时按 Apple 芯片猜：2020 年之后出的 Mac 基本都是 ARM。
-        return "aarch64";
+        return "unknown";
     }
 
+    // 4. Windows / Linux：UA 里显式写了架构才采信。
+    //    注意 Windows 的 UA 恒为 "Win64; x64"（Windows on ARM 也一样），
+    //    但 x64 包在 ARM Windows 上能靠模拟运行，属于安全默认值。
     const s = ua.toLowerCase();
     if (/arm64|aarch64|armv8|win arm/.test(s)) return "aarch64";
     if (/x86_64|x64|win64|wow64/.test(s)) return "x86_64";
 
-    // Windows / Linux 的 UA 没写架构时按当前主流架构猜；卡片上会写明识别结果，
-    // 下方完整列表始终可以手动改选。
-    return "x86_64";
+    return "unknown";
+}
+
+/** 读高熵提示里的 architecture；浏览器拒绝或超时都返回 null。 */
+async function highEntropyArch(uaData?: UaData): Promise<Arch | null> {
+    if (!uaData?.getHighEntropyValues) return null;
+    try {
+        const v = await uaData.getHighEntropyValues([
+            "architecture",
+            "bitness",
+            "platform",
+        ]);
+        if (v.architecture === "arm") return "aarch64";
+        if (v.architecture === "x86") return "x86_64";
+    } catch {
+        // 有的浏览器暴露了 userAgentData 却拒绝高熵提示，退回 UA 判断。
+    }
+    return null;
 }
 
 async function detectDevice() {
@@ -290,9 +375,13 @@ function mb(bytes: number): string {
             <!-- MFAA/MXU 的说明只对桌面包成立，安卓端只有一个壳，不该跟着出现。 -->
             <p v-if="available && !hideUiHint" class="hint">{{ t.hint }}</p>
 
-            <!-- 识别成功时只留一张匹配卡，其他架构收进下面的小入口；
-                 识别不出来（手机/平板/JS 未运行）时整块消失，直接回退成完整列表。 -->
-            <div v-if="available && recommended" class="picked">
+            <!-- 推荐卡：多数情况下只展示一张匹配当前设备的包，其余收进下面的小入口。
+                 三种形态：
+                   1. 普通情况  —— 一颗下载按钮
+                   2. macOS 架构未知 —— 两颗按钮让用户自己选（猜错等于给一个跑不起来的包）
+                   3. 安卓 ABI 未知 —— 按覆盖面推荐 arm64，并标注"未能识别架构"
+                 识别不出来（iOS、JS 未运行）时整块不渲染，直接回退完整列表。 -->
+            <div v-if="showCard" class="picked">
                 <p class="picked-head">
                     <VPIcon name="ri:computer-line" :size="18" />
                     <span>{{ t.pickedTitle }}</span>
@@ -313,19 +402,51 @@ function mb(bytes: number): string {
                         </button>
                     </div>
 
-                    <a class="picked-dl" :href="recommended.url" target="_blank" rel="noopener noreferrer">
+                    <!-- macOS 芯片未知：并排两颗，不预设哪一个是"对"的。 -->
+                    <template v-if="needsArchChoice">
+                        <a
+                            v-if="macArmBuild"
+                            class="picked-dl"
+                            :href="macArmBuild.url"
+                            target="_blank"
+                            rel="noopener noreferrer">
+                            <VPIcon name="ri:download-2-line" :size="18" />
+                            <span class="picked-dl-text">{{ t.macArm }}</span>
+                            <span class="picked-dl-size">{{ mb(macArmBuild.size) }}</span>
+                        </a>
+                        <a
+                            v-if="macIntelBuild"
+                            class="picked-dl picked-dl-quiet"
+                            :href="macIntelBuild.url"
+                            target="_blank"
+                            rel="noopener noreferrer">
+                            <VPIcon name="ri:download-2-line" :size="18" />
+                            <span class="picked-dl-text">{{ t.macIntel }}</span>
+                            <span class="picked-dl-size">{{ mb(macIntelBuild.size) }}</span>
+                        </a>
+                    </template>
+
+                    <a v-else class="picked-dl" :href="primary.url" target="_blank" rel="noopener noreferrer">
                         <VPIcon name="ri:download-2-line" :size="18" />
                         <span class="picked-dl-text">
-                            {{ recommended.ui ? t.download + " " + recommended.ui : t.downloadApk }}
+                            {{ primary.ui ? t.download + " " + primary.ui : t.downloadApk }}
                         </span>
-                        <span class="picked-dl-size">{{ mb(recommended.size) }}</span>
+                        <span class="picked-dl-size">{{ mb(primary.size) }}</span>
                     </a>
                 </div>
+
+                <!-- 两条提示互斥：macOS 先告诉用户怎么选；其余情况提示架构可能不匹配。 -->
+                <p v-if="needsArchChoice" class="picked-note">{{ t.macHint }}</p>
+                <p v-else-if="crossArch" class="picked-note picked-note-warn">
+                    <VPIcon name="ri:error-warning-line" :size="14" />
+                    <span>{{ t.crossArch }}</span>
+                </p>
+                <p v-else-if="crossArchUnknown" class="picked-note">{{ t.unknownArch }}</p>
             </div>
 
             <!-- 识别成功时，其他平台收成一行入口，放在卡片外面：
                  它比匹配卡窄、居中，是"还有别的包"的附属入口，不该占据列表的位置。 -->
-            <details v-if="available && recommended" class="others">
+            <details v-if="available && showCard" class="others">
                 <summary class="others-toggle">
                     <VPIcon name="ri:apps-2-line" :size="16" />
                     <span>{{ t.otherTitle }}</span>
@@ -362,7 +483,7 @@ function mb(bytes: number): string {
             </details>
 
             <!-- 完整三平台列表：识别失败时是唯一出口；识别成功时收在上面那个 details 里。 -->
-            <div v-if="available && !recommended" class="grid">
+            <div v-if="available && !showCard" class="grid">
                 <div v-for="group in groups" :key="group.os" class="group">
                     <p class="group-head">
                         <VPIcon :name="group.icon" :size="20" />
@@ -690,6 +811,12 @@ function mb(bytes: number): string {
     box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
 }
 
+/* 推荐卡的主 CTA。光效分两层，和首页 hero 那颗主按钮的语义对齐：
+     常态 —— 一圈柔和的静态光晕（"这是主入口"）
+     hover —— 光晕增强 + 抬升（"你正要点它"）
+   第一版只写了 hover 的投影，常态什么都没有；加上按钮本身底色就深，
+   看起来就像"默认已经很亮，移上去反而变暗"。光晕用两层 box-shadow：
+   贴边一层保证在任何背景上都能看出边界，外扩一层负责氛围。 */
 .picked-dl {
     display: inline-flex;
     flex: 1;
@@ -704,10 +831,13 @@ function mb(bytes: number): string {
     text-decoration: none;
     background-color: var(--vp-c-brand-1);
     border-radius: 8px;
+    box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--vp-c-brand-2) 45%, transparent),
+        0 4px 14px -6px color-mix(in srgb, var(--vp-c-brand-1) 55%, transparent);
     transition:
         background-color var(--vp-t-color),
         transform 0.18s ease,
-        box-shadow 0.18s ease;
+        box-shadow 0.25s ease;
 }
 
 .picked-dl:hover,
@@ -716,11 +846,29 @@ function mb(bytes: number): string {
     background-color: var(--vp-c-brand-2);
     outline: none;
     transform: translateY(-1px);
-    box-shadow: 0 6px 18px -8px color-mix(in srgb, var(--vp-c-brand-1) 90%, transparent);
+    /* hover 时两层都加强：描边更实、外扩光晕更大更亮，位移同时发生，
+       三个变化叠起来就是"被点亮"，而不是"变暗"。 */
+    box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--vp-c-brand-2) 75%, transparent),
+        0 8px 24px -8px color-mix(in srgb, var(--vp-c-brand-1) 85%, transparent);
 }
 
 .picked-dl:active {
     transform: translateY(0) scale(0.99);
+}
+
+/* 深色主题下 --vp-c-brand-1 是浅粉（#f9a8d4），白字压在上面对比度只有 1.7:1，
+   几乎看不清，所以改用深色字。
+   hover 不能跟着换 brand-2/brand-3 —— 那两个在深色主题里更深，深色字会一起失效；
+   统一往白里掺 12%，越 hover 越亮，方向感和浅色主题一致。 */
+html[data-theme="dark"] .picked-dl {
+    color: var(--vp-c-black);
+}
+
+html[data-theme="dark"] .picked-dl:hover,
+html[data-theme="dark"] .picked-dl:focus-visible {
+    color: var(--vp-c-black);
+    background-color: color-mix(in srgb, var(--vp-c-brand-1) 88%, var(--vp-c-white));
 }
 
 .picked-dl-text {
@@ -732,6 +880,38 @@ function mb(bytes: number): string {
     font-size: 12px;
     font-weight: 500;
     opacity: 0.8;
+}
+
+/* macOS 架构未知时的第二颗按钮：它是"另一个可能"，不该和主推荐抢注意力。 */
+/* macOS 架构未知时的第二颗按钮：它是"另一个可能"，不该和主推荐抢注意力，
+   所以常态完全去掉光晕，只保留玻璃底 + 描边。 */
+.picked-dl-quiet {
+    color: var(--vp-c-text-1);
+    background-color: var(--vp-home-glass-btn);
+    border: 1px solid var(--vp-home-glass-edge);
+    box-shadow: none;
+}
+
+.picked-dl-quiet:hover,
+.picked-dl-quiet:focus-visible {
+    color: var(--vp-c-brand-1);
+    background-color: var(--vp-home-glass-btn-hover);
+    box-shadow: 0 4px 14px -8px color-mix(in srgb, var(--vp-c-brand-1) 55%, transparent);
+}
+
+/* 跨架构提醒：用警示色，但保持小字，不喧宾夺主。 */
+.picked-note-warn {
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    color: var(--vp-c-warning-1);
+}
+
+.picked-note {
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--vp-c-text-3);
 }
 
 /* 其他平台入口：收成一行，和匹配卡同样宽度对齐，视觉上是一个"折叠尾巴"。
