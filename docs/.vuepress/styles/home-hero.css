@@ -659,7 +659,12 @@ html[data-theme="dark"] .vp-home-hero::after {
 }
 
 /* 触屏上既没有指针去触发交互，滚动的每一帧还要多合成两层，直接关掉：
-   极光留在原地当静态背景，光束整条撤掉。 */
+   极光留在原地当静态背景，光束整条撤掉。
+   同理，两个纯装饰的常驻动画也在这里停掉——
+   logo 的呼吸光晕和标题的彩虹都是"一直在动但没人要求它动"的东西，
+   移动端省下来的电量和合成开销比这点氛围更值。
+   注意彩虹要单独处理：它和首屏上浮写在同一条 animation 里，
+   整条覆盖会连上浮一起关掉，所以只重置到彩虹自己。 */
 @media (hover: none), (pointer: coarse) {
     .vp-home-hero::before {
         animation: none;
@@ -667,6 +672,11 @@ html[data-theme="dark"] .vp-home-hero::after {
 
     .vp-home-hero::after {
         display: none;
+    }
+
+    .vp-home-hero .hero-content::before {
+        /* 只留摆动，去掉呼吸光晕。 */
+        animation: hero-logo-swing 9s ease-in-out infinite;
     }
 }
 
@@ -760,6 +770,21 @@ html[data-theme="dark"] .vp-home-hero::after {
 
     .vp-home-hero .actions {
         animation-delay: 0.36s;
+    }
+}
+
+/* 触屏上同样不做首屏上浮：它是一次性的入场动画，在手机上通常发生在地址栏收起的
+   同一帧里，用户根本看不清，只会让首屏晚一点稳定下来。
+   标题要单独写：它身上还挂着彩虹动画，整条 animation: none 会把彩虹一起关掉。 */
+@media (hover: none), (pointer: coarse) {
+    .vp-home-hero .hero-tagline,
+    .vp-home-hero .hero-text,
+    .vp-home-hero .actions {
+        animation: none;
+    }
+
+    .vp-home-hero .hero-content .hero-name {
+        animation: hero-name-rainbow 7s linear infinite;
     }
 }
 
