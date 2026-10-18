@@ -2,8 +2,9 @@
 icon: ic:round-home
 index: true
 home: true
-title: MaaKEDR
-description: KEDR Automation Assistant — Powered by MaaFramework. Image technology + simulation control, free your hands
+# 首页不用 frontmatter 的 title：hero 的 name 已经渲染出 <h1>MaaKEDR</h1>，
+# 这里再写一遍只会让 <title> 变成 "MaaKEDR | 雪松小助手 MaaKEDR · ..."（项目名重复两次）。
+description: MaaKEDR is an automation assistant for the game KEDR, built on MaaFramework with image recognition and simulated input. It automates game launch, reward claiming, resource farming and PvP battles.
 dir:
     order: 0
 config:

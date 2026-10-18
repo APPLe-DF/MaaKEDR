@@ -2,8 +2,9 @@
 icon: ic:round-home
 index: true
 home: true
-title: MaaKEDR
-description: 《雪松》小助手 — 基于 MaaFramework 的自动化工具，图像技术 + 模拟控制，解放双手
+# 首页不用 frontmatter 的 title：hero 的 name 已经渲染出 <h1>MaaKEDR</h1>，
+# 这里再写一遍只会让 <title> 变成 "MaaKEDR | 雪松小助手 MaaKEDR · ..."（项目名重复两次）。
+description: 雪松小助手（MaaKEDR）是《雪松》游戏的自动化工具，基于 MaaFramework 实现图像识别与模拟控制，支持启动游戏、领取奖励、资源刷取、PvP 对战等任务的自动完成。
 dir:
     order: 0
 config:
