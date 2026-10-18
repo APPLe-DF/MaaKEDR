@@ -15,17 +15,17 @@ icon: ri:guide-fill
 
 |             |   Windows   |      macOS      |               Linux               |               Android                |
 | :---------: | :---------: | :-------------: | :-------------------------------: | :----------------------------------: |
-|  Required   | Windows 10+ | Try at own risk |          Try at own risk          |             Android 8.0+             |
+|  Required   | Windows 10+ | Try at own risk |          Try at own risk          |             Android 9.0+             |
 | Environment |     Yes     |       Yes       |                Yes                |                  No                  |
 |  Emulator   |     Yes     |       Yes       | Emulator or containerized Android |                  No                  |
 |    Usage    | GUI or CLI  |   GUI or CLI    |            GUI or CLI             |                 GUI                  |
 | Also needs  |    None     |      None       |               None                | Shizuku or root (see the note below) |
 
-| Notes                                                                                                                                                                                                     |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Windows: Most users should download the **x86_64** build                                                                                                                                                  |
-| Mac: MaaKEDR supports both Apple Silicon and Intel Macs<br>Intel Mac users are advised to install Windows via Boot Camp<br>and use the Windows version of MaaKEDR with an emulator                        |
-| Android: An APK is provided — install it on the phone directly, <strong>no PC or emulator needed</strong><br>Shizuku authorization or root is required for screen capture and taps; see the section below |
+| Notes                                                                                                                                                                                                                                                                                                                                                                        |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Windows: Most users should download the **x86_64** build                                                                                                                                                                                                                                                                                                                     |
+| Mac: MaaKEDR supports both Apple Silicon and Intel Macs<br>Intel Mac users are advised to install Windows via Boot Camp<br>and use the Windows version of MaaKEDR with an emulator                                                                                                                                                                                           |
+| Android: MaaKEDR ships an Android client (see [Releases](https://github.com/APPLe-DF/MaaKEDR/releases); `MaaKEDR-android-arm64-v8a-<version>.apk` for phones, `MaaKEDR-android-x86_64-<version>.apk` for x86 emulators)<br>Requires Android 9.0+; grant notification permission and add the app to the battery allowlist on first launch, then authorize via Shizuku or root |
 
 </div>
 
@@ -264,29 +264,17 @@ Same as macOS — extract the appropriate archive and run `./maakedr`.
 
 #### Android
 
-The Android build is a **separate thing**: no PC, no emulator and no extraction — just install the APK.
+The Android build is a **separate thing**: no PC, no emulator, no extraction — just install the APK.
 
-<div align="center">
+Download the APK matching your architecture from [Releases](https://github.com/APPLe-DF/MaaKEDR/releases): `arm64-v8a` for phones, `x86_64` for x86 emulators, `universal` if unsure.
 
-<details>
-  <summary>Install and authorize (click to expand)</summary>
-  <p></p>
-  <blockquote>
-
-1. **Install the APK**: download `MaaKEDR-android-*.apk` and tap install. If Android blocks it as an unknown source, allow it once on the install screen.
-
-2. **Install and start Shizuku**: get it from the [Shizuku website](https://shizuku.rikka.app/) or your app store and follow the in-app guide. How you start it depends on the Android version:
-    - **Wireless debugging** (Android 11+, no PC needed): enable "Wireless debugging" in Developer options, then pair and start Shizuku inside the app
-    - **ADB from a PC**: connect the phone and run `adb shell sh /storage/emulated/0/Android/data/moe.shizuku.privileged.api/start.sh`
-
-3. **Grant permission**: open MaaKEDR and allow it in the Shizuku prompt. If you declined before, enable MaaKEDR manually inside the Shizuku app.
-
-4. **Keep the game and MaaKEDR running**: the Android build does not use ADB. Shizuku (or root) calls the system APIs directly for screen capture and taps, so **no PC is required**, but the game must stay in the foreground.
-
-  </blockquote>
-</details>
-
-</div>
+1. On first launch, grant **notification permission** and add the app to the **battery allowlist**. Background idling, scheduled starts and progress notifications all depend on them.
+2. Authorize with **Shizuku or root** and wait for the service to connect. Shizuku must be installed and started separately:
+    - Android 11+: start it on-device via **wireless debugging**, no PC needed
+    - Older versions without root: start it from a PC over ADB
+    - See the [Shizuku documentation](https://shizuku.rikka.app/)
+3. The task resources are unpacked automatically on first launch.
+4. Pick a server, tick the tasks you want and start — **no ADB connection to configure**.
 
 > [!NOTE]
 >

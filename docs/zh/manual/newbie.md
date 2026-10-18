@@ -15,17 +15,17 @@ icon: ri:guide-fill
 
 |              |      Windows      |      macOS       |       Linux        |            Android            |
 | :----------: | :---------------: | :--------------: | :----------------: | :---------------------------: |
-|   系统要求   | Windows 10 及以上 |     自行尝试     |      自行尝试      |      Android 8.0 及以上       |
+|   系统要求   | Windows 10 及以上 |     自行尝试     |      自行尝试      |      Android 9.0 及以上       |
 | 需要配置环境 |        是         |        是        |         是         |              否               |
 |  需要模拟器  |        是         |        是        | 模拟器或容器化安卓 |              否               |
 |   使用方式   | 图形界面或命令行  | 图形界面或命令行 |  图形界面或命令行  |           图形界面            |
 |   额外要求   |        无         |        无        |         无         | Shizuku 或 root（见下方说明） |
 
-|              | 备注                                                                                                                                                                     |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Windows 用户 | 绝大部分情况请下载 x86_64 架构                                                                                                                                           |
-| Mac 用户     | MaaKEDR 同时支持搭载 Apple Silicon 和 Intel 芯片的 Mac 电脑<br>但更推荐搭载 Intel 芯片的 Mac 电脑使用 Mac 自带的多系统安装 Windows<br>并使用 Windows 版 MaaKEDR 和模拟器 |
-| Android 用户 | 提供 APK 安装包，直接装在手机上跑，<strong>不需要电脑和模拟器</strong><br>需要 [Shizuku](https://shizuku.rikka.app/) 授权或 root 权限来获取截屏与点击能力，详见下节      |
+|              | 备注                                                                                                                                                                                                                                                                                               |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Windows 用户 | 绝大部分情况请下载 x86_64 架构                                                                                                                                                                                                                                                                     |
+| Mac 用户     | MaaKEDR 同时支持搭载 Apple Silicon 和 Intel 芯片的 Mac 电脑<br>但更推荐搭载 Intel 芯片的 Mac 电脑使用 Mac 自带的多系统安装 Windows<br>并使用 Windows 版 MaaKEDR 和模拟器                                                                                                                           |
+| Android 用户 | MaaKEDR 提供 Android 客户端安装包（见 [Releases](https://github.com/APPLe-DF/MaaKEDR/releases)，真机推荐 `MaaKEDR-android-arm64-v8a-<版本>.apk`，模拟器等 x86 环境用 `MaaKEDR-android-x86_64-<版本>.apk`）<br>需要 Android 9.0 及以上；首次启动请授予通知与电池白名单，并选择 Shizuku 或 root 授权 |
 
 </div>
 
@@ -267,29 +267,17 @@ sudo xattr -rd com.apple.quarantine ~/MaaKEDR/maakedr
 
 #### Android
 
-安卓版是**独立的一套**，不需要电脑、不需要模拟器，也不用解压——直接安装 APK 即可。
+安卓版是**独立的一套**：不需要电脑、不需要模拟器、也不用解压，直接装 APK。
 
-<div align="center">
+从 [Releases](https://github.com/APPLe-DF/MaaKEDR/releases) 下载对应架构的 APK：真机选 `arm64-v8a`，x86 模拟器选 `x86_64`，不确定请选 `universal`。
 
-<details>
-  <summary>安装与授权步骤（点击展开）</summary>
-  <p></p>
-  <blockquote>
-
-1. **安装 APK**：下载 `MaaKEDR-android-*.apk` 后点击安装。系统提示"未知来源"时，在安装界面允许一次即可。
-
-2. **安装并启动 Shizuku**：从 [Shizuku 官网](https://shizuku.rikka.app/) 或应用商店安装，按应用内指引启动服务。Shizuku 的启动方式取决于系统版本，常见有两种：
-    - **无线调试启动**（Android 11 及以上，无需电脑）：开发者选项里开启「无线调试」，在 Shizuku 中用配对码配对后启动
-    - **电脑 adb 启动**：手机连电脑执行 `adb shell sh /storage/emulated/0/Android/data/moe.shizuku.privileged.api/start.sh`
-
-3. **授予权限**：打开 MaaKEDR，在 Shizuku 的授权弹窗中允许它使用 Shizuku。之前拒绝过的话，去 Shizuku 应用里手动把 MaaKEDR 的权限打开。
-
-4. **游戏与 MaaKEDR 都需要保持运行**：安卓端不走 ADB，而是由 Shizuku（或 root）直接调用系统接口完成截屏与点击，所以**不需要连电脑**，但游戏必须在前台运行。
-
-  </blockquote>
-</details>
-
-</div>
+1. 首次启动时授予**通知权限**并加入**电池白名单**：后台挂机、定时触发与运行进度通知都依赖这些权限。
+2. 选择 **Shizuku 或 root** 完成授权，并等待服务连接。Shizuku 需另行安装并启动：
+    - Android 11 及以上：可在设备上通过**无线调试**直接启动，无需电脑
+    - 更低版本且没有 root 时：需要一台电脑通过 ADB 启动
+    - 详见 [Shizuku 官方文档](https://shizuku.rikka.app/zh-hans/)
+3. 首次启动会自动解包任务资源。
+4. 在应用内选择服务器、勾选任务后开始运行，**无需配置 ADB 连接**。
 
 > [!NOTE]
 >
