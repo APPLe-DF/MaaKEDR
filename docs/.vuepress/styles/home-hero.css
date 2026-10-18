@@ -8,7 +8,12 @@
     background: url("/images/maakedr-logo_512x512.png") center / contain no-repeat;
     /* 支点放在挂绳处，摆起来才是“吊着晃”而不是“整块平移”。 */
     transform-origin: 50% 6%;
-    animation: hero-logo-swing 9s ease-in-out infinite;
+    /* 摆动 + 呼吸光晕并列：一个动 transform、一个动 filter，互不抢属性。
+       光晕必须和摆动写在同一条 animation 里（而不是后面再单独声明一次），
+       否则后写的会整个覆盖前者，logo 就不摆了。 */
+    animation:
+        hero-logo-swing 9s ease-in-out infinite,
+        hp-logo-glow 5.2s ease-in-out infinite;
 }
 
 /* 衰减式轻摆，末尾留一段静止再重来。首尾都回到 0deg 很关键：
@@ -436,4 +441,387 @@ html[data-theme="dark"] {
 
 .vp-home .vp-home-hero .vp-button.alt:active {
     background-color: var(--vp-c-default-1);
+}
+
+/* ── 科技感动效层 ──────────────────────────────────────────────────────────────
+   这一层只加视觉，不改任何布局：新增的都是绝对定位伪元素 / fixed 层，不参与文档流，
+   所以文字位置、卡片间距、锚点滚动位置和改造前逐像素一致。
+   动画只碰 transform / opacity / filter，全部交给合成线程，不触发布局或整屏重绘。
+   主题的 normalize.css 会把 prefers-reduced-motion 下的动画压成 1ms 单次播放，
+   因此每个 keyframes 的首尾帧都写成同一个"静止态”——关掉动效后停在正常样子，
+   而不是停在半截发光、半透明或者歪着的位置。 */
+
+/* 极光：三团低饱和光斑在 hero 背后缓慢漂移。
+   hero 没有配 background（ImageBg 返回 null），这层不会和主题背景图打架。
+   横向不留负 inset，避免在窄屏撑出横向滚动条；边缘靠 mask 收，不然会在 hero 下沿切一条硬边。 */
+.vp-home-hero::before {
+    content: "";
+    position: absolute;
+    inset: -8% 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(38% 44% at 26% 32%, color-mix(in srgb, var(--vp-c-brand-2) 26%, transparent), transparent 72%),
+        radial-gradient(34% 40% at 74% 24%, color-mix(in srgb, #8b5cf6 22%, transparent), transparent 74%),
+        radial-gradient(42% 46% at 58% 82%, color-mix(in srgb, #22d3ee 18%, transparent), transparent 72%);
+    /* 光斑本身已经是软边径向渐变，模糊只用来抹掉色带交界，10px 足够；
+       更大的半径会让整块 hero 每帧重新栅格化。 */
+    filter: blur(10px) saturate(1.1);
+    opacity: 0.5;
+    -webkit-mask-image: radial-gradient(64% 64% at 50% 46%, #000 30%, transparent 78%);
+    mask-image: radial-gradient(64% 64% at 50% 46%, #000 30%, transparent 78%);
+    animation: hp-aurora-drift 24s ease-in-out infinite alternate;
+}
+
+/* 深色底上同样的透明度会显得发灰，抬一档才有“背后有光”的感觉。 */
+html[data-theme="dark"] .vp-home-hero::before {
+    opacity: 0.62;
+}
+
+@keyframes hp-aurora-drift {
+    0% {
+        transform: translate3d(-2%, -1%, 0) scale(1);
+    }
+
+    50% {
+        transform: translate3d(2%, 2%, 0) scale(1.06);
+    }
+
+    100% {
+        transform: translate3d(0, -2%, 0) scale(1.02);
+    }
+}
+
+/* 扫描光束：一道柔光从 hero 顶部匀速下扫，走完一遍停一会儿再来。
+   单条而不是平铺重复——重复的渐变会在整屏切出好几道横带，读起来像渲染故障。
+   hero 加 overflow:clip 只为了把光束两端裁掉，不让它画到下一块内容上。
+   用 clip 而不是 hidden：hidden 会把 hero 变成滚动容器，里面的滚动驱动动画/粘性定位
+   都会被重新锚定；clip 只裁绘制，不建立滚动容器。 */
+.vp-home-hero {
+    overflow: clip;
+}
+
+/* clip 在旧版 Safari/Firefox 上没有，退回 hidden：只是多了个滚动容器，
+   对首页 hero 没有实际影响（里面没有 sticky 内容）。 */
+@supports not (overflow: clip) {
+    .vp-home-hero {
+        overflow: hidden;
+    }
+}
+
+.vp-home-hero::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 0;
+    height: 240px;
+    pointer-events: none;
+    background: linear-gradient(
+        to bottom,
+        transparent 0,
+        color-mix(in srgb, var(--vp-c-brand-2) 7%, transparent) 36%,
+        color-mix(in srgb, #22d3ee 16%, transparent) 50%,
+        color-mix(in srgb, var(--vp-c-brand-2) 7%, transparent) 64%,
+        transparent 100%
+    );
+    opacity: 0.4;
+    animation: hp-hero-scan 9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+/* 浅色底上同样的透明度会读成一条发白的水渍，压一档才像“扫过”而不是”糊了一片”。 */
+html[data-theme="dark"] .vp-home-hero::after {
+    opacity: 0.6;
+}
+
+/* 触屏上既没有指针去触发交互，滚动的每一帧还要多合成两层，直接关掉：
+   极光留在原地当静态背景，光束整条撤掉。 */
+@media (hover: none), (pointer: coarse) {
+    .vp-home-hero::before {
+        animation: none;
+    }
+
+    .vp-home-hero::after {
+        display: none;
+    }
+}
+
+/* 减少动效时主题会把动画压成 1ms 单次播放，停在没有 fill 的静态样式上。
+   极光静态化正好是一块柔光，但光束会停在 top:0，变成 hero 顶部一条横向色带，
+   所以这里直接不画。 */
+@media (prefers-reduced-motion: reduce) {
+    .vp-home-hero::before {
+        animation: none;
+    }
+
+    .vp-home-hero::after {
+        display: none;
+    }
+}
+
+/* 用 100vh 而不是百分比：translate 的百分比是相对元素自身 240px 的高度算的，
+   走不到 hero 底部。起点再往上多走 300px，让光束完全从画面外淡入。 */
+@keyframes hp-hero-scan {
+    0% {
+        transform: translate3d(0, -300px, 0);
+    }
+
+    100% {
+        transform: translate3d(0, 100vh, 0);
+    }
+}
+
+/* HUD 取景角标：只在大屏出现。四角各两条 1px 亮线，八个 background 层拼出来，
+   不加任何额外 DOM。inset 让出导航高度和左右边距，不压到 hero 文字。 */
+@media (min-width: 1024px) {
+    .vp-home-hero .hero-container::after {
+        --hp-hud: color-mix(in srgb, var(--vp-c-brand-1) 34%, transparent);
+
+        content: "";
+        position: absolute;
+        inset: calc(var(--vp-nav-height) + 28px) 40px 40px;
+        z-index: -1;
+        pointer-events: none;
+        background:
+            linear-gradient(var(--hp-hud), var(--hp-hud)) left top / 30px 1px no-repeat,
+            linear-gradient(var(--hp-hud), var(--hp-hud)) left top / 1px 30px no-repeat,
+            linear-gradient(var(--hp-hud), var(--hp-hud)) right top / 30px 1px no-repeat,
+            linear-gradient(var(--hp-hud), var(--hp-hud)) right top / 1px 30px no-repeat,
+            linear-gradient(var(--hp-hud), var(--hp-hud)) left bottom / 30px 1px no-repeat,
+            linear-gradient(var(--hp-hud), var(--hp-hud)) left bottom / 1px 30px no-repeat,
+            linear-gradient(var(--hp-hud), var(--hp-hud)) right bottom / 30px 1px no-repeat,
+            linear-gradient(var(--hp-hud), var(--hp-hud)) right bottom / 1px 30px no-repeat;
+    }
+}
+
+/* logo 的呼吸光晕。drop-shadow 跟着 alpha 轮廓走，不用 border-radius 就不会裁掉挂绳和相框的角。 */
+@keyframes hp-logo-glow {
+    0%,
+    100% {
+        filter: drop-shadow(0 10px 22px color-mix(in srgb, var(--vp-c-brand-2) 22%, transparent));
+    }
+
+    50% {
+        filter: drop-shadow(0 10px 36px color-mix(in srgb, var(--vp-c-brand-2) 52%, transparent));
+    }
+}
+
+/* 标题不加 filter 外发光：hero-name 的彩虹动画每帧都在改 background-position，
+   叠一层 drop-shadow 会逼着浏览器每帧把整行大字重新栅格化。发光交给底下的极光层。 */
+
+/* 首屏入场：内容逐级上浮。fill 用 backwards 而不是 both —— 动画结束后回到元素自身的
+   静态样式，这样和后面 hover/主题动画不会有残留的 transform 打架。 */
+@media (prefers-reduced-motion: no-preference) {
+    .vp-home-hero .hero-name,
+    .vp-home-hero .hero-tagline,
+    .vp-home-hero .hero-text,
+    .vp-home-hero .actions {
+        animation: hp-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    }
+
+    /* hero-name 已有彩虹动画，必须把两条并列写在同一条 animation 里，否则后写的会整个覆盖前者。 */
+    .vp-home-hero .hero-content .hero-name {
+        animation:
+            hero-name-rainbow 7s linear infinite,
+            hp-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    }
+
+    .vp-home-hero .hero-tagline {
+        animation-delay: 0.12s;
+    }
+
+    .vp-home-hero .hero-text {
+        animation-delay: 0.24s;
+    }
+
+    .vp-home-hero .actions {
+        animation-delay: 0.36s;
+    }
+}
+
+@keyframes hp-rise {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 18px, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+/* 指针光斑：HomeFX 会把鼠标在卡片内的坐标写进 --hp-mx / --hp-my（px），
+   这里只负责画。卡片本身已有 hover 抬升，光斑是第二层反馈，读起来更像"被扫描到”。
+   isolation 让伪元素的混合范围限制在卡片内，不会影响相邻卡片。 */
+.vp-home .vp-home-box.vp-home-features .vp-home-feature {
+    position: relative;
+    isolation: isolate;
+}
+
+.vp-home .vp-home-box.vp-home-features .vp-home-feature::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(
+        220px circle at var(--hp-mx, 50%) var(--hp-my, 50%),
+        color-mix(in srgb, var(--vp-c-brand-2) 18%, transparent),
+        transparent 72%
+    );
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* 只在真有 hover 能力的设备上亮：触屏点一下之后 :hover 会一直粘着，
+   卡片会留着一块永久亮着的光斑。 */
+@media (hover: hover) {
+    .vp-home .vp-home-box.vp-home-features .vp-home-feature:hover::before {
+        opacity: 1;
+    }
+}
+
+/* 卡片内容压到光斑之上；不写这条的话，z-index:0 的定位伪元素会盖住正文。 */
+.vp-home .vp-home-box.vp-home-features .vp-home-feature .box {
+    position: relative;
+    z-index: 1;
+}
+
+/* 按钮扫光：不新增伪元素（brand 按钮的 ::before 已经被呼吸光晕占了），
+   改成给按钮自己叠一层背景图，hover 时从右往左扫一次。
+   background-image 只在 hover 存在，移开后立刻消失，不会给静止态留一条白边。 */
+@media (hover: hover) {
+    .vp-home .vp-button:hover {
+        background-image: linear-gradient(110deg, transparent 32%, rgb(255 255 255 / 0.34) 50%, transparent 68%);
+        background-repeat: no-repeat;
+        background-size: 240% 100%;
+        animation: hp-btn-sheen 0.75s ease-out;
+    }
+}
+
+@keyframes hp-btn-sheen {
+    from {
+        background-position: 130% 0;
+    }
+
+    to {
+        background-position: -30% 0;
+    }
+}
+
+/* 章节序号：只给 features 区块编号，快捷下载/项目规模保持无号，
+   避免和 hero 抢"第 1 屏”的读法。序号是纯装饰，正文标题不变。 */
+.vp-home {
+    counter-reset: hp-section;
+}
+
+.vp-home .vp-home-box.vp-home-features {
+    counter-increment: hp-section;
+}
+
+.vp-home .vp-home-box.vp-home-features > .container > .title::before {
+    content: "[ " counter(hp-section, decimal-leading-zero) " ]";
+
+    display: block;
+    margin-bottom: 8px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: color-mix(in srgb, var(--vp-c-brand-1) 72%, transparent);
+}
+
+/* 颗粒噪点：给整页垫一层极淡的胶片颗粒，压住大色块之间的塑料感。
+   fixed 层不随滚动重绘，tile 只有 140px，成本可以忽略。 */
+.vp-home::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+}
+
+html[data-theme="dark"] .vp-home::after {
+    opacity: 0.05;
+}
+
+/* 滚动进入视口时上浮。这里不用 CSS 滚动驱动动画：view() 的时间线依赖滚动容器与
+   元素尺寸的匹配，实测在某些布局下 progress 恒为 null（动画完全不生效），
+   而且一旦算错就会把内容永久留在 opacity:0。
+   改成由 HomeFX 在挂载后给 .vp-home 打上 data-hp-reveal，再逐个观察卡片：
+   没有 JS、减少动效、或者观察失败时这个属性根本不存在，卡片就是普通静态样式。
+   也就是说“看不到入场效果”是唯一可能的降级，绝不会出现内容被藏起来。
+   translate 是独立属性，不和卡片 hover 的 transform 抢同一条声明。 */
+/* 进场动画只动 translate，不动 opacity —— 这条是踩过的坑，别改回去：
+   带 backdrop-filter 的元素一旦自身（或任意祖先）的不透明度 < 1，浏览器会为它
+   建立新的 backdrop root，模糊就采样不到背后的网格了。实测同一区域：
+     opacity 1    → 边缘能量 0.22（网格被糊开，模糊生效）
+     opacity 0.5  → 边缘能量 1.90（网格清晰可辨，等于没模糊）
+   同时半透明会把整块面板混向底色，看起来就是"变暗 + 模糊消失"。
+   所以这里只用位移做入场，透明度保持 1。 */
+.vp-home[data-hp-reveal] .vp-home-feature,
+.vp-home[data-hp-reveal] .home-download .group,
+.vp-home[data-hp-reveal] .home-stats .stat {
+    translate: 0 22px;
+}
+
+/* transition 是 shorthand，写一条就会把元素原有的过渡全部替换掉。
+   所以下面按目标分别把“原有的属性 + translate”整条重列一遍，
+   否则卡片 hover 时的颜色渐变和抬升会变成瞬变。 */
+.vp-home[data-hp-reveal] .vp-home-feature {
+    transition:
+        translate 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color var(--vp-t-color),
+        background-color var(--vp-t-color),
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.vp-home[data-hp-reveal] .home-download .group {
+    transition:
+        translate 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        background-color var(--vp-t-color);
+}
+
+.vp-home[data-hp-reveal] .home-stats .stat {
+    transition:
+        translate 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color var(--vp-t-color),
+        background-color var(--vp-t-color);
+}
+
+.vp-home[data-hp-reveal] .vp-home-feature.is-revealed,
+.vp-home[data-hp-reveal] .home-download .group.is-revealed,
+.vp-home[data-hp-reveal] .home-stats .stat.is-revealed {
+    translate: 0 0;
+}
+
+/* 首屏就可见的卡片不该有“进场”，否则一打开页面先看到歪着的自己再滑正。
+   HomeFX 在观察时会把已经在视口内的元素直接标成 is-revealed，这里再兜一层
+   系统级的减少动效：直接不进入位移态。 */
+@media (prefers-reduced-motion: reduce) {
+    .vp-home[data-hp-reveal] .vp-home-feature,
+    .vp-home[data-hp-reveal] .home-download .group,
+    .vp-home[data-hp-reveal] .home-stats .stat {
+        translate: none;
+        transition: none;
+    }
+}
+
+/* hero 滚出视口后，HomeFX 会在 .vp-home 上挂 data-hp-hero-away，
+   把首屏那些常驻动画停掉。合成的动画虽然便宜，但没必要在看不见的地方一直跑。 */
+.vp-home[data-hp-hero-away] .vp-home-hero::before,
+.vp-home[data-hp-hero-away] .vp-home-hero::after,
+.vp-home[data-hp-hero-away] .vp-home-hero .hero-content::before,
+.vp-home[data-hp-hero-away] .vp-home-hero .hero-name,
+.vp-home[data-hp-hero-away] .vp-home-hero .vp-button.brand::before {
+    animation-play-state: paused;
 }

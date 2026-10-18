@@ -31,6 +31,7 @@ config:
                 link: https://github.com/APPLe-DF/MaaKEDR
                 icon: ri:github-fill
     - type: HomePointerField
+    - type: HomeFX
     - type: HomeDownload
       title: 快捷下载
       lang: zh

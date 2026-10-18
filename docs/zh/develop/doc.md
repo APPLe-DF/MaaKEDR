@@ -28,7 +28,8 @@ docs/
 
 两份首页（`docs/zh/README.md`、`docs/en/README.md`）用的是 Plume 的 `home` frontmatter，`config` 里的区块顺序就是页面顺序。
 
-- 三个自定义区块在 `docs/.vuepress/components/`：`HomeDownload`（快捷下载）、`HomeStats`（项目规模）、`HomePointerField`（背景的识别框装饰层）。必须先在同目录的 `client.ts` 里注册，`config` 中的 `type:` 才认得它们
+- 四个自定义区块在 `docs/.vuepress/components/`：`HomeDownload`（快捷下载）、`HomeStats`（项目规模）、`HomePointerField`（背景的识别框装饰层）、`HomeFX`（滚动进度条 + 卡片指针光斑 + 滚动进场）。必须先在同目录的 `client.ts` 里注册，`config` 中的 `type:` 才认得它们
+- `HomeFX` 是纯增强层：它只在挂载后往 DOM 上打标记（`data-hp-reveal`、`data-hp-hero-away`、`is-revealed`）并挂一条进度条到 `body`，样式全在 `home-hero.css` 里按这些标记生效。没有 JS、用户开启「减少动效」、或指针不是精细指针时，页面只是少掉对应的动效，内容始终可见 —— 新增首页动效请沿用这个约定，不要把内容可见性交给 JS
 - 首页专属样式只有 `docs/.vuepress/styles/home-hero.css` 一个文件，其中的**规则选择器**一律以 `.vp-home` 开头，以免漏到文档页上；只有 `--vp-home-*` 命名的 CSS 变量例外，它们必须声明在全局 `:root` / `html[data-theme="dark"]` 上才能被继承，靠命名前缀保证不与主题自带变量撞名
 - `docs/.vuepress/data/*.json` 是构建期生成的：`pnpm docs:build` / `docs:dev` 会先跑 `tools/gen-docs-downloads.mjs` 和 `tools/gen-docs-stats.mjs` 写出 release 资产和仓库规模统计。取不到数据（例如无网络的全新 clone）时脚本会写占位文件（空 assets / 全零），两个区块降级成一行提示而不是把构建带崩；上一次留下的文件如果解析不出、或缺了首页要用的字段，也会被占位覆盖而不是继续沿用。**不要手改**，改了也会被下次构建覆盖
 - `HomePointerField` 里的节点名标签是从 `resource/base/pipeline/*.json` 抄来的一份静态快照，重命名或删除 pipeline 节点不会自动反映到首页

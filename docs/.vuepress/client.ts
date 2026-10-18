@@ -1,6 +1,7 @@
 import { defineClientConfig } from 'vuepress/client'
 
 import HomeDownload from './components/HomeDownload.vue'
+import HomeFX from './components/HomeFX.vue'
 import HomePointerField from './components/HomePointerField.vue'
 import HomeStats from './components/HomeStats.vue'
 import './styles/palette.css'
@@ -10,6 +11,7 @@ export default defineClientConfig({
   enhance({ app, router }) {
     // Plume 的 home config 会把未知 type 当作全局组件解析，注册后即可作为一个首页块使用。
     app.component('HomeDownload', HomeDownload)
+    app.component('HomeFX', HomeFX)
     app.component('HomePointerField', HomePointerField)
     app.component('HomeStats', HomeStats)
 
