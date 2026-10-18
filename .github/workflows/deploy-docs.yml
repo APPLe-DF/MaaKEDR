@@ -4,6 +4,14 @@ on:
   push:
     branches: [main]
     paths: ["docs/**"]
+  # 首页的版本号、发布日、下载链接是构建期从 GitHub Release 抓的（tools/gen-docs-downloads.mjs），
+  # 数据虽然会自动更新，但站点只有在"重新构建"时才会重跑那个脚本。原来这里只监听 docs/** 的改动，
+  # 于是发新版本后（release.yml 跑完、tag 已推）站点仍停在旧版本，得等下一次有人改文档才被动刷新。
+  # 补上 workflow_run：Release 工作流跑完后立即重建一次，发版即生效。
+  # workflow_dispatch 留着手动兜底（release 重跑、或想强制刷新站点时用）。
+  workflow_run:
+    workflows: ["Release"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -17,6 +25,9 @@ concurrency:
 
 jobs:
   build:
+    # workflow_run 触发时，上游 Release 失败/取消就没必要重建：那一刻 assets 可能还没传完，
+    # 抓到的会是一个缺文件的版本。push / workflow_dispatch 没有 workflow_run 上下文，照常放行。
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -29,7 +40,12 @@ jobs:
         with:
           enablement: true
       - run: pnpm install --frozen-lockfile
+      # tools/gen-docs-downloads.mjs 会读 GH_TOKEN / GITHUB_TOKEN 给 GitHub API 加认证。
+      # 不传的话每次构建都在 60 次/小时的匿名配额里跑，一旦撞上限脚本会静默回退到上一份数据，
+      # 站点就继续显示旧版本——正是这次要修的症状，所以这里必须带上 token。
       - run: pnpm docs:build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: docs/.vuepress/dist
