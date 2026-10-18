@@ -5,16 +5,24 @@ import {fileURLToPath} from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO = process.env.MAAKEDR_REPO ?? "APPLe-DF/MaaKEDR";
 const OUT = resolve(__dirname, "..", "docs", ".vuepress", "data", "latest-release.json");
-const ASSET =
+// 桌面包：MaaKEDR-<os>-<arch>-<tag>-<ui>.<ext>
+const DESKTOP_ASSET =
     /^MaaKEDR-(?<os>win|macos|linux)-(?<arch>x86_64|aarch64)-(?<tag>v\d+\.\d+\.\d+)-(?<ui>MFAA|MXU)\.(?<ext>zip|tar\.gz)$/;
+// 安卓包：MaaKEDR-android-<universal|arm64-v8a|x86_64>-<tag>.apk
+// 与 android-build.yml 的 Rename Release APK 步骤保持一致（artifact_prefix 取自
+// maa-project.json 的 project.displayName）。
+const ANDROID_ASSET = /^MaaKEDR-android-(?<arch>universal|arm64-v8a|x86_64)-(?<tag>v\d+\.\d+\.\d+)\.apk$/;
 const OS_ORDER = [
     "win",
     "macos",
     "linux",
+    "android",
 ];
 const ARCH_ORDER = [
     "x86_64",
     "aarch64",
+    "universal",
+    "arm64-v8a",
 ];
 const UI_ORDER = [
     "MFAA",
@@ -32,7 +40,9 @@ function isNonEmptyString(value) {
 function isUsableAsset(asset) {
     if (!asset || typeof asset !== "object") return false;
     if (!isNonEmptyString(asset.name) || !isNonEmptyString(asset.url)) return false;
-    if (!isNonEmptyString(asset.os) || !isNonEmptyString(asset.arch) || !isNonEmptyString(asset.ui)) return false;
+    if (!isNonEmptyString(asset.os) || !isNonEmptyString(asset.arch)) return false;
+    // ui 只有桌面包才有；安卓包固定为空串，所以这里只校验"存在且是字符串"。
+    if (typeof asset.ui !== "string") return false;
     return Number.isFinite(asset.size) && asset.size >= 0;
 }
 
@@ -100,19 +110,42 @@ function buildRelease(release) {
     const assets = [];
     for (const item of release.assets) {
         if (!item || typeof item !== "object") continue;
-        const m = ASSET.exec(item.name ?? "");
-        // 名字不匹配命名规则、或没有下载地址的资源都进不了首页，宁可不收。
-        if (!m || typeof item.browser_download_url !== "string") continue;
-        const {os, arch, ui, ext} = m.groups;
-        assets.push({
-            name: item.name,
-            os,
-            arch,
-            ui,
-            ext,
-            size: item.size ?? 0,
-            url: item.browser_download_url,
-        });
+        const name = item.name ?? "";
+        if (typeof item.browser_download_url !== "string") continue;
+
+        const desktop = DESKTOP_ASSET.exec(name);
+        if (desktop) {
+            const {os, arch, ui, ext} = desktop.groups;
+            assets.push({
+                name,
+                os,
+                arch,
+                ui,
+                ext,
+                size: item.size ?? 0,
+                url: item.browser_download_url,
+            });
+            continue;
+        }
+
+        // APK 只有 universal / 单 ABI 两种，没有 MFAA/MXU 之分（安卓端只有一个壳），
+        // 所以 ui 记成空串，首页据此把这一组渲染成"只有下载按钮、没有界面切换"。
+        const android = ANDROID_ASSET.exec(name);
+        if (android) {
+            const {arch, tag: apkTag} = android.groups;
+            // APK 名里的 tag 必须和 release 的 tag 对得上，否则可能是上一次构建残留的工件。
+            if (apkTag !== release.tag_name) continue;
+            assets.push({
+                name,
+                os: "android",
+                arch,
+                ui: "",
+                ext: "apk",
+                size: item.size ?? 0,
+                url: item.browser_download_url,
+            });
+            continue;
+        }
     }
 
     assets.sort(

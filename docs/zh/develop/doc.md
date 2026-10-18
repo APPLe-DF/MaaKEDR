@@ -31,6 +31,10 @@ docs/
 - 四个自定义区块在 `docs/.vuepress/components/`：`HomeDownload`（快捷下载）、`HomeStats`（项目规模）、`HomePointerField`（背景的识别框装饰层）、`HomeFX`（滚动进度条 + 卡片指针光斑 + 滚动进场）。必须先在同目录的 `client.ts` 里注册，`config` 中的 `type:` 才认得它们
 - `HomeFX` 是纯增强层：它只在挂载后往 DOM 上打标记（`data-hp-reveal`、`data-hp-hero-away`、`is-revealed`）并挂一条进度条到 `body`，样式全在 `home-hero.css` 里按这些标记生效。没有 JS、用户开启「减少动效」、或指针不是精细指针时，页面只是少掉对应的动效，内容始终可见 —— 新增首页动效请沿用这个约定，不要把内容可见性交给 JS
 - 首页专属样式只有 `docs/.vuepress/styles/home-hero.css` 一个文件，其中的**规则选择器**一律以 `.vp-home` 开头，以免漏到文档页上；只有 `--vp-home-*` 命名的 CSS 变量例外，它们必须声明在全局 `:root` / `html[data-theme="dark"]` 上才能被继承，靠命名前缀保证不与主题自带变量撞名
+- `HomeDownload` 会在挂载后读一次 `navigator.userAgentData` / `navigator.platform` / WebGL 渲染器，识别出当前设备的系统与架构，在完整列表上方多渲染一张"推荐下载"卡（界面版本默认 MFAA，可切到 MXU）。识别结果只在客户端存在，SSR 产物里没有这张卡，所以不会产生 hydration 失配；手机/平板/ChromeOS 没有对应包，识别不出来时整块不渲染，完整列表始终可用。macOS 的 UA 不区分芯片，架构靠 WebGL 渲染器名判断（含 `Apple` 判 ARM），判不出来时按 Apple 芯片猜
+- **首页版本号与下载链接是自动的，不要手写**：`tools/gen-docs-downloads.mjs` 在每次构建时调用 GitHub Release API，取最新**正式版**（`/releases/latest` 会跳过 prerelease）的 tag、发布时间和资产清单，按 `MaaKEDR-<os>-<arch>-<tag>-<ui>.<ext>` 解析出平台/架构/界面版本。站点侧靠 `.github/workflows/deploy-docs.yml` 的两条触发保证及时刷新：`docs/**` 有改动，以及 **Release 工作流成功跑完后自动重建**（`workflow_run`）。另有 `workflow_dispatch` 可手动强制刷新
+- 下载区已预留 **Android APK**：脚本认 `MaaKEDR-android-<universal|arm64-v8a|x86_64>-<tag>.apk` 这个命名（与 `android-build.yml` 的 Rename Release APK 步骤一致），APK 的 `ui` 字段固定为空串（安卓端只有一个壳，没有 MFAA/MXU 之分）。当前正式版还没有 APK，所以「Android」分组和安卓设备的推荐卡都不会出现；`release.yml` 一旦把这些 APK 传上去，首页会自动多出该分组，安卓浏览器访问时推荐卡也会直接给对应 ABI 的 APK
+- 自动更新依赖 API 可用：脚本读 `GH_TOKEN` / `GITHUB_TOKEN` 给请求加认证（CI 里已传入），因为匿名配额只有 60 次/小时，撞上限后会静默回退到上一份数据、站点继续显示旧版本。改到新版本时构建日志会打印 `wrote N assets for vX.Y.Z`，没更新就查这行
 - `docs/.vuepress/data/*.json` 是构建期生成的：`pnpm docs:build` / `docs:dev` 会先跑 `tools/gen-docs-downloads.mjs` 和 `tools/gen-docs-stats.mjs` 写出 release 资产和仓库规模统计。取不到数据（例如无网络的全新 clone）时脚本会写占位文件（空 assets / 全零），两个区块降级成一行提示而不是把构建带崩；上一次留下的文件如果解析不出、或缺了首页要用的字段，也会被占位覆盖而不是继续沿用。**不要手改**，改了也会被下次构建覆盖
 - `HomePointerField` 里的节点名标签是从 `resource/base/pipeline/*.json` 抄来的一份静态快照，重命名或删除 pipeline 节点不会自动反映到首页
 
