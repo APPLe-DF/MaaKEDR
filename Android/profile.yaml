@@ -66,12 +66,9 @@ agent:
 # 应用内更新默认查 PI 的 mirrorchyan_rid（MaaKEDR），不另写 update 段。
 # MaaFwApp 暂不支持 Mirror酱 CDN，仅按 rid 查询更新信息。
 #
-# 待办：Android 包在 Mirror酱 上应是独立产品条目（桌面包只换资源、APK 自带 GUI 与运行时），
-# 需要单独申请 rid，参照 M9A 的 M9A_exec 与桌面的 M9A 分开。拿到后在这里写：
-#   update:
-#     mirrorchyanRid: <申请的 rid>
-# 它会压过 PI 的 mirrorchyan_rid，桌面端不受影响。
-# 未申请前不要写死——rid 不存在时 App 的更新检查会报 MISSING/失败。
+# Android APK 使用独立的 Mirror酱产品条目；该设置覆盖 PI 的 mirrorchyan_rid，桌面端不受影响。
+update:
+  mirrorchyanRid: MaaKEDR_exec
 
 # 包名拼成 com.aliothmoon.maafw.maakedr；图标须 png/webp，
 # 由 tools/make_android_icon.py 从根目录 logo.ico 转出（产物 logo.png，已 gitignore）。

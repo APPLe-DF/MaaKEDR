@@ -127,11 +127,8 @@ jobs:
         with:
           filetype: latest-release
           filename: ${{ format('*-android-{0}-*.apk', matrix.suffix) }}
-          # 待申请：Android 包需要独立的 rid（参照 M9A 的 M9A_exec 与桌面的 M9A 分开）。
-          # 在 Mirror酱 后台开通并拿到 rid 前，本 job 上传必然失败（rid 不存在）。
-          # 开通后把下面的占位换成真实 rid，并同步 Android/profile.yaml 的 update.mirrorchyanRid。
-          # 在此之前保持 android 输入为 false（默认），本 job 不会被触发。
-          mirrorchyan_rid: MaaKEDR-Android-PENDING
+          # Android APK 使用独立的可执行包 RID。
+          mirrorchyan_rid: MaaKEDR_exec
           tag: ${{ inputs.tag || github.event.client_payload.tag }}
 
           os: android
