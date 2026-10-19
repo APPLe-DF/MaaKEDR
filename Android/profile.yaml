@@ -58,10 +58,22 @@ agent:
 #   include:
 #     - debug/**/*.log
 
-# 运行屏：默认前台+后台（720P@240dpi / 1080P@280dpi）与 PI controller 的
-# display_short_side: 720 一致，无需覆盖。
-# display:
-#   foreground: true
+# 运行屏：只出后台虚拟屏。
+#
+# 前台模式在手机主屏上跑，屏幕实际分辨率与比例和 720P 资源对不上，识别会漂。
+# 关掉后 MAFW_FOREGROUND_ALLOWED=false：首页不再渲染运行模式开关，已存的前台设置
+# 也回落到后台。presets 整体替换内置档位，只留与 PI controller 的
+# display_short_side: 720 一致的那一档。
+#
+# 代价：只剩后台虚拟屏，而 BackgroundModePrecheck 在 API 29 以下直接 Block，
+# Android 10 以下的机器跑不起来。
+display:
+  foreground: false
+  presets:
+    - label: 720P
+      width: 1280
+      height: 720
+      dpi: 240
 
 # 应用内更新默认查 PI 的 mirrorchyan_rid（MaaKEDR），不另写 update 段。
 # MaaFwApp 暂不支持 Mirror酱 CDN，仅按 rid 查询更新信息。
