@@ -266,12 +266,18 @@ in.
 ## Runtime modes
 
 MaaKEDR's ROIs, coordinates and template images are authored for 1280x720 (16:9), and the
-agent enforces the ratio at task start (`agent/custom/sink/aspect_ratio.py`). Therefore:
+agent enforces the ratio at task start (`agent/custom/sink/aspect_ratio.py`). The Android
+package therefore **ships background mode only**: the virtual display is fixed at
+720P@240dpi, which is 16:9 out of the box.
 
-- **Background mode** (virtual display, 720P/1080P) is 16:9 out of the box and is the
-  recommended mode.
-- **Foreground mode** uses the physical screen (e.g. 1260x2800), which is not 16:9; tasks
-  are stopped deliberately with a hint.
+Foreground mode is disabled in the packaging profile (`display.foreground: false` in
+`Android/profile.yaml`). The physical screen (e.g. 1260x2800) is not 16:9, so tasks are
+stopped deliberately — keeping the switch would only mislead. With it off, the home screen
+no longer renders the mode toggle, and any stored foreground setting falls back to
+background.
+
+**Trade-off**: with only the virtual display left, `BackgroundModePrecheck` blocks outright
+below API 29, so the app requires **Android 10 (API 29) or newer**.
 
 ## Troubleshooting
 
