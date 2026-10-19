@@ -68,20 +68,39 @@ footer = """
     {%- set_global latest_version = release.version -%}
   {%- endif -%}
 {%- endfor -%}
-
-{% if latest_version -%}
-**按平台选择安装包**（点击架构名即可下载）：
-
-| 平台 | MFAA | MXU |
-| :--- | :--- | :--- |
-| **Windows** | [x64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-win-x86_64-{{ latest_version }}-MFAA.zip) · [ARM64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-win-aarch64-{{ latest_version }}-MFAA.zip) | [x64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-win-x86_64-{{ latest_version }}-MXU.zip) · [ARM64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-win-aarch64-{{ latest_version }}-MXU.zip) |
-| **macOS** | [Intel]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-macos-x86_64-{{ latest_version }}-MFAA.tar.gz) · [Apple 芯片]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-macos-aarch64-{{ latest_version }}-MFAA.tar.gz) | [Intel]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-macos-x86_64-{{ latest_version }}-MXU.tar.gz) · [Apple 芯片]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-macos-aarch64-{{ latest_version }}-MXU.tar.gz) |
-| **Linux** | [x64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-linux-x86_64-{{ latest_version }}-MFAA.tar.gz) · [ARM64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-linux-aarch64-{{ latest_version }}-MFAA.tar.gz) | [x64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-linux-x86_64-{{ latest_version }}-MXU.tar.gz) |
-| **Android** | [arm64-v8a]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-android-arm64-v8a-{{ latest_version }}.apk) · [universal]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-android-universal-{{ latest_version }}.apk) · [x86_64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-android-x86_64-{{ latest_version }}.apk) | — |
-
-- **Android**：手机选 `arm64-v8a`；不确定选 `universal`（约大一倍，兼容性最好）；模拟器选 `x86_64`
+{%- if latest_version -%}
+  {%- set_global ver = latest_version -%}
 {%- else -%}
-**按平台选择安装包，没找到的请点 show all x assets**
+  {%- set_global ver = "v?.?.?" -%}
+{%- endif %}
+
+{%- macro asset(prefix, suffix, label, ver, tag) -%}
+  {%- set filename = prefix ~ ver ~ suffix -%}
+  {%- if tag -%}
+    [{{ label }}]({{ self::remote_url() }}/releases/download/{{ tag }}/{{ filename }})
+  {%- else -%}
+    {{ filename }}
+  {%- endif -%}
+{%- endmacro %}
+
+---
+
+### 下载哪个包
+
+| 包 | 适用 |
+| --- | --- |
+| {{ self::asset(prefix="MaaKEDR-win-x86_64-", suffix="-MFAA.zip", label="MaaKEDR-MFAA", ver=ver, tag=latest_version) }}（推荐） | Windows x64，绝大部分用户 |
+| {{ self::asset(prefix="MaaKEDR-win-x86_64-", suffix="-MXU.zip", label="MaaKEDR-MXU", ver=ver, tag=latest_version) }} | Windows x64（MaaEnd 同款界面） |
+| {{ self::asset(prefix="MaaKEDR-win-aarch64-", suffix="-MFAA.zip", label="MFAA", ver=ver, tag=latest_version) }} / {{ self::asset(prefix="MaaKEDR-win-aarch64-", suffix="-MXU.zip", label="MXU", ver=ver, tag=latest_version) }} | Windows on ARM |
+| {{ self::asset(prefix="MaaKEDR-linux-x86_64-", suffix="-MFAA.tar.gz", label="MaaKEDR-MFAA", ver=ver, tag=latest_version) }} / {{ self::asset(prefix="MaaKEDR-linux-x86_64-", suffix="-MXU.tar.gz", label="MaaKEDR-MXU", ver=ver, tag=latest_version) }} | Linux x64 |
+| {{ self::asset(prefix="MaaKEDR-linux-aarch64-", suffix="-MFAA.tar.gz", label="MaaKEDR-MFAA", ver=ver, tag=latest_version) }} /（无 MXU 包） | Linux ARM64 |
+| {{ self::asset(prefix="MaaKEDR-macos-x86_64-", suffix="-MFAA.tar.gz", label="MaaKEDR-MFAA", ver=ver, tag=latest_version) }} / {{ self::asset(prefix="MaaKEDR-macos-x86_64-", suffix="-MXU.tar.gz", label="MaaKEDR-MXU", ver=ver, tag=latest_version) }} | macOS（Intel 芯片） |
+| {{ self::asset(prefix="MaaKEDR-macos-aarch64-", suffix="-MFAA.tar.gz", label="MaaKEDR-MFAA", ver=ver, tag=latest_version) }} / {{ self::asset(prefix="MaaKEDR-macos-aarch64-", suffix="-MXU.tar.gz", label="MaaKEDR-MXU", ver=ver, tag=latest_version) }} | macOS（Apple Silicon） |
+| {{ self::asset(prefix="MaaKEDR-android-arm64-v8a-", suffix=".apk", label="MaaKEDR-android-arm64-v8a.apk", ver=ver, tag=latest_version) }}（推荐） | Android 真机（ARM64），体积约为 universal 的一半 |
+| {{ self::asset(prefix="MaaKEDR-android-universal-", suffix=".apk", label="MaaKEDR-android-universal.apk", ver=ver, tag=latest_version) }} | Android 双架构通用包，真机 / 模拟器都能装，不确定选这个 |
+| {{ self::asset(prefix="MaaKEDR-android-x86_64-", suffix=".apk", label="MaaKEDR-android-x86_64.apk", ver=ver, tag=latest_version) }} | Android 模拟器等 x86 环境（Windows 上的蓝叠 / MuMu / 雷电等） |
+{%- if not latest_version %}
+以上版本号为占位 v?.?.?，release 页没找到对应包请点 show all assets
 {%- endif %}
 
 > MFAA = 图形界面版（MFAAvalonia） | MXU = 图形界面版（MaaEnd同款）
