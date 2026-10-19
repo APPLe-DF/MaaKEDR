@@ -102,10 +102,6 @@ function compareVersions(a, b) {
     return 0;
 }
 
-function escapeRegExp(text) {
-    return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
 function envTrim(name) {
     return (process.env[name] ?? "").trim();
 }
@@ -182,12 +178,36 @@ function availablePairings(coreTags) {
     return [...versions].sort(compareMaafwVersions).reverse();
 }
 
+/** 预发布后缀归一成 PEP 440 的短形式：`-beta.1` / `beta.1` / `b1` 都是 `b1`，`rc.2` / `c2` 都是
+ *  `rc2`。同一个版本在 requirements（uv 导出的归一形式）与内核 tag（GitHub tag 原文）里拼写不同，
+ *  比较前必须先落到同一个 key */
+function maafwPrereleaseKey(text) {
+    const suffix = text.toLowerCase().replace(/^[-_.]+/, "");
+    if (suffix === "") return "";
+    const match = /^(alpha|beta|preview|pre|rc|a|b|c)[-_.]?(\d*)(.*)$/.exec(suffix);
+    if (match === null) return suffix;
+    const word = match[1];
+    const short = word === "a" || word === "alpha" ? "a" : word === "b" || word === "beta" ? "b" : "rc";
+    return `${short}${match[2]}${match[3]}`;
+}
+
+/** 版本比较用的 key：`5.15.0-beta.1`、`5.15.0b1`、`v5.15.0b1` 归一到 `5.15.0b1`。解析不了的退回
+ *  小写原文（仍可比较，只是没有发布线语义） */
+function maafwVersionKey(text) {
+    const value = String(text).trim().replace(/^[vV]/, "");
+    const match = /^(\d+(?:\.\d+)*)(.*)$/.exec(value);
+    if (match === null) return value.toLowerCase();
+    return `${match[1]}${maafwPrereleaseKey(match[2])}`;
+}
+
 /** MaaFW 版本拆成「数字段 + 后缀」：数字段决定发布线（5.14.3 / 5.13.0b6 / 5.15.0-beta.1），
- *  后缀只在同一条线内比先后。解析不了的（不以数字开头）返回 undefined */
+ *  后缀只在同一条线内比先后（已归一，`b1` 与 `beta.1` 不会比出先后）。
+ *  解析不了的（不以数字开头）返回 undefined */
 function parseMaafwVersion(text) {
-    const match = /^(\d+(?:\.\d+)*)(.*)$/.exec(text.trim());
+    const value = String(text).trim().replace(/^[vV]/, "");
+    const match = /^(\d+(?:\.\d+)*)(.*)$/.exec(value);
     if (match === null) return undefined;
-    return {release: match[1].split(".").map(Number), suffix: match[2].replace(/^[-.]/, "")};
+    return {release: match[1].split(".").map(Number), suffix: maafwPrereleaseKey(match[2])};
 }
 
 /** 同一条线内无后缀（正式版）大于带后缀（预发布）；后缀之间按 compareSuffix 逐段比（数字段按数值）；解析不了退回纯数字比较 */
@@ -238,16 +258,21 @@ function releaseAtMost(candidate, pin) {
     return compareVersions(a.release.join("."), b.release.join(".")) <= 0;
 }
 
-/** 某个 maafw 配对下的内核 tag：tag 第一段是 CPython 版本，同配对有多个 CPython 线时取最高的 */
 /** 某个 maafw 配对下的内核 tag：tag 第一段是 CPython 版本，同配对有多个 CPython 线时取最高的。
  *  只取最高会把项目不支持的线也选中——agent/main.py 明确拒绝 3.14，必须按声明的
- *  Python 范围过滤（allowedMinor 为空数组表示未声明、不限制）。 */
+ *  Python 范围过滤（allowedMinor 为空数组表示未声明、不限制）。
+ *
+ *  tag 里的版本段是发布原文（可能是 5.15.0-beta.1），而入参可能来自 uv 导出的
+ *  PEP 440 归一形式（5.15.0b1），所以两边都先过 maafwVersionKey 再比。 */
 function coreTagFor(coreTags, maafwVersion, allowedMinor = []) {
-    const pattern = new RegExp(`^(\\d[\\w.]*)-maafw${escapeRegExp(maafwVersion)}$`);
+    const wanted = maafwVersionKey(maafwVersion);
     return coreTags
-        .map((tag) => pattern.exec(tag))
-        .filter((match) => match !== null)
-        .map((match) => match[1])
+        .map((tag) => {
+            const match = /^(\d[\w.]*)-maafw(.+)$/.exec(tag);
+            return match === null ? null : {cpython: match[1], maafw: match[2]};
+        })
+        .filter((entry) => entry !== null && maafwVersionKey(entry.maafw) === wanted)
+        .map((entry) => entry.cpython)
         .filter((cpython) => allowedMinor.length === 0 || allowedMinor.includes(cpythonMinor(cpython)))
         .sort(compareVersions)
         .at(-1);
@@ -286,7 +311,11 @@ function allowedPythonMinors(requiresPython) {
 function pickPackagingCore(coreTags, requested, allowedMinor = []) {
     const pairings = availablePairings(coreTags);
     const eligible = pairings.filter((version) => releaseAtMost(version, requested)).sort(compareMaafwVersions);
-    const chosen = pairings.includes(requested) ? requested : eligible.at(-1);
+    // 精确配对要按归一 key 比：requirements 里是 PEP 440 拼写（5.15.0b1），配对 tag 是发布原文
+    // （5.15.0-beta.1），直接字符串比较会把预发布钉版误判成「内核还没发配对」
+    const wanted = maafwVersionKey(requested);
+    const exact = pairings.find((version) => maafwVersionKey(version) === wanted);
+    const chosen = exact ?? eligible.at(-1);
     if (chosen === undefined) {
         throw new Error(
             `内核（${CORE_REPO}）没有不高于 maafw${requested} 的配对 release；` +
@@ -298,7 +327,7 @@ function pickPackagingCore(coreTags, requested, allowedMinor = []) {
     return {
         coreTag: `${coreTagFor(coreTags, chosen, allowedMinor)}-maafw${chosen}`,
         maafwVersion: chosen,
-        degraded: chosen !== requested,
+        degraded: exact === undefined,
     };
 }
 
@@ -497,7 +526,8 @@ async function resolvePackaging(root) {
     let maafwVersion;
     if (requirementPin !== undefined) {
         maafwVersion = requirementPin;
-        if (declaredVersion !== "" && declaredVersion !== requirementPin) {
+        // 归一再比：maa-project.json 常写带 v 前缀的原文，requirements 是 PEP 440 拼写
+        if (declaredVersion !== "" && maafwVersionKey(declaredVersion) !== maafwVersionKey(requirementPin)) {
             warnings.push(
                 `maa-project.json 固定 ${declaredVersion}，与 requirements 的 maafw==${requirementPin} 不一致；` +
                     `Android 以 requirements 为准（GUI 运行时与 agent 绑定的漂移 PC 侧同样存在）`,
@@ -526,7 +556,8 @@ async function resolvePackaging(root) {
                 throw new Error(`${CORE_TAG_ENV}=${override} 里解析不到 -maafw 版本段`);
             }
             coreTag = override;
-            if (match[2] !== maafwVersion) {
+            // 归一再比：override 里写的是 tag 原文，maafwVersion 可能来自 requirements 的归一拼写
+            if (maafwVersionKey(match[2]) !== maafwVersionKey(maafwVersion)) {
                 warnings.push(
                     `${CORE_TAG_ENV} 钉的内核绑定是 ${match[2]}，与固定的 maafw${maafwVersion} 不一致；` +
                         `这是应急通道，client 原生库会跟着内核走，出包前记得撤掉`,

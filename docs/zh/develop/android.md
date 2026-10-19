@@ -243,10 +243,15 @@ nativeLibraryDir）后直接沿用，桌面 `runtimes/` 布局逻辑不会介入
 ## 运行要求与模式
 
 MaaKEDR 的 ROI / 坐标 / 模板图以 1280x720（16:9）为基准，agent 启动任务时会强制校验
-分辨率（`agent/custom/sink/aspect_ratio.py`）。因此：
+分辨率（`agent/custom/sink/aspect_ratio.py`）。因此 Android 包**只提供后台模式**：
+虚拟屏固定 720P@240dpi，即 16:9，直接可用。
 
-- **后台模式**（虚拟屏，720P/1080P）分辨率即 16:9，直接可用，也是推荐用法；
-- **前台模式**用的是手机物理屏（如 1260x2800），非 16:9，任务会被主动拦停并提示。
+前台模式已在打包配方里关掉（`Android/profile.yaml` 的 `display.foreground: false`）：
+手机物理屏（如 1260x2800）不是 16:9，跑起来任务会被主动拦停，留着这个开关只会误导。
+关掉后首页不再渲染运行模式切换，已存的前台设置会自动回落到后台。
+
+**代价**：只剩后台虚拟屏，而 `BackgroundModePrecheck` 在 API 29 以下直接拦截，
+所以 **Android 10（API 29）及以上**才能运行。
 
 ## 常见问题
 

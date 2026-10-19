@@ -73,6 +73,12 @@ jobs:
         if: hashFiles('pyproject.toml') != ''
       - run: pnpm release:dry-run
         if: github.event_name == 'workflow_dispatch'
+      # 依赖变更（Dependabot 的 uv 更新）只改 uv.lock，而 sync:runtime 与 APK 的
+      # build_agent_bundle.py 都从导出的 requirements.txt 装依赖。不重导就会拿旧钉版出包，
+      # 且不会有任何报错。--frozen 顺带校验 pyproject 与 lock 一致，不一致直接失败。
+      - name: Re-export requirements from the lock
+        if: hashFiles('pyproject.toml') != ''
+        run: uv export --frozen --format requirements-txt --no-hashes --no-emit-project --no-group dev --output-file requirements.txt
       - run: pnpm sync:runtime
         if: github.event_name != 'workflow_dispatch'
         env:
