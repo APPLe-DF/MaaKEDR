@@ -205,14 +205,11 @@ jobs:
           gh api --method POST "repos/$GITHUB_REPOSITORY/dispatches" \
             -f event_type=create-maa-project-release \
             -f client_payload[tag]="$GITHUB_REF_NAME"
-          # Android 包的 Mirror酱 上传暂未启用：独立 rid 尚未申请（见
-          # .github/workflows/mirrorchyan_release.yml 的 mirrorchyan_android job）。
-          # 拿到 rid 并改好那里的 mirrorchyan_rid 后，在这里补回
-          #   -f client_payload[android]=true
-          # 否则 android job 不会随 tag 发版自动触发（仍可手动 dispatch 勾选 android 测试）。
+          # Android APK 使用独立的 MaaKEDR_exec RID，release 时一并触发上传。
           gh api --method POST "repos/$GITHUB_REPOSITORY/dispatches" \
             -f event_type=mirrorchyan-upload \
-            -f client_payload[tag]="$GITHUB_REF_NAME"
+            -f client_payload[tag]="$GITHUB_REF_NAME" \
+            -f client_payload[android]=true
           gh api --method POST "repos/$GITHUB_REPOSITORY/dispatches" \
             -f event_type=mirrorchyan-release-note \
             -f client_payload[tag]="$GITHUB_REF_NAME"
