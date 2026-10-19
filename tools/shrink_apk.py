@@ -151,6 +151,11 @@ def main() -> int:
         # 密码走 apksigner 的 env:<name> 形式，不进 argv：`pass:<明文>` 会让密码出现在
         # 进程参数里（ps / 日志 / CI 的 step 回显都能看到）。apksigner 支持 env: 形式，
         # 我们把值塞进子进程环境再让它按名字读。
+        #
+        # 签名方案必须显式指定，不能交给 apksigner 的默认策略推断：
+        # minSdk 28 下它默认只出 v3，而 v3-only 的包在部分厂商 ROM（vivo 等）上会被
+        # 判成「安装包缺乏开发者证书」直接拒装。这里对齐 M9A 的产物形态：只开 v2。
+        # v1 对 minSdk 28 没有意义（JAR 签名只服务 Android 6 及以下），关掉还能省体积。
         ks_env = "APKSIGNER_KS_PASS"
         key_env = "APKSIGNER_KEY_PASS"
         subprocess.run(
@@ -165,6 +170,12 @@ def main() -> int:
                 f"env:{key_env}",
                 "--ks-key-alias",
                 setting("KEY_ALIAS", "androiddebugkey"),
+                "--v1-signing-enabled",
+                "false",
+                "--v2-signing-enabled",
+                "true",
+                "--v3-signing-enabled",
+                "false",
                 str(aligned),
             ],
             check=True,

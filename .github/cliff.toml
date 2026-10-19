@@ -70,9 +70,18 @@ footer = """
 {%- endfor -%}
 
 {% if latest_version -%}
-**绝大部分用户请下载 [MaaKEDR-win-x86_64-{{ latest_version }}-MFAA.zip]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-win-x86_64-{{ latest_version }}-MFAA.zip) 或 [MaaKEDR-win-x86_64-{{ latest_version }}-MXU.zip]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-win-x86_64-{{ latest_version }}-MXU.zip)**
+**按平台选择安装包**（点击架构名即可下载）：
+
+| 平台 | MFAA | MXU |
+| :--- | :--- | :--- |
+| **Windows** | [x64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-win-x86_64-{{ latest_version }}-MFAA.zip) · [ARM64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-win-aarch64-{{ latest_version }}-MFAA.zip) | [x64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-win-x86_64-{{ latest_version }}-MXU.zip) · [ARM64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-win-aarch64-{{ latest_version }}-MXU.zip) |
+| **macOS** | [Intel]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-macos-x86_64-{{ latest_version }}-MFAA.tar.gz) · [Apple 芯片]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-macos-aarch64-{{ latest_version }}-MFAA.tar.gz) | [Intel]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-macos-x86_64-{{ latest_version }}-MXU.tar.gz) · [Apple 芯片]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-macos-aarch64-{{ latest_version }}-MXU.tar.gz) |
+| **Linux** | [x64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-linux-x86_64-{{ latest_version }}-MFAA.tar.gz) · [ARM64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-linux-aarch64-{{ latest_version }}-MFAA.tar.gz) | [x64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-linux-x86_64-{{ latest_version }}-MXU.tar.gz) |
+| **Android** | [arm64-v8a]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-android-arm64-v8a-{{ latest_version }}.apk) · [universal]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-android-universal-{{ latest_version }}.apk) · [x86_64]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-android-x86_64-{{ latest_version }}.apk) | — |
+
+- **Android**：手机选 `arm64-v8a`；不确定选 `universal`（约大一倍，兼容性最好）；模拟器选 `x86_64`
 {%- else -%}
-**绝大部分用户请下载 MaaKEDR-win-x86_64-vx.x.x-MFAA.zip 或 MaaKEDR-win-x86_64-vx.x.x-MXU.zip，没找到的请点 show all x assets**
+**按平台选择安装包，没找到的请点 show all x assets**
 {%- endif %}
 
 > MFAA = 图形界面版（MFAAvalonia） | MXU = 图形界面版（MaaEnd同款）
