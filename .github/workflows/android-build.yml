@@ -123,7 +123,7 @@ jobs:
       # requirements.txt 装依赖。不重导就会拿旧钉版出包，且不会有任何报错。--frozen 顺带
       # 校验 pyproject 与 lock 一致，不一致直接失败。
       - name: Re-export requirements from the lock
-        run: uv export --frozen --no-hashes --no-emit-project --output-file requirements.txt
+        run: uv export --frozen --format requirements-txt --no-hashes --no-emit-project --no-group dev --output-file requirements.txt
 
       # MaaFW 版本与资产前缀由 tools/android-packaging.mjs 解析（Node 而不是 Python：
       # 纯 pipeline 项目不引入 Python，同一份脚本要能给它们用）：
@@ -410,7 +410,7 @@ jobs:
 
       # 同 build job：先按 lock 重导 requirements.txt，避免用旧钉版出包
       - name: Re-export requirements from the lock
-        run: uv export --frozen --no-hashes --no-emit-project --output-file requirements.txt
+        run: uv export --frozen --format requirements-txt --no-hashes --no-emit-project --no-group dev --output-file requirements.txt
 
       - name: Resolve Android packaging
         id: maafw
