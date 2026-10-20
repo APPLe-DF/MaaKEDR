@@ -14,7 +14,7 @@
 
 <p align="center">
   <img alt="Python" src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white">
-  <img alt="platform" src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blueviolet">
+  <img alt="platform" src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20Android-blueviolet">
   <img alt="license" src="https://img.shields.io/github/license/APPLe-DF/MaaKEDR">
   <br>
   <img alt="commit" src="https://img.shields.io/github/commit-activity/m/APPLe-DF/MaaKEDR">
@@ -82,12 +82,21 @@
 
 ### 环境要求
 
-本项目支持 Windows / macOS / Linux，详细安装步骤见[新手指南](docs/zh/manual/newbie.md)。
+本项目支持 Windows / macOS / Linux 桌面端，以及 **Android** 客户端。详细安装步骤见[新手指南](docs/zh/manual/newbie.md)。
+
+**桌面端：**
 
 - Windows 10+
 - [VC++ Redistributable 2015+](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 - [.NET Desktop Runtime 10.0](https://dotnet.microsoft.com/download/dotnet/10.0)（MFAAvalonia 需要）
 - ADB 已配置（用于连接 Android 设备或模拟器）
+
+**Android 客户端：**
+
+- Android 10（API 29）及以上
+- 无需模拟器、无需配置 ADB 与运行时环境，安装即用
+- 需要 **Shizuku 或 root** 授权
+- 仅提供后台模式（虚拟屏固定 720p@240dpi）；前台模式已关闭，因为手机物理屏比例与 720p 资源不匹配
 
 ### 下载安装
 
@@ -95,7 +104,17 @@
 
 - [Mirror酱高速下载](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-readme) — 已拥有 CDK 的用户可前往高速下载与自动更新
 
+桌面端每平台提供 **MFAA** 与 **MXU** 两种 GUI，按系统架构选择对应压缩包；Android 端提供三个 APK：
+
+| 包                                             | 适用                                            |
+| ---------------------------------------------- | ----------------------------------------------- |
+| `MaaKEDR-android-arm64-v8a-<版本>.apk`（推荐） | 绝大多数 Android 真机，体积约为通用包的一半     |
+| `MaaKEDR-android-universal-<版本>.apk`         | 双架构通用包，真机 / 模拟器都能装，不确定就选它 |
+| `MaaKEDR-android-x86_64-<版本>.apk`            | x86 环境（部分 Android 模拟器）                 |
+
 ### 安装运行
+
+**桌面端：**
 
 ```bash
 # 安装运行时依赖
@@ -109,6 +128,10 @@ mxu.exe             # Tauri + React 版本（MaaEnd 同款）
 
 在 GUI 界面中选择任务并配置选项即可开始自动化。
 
+**Android 端：**
+
+安装对应架构的 APK 后启动，首次运行需授予通知与电池白名单权限，并完成 Shizuku 或 root 授权。应用内含与桌面端一致的图形界面与任务列表，选择任务即可运行。
+
 ---
 
 ## 开发相关
@@ -117,15 +140,21 @@ mxu.exe             # Tauri + React 版本（MaaEnd 同款）
 pnpm install          # 安装开发依赖
 pnpm check            # 代码检查（格式 + schema + MaaFW + lint）
 pnpm check:py         # Python 代码检查（ruff + pyright）
+pnpm test:py          # 运行 Python 单元测试（pytest）
 pnpm format           # 格式化所有文件
 pnpm format:py        # 格式化 Python 文件
+pnpm release:dry-run  # 发版预演（校验产物命名，不实际打包）
 ```
+
+> 提交前请确保 `pnpm check`、`pnpm check:py` 与 `pnpm test:py` 全部通过。
+> 改动 pipeline / interface / agent 代码后，建议过一遍 `maakedr-review` 自查。
 
 ### 项目结构
 
 ```
 MaaKEDR/
-├── interface.json               # 项目入口配置
+├── interface.json               # 项目入口配置（PI V2）
+├── maa-project.json             # create-maa-project 项目配置
 ├── tasks/                       # 任务定义（GUI 中显示的任务列表）
 │   ├── startup.json             #   启动游戏
 │   ├── pvp.json                 #   玩家对战
@@ -134,16 +163,28 @@ MaaKEDR/
 │   ├── farm_remaining_stamina.json # 剩余体力刷取
 │   ├── event_stage.json         #   活动关卡与活动商店
 │   └── stamina_info.json        #   体力信息
-├── resource/base/               # 核心资源
-│   ├── pipeline/                #   Pipeline 流程定义
-│   ├── image/                   #   模板匹配用图片
-│   └── model/ocr/               #   PaddleOCR 模型
+├── resource/
+│   ├── base/                    # 核心资源（各服共用）
+│   │   ├── pipeline/            #   Pipeline 流程定义
+│   │   ├── image/               #   模板匹配用图片
+│   │   └── model/ocr/           #   PaddleOCR 模型
+│   ├── bilibili/                # B 服差异资源
+│   ├── taptap/                  # TapTap 服差异资源
+│   └── announcement/            # 客户端公告与欢迎页
 ├── agent/                       # Python Agent（自定义识别/动作）
-│   └── custom/
-│       ├── recognition/         #   自定义识别
-│       └── action/              #   自定义动作
-├── docs/                        # 开发文档
-├── tools/                       # 开发工具
+│   ├── main.py                  #   入口（先调 maafw_paths 再 import maa）
+│   ├── maafw_paths.py           #   定位客户端原生库，须早于任何 import maa
+│   ├── agent_runtime.py         #   AgentServer 运行时装配
+│   ├── custom/
+│   │   ├── recognition/         #   自定义识别
+│   │   └── action/              #   自定义动作
+│   └── utils/                   #   可复用工具（日志、HTTP、缩放等）
+├── Android/                     # Android 客户端打包
+│   ├── profile.yaml             #   MaaFwApp 打包配方
+│   └── MaaFwApp/                #   客户端外壳（git 子模块）
+├── tests/                       # pytest 单元测试
+├── docs/                        # 开发与用户文档（zh / en）
+├── tools/                       # 构建、发版、schema 校验、CI 脚本
 └── .github/workflows/           # CI/CD 配置
 ```
 
@@ -159,6 +200,8 @@ MaaKEDR/
 - [Pipeline 编写指南](docs/zh/develop/pipeline.md)
 - [Custom 识别与动作开发](docs/zh/develop/custom.md)
 - [项目结构说明](docs/zh/develop/structure.md)
+- [通用回主页枢纽](docs/zh/develop/common.md)
+- [Android 客户端与打包](docs/zh/develop/android.md)
 - [格式化规范](docs/zh/develop/formatting.md)
 - [Bug 排查](docs/zh/develop/fix.md)
 - [海外客户端适配](docs/zh/develop/overseas-client-adaptation.md)
@@ -191,6 +234,8 @@ MaaKEDR/
   基于 Avalonia UI 构建的 MaaFramework 通用 GUI 解决方案
 - [MXU](https://github.com/MistEO/MXU)  
   基于 MaaFramework PI V2 协议的通用 GUI 客户端，使用 Tauri + React + TypeScript 构建
+- [MaaFwApp](https://github.com/Aliothmoon/MaaFwApp)  
+  基于 MaaFramework PI V2 协议的 Android 通用 GUI，MaaKEDR 的 Android 版外壳（见 [Android/](Android/README.md)）
 
 ### 社区项目
 

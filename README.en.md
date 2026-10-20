@@ -14,7 +14,7 @@ Powered by [MaaFramework](https://github.com/MaaXYZ/MaaFramework)!
 
 <p align="center">
   <img alt="Python" src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white">
-  <img alt="platform" src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blueviolet">
+  <img alt="platform" src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20Android-blueviolet">
   <img alt="license" src="https://img.shields.io/github/license/APPLe-DF/MaaKEDR">
   <br>
   <img alt="commit" src="https://img.shields.io/github/commit-activity/m/APPLe-DF/MaaKEDR">
@@ -82,16 +82,39 @@ Powered by [MaaFramework](https://github.com/MaaXYZ/MaaFramework)!
 
 ### Requirements
 
+MaaKEDR supports Windows / macOS / Linux desktop platforms as well as an **Android** client. See the [Beginner's Guide](docs/en/manual/newbie.md) for detailed setup.
+
+**Desktop:**
+
 - Windows 10+
 - [VC++ Redistributable 2015+](https://aka.ms/vs/17/release/vc_redist.x64.exe)
-- [.NET Desktop Runtime 10.0](https://dotnet.microsoft.com/download/dotnet/10.0)
+- [.NET Desktop Runtime 10.0](https://dotnet.microsoft.com/download/dotnet/10.0) (required by MFAAvalonia)
 - ADB set up (for connecting to Android device or emulator)
+
+**Android client:**
+
+- Android 10 (API 29) or later
+- No emulator, no ADB or runtime setup — install and run
+- Requires **Shizuku or root** authorization
+- Background mode only (the virtual display is fixed at 720p@240dpi); foreground mode is disabled because a phone's physical screen ratio does not match the 720p assets
 
 ### Download
 
 Download the latest release from [GitHub Releases](https://github.com/APPLe-DF/MaaKEDR/releases/latest), extract the archive, and run.
 
 - [Mirror酱高速下载](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-readme) — Faster downloads & auto-updates for CDK holders
+
+Desktop builds ship two GUIs per platform (**MFAA** and **MXU**) — pick the archive matching your OS and architecture. Android ships three APKs:
+
+| Package                                                 | For                                                                           |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `MaaKEDR-android-arm64-v8a-<version>.apk` (recommended) | Most Android phones; about half the size of the universal build               |
+| `MaaKEDR-android-universal-<version>.apk`               | Dual-ABI universal build — works on phones and emulators; pick this if unsure |
+| `MaaKEDR-android-x86_64-<version>.apk`                  | x86 environments (some Android emulators)                                     |
+
+### Install & Run
+
+**Desktop:**
 
 ```bash
 # Install runtime dependencies
@@ -105,6 +128,10 @@ mxu.exe             # Tauri + React version
 
 Select tasks and configure options in the GUI to start automation.
 
+**Android:**
+
+Install the APK matching your architecture and launch it. On first run, grant notification and battery-optimization exemptions, then complete Shizuku or root authorization. The app bundles the same GUI and task list as the desktop builds — just pick a task and run.
+
 ---
 
 ## Development
@@ -113,15 +140,21 @@ Select tasks and configure options in the GUI to start automation.
 pnpm install          # Install dev dependencies
 pnpm check            # Code check (format + schema + MaaFW + lint)
 pnpm check:py         # Python code check (ruff + pyright)
+pnpm test:py          # Run Python unit tests (pytest)
 pnpm format           # Format all files
 pnpm format:py        # Format Python files
+pnpm release:dry-run  # Release dry run (validates artifact naming, no packaging)
 ```
+
+> Before submitting, make sure `pnpm check`, `pnpm check:py`, and `pnpm test:py` all pass.
+> After touching pipeline / interface / agent code, run a self-review with `maakedr-review`.
 
 ### Project Structure
 
 ```
 MaaKEDR/
-├── interface.json           # Project entry config
+├── interface.json           # Project entry config (PI V2)
+├── maa-project.json         # create-maa-project project config
 ├── tasks/                   # Task definitions (task list shown in the GUI)
 │   ├── startup.json         #   Game launch
 │   ├── pvp.json             #   PVP
@@ -130,16 +163,28 @@ MaaKEDR/
 │   ├── farm_remaining_stamina.json # Remaining stamina farming
 │   ├── event_stage.json     #   Event stages & shop
 │   └── stamina_info.json    #   Stamina info
-├── resource/base/           # Core resources
-│   ├── pipeline/            #   Pipeline definitions
-│   ├── image/               #   Template images
-│   └── model/ocr/           #   PaddleOCR models
+├── resource/
+│   ├── base/                # Core resources (shared by all servers)
+│   │   ├── pipeline/        #   Pipeline definitions
+│   │   ├── image/           #   Template images
+│   │   └── model/ocr/       #   PaddleOCR models
+│   ├── bilibili/            # Bilibili server overrides
+│   ├── taptap/              # TapTap server overrides
+│   └── announcement/        # Client announcement & welcome page
 ├── agent/                   # Python Agent (custom recognition/actions)
-│   └── custom/
-│       ├── recognition/     #   Custom recognition
-│       └── action/          #   Custom actions
-├── docs/                    # Development docs
-├── tools/                   # Dev tools
+│   ├── main.py              #   Entrypoint (calls maafw_paths before importing maa)
+│   ├── maafw_paths.py       #   Locates client native libs; must run before any `import maa`
+│   ├── agent_runtime.py     #   AgentServer runtime wiring
+│   ├── custom/
+│   │   ├── recognition/     #   Custom recognition
+│   │   └── action/          #   Custom actions
+│   └── utils/               #   Reusable helpers (logging, HTTP, scaling, ...)
+├── Android/                 # Android client packaging
+│   ├── profile.yaml         #   MaaFwApp build recipe
+│   └── MaaFwApp/            #   Client shell (git submodule)
+├── tests/                   # pytest unit tests
+├── docs/                    # Development & user docs (zh / en)
+├── tools/                   # Build, release, schema validation, CI scripts
 └── .github/workflows/       # CI/CD config
 ```
 
@@ -155,6 +200,8 @@ See [docs/](docs/README.md) for detailed development documentation:
 - [Pipeline Guide](docs/en/develop/pipeline.md)
 - [Custom Recognition & Action](docs/en/develop/custom.md)
 - [Project Structure](docs/en/develop/structure.md)
+- [Shared Home Recovery Hub](docs/en/develop/common.md)
+- [Android Client & Packaging](docs/en/develop/android.md)
 - [Formatting](docs/en/develop/formatting.md)
 - [Troubleshooting](docs/en/develop/fix.md)
 - [Overseas Client Adaptation](docs/en/develop/overseas-client-adaptation.md)
@@ -187,6 +234,8 @@ See [docs/](docs/README.md) for detailed development documentation:
   Universal MaaFramework GUI solution built with Avalonia UI
 - [MXU](https://github.com/MistEO/MXU)  
   A universal GUI client based on MaaFramework PI V2 protocol, built with Tauri + React + TypeScript
+- [MaaFwApp](https://github.com/Aliothmoon/MaaFwApp)  
+  A universal Android GUI based on MaaFramework PI V2 protocol, the Android shell of MaaKEDR (see [Android/](Android/README.md))
 
 ### Community Project
 
