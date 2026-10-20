@@ -131,7 +131,7 @@
             "templateHash": "7a4b8e4c2efa2036473526e0e4de5c09327ff3df189c62b1a1f320a1f23c7692"
         },
         ".github/cliff.toml": {
-            "hash": "094dfa99689816d3cdbe177832d43cb7ab46aa69822d664f62e63e7a5915b9b0",
+            "hash": "819a1ced0efd6aed3c0b04e01173e2cd044a1127c197b347262555edc784733b",
             "templateHash": "1c475f27cd91987b4a8e82a99ee2054f673fe5c344c2c2facc0c4c80778317bc"
         },
         ".github/dependabot.yml": {
@@ -147,7 +147,7 @@
             "templateHash": "73a7c9e794094326764331ef81841f10534d74e083609773d064cfbe2ce4b072"
         },
         ".github/workflows/release.yml": {
-            "hash": "0b7242332689f7e5a31941f2980173afcf0cf05cc445890d006cb23305c42cfe",
+            "hash": "1b8d145cb2400a7a0d9181bd0202087f55839e33ef7e61ebbbd9af61deabed8f",
             "templateHash": "1948c8135358e77ebb874e0b99952b6f592f093b50efe9c4fa515786f6074172"
         },
         ".github/workflows/schema-sync.yml": {

@@ -220,34 +220,28 @@ node tools/android-packaging.mjs          # see the resolved versions first
 # then follow "Local build" above, keeping the three differences in mind
 ```
 
-### MirrorChyan distribution (Android RID must be requested)
+### MirrorChyan distribution (Android uses its own RID)
 
 Android APKs **cannot reuse the desktop `mirrorchyan_rid`**. They are different product entries:
 
 |          | Desktop (MFAA / MXU)                       | Android APK                      |
 | :------- | :----------------------------------------- | :------------------------------- |
 | Contents | resources only; the user already has a GUI | GUI + Python runtime + resources |
-| RID      | `MaaKEDR` / `MaaKEDR-MXU`                  | must be requested                |
+| RID      | `MaaKEDR` / `MaaKEDR-MXU`                  | `MaaKEDR_exec`                   |
 | Update   | hot-swap resources                         | full package reinstall           |
 
-> **Status: pending.** The RID is not registered on MirrorChyan yet, and the `mirrorchyan_android`
-> job is not triggered by default (`android` input defaults to false). Once granted, two places
-> need updating:
->
-> 1. `mirrorchyan_rid` in `.github/workflows/mirrorchyan_release.yml` (currently the placeholder
->    `MaaKEDR-Android-PENDING`)
-> 2. `update.mirrorchyanRid` in `Android/profile.yaml` — it **overrides** the PI's
->    `mirrorchyan_rid`, leaving desktop builds untouched:
->
->     ```yaml
->     update:
->         mirrorchyanRid: <granted rid>
->     ```
->
-> Do **not** hardcode a RID before activation: the app queries `/api/resources/<rid>/latest`, so an
-> unknown RID fails every update check (not fatal, but noisy). MirrorChyan downloads also require a
-> CDK; without one `resolve` returns `CDK_REQUIRED`, while a plain "is there a newer version" check
-> still works.
+`MaaKEDR_exec` is registered on MirrorChyan and has been live since v1.5.7-beta.2 (all three APKs
+uploaded successfully). Both places are already configured — do not revert them to a placeholder:
+
+1. The `mirrorchyan_android` job in `.github/workflows/mirrorchyan_release.yml`:
+   `mirrorchyan_rid: MaaKEDR_exec`
+2. `update.mirrorchyanRid: MaaKEDR_exec` in `Android/profile.yaml` — it **overrides** the PI's
+   `mirrorchyan_rid`, leaving desktop builds untouched
+
+> Mind the channel: APKs for beta / rc builds only show up on the **beta channel**; a `channel=stable`
+> query returns 404 until the matching stable release ships. The in-app update check defaults to
+> STABLE, so only stable releases reach users. MirrorChyan downloads also require a CDK; without one
+> `resolve` returns `CDK_REQUIRED`, while a plain "is there a newer version" check still works.
 
 Uploads run in the `mirrorchyan_android` job of `mirrorchyan_release.yml`; `release.yml` dispatches
 it after creating the Release (`client_payload.android=true`), so desktop and Android upload in one

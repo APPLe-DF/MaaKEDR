@@ -150,6 +150,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
+          # 必须拉全量历史与全部 tag：下面的发行说明要靠 `git tag --sort=-v:refname`
+          # 找出上一个正式版。改成 1 会让 tag 列表残缺，范围退化成「最近一个 tag..HEAD」，
+          # 正式版说明会静默丢掉 beta 期间的全部改动。
           fetch-depth: 0
       - name: Generate release notes
         shell: bash
@@ -167,7 +170,36 @@ jobs:
             echo "[ERR] git-cliff binary was not found after extraction"
             exit 1
           fi
-          "$git_cliff" --config .github/cliff.toml --latest --strip header --output CHANGES.md
+
+          tag="$GITHUB_REF_NAME"
+
+          # --latest 只回溯到「最近一个 tag」。正式版前面通常压着若干 beta/rc，那些标签会把
+          # 整段改动切碎：v1.5.7 若直接用 --latest，正文只剩 beta.2 之后的 4 个提交，
+          # beta 期间接入的 Android 客户端、发布包减重等全部消失。
+          # 所以正式版显式取「上个正式版..HEAD」，并忽略中间的预发布标签，让整段改动落进
+          # 同一个 x.y.z 小节；预发布版仍用 --latest（只关心相对上一个 tag 的增量）。
+          if [[ "$tag" == *-* ]]; then
+            echo "[INFO] prerelease $tag — using the latest tag as the lower bound"
+            args=(--latest)
+          else
+            # 只认不带连字符的正式版标签；没有历史正式版时退回全部历史
+            prev_stable="$(git tag --sort=-v:refname \
+              | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' \
+              | grep -vxF "$tag" \
+              | head -n 1 || true)"
+            if [[ -n "$prev_stable" ]]; then
+              echo "[INFO] stable $tag — collecting commits since $prev_stable"
+              args=("$prev_stable..HEAD")
+            else
+              echo "[WARN] stable $tag has no previous stable tag; collecting the full history"
+              args=()
+            fi
+            args+=(--tag "$tag" --ignore-tags '^v[0-9]+\.[0-9]+\.[0-9]+-')
+          fi
+
+          "$git_cliff" --config .github/cliff.toml --strip header "${args[@]}" --output CHANGES.md
+          echo "----- CHANGES.md (first 40 lines) -----"
+          head -n 40 CHANGES.md
       - name: Upload release notes
         uses: actions/upload-artifact@v7
         with:

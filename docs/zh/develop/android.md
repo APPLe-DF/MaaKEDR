@@ -201,32 +201,27 @@ node tools/android-packaging.mjs          # 先看解析出的版本
 # 其余步骤同「本地出包」，注意上面三处差异
 ```
 
-### Mirror酱 分发（需单独申请 Android rid）
+### Mirror酱 分发（Android 使用独立 rid）
 
 Android 包**不能复用桌面的 `mirrorchyan_rid`**。两者是 Mirror酱 上的不同产品条目：
 
 |          | 桌面包（MFAA / MXU）      | Android APK                     |
 | :------- | :------------------------ | :------------------------------ |
 | 内容     | 只有资源，用户已有 GUI    | 自带 GUI + Python 运行时 + 资源 |
-| rid      | `MaaKEDR` / `MaaKEDR-MXU` | 需单独申请                      |
+| rid      | `MaaKEDR` / `MaaKEDR-MXU` | `MaaKEDR_exec`                  |
 | 更新方式 | 资源热替换                | 整包覆盖安装                    |
 
-> **状态：待申请。** 该 rid 尚未在 Mirror酱 后台登记，`mirrorchyan_android` job 默认不会被触发
-> （`android` 输入默认 false）。申请到之后需要改两处：
->
-> 1. `.github/workflows/mirrorchyan_release.yml` 的 `mirrorchyan_rid`（当前是占位
->    `MaaKEDR-Android-PENDING`）
-> 2. `Android/profile.yaml` 加 `update.mirrorchyanRid`——它**压过** PI 的 `mirrorchyan_rid`，
->    桌面端不受影响：
->
->     ```yaml
->     update:
->         mirrorchyanRid: <申请的 rid>
->     ```
->
-> 未开通前**不要**写死 rid：App 的更新检查会拿它去查 `/api/resources/<rid>/latest`，rid 不存在
-> 就是一次失败（不致命，但每次检查都会报错）。另外 Mirror酱 下载需要 CDK，无 CDK 时
-> `resolve` 会直接返回 `CDK_REQUIRED`，只做「检查有无新版本」不受影响。
+`MaaKEDR_exec` 已在 Mirror酱 后台登记并在 v1.5.7-beta.2 起实际生效（三个 APK 均上传成功）。
+两处配置都已落定，不要改回占位值：
+
+1. `.github/workflows/mirrorchyan_release.yml` 的 `mirrorchyan_android` job：`mirrorchyan_rid: MaaKEDR_exec`
+2. `Android/profile.yaml` 的 `update.mirrorchyanRid: MaaKEDR_exec`——它**压过** PI 的
+   `mirrorchyan_rid`，桌面端不受影响
+
+> 注意频道：beta / rc 版本的 APK 只出现在 **beta 频道**，`channel=stable` 查询会返回 404，
+> 直到对应的正式版发布为止。App 内的更新检查默认走 STABLE，所以只有正式版才会被推给用户。
+> 另外 Mirror酱 下载需要 CDK，无 CDK 时 `resolve` 会直接返回 `CDK_REQUIRED`，
+> 只做「检查有无新版本」不受影响。
 
 上传由 `mirrorchyan_release.yml` 的 `mirrorchyan_android` job 负责，`release.yml` 建完 Release
 后统一派发（`client_payload.android=true`），桌面与 Android 一次传完。手动触发时勾选

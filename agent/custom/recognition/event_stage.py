@@ -106,7 +106,7 @@ class CheckEventHub(CustomRecognition):
 
         activity_next = str(params.get("activity_next", "EventStage.ClickJourney"))
         global_next = str(params.get("global_next", "EventStage.Start"))
-        other_next = str(params.get("other_next", "EventStage.ReturnToHome"))
+        other_next = str(params.get("other_next", "EventStage.EnsureHome"))
         activity_only = str(params.get("activity_only", "false")).lower() == "true"
         activity_template = str(params.get("activity_template", "flare_home.png"))
         global_template = str(params.get("global_template", "main_option.png"))

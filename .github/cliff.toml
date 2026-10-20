@@ -28,6 +28,9 @@ body = """
 {% if version == "v1.5.6" %}\
 > **建议完整更新 | Full update recommended**：请下载完整安装包并替换旧目录，不建议在旧版本目录上直接覆盖更新，以免残留旧资源文件。
 {% endif %}\
+{% if version == "v1.5.7" %}\
+> **建议完整更新 | Full update recommended**：本版本调整了发布包内部布局——`python/` 下不再携带第二份 MaaFramework 原生库（改用客户端那一份，包体约 379 MB → 324 MB），Agent 入口统一为 `agent/main.py`（`bootstrap.py` 已移除），`maafw` 升至 5.14.2。残留的旧文件不会导致 Agent 加载到错误版本（`agent/maafw_paths.py` 优先解析 `runtimes/<平台>/native`，会遮蔽 `python/` 下的旧副本），但旧 `resource/` 里被本版更新过的内容可能与新 pipeline 不匹配，因此仍建议解压到新目录后使用。
+{% endif %}\
 
 {% if version %}\
     ## {{ version | trim_start_matches(pat="v") }} ({{ timestamp | date(format="%Y-%m-%d") }})
