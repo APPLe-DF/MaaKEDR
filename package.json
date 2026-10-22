@@ -12,7 +12,7 @@
         "katex": "0.19.0",
         "prettier": "3.9.10",
         "prettier-plugin-multiline-arrays": "4.1.11",
-        "sass": "^1.105.1",
+        "sass": "^1.105.2",
         "sass-embedded": "^1.105.1",
         "typescript": "^5.9.3",
         "vue": "^3.5.43",
