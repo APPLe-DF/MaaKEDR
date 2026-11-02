@@ -105,7 +105,7 @@ Windows users **must install VCRedist x64**. This is required to run MaaKEDR (re
 
 #### .NET
 
-If you use the **MFAA** GUI, you need to install **.NET 10** Desktop Runtime.
+If you use the **MFAA** GUI, you need to install **.NET 10**. On Windows that means the **.NET Desktop Runtime**; on macOS and Linux it is the plain **.NET Runtime** (not the desktop one) — pick the matching build on the same download page.
 
 <details>
   <summary>Installation details</summary>
@@ -133,11 +133,11 @@ Python is bundled in the Windows and macOS release packages &mdash; no separate 
 
 ### 3. Download the Right Version
 
-Download MaaKEDR from the [GitHub Releases page](https://github.com/APPLe-DF/MaaKEDR/releases). Each release provides two GUI frontends — download only one:
+Download MaaKEDR from the [GitHub Releases page](https://github.com/APPLe-DF/MaaKEDR/releases). Users who have a MirrorChyan CDK can also download directly from the [MirrorChyan direct link](https://mirrorchyan.com/en/projects?rid=MaaKEDR&source=maakedr-release) (same content as GitHub). Each release provides two GUI frontends — download only one:
 
 > [!TIP]
 >
-> **Trust only the official channels**: MaaKEDR is released through GitHub Releases and [Mirror酱](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-release) (a partner channel with content identical to the official one); some GUIs support in-app updates via Mirror酱. Downloads from other unofficial sources (lookalike sites, file-hosting reshare) carry security risks — verify the app identifier before installing.
+> **Trust only the official channels**: MaaKEDR is released through GitHub Releases and [Mirror酱](https://mirrorchyan.com/en/projects?rid=MaaKEDR&source=maakedr-release) (a partner channel with content identical to the official one); some GUIs support in-app updates via Mirror酱. Downloads from other unofficial sources (lookalike sites, file-hosting reshare) carry security risks — verify the app identifier before installing.
 
 <div align="center">
 
@@ -201,7 +201,11 @@ MaaKEDR connects to emulators/devices via ADB. Recommended emulators:
 - LDPlayer 9
 - NoxPlayer
 
-Refer to the [MAA documentation](https://maa.plus/docs/en-us/manual/device/windows.html) for emulator compatibility details.
+Refer to the MAA documentation for emulator and device support details:
+
+- [Windows emulators](https://maa.plus/docs/en-us/manual/device/windows.html)
+- [macOS emulators](https://maa.plus/docs/en-us/manual/device/macos.html)
+- [Linux emulators and containers](https://maa.plus/docs/en-us/manual/device/linux.html)
 
 ---
 
@@ -233,7 +237,7 @@ Extract and run `maakedr.exe`.
   <p></p>
   <blockquote>
 
-1. Open Terminal and extract:
+1. Open Terminal and extract (extracting into your home directory needs no `sudo`):
 
     ```shell
     mkdir -p ~/MaaKEDR
@@ -247,12 +251,23 @@ Extract and run `maakedr.exe`.
     ./maakedr
     ```
 
+> [!TIP]
+>
+> To install into a system directory (e.g. `/usr/local/bin/MaaKEDR`), prefix the `mkdir` and `tar` commands with `sudo`; replace the paths in the commands below accordingly and prefix them with `sudo` too.
+
 **Gatekeeper warning:**
 
-On macOS 10.15+ you may see "cannot be opened because the developer cannot be verified". To bypass:
+On macOS 10.15+ you may see "cannot be opened because the developer cannot be verified". Use any one of the following:
 
 ```shell
-sudo xattr -rd com.apple.quarantine ~/MaaKEDR/maakedr
+# Option 1: remove the quarantine attribute (recommended)
+xattr -rd com.apple.quarantine ~/MaaKEDR/maakedr
+
+# Option 2: add to the Gatekeeper allowlist
+spctl --add ~/MaaKEDR/maakedr
+
+# Option 3: handle the whole directory at once
+xattr -rd com.apple.quarantine ~/MaaKEDR/*
 ```
 
   </blockquote>
@@ -290,7 +305,14 @@ Download the APK matching your architecture from [Releases](https://github.com/A
 
 #### First Launch
 
-On first launch, MaaKEDR automatically initializes and creates the `config/` directory. Wait for "AgentServer started" in the log panel, and do not click "Stop" until "All tasks completed" appears.
+On first launch, MaaKEDR automatically initializes and creates the `config/` directory. The main window has panels for **Resource Type**, **Task List**, **Task Settings**, **Task Description**, **Connection** and **Log** (MXU lays them out and names them slightly differently). Wait for "AgentServer started" in the log panel, and do not click "Stop" until "All tasks completed" appears.
+
+#### Settings
+
+Two sections of the GUI **Settings** matter most day to day:
+
+- **Update settings**: choose the source used when checking for updates. MirrorChyan users fill in a CDK (CDK and download entry: [MirrorChyan direct link](https://mirrorchyan.com/en/projects?rid=MaaKEDR&source=maakedr-release)); GitHub users can fill in a Token to raise the API rate limit. See [MirrorChyan](./mirror-chyan).
+- **Startup settings**: the emulator executable path and its launch arguments. `Additional commands` is normally only used for the emulator multi-instance ID together with "Auto-Launch Game"; a wrong value here means MaaKEDR cannot start the emulator correctly. See "MFAA Tips" in the [FAQ](./faq).
 
 #### Resource Type
 
@@ -312,16 +334,17 @@ MaaKEDR needs a correct ADB connection to your target emulator. In most cases, j
 
 MaaKEDR provides these automation tasks:
 
-| Task              | Description                                         |
-| ----------------- | --------------------------------------------------- |
-| Launch Game       | From launcher to main menu                          |
-| Claim Rewards     | Daily check-in, weekly, battle pass, mail, dispatch |
-| Farm Resources    | Auto-battle with stamina management                 |
-| Remaining Stamina | Fixed stamina-drain mode to use up leftover stamina |
-| Event Stage       | Event stage sweeps (3/day, no stamina cost)         |
-| Event Shop        | Auto-buy fixed-guarantee items in the event shop    |
-| PVP               | Arena auto-battle                                   |
-| Stamina Info      | Read home-screen stamina and report refill time     |
+| Task                    | Description                                                                         |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| Launch Game             | From launcher to main menu                                                          |
+| Claim Rewards           | Daily check-in, weekly, battle pass, mail, dispatch                                 |
+| Claim Remaining Rewards | Supplementary claim at the tail of the chain (PVP rewards usually land in the mail) |
+| Farm Resources          | Auto-battle with stamina management                                                 |
+| Remaining Stamina       | Fixed stamina-drain mode to use up leftover stamina                                 |
+| Event Stage             | Event stage sweeps (3/day, no stamina cost)                                         |
+| Event Shop              | Auto-buy fixed-guarantee items in the event shop                                    |
+| PVP                     | Arena auto-battle                                                                   |
+| Stamina Info            | Read home-screen stamina and report refill time                                     |
 
 > [!IMPORTANT]
 >
@@ -363,4 +386,4 @@ pip installation settings. In most cases, no changes are needed.
 
 - Ensure the game is on the correct screen (main menu or target feature page)
 - Check screenshots in the `debug/` directory to verify recognition accuracy
-- Review `maafw.log` (project root) for error details
+- Review `debug/maafw.log` for error details

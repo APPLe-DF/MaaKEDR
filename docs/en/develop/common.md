@@ -31,11 +31,14 @@ icon: "ri:home-4-fill"
         "[JumpBack]Common.CheckItemObtained",
         "[JumpBack]Common.ClickHomeButton",
         "[JumpBack]Common.BackButton",
+        "[JumpBack]FarmResources.ExitStageConfirm",
         "Common.CheckHomePage",
         "Common.PressBackToHome"
     ]
 }
 ```
+
+`[JumpBack]FarmResources.ExitStageConfirm` is defined in `farm_resources.json`; it dismisses the stage-exit confirmation dialog. Hub `[JumpBack]` handlers may live in any pipeline file — they do not have to be declared in `common.json`, because every JSON under `pipeline/` is merged into one namespace and can be referenced by node name.
 
 ## How callers use it
 

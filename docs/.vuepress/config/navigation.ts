@@ -33,6 +33,7 @@ const zh: NavigationConfig = {
         'structure.md',
         'doc.md',
         'overseas-client-adaptation.md',
+        'android.md',
       ],
     },
     {
@@ -80,6 +81,7 @@ const en: NavigationConfig = {
         'structure.md',
         'doc.md',
         'overseas-client-adaptation.md',
+        'android.md',
       ],
     },
     {

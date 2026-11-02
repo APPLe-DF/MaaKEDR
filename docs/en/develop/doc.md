@@ -10,11 +10,19 @@ How to edit the MaaKEDR docs site (VuePress Theme Plume).
 ## Layout
 
 ```text
-docs/zh|en/{manual,develop,protocol}/
-docs/.vuepress/config/navigation.ts   # navbar + sidebar
+docs/
+├── README.md           # language-selection homepage
+├── zh/                 # Simplified Chinese
+│   ├── README.md
+│   ├── manual/         # user manual
+│   ├── develop/        # development docs
+│   └── protocol/       # task / resource protocols
+└── en/                 # English (mirrors zh)
 ```
 
-Add new pages to **both** locale sidebars when applicable.
+- Use forward slashes for paths and in-site links
+- The sidebar is maintained in `collections.sidebar` of `docs/.vuepress/config/navigation.ts`
+- After adding a page, update the sidebar for **both** locales (when an English counterpart exists)
 
 ## Homepage
 
@@ -57,21 +65,180 @@ Cover every conditional branch: detection succeeded / failed / architecture unkn
 
 ## Frontmatter
 
+Common fields:
+
 ```yaml
 ---
 order: 1
 icon: ri:tools-fill
+title: Optional title
+---
+```
+
+Directory index pages may use:
+
+```yaml
+---
+title: Development Docs
+icon: ph:code-bold
+dir:
+    order: 1
 ---
 ```
 
 ## Containers
 
+Plume supports the `::: <type>` container syntax. All of these types are enabled on this site. Markdown extensions are configured in `plumeTheme({ markdown })` inside `docs/.vuepress/config.ts` (putting them at the top level of `plume.config.ts` has no effect), so check that a dependency is installed before using new syntax:
+
+| Type        | Purpose        |
+| ----------- | -------------- |
+| `note`      | Note           |
+| `info`      | Information    |
+| `tip`       | Tip            |
+| `warning`   | Warning        |
+| `caution`   | Caution        |
+| `important` | Important      |
+| `details`   | Collapsed note |
+
 ::: tip
-Tip box
+A container accepts any Markdown (lists, code blocks, links). **Do not nest containers** — multiple levels may render incorrectly.
 :::
 
+::: details
+A details block is collapsed by default; click the title to expand it.
+:::
+
+### Custom Titles
+
+Add a space and a title after the type:
+
+```markdown
+::: tip Small tip
+Some tip content
+:::
+```
+
+### GitHub-style Alerts
+
+GitHub-style `> [!NOTE]` blocks are also supported and render as the same hint containers:
+
+```markdown
+> [!NOTE]
+> Explanatory text
+```
+
+`NOTE`, `TIP`, `IMPORTANT`, `WARNING` and `CAUTION` are available.
+
+## Images
+
+Put images under `docs/.vuepress/public/images/`, grouped into subdirectories and named with lowercase letters and hyphens (e.g. `pipeline-flow.png`), then reference them by site-absolute path:
+
+```markdown
+![Pipeline execution flow](/images/develop/pipeline-flow.png)
+```
+
+The image plugin enables `figure` / `lazyload` / `mark` / `size`:
+
+- A standalone image renders as a `<figure>` with a caption taken from the alt text
+- Images are lazy-loaded by default
+- Use `=widthxheight` to control the display size: `![caption](/images/develop/a.png =640x360)`
+- When the URL ends with `#light` / `#dark`, the image is shown only in that color mode (useful for light/dark screenshot pairs)
+
 ::: warning
-Warning
+Images must live under `docs/.vuepress/public/` (or use a path relative to the page) and be committed with the docs. An image that points outside the repository never reaches the build output.
+:::
+
+## Code Blocks
+
+Wrap code in three backticks and specify the language. Line numbers are on by default.
+
+### Line Numbers and Highlighting
+
+Append `{line,line-range}` after the language to highlight lines; `{1,3-5}` means line 1 and lines 3 through 5:
+
+````markdown
+```json {2,5-7}
+{
+    "FarmResources.Start": {
+        "recognition": "DirectHit"
+    }
+}
+```
+````
+
+Add `:no-line-numbers` after the language for a block that should not show line numbers.
+
+### Code Block Titles
+
+Use `title="..."` to give a code block a title, usually a file name:
+
+````markdown
+```json title="tasks/farm_resources.json"
+{
+    "FarmResources.ExitStageConfirm": {}
+}
+```
+````
+
+## Tabs
+
+Use the `::: tabs` container for alternative approaches or examples; `@tab` starts a tab and its label follows:
+
+::: tabs
+@tab Option 1
+This is the content of option 1 — any Markdown such as lists and links works.
+
+@tab Option 2
+This is the content of option 2; the two tabs switch in place.
+:::
+
+To compare code only, use `::: code-tabs`: write the file name after `@tab` and the title automatically gets a file-type icon.
+
+## File Tree
+
+Use the `::: file-tree` container to show a directory layout; indent list items by 2 spaces per level:
+
+```text
+::: file-tree title="docs/"
+
+- docs/
+  - zh/
+    - develop/
+      - pipeline.md
+  - en/
+- resource/
+
+:::
+```
+
+## Math
+
+Math is rendered with KaTeX. Use `$...$` for inline formulas and `$$...$$` for block formulas:
+
+```markdown
+Inline: $E = mc^2$
+
+$$
+\Delta = b^2 - 4ac
+$$
+```
+
+## Other Containers
+
+`::: steps` renders a numbered step list:
+
+```markdown
+::: steps
+
+1. Capture a screenshot and measure the ROI
+2. Write the pipeline node
+3. Bind the task and run it
+
+:::
+```
+
+::: warning
+This site does **not** enable the chart (Mermaid / Chart.js / ECharts), timeline (`::: timeline`) or collapse (`::: collapse`) plugins. Ask the maintainers about the dependencies before using those effects.
 :::
 
 ## MarkdownLint
@@ -83,6 +250,14 @@ Docs must pass **MarkdownLint**. The config lives at `docs/.markdownlint.yaml` (
 - MarkdownLint is **not** wired into `pnpm check` or CI, and no related package is installed — it only runs in your editor, so do not expect a failing CI job to point at your Markdown
 - Division of labor with Prettier: **Prettier handles formatting** (indentation, line breaks, table alignment); **MarkdownLint handles conventions** (heading levels, list correctness, link validity). They do not conflict: noisy rules unrelated to Prettier (e.g. MD013 line length) are disabled in `.markdownlint.yaml`
 
+## Writing Guidelines
+
+- User manual: steps must be actionable, and options must match `tasks/*.json`
+- Development docs: paths and commands must match the repository; every command must exist in `package.json`; do not document deprecated CLIs or tools
+- Protocol docs: describe conventions and node relationships; JSON is the source of truth, so link the file paths
+- Releases: `interface.json` `version` / `title` are updated by hand (see the Release Guidelines in `AGENTS.md`)
+- **Keep zh and en in sync**: `docs/zh/<path>.md` and `docs/en/<path>.md` are one-to-one; heading levels, code blocks and the amount of information must match — when you edit Chinese, edit English too
+
 ## Preview
 
 ```bash
@@ -90,8 +265,13 @@ pnpm docs:dev
 pnpm docs:build
 ```
 
+Build output goes to `docs/.vuepress/dist` (git-ignored).
+
 - `pnpm docs:preview` does not match the site's `base: /MaaKEDR/` right now, so the root URL 404s — use `pnpm docs:dev` to look at your work
 - Running `vuepress dev docs` directly skips the data generators, and the homepage blocks fail to build when `docs/.vuepress/data/` is missing
 - `pnpm docs:build` passes `--clean-cache --clean-temp`, which also kills a dev server that is currently running — do not run both at once
 
-Keep user manuals aligned with `tasks/*.json`. Keep protocol pages aligned with pipelines. Release notes: update `interface.json` `version` / `title` manually (see `AGENTS.md`).
+## References
+
+- [VuePress Theme Plume](https://theme-plume.vuejs.press/)
+- [MaaFramework Documentation](https://maafw.com/docs/1.1-QuickStarted)

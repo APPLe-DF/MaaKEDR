@@ -87,34 +87,158 @@ dir:
 
 ## 提示容器
 
-Plume 支持容器语法：
+Plume 支持 `::: <类型>` 容器语法，本站以下类型全部可用。Markdown 扩展统一在 `docs/.vuepress/config.ts` 的 `plumeTheme({ markdown })` 里配置（写到 `plume.config.ts` 顶层不会生效），新增语法前先确认依赖已安装。
 
-::: note
-注释
-:::
+| 类型        | 用途     |
+| ----------- | -------- |
+| `note`      | 注释     |
+| `info`      | 信息     |
+| `tip`       | 提示     |
+| `warning`   | 警告     |
+| `caution`   | 危险     |
+| `important` | 重要     |
+| `details`   | 折叠详情 |
 
 ::: tip
-提示
-:::
-
-::: warning
-警告
-:::
-
-::: caution
-危险
+容器内可以写任意 Markdown（列表、代码块、链接）。**不要嵌套容器**：多层嵌套可能渲染异常。
 :::
 
 ::: details
-折叠详情
+折叠框默认收起，点击标题展开。
 :::
 
-也可用 GitHub 风格（渲染取决于主题配置）：
+### 自定义标题
+
+在类型后加一个空格写标题：
+
+```markdown
+::: tip 小提示
+这里是提示内容
+:::
+```
+
+### GitHub 风格警告
+
+也支持 GitHub 风格的 `> [!NOTE]` 写法，构建时会渲染为同样的提示容器：
 
 ```markdown
 > [!NOTE]
 > 说明文字
 ```
+
+可用 `NOTE`、`TIP`、`IMPORTANT`、`WARNING`、`CAUTION`。
+
+## 图片
+
+图片放在 `docs/.vuepress/public/images/` 下，按用途分子目录、用小写字母与连字符命名（如 `pipeline-flow.png`），引用时写站点绝对路径：
+
+```markdown
+![Pipeline 执行流程](/images/develop/pipeline-flow.png)
+```
+
+本站的图片插件开启了 `figure` / `lazyload` / `mark` / `size`：
+
+- 单独成段的图片会渲染为带说明的 `<figure>`，说明文字取自 alt
+- 图片默认懒加载
+- 用 `=宽x高` 控制显示尺寸：`![说明](/images/develop/a.png =640x360)`
+- URL 以 `#light` / `#dark` 结尾时，图片只在对应主题下显示（用于浅色 / 深色两套截图）
+
+::: warning
+图片必须放进 `docs/.vuepress/public/`（或用相对本文档的路径），并随文档一起提交。指向仓库外路径的图片不会出现在构建产物里。
+:::
+
+## 代码块
+
+用三个反引号包裹代码并标注语言，行号默认开启。
+
+### 行号与行高亮
+
+在语言标识后加 `{行号,行号范围}` 高亮指定行，`{1,3-5}` 表示第 1 行与第 3 至 5 行：
+
+````markdown
+```json {2,5-7}
+{
+    "FarmResources.Start": {
+        "recognition": "DirectHit"
+    }
+}
+```
+````
+
+个别代码块不需要行号时，在语言标识后加 `:no-line-numbers`。
+
+### 代码块标题
+
+用 `title="..."` 给代码块加标题，通常写文件名：
+
+````markdown
+```json title="tasks/farm_resources.json"
+{
+    "FarmResources.ExitStageConfirm": {}
+}
+```
+````
+
+## 选项卡
+
+用 `::: tabs` 容器组织并列的方案或示例，`@tab` 后跟标签名：
+
+::: tabs
+@tab 方案一
+这是方案一的内容，可以写列表、链接等任意 Markdown。
+
+@tab 方案二
+这是方案二的内容，两个标签页在页面上切换显示。
+:::
+
+只在标签页之间对比代码时，用 `::: code-tabs`，`@tab` 后写文件名，标题会自动带上文件类型图标。
+
+## 文件树
+
+用 `::: file-tree` 容器展示目录结构，列表用 2 空格缩进表示层级：
+
+```text
+::: file-tree title="docs/"
+
+- docs/
+  - zh/
+    - develop/
+      - pipeline.md
+  - en/
+- resource/
+
+:::
+```
+
+## 数学公式
+
+本站用 KaTeX 渲染数学公式。行内公式用 `$...$`，块级公式用 `$$...$$`：
+
+```markdown
+行内：$E = mc^2$
+
+$$
+\Delta = b^2 - 4ac
+$$
+```
+
+## 其他容器
+
+`::: steps` 用来展示带序号的步骤流程：
+
+```markdown
+::: steps
+
+1. 截图并测量 ROI
+2. 编写 Pipeline 节点
+3. 绑定任务并运行验证
+
+:::
+```
+
+::: warning
+本站**没有**启用图表（Mermaid / Chart.js / ECharts）、时间线（`::: timeline`）和折叠块（`::: collapse`）插件。需要这些效果时先与维护者确认依赖，不要直接写进文档。
+:::
 
 ## MarkdownLint 规范
 
@@ -128,9 +252,10 @@ Plume 支持容器语法：
 ## 写作要求
 
 - 用户手册：步骤可操作，选项与 `tasks/*.json` 一致
-- 开发文档：路径、命令与仓库现状一致；避免写已废弃的 CLI/工具
+- 开发文档：路径、命令与仓库现状一致；命令必须是 `package.json` 里真实存在的脚本；避免写已废弃的 CLI/工具
 - 协议文档：描述约定与节点关系，细节以 JSON 为准并给文件路径
 - 发版相关：`interface.json` 的 `version` / `title` 需手动改（见 AGENTS.md Release Guidelines）
+- **中英同步**：`docs/zh/<路径>.md` 与 `docs/en/<路径>.md` 一一对应，标题层级、代码块和信息量保持一致；改完中文要顺手改英文
 
 ## 本地预览
 
