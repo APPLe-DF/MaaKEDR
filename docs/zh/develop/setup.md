@@ -9,17 +9,22 @@ icon: ri:tools-fill
 
 本文档面向希望参与 MaaKEDR 开发的贡献者，帮助快速搭建开发环境并完成第一个 Pipeline。
 
+::: tip 先确认你要做什么
+只想安装并使用 MaaKEDR，请看 [用户手册](../manual/newbie.md)；只打算改一点点 JSON 或文档、不想装开发环境，可以直接看下文「贡献与 PR」里的「不懂编程，只想改 JSON 或文档」。
+:::
+
 ## 环境准备
 
 ### 系统要求
 
-| 项目     | 要求                        |
-| -------- | --------------------------- |
-| 操作系统 | Windows 10+ / macOS / Linux |
-| Python   | 3.13                        |
-| Node.js  | >= 24                       |
-| 包管理器 | pnpm（corepack 管理） + uv  |
-| 版本控制 | Git                         |
+| 项目     | 要求                                           |
+| -------- | ---------------------------------------------- |
+| 操作系统 | Windows 10+ / macOS / Linux                    |
+| Python   | 3.13                                           |
+| Node.js  | >= 24                                          |
+| 包管理器 | pnpm（corepack 管理） + uv                     |
+| 版本控制 | Git                                            |
+| 编辑器   | VSCode（推荐，配合 Maa Pipeline Support 插件） |
 
 ### 安装步骤
 
@@ -69,6 +74,10 @@ cd MaaKEDR
 ```
 
 项目通过 `MaaCommonAssets` 子模块提供 OCR 模型（`resource/base/model/ocr/`）。该目录已被 `.gitignore` 忽略，模型在构建时从子模块复制，因此**必须初始化子模块**，否则运行任务时会因缺少模型而识别失败。
+
+::: warning `--recurse-submodules` 一定不要忘
+少了它克隆出来的是一个空的 `MaaCommonAssets/`，直到真正跑任务时才会发现所有 OCR 识别都失败。这是最常见的「环境明明装好了却识别不了」的原因。
+:::
 
 若克隆时忘了加参数，可事后补：
 
@@ -240,11 +249,31 @@ resource/base/image/start_button.png
 
 ## 贡献与 PR
 
-1. Fork 仓库并克隆自己的 fork
-2. 从最新 `main` 拉出分支，例如 `feat/xxx`、`fix/xxx`、`docs/xxx`
-3. 本地通过 `pnpm check`（及 Python 相关时的 `pnpm check:py`）
-4. 推送并打开 Pull Request；一个 PR 只解决一个问题
-5. 描述写清改动动机、影响范围与自测方式；识别/流程类问题请附截图或日志
+### 不懂编程，只想改 JSON 或文档
+
+改一个数值、补一句文案、修一个错别字，不需要本地开发环境，全程可以在 GitHub 网页上完成：
+
+1. 打开要改的文件，点右上角的编辑（铅笔）按钮。没有写权限时 GitHub 会提示你 Fork 一份，按提示确认即可
+2. 在网页编辑器里修改，切到预览确认改动符合预期
+3. 页面底部填写提交说明，选择新建分支并提交（GitHub 会引导你直接发起 Pull Request）
+4. 按 PR 模板填写说明，等待维护者 review
+
+改 JSON 前请先读 [Pipeline 编写指南](./pipeline.md) 和对应的 [协议文档](../protocol/)，确认字段含义；能本地跑 `pnpm check` 最好，跑不了也可以交给 CI 检查。
+
+### 完整流程
+
+1. 如果很久以前 Fork 过，先到你自己仓库的 `Settings` 最下面删除旧 fork，避免基于过期代码开发
+2. 在 [MaaKEDR 主仓库](https://github.com/APPLe-DF/MaaKEDR) 点 `Fork`，再点 `Create fork`
+3. 克隆自己的仓库并**拉取子模块**：
+
+    ```bash
+    git clone --recurse-submodules https://github.com/<你的用户名>/MaaKEDR.git
+    ```
+
+4. 从最新 `main` 拉出分支，例如 `feat/add-task`、`fix/recognition-node`、`docs/update-guide`
+5. 本地通过 `pnpm check`（及 Python 相关时的 `pnpm check:py`）
+6. 推送并打开 Pull Request；一个 PR 只解决一个问题
+7. 描述写清改动动机、影响范围与自测方式：关联 Issue（没有就说明需求来源）、2–5 条变更摘要、实际执行的验证命令与结果；识别/流程类问题请附截图或日志
 
 完整约定见仓库 [CONTRIBUTING.md](https://github.com/APPLe-DF/MaaKEDR/blob/main/CONTRIBUTING.md) 与 [AGENTS.md](https://github.com/APPLe-DF/MaaKEDR/blob/main/AGENTS.md)。
 

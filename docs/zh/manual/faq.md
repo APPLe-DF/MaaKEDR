@@ -41,6 +41,7 @@ MaaKEDR-android-<ABI>-<版本>.apk
 
 GitHub 下载速度受网络环境影响，可尝试：
 
+- 使用 [Mirror酱 直达链接](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-release) 渠道下载（内容与官方一致，需 CDK；说明见 [Mirror酱](./mirror-chyan)）
 - 使用 [ghproxy](https://ghproxy.com/) 等代理加速
 - 在 MaaKEDR 交流群内获取网盘备份（见 `CONTACT` 文件）
 
@@ -54,11 +55,25 @@ GitHub 下载速度受网络环境影响，可尝试：
 
 ### MFAA 启动无反应或报 .NET 相关错误
 
-未安装 .NET 桌面运行时。请前往 [.NET 下载页面](https://dotnet.microsoft.com/download/dotnet) 下载并安装对应版本。
+未安装 .NET 桌面运行时。若看到类似下面的提示，即为该原因：
+
+```plaintext
+You must install .NET Desktop Runtime to run this application.
+```
+
+请前往 [.NET 下载页面](https://dotnet.microsoft.com/download/dotnet) 下载并安装对应版本。
+
+### 安装运行库后仍然闪退
+
+如果运行库都装好了，程序仍然**闪退**，并且**连日志文件都没有生成**（`debug/maafw.log`），通常说明问题不在运行库，而是其它依赖缺失或文件损坏：
+
+- 确认是从官方渠道下载的**完整**压缩包，且解压完整
+- 重新解压一次，或删掉整个文件夹后重新下载（需要保留配置时先备份 `config/` 目录）
+- 仍然无法启动时，到 [GitHub Issues](https://github.com/APPLe-DF/MaaKEDR/issues) 反馈
 
 ### 程序闪退，没有错误提示
 
-检查 `maafw.log` 查看错误日志。常见原因：
+检查 `debug/maafw.log` 查看错误日志。常见原因：
 
 - 路径包含中文字符或空格 → 移至纯英文路径
 - 解压不完整 → 重新解压
@@ -67,6 +82,10 @@ GitHub 下载速度受网络环境影响，可尝试：
 ### MXU 版本启动卡顿或黑屏
 
 确保显卡驱动已更新。在 MXU 设置中尝试切换渲染模式。
+
+### 提示资源加载失败
+
+资源文件缺失或损坏时会出现该提示。解决方法是删除 MaaKEDR 所在的整个文件夹后重新下载安装（**需要保留配置时请先备份 `config/` 目录**）。
 
 ---
 
@@ -77,6 +96,7 @@ GitHub 下载速度受网络环境影响，可尝试：
 - 确认模拟器 ADB 调试已开启
 - 确认只启动了一个模拟器实例
 - 尝试点击"刷新"按钮
+- 尝试以管理员权限运行 MaaKEDR
 - 确认模拟器分辨率设置为 1280x720（横屏）
 
 ### 手动连接如何配置？
@@ -90,6 +110,20 @@ GitHub 下载速度受网络环境影响，可尝试：
 | LDPlayer 9   | `127.0.0.1:5555`  |
 | 夜神模拟器   | `127.0.0.1:62001` |
 
+ADB 路径、多开端口与触控模式的详细说明见 [连接设置](./connection)。
+
+### 连接失败排查顺序
+
+提示"连接模拟器时发生错误"时，造成失败的原因很多，请按下面的顺序**一步步**尝试，不要跳步：
+
+1. **确认 ADB 路径与地址正确**：参阅 [连接设置](./connection)，并注意不要连到别的模拟器/设备上去了
+2. **关闭现有 ADB 进程**：关闭 MaaKEDR 后打开 `任务管理器` → `详细信息`，查找名称中包含 `adb` 的进程，结束它后重试
+3. **注意多个 ADB 版本冲突**：ADB 版本不同时，新启动的进程会关掉旧的进程。同时运行 MAA、Android Studio、手机助手等工具时，请确认它们的 ADB 版本一致
+4. **更换输入方式或换一个 ADB**：部分模拟器（如蓝叠中国版、夜神等）自带 ADB 版本较低，可尝试更换 ADB 或在 **自定义** 中更换输入方式
+5. **避免游戏加速器**：部分加速器在开始加速和停止加速之后，都需要重启 MaaKEDR、ADB 和模拟器再连接
+6. **重启电脑**：重启能解决绝大部分莫名其妙的连接问题
+7. **换模拟器**：通常推荐 MuMu 12 或雷电 9，模拟器支持详情见 [MAA 文档](https://maa.plus/docs/zh-cn/manual/device/windows.html)
+
 ### 连接成功但任务无法执行
 
 - 检查游戏是否已安装并更新到最新版本
@@ -100,19 +134,27 @@ GitHub 下载速度受网络环境影响，可尝试：
 
 ## 任务执行
 
-### Agent 启动超时
+### Agent 启动超时或长时间无反应
 
 首次运行时 MaaKEDR 需要安装 Python 依赖，可能耗时较长。请耐心等待，不要点击停止。若反复超时：
 
 - 检查网络连接是否正常
 - 检查 `config/pip_config.json` 中的镜像源是否可用
 
+如果长时间**完全没有任何反应**，或日志中出现 `...No such file or directory` 一类的报错，通常是安装包不完整，请重新下载完整压缩包。
+
 ### 任务未按预期执行
 
 - 确认任务已勾选启用
 - 阅读任务的"任务说明"，按要求配置选项
 - 确保游戏处于正确的界面（如主菜单或对应功能页面）
-- 查看 `maafw.log` 日志文件定位问题
+- 查看 `debug/maafw.log` 日志文件定位问题
+
+### 日志里出现黄色提示
+
+启动任务时，日志中可能出现黄色（警告级）的文字。这类提示多来自**可选的**网络请求失败（如更新检查、公告拉取等），**一般不影响任务执行**，可以先忽略。
+
+遇到其它黄色日志同样建议先忽略；若频繁出现并确实影响了功能，请按下方「如何反馈问题」提供日志。
 
 ### 资源刷取选项中的关卡列表不全
 
@@ -124,16 +166,23 @@ GitHub 下载速度受网络环境影响，可尝试：
 
 ### 如何查看日志？
 
-运行日志位于项目根目录的 `maafw.log`，截图位于 `debug/` 目录下。提交问题反馈时请一并提供这些文件。
+运行日志位于 `debug/maafw.log`，截图位于 `debug/` 目录下，自定义模块的日志在 `debug/custom/`。提交问题反馈时请一并提供这些文件。
 
 ### 如何更新 MaaKEDR？
 
 **MXU：** 设置中会出现「更新」相关选项（依赖 `interface.json` 中的 `mirrorchyan_rid`）。  
-点击检查更新后，会优先尝试 Mirror 酱；若未购买 CDK 或资源未在 Mirror 登记，一般会回退到 **GitHub Releases**（需能访问 GitHub；可选填 Token 提高限额）。
+点击检查更新后，会优先尝试 [Mirror 酱](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-release)；若未购买 CDK 或资源未在 Mirror 登记，一般会回退到 **GitHub Releases**（需能访问 GitHub；可选填 Token 提高限额）。
 
 **MFAAvalonia：** 在软件设置中配置更新源后检查更新即可。
 
 如需手动更新：下载最新版本压缩包，解压到新目录，将旧版本的 `config/` 目录复制到新目录即可保留配置。
+
+### 如何反馈问题？
+
+在确认已阅读本页并尝试自行解决无果后，可以：
+
+1. 到 [GitHub Issues](https://github.com/APPLe-DF/MaaKEDR/issues) 提交，并**按模板要求**附上 `debug/maafw.log`、`debug/` 下的截图与复现步骤
+2. 加入交流群提问（群号见 `CONTACT` 文件）
 
 ---
 

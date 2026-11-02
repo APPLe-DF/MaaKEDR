@@ -5,7 +5,7 @@ icon: ic:outline-fast-forward
 
 # Mirror酱 Usage
 
-Mirror酱 ([website](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-release)) is MaaKEDR's partner distribution and update platform, making updates to open source apps easier, with content kept in sync with the official channels. It is paid for by users, shares revenue with developers, and is itself open source.
+Mirror酱 ([MaaKEDR direct link](https://mirrorchyan.com/en/projects?rid=MaaKEDR&source=maakedr-release)) is MaaKEDR's partner distribution and update platform, making updates to open source apps easier, with content kept in sync with the official channels. It is paid for by users, shares revenue with developers, and is itself open source.
 
 By accessing or using the service you agree to be bound by the [Mirror酱 Terms of Service](https://mirrorchyan.com/disclaimer.html).
 
@@ -17,9 +17,9 @@ Some MaaFramework GUIs (such as [MFAAvalonia](https://github.com/SweetSmellFox/M
 
 ## Using the Website
 
-1. Open the [Mirror酱 website](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-release)
-2. Search for `MaaKEDR`
-3. You can install, update, download previous versions, and donate
+Open the [MaaKEDR page on Mirror酱](https://mirrorchyan.com/en/projects?rid=MaaKEDR&source=maakedr-release). This is the project's **direct link** (`rid=MaaKEDR`): it lands on the MaaKEDR project page, so there is no need to search the project list.
+
+From there you can install, update, download previous versions, and donate.
 
 ## FAQ
 

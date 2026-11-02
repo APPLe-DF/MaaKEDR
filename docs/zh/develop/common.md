@@ -31,11 +31,14 @@ icon: "ri:home-4-fill"
         "[JumpBack]Common.CheckItemObtained",
         "[JumpBack]Common.ClickHomeButton",
         "[JumpBack]Common.BackButton",
+        "[JumpBack]FarmResources.ExitStageConfirm",
         "Common.CheckHomePage",
         "Common.PressBackToHome"
     ]
 }
 ```
+
+其中 `[JumpBack]FarmResources.ExitStageConfirm` 定义在 `farm_resources.json`，用于在关卡里先点掉「退出关卡」确认框。枢纽的 `[JumpBack]` 处理节点可以跨文件引用，不必都堆在 `common.json` 里——`pipeline/` 下所有 JSON 合并进同一命名空间，按节点名直接引用即可。
 
 ## 调用方写法
 

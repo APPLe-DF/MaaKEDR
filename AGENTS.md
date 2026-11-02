@@ -65,6 +65,19 @@ MaaKEDR/
 | Activity / combat / item protocols                 | `docs/*/protocol/`                             |
 | Newbie / connection / FAQ / Mirror酱 (user-facing) | `docs/*/manual/`                               |
 
+**Load the matching skill before reading or editing files in these areas** — skills carry the MaaFW playbook that `pnpm check` cannot verify. Treat this as a lookup table, not a judgement call: if a row matches, load the skill. When the environment has no `skill` tool, read the doc column instead.
+
+| Area                                                             | Skill                                          |
+| ---------------------------------------------------------------- | ---------------------------------------------- |
+| `resource/**/pipeline/**` — pipeline task logic                  | `maafw-pipeline`                               |
+| `tasks/**`, `interface.json` — task entries, options, overrides  | `maafw-interface`                              |
+| `agent/**` — custom actions / recognitions / sinks               | `maafw-custom`                                 |
+| Fixing a bug, acceptance runs, declaring work done or PR-ready   | `maafw-debug` (device) / `maa-evidence` (logs) |
+| ROI & template measurement, live observation, keyframe retention | `maafw-live`                                   |
+| MaaFW field semantics, defaults, version support                 | `maallmwiki`                                   |
+| Reviewing a diff in this repository                              | `maakedr-review`                               |
+| Visualizing node relationships / pipeline state machine          | `maa-pipeline-graph`                           |
+
 ## Build, Test, and Development Commands
 
 | Command                     | Purpose                                                           |
@@ -83,7 +96,7 @@ MaaKEDR/
 ## Coding Style & Naming Conventions
 
 - **Python**: 120-character line limit, 4-space indentation. Linted with `ruff` (via `pnpm lint:py`) and type-checked with `pyright --strict` (via `pnpm typecheck:py`). Follow PEP 8 and PEP 484.
-- **JSON**: 4-space indentation. **YAML / Markdown**: 2-space indentation. All formatted with Prettier.
+- **JSON**: 4-space indentation. **YAML**: 2-space indentation. **Markdown**: 4-space indentation (Prettier's global `tabWidth`, including front matter and nested lists). All formatted with Prettier — run `pnpm format` instead of hand-aligning.
 - **Resource files**: Use forward slashes for paths. Follow MaaFW 720p baseline for coordinates, ROI, and template images.
 - **Naming**: Modules use `snake_case`. Classes use `PascalCase`. Functions/variables use `snake_case`. Custom actions/recognitions match their pipeline node names.
 

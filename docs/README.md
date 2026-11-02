@@ -1,6 +1,7 @@
 ---
 pageLayout: home
 title: 首页
+description: MaaKEDR（《雪松》小助手）文档站：中文与英文用户手册、开发指南、协议文档。
 config:
     - type: doc-hero
       hero:
