@@ -101,8 +101,8 @@ MainHub.next（按顺序轮询，命中即执行并回跳）
 
 ### 派遣
 
-- `DispatchClaim.Start` / `RetryClick`：派遣入口有可领取奖励的判定（**ColorMatch** 红点颜色匹配）→ `ClaimButton` → `RedeployConfirm`（可选）→ `Exit`；`Start.next` 同时挂 `Exit`，面板一打开就是「关闭」时直接收尾
-- 两个入口节点的 `post_wait_freezes` 必须显式把 `target` 设为全屏 `[0,0,1280,720]`：默认只盯本节点目标区域（红点那一小块），面板滑入时它不变、会立刻放行，重试候选就会在动画中途再次点击入口、把点击落进面板导致状态错位（Issue #86）
+- `DispatchClaim.Start`：派遣入口有可领取奖励的判定（**ColorMatch** 红点颜色匹配）→ `ClaimButton` → `RedeployConfirm`（可选）→ `Exit`；`Start.next` 同时挂 `Exit`，面板一打开就是「关闭」时直接收尾
+- 不保留入口「重试点击」节点：面板展开动画期间用同一红点判据再点一次会把点击落进面板、导致领取状态错位（Issue #86）。入口点击失败时由 `Start` 自身超时后判失败，不重复点击
 - `DispatchClaim.Start` 带 `max_hit: 1`：单次任务只进入一次。否则红点未及时消失时，`Exit` 回到 `MainHub` 后会被 `[JumpBack]DispatchClaim.Start` 反复重入，形成「开面板 → 关面板」循环并饿死后续分支
 - 关闭 `dispatch_redeploy` 时：`DispatchClaim.ClaimButton.next` 变为 `[Common.CheckItemObtained, DispatchClaim.RedeployConfirm, DispatchClaim.Exit]`，同时 `DispatchClaim.RedeployConfirm` 被改成 DirectHit + DoNothing 的空节点——保留在链路上但不再点「再次派遣」
 
