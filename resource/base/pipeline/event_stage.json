@@ -33,7 +33,7 @@
             77,
             83
         ],
-        "template": "main_option.png",
+        "template": "more.png",
         "threshold": 0.8,
         "pre_delay": 0,
         "post_delay": 0,
@@ -74,7 +74,7 @@
         "desc": "点击活动入口后等待加载并确认活动首页",
         "recognition": "Custom",
         "custom_recognition": "CheckEventHub",
-        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.EnsureHome\",\"activity_only\":\"true\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.EnsureHome\",\"activity_only\":\"true\",\"activity_template\":\"flare_home.png\",\"global_template\":\"more.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
         "pre_delay": 0,
         "action": {
             "type": "DoNothing"
@@ -91,7 +91,7 @@
         "desc": "三态确认入口：活动首页、全局主页或其他页面",
         "recognition": "Custom",
         "custom_recognition": "CheckEventHub",
-        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.EnsureHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.EnsureHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"more.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
         "pre_delay": 0,
         "action": {
             "type": "DoNothing"
@@ -108,7 +108,7 @@
         "desc": "入口识别超时后额外重试5秒",
         "recognition": "Custom",
         "custom_recognition": "CheckEventHub",
-        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.EnsureHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickJourney\",\"global_next\":\"EventStage.Start\",\"other_next\":\"EventStage.EnsureHome\",\"activity_template\":\"flare_home.png\",\"global_template\":\"more.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
         "pre_delay": 0,
         "action": {
             "type": "DoNothing"
@@ -2030,7 +2030,7 @@
             77,
             83
         ],
-        "template": "main_option.png",
+        "template": "more.png",
         "threshold": 0.8,
         "pre_delay": 300,
         "action": {
@@ -2050,7 +2050,7 @@
             77,
             83
         ],
-        "template": "main_option.png",
+        "template": "more.png",
         "threshold": 0.8,
         "pre_delay": 0,
         "post_delay": 0,
@@ -2110,7 +2110,7 @@
         "desc": "商店任务入口：快速确认活动首页或主页",
         "recognition": "Custom",
         "custom_recognition": "CheckEventHub",
-        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickBattleReport\",\"global_next\":\"EventStage.StartShop\",\"other_next\":\"EventStage.EnsureHomeShop\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickBattleReport\",\"global_next\":\"EventStage.StartShop\",\"other_next\":\"EventStage.EnsureHomeShop\",\"activity_template\":\"flare_home.png\",\"global_template\":\"more.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
         "pre_delay": 0,
         "action": {
             "type": "DoNothing"
@@ -2154,7 +2154,7 @@
         "desc": "商店任务点击入口后等待活动首页",
         "recognition": "Custom",
         "custom_recognition": "CheckEventHub",
-        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickBattleReport\",\"global_next\":\"EventStage.StartShop\",\"other_next\":\"EventStage.EnsureHomeShop\",\"activity_only\":\"true\",\"activity_template\":\"flare_home.png\",\"global_template\":\"main_option.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
+        "custom_recognition_param": "{\"activity_next\":\"EventStage.ClickBattleReport\",\"global_next\":\"EventStage.StartShop\",\"other_next\":\"EventStage.EnsureHomeShop\",\"activity_only\":\"true\",\"activity_template\":\"flare_home.png\",\"global_template\":\"more.png\",\"global_roi\":[1199,6,77,83],\"template_roi\":[0,0,1280,720]}",
         "pre_delay": 0,
         "action": {
             "type": "DoNothing"

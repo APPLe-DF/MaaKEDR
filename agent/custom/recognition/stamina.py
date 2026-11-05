@@ -222,7 +222,7 @@ class CheckStaminaPage(CustomRecognition):
             logger.error("CheckStaminaPage: {}", error)
             return None
 
-        home_template = str(params.get("home_template", "main_option.png"))
+        home_template = str(params.get("home_template", "more.png"))
         home_roi = coerce_roi(params.get("home_roi", [1199, 6, 77, 83]), [1199, 6, 77, 83], "CheckStaminaPage")
         home_next = _as_node_list(
             params.get("home_next"),

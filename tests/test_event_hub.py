@@ -55,7 +55,7 @@ def test_event_hub_routes_global_home_to_start() -> None:
     result = _run(context)
 
     assert result.detail["status"] == "global_home"
-    assert context.templates == ["flare_home.png", "main_option.png"]
+    assert context.templates == ["flare_home.png", "more.png"]
     assert context.overridden == ["EventStage.Start"]
 
 
@@ -65,7 +65,7 @@ def test_event_hub_routes_unknown_page_to_ensure_home() -> None:
     result = _run(context)
 
     assert result.detail["status"] == "other"
-    assert context.templates == ["flare_home.png", "main_option.png"]
+    assert context.templates == ["flare_home.png", "more.png"]
     assert context.overridden == ["EventStage.EnsureHome"]
 
 
@@ -143,7 +143,7 @@ def test_event_stage_home_recovery_goes_through_common_hub() -> None:
         "EventStage.Start",
         "[JumpBack]Common.EnsureHome",
     ]
-    assert pipeline["EventStage.CheckHomePage"]["template"] == "main_option.png"
+    assert pipeline["EventStage.CheckHomePage"]["template"] == "more.png"
 
     assert pipeline["EventStage.EventHubShop"]["on_error"] == ["EventStage.EnsureHomeShop"]
     assert pipeline["EventStage.EnsureHomeShop"]["next"] == [
@@ -208,4 +208,4 @@ def test_event_stage_return_home_waits_for_slow_transition() -> None:
     # 验证窗口必须足够长，否则 CheckReturnedHome 尚未命中就超时导致任务误报失败。
     assert pipeline["EventStage.ReturnMainFromStage"]["timeout"] >= 10000
     assert pipeline["EventStage.ReturnMainFromStage"]["next"] == ["EventStage.CheckReturnedHome"]
-    assert pipeline["EventStage.CheckReturnedHome"]["template"] == "main_option.png"
+    assert pipeline["EventStage.CheckReturnedHome"]["template"] == "more.png"

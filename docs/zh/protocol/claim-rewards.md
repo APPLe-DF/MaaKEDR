@@ -71,7 +71,7 @@ MainHub.next（按顺序轮询，命中即执行并回跳）
 
 `MainHub` 的 `next` 中所有子模块入口均为 `[JumpBack]` 节点：命中执行后压栈跳回 `MainHub` 继续轮询下一个入口；
 入口在对应奖励领完后即无法识别，轮询会自然推进。当所有入口均无法识别时，`next` 末尾的 `MainHubIdle`
-（普通节点，识别 `main_option.png`）命中——此时 JumpBack 栈为空，节点无 `next`，任务成功结束。
+（普通节点，识别 `more.png`）命中——此时 JumpBack 栈为空，节点无 `next`，任务成功结束。
 
 > [!NOTE]
 > 不要用 `on_error` 承担"无奖励退出"等正常逻辑：`on_error` 触发时会自动保存截图（`save on error`），频繁触发会撑爆日志目录。正常分支一律放在 `next` 末尾做兜底。
@@ -80,7 +80,7 @@ MainHub.next（按顺序轮询，命中即执行并回跳）
 
 ### 主页确认
 
-- `ClaimRewards.EnsureHome`：识别 `main_option.png`（`timeout: 60000`），命中后进入 `CheckMainInterface`，否则由 `[JumpBack]Common.EnsureHome` 回主页后重试。
+- `ClaimRewards.EnsureHome`：识别 `more.png`（`timeout: 60000`），命中后进入 `CheckMainInterface`，否则由 `[JumpBack]Common.EnsureHome` 回主页后重试。
 - `ClaimRewards.CheckMainInterface`：识别主页并**点击一次**，`next` 指向 `MainHub`（不带 `[JumpBack]`，避免 JumpBack 栈导致任务无法结束）。
 - `ClaimRewards.MainHubIdle`：识别主页，作为"全部奖励已领完"的成功退出条件，位于 `MainHub.next` 末尾。
 

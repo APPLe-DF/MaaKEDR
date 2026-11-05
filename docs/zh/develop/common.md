@@ -10,14 +10,13 @@ icon: "ri:home-4-fill"
 
 ## 节点清单
 
-| 节点                       | 类型          | 作用                                                                                                                      |
-| -------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `Common.EnsureHome`        | DirectHit     | 回主页枢纽：依次处理已知浮层/子页，直到命中全局主页标记                                                                   |
-| `Common.CheckHomePage`     | TemplateMatch | 全局主页标记（`main_option.png`，阈值 0.75）。叶子节点，是枢纽的收敛出口                                                  |
-| `Common.ClickHomeButton`   | TemplateMatch | 点击顶部主页按钮（`return_main.png`）                                                                                     |
-| `Common.PressBackToHome`   | DirectHit     | **有意保留的 DirectHit 回退例外**：排在 `Common.CheckHomePage` 之后、枢纽 `next` 末位；嵌套 `next` 每次按键后重新判定主页 |
-| `Common.CheckItemObtained` | TemplateMatch | 全屏「获得物品」弹窗（定义在 `claim_rewards.json`，按名跨文件引用）                                                       |
-| `Common.BackButton`        | TemplateMatch | 通用返回箭头（同上，定义在 `claim_rewards.json`）                                                                         |
+| 节点                       | 类型          | 作用                                                                |
+| -------------------------- | ------------- | ------------------------------------------------------------------- |
+| `Common.EnsureHome`        | DirectHit     | 回主页枢纽：依次处理已知浮层/子页，直到命中全局主页标记             |
+| `Common.CheckHomePage`     | TemplateMatch | 全局主页标记（`more.png`，阈值 0.75）。叶子节点，是枢纽的收敛出口   |
+| `Common.ClickHomeButton`   | TemplateMatch | 点击顶部主页按钮（`return_main.png`）                               |
+| `Common.CheckItemObtained` | TemplateMatch | 全屏「获得物品」弹窗（定义在 `claim_rewards.json`，按名跨文件引用） |
+| `Common.BackButton`        | TemplateMatch | 通用返回箭头（同上，定义在 `claim_rewards.json`）                   |
 
 ## 枢纽定义
 
@@ -32,8 +31,7 @@ icon: "ri:home-4-fill"
         "[JumpBack]Common.ClickHomeButton",
         "[JumpBack]Common.BackButton",
         "[JumpBack]FarmResources.ExitStageConfirm",
-        "Common.CheckHomePage",
-        "Common.PressBackToHome"
+        "Common.CheckHomePage"
     ]
 }
 ```
@@ -53,14 +51,16 @@ icon: "ri:home-4-fill"
 }
 ```
 
-任务入口识别失败（不在主页）时不再直接判任务失败：枢纽会依次尝试关闭「获得物品」弹窗、点击主页按钮、点击通用返回、最后发送系统返回键；回到主页后**自动跳回调用方**重试原列表，从而进入正常流程。
+任务入口识别失败（不在主页）时不再直接判任务失败：枢纽会依次尝试关闭「获得物品」弹窗、点击主页按钮、点击通用返回；回到主页后**自动跳回调用方**重试原列表，从而进入正常流程。
+
+枢纽**不发送系统返回键**：本游戏的 BACK 等同 ESC，会弹出「是否确定退出游戏」，而该弹窗会遮挡主页标记，使「判定不到主页 → 再按 ESC」形成死循环。这条兜底已被移除——走投无路时让任务失败，好过把游戏退掉。
 
 ## 四条约束
 
 1. **必须带 `[JumpBack]`**：枢纽出口 `Common.CheckHomePage` 是叶子，靠回跳把控制权交回调用方；不带 `[JumpBack]` 时枢纽跑完会命中流程终止条件，任务「成功但什么都没做」。
 2. **必须放在 `next` 末位**：枢纽是 `DirectHit`，放在前面会压制其后所有候选。
-3. **枢纽内的 `[JumpBack]` 处理节点必须是叶子且非 `DirectHit`**，否则会把收敛判定饿死。唯一的刻意例外是背键兜底 `Common.PressBackToHome`：它**有意**采用 `DirectHit`，且**不是** `[JumpBack]` 处理节点；它必须排在 `Common.CheckHomePage` **之后**、作为枢纽 `next` 的最后一项，并由自身的嵌套 `next`（`Common.CheckHomePage` → `Common.ClickHomeButton` → 自身）在每次按键后重新判定主页，使重试链有界（`max_hit: 5`）。把它移到收敛判定之前、或改成 `[JumpBack]` 子节点，都会破坏枢纽。
-4. **列表顺序**：`[JumpBack]` 处理项在前、非 JumpBack 的收敛判定在后、恒命中兜底垫底；同一节点的 `next` 与 `on_error` 合并计算，不能重复指向同一目标（`pnpm check:maa` 会报 `duplicate-next`）。
+3. **枢纽内的 `[JumpBack]` 处理节点必须是叶子且非 `DirectHit`**，否则会把收敛判定饿死；枢纽 `next` 里也不允许出现 `DirectHit` 兜底（尤其禁止系统返回键），否则收敛判定永远轮不到。
+4. **列表顺序**：`[JumpBack]` 处理项在前、非 JumpBack 的收敛判定垫底；同一节点的 `next` 与 `on_error` 合并计算，不能重复指向同一目标（`pnpm check:maa` 会报 `duplicate-next`）。
 
 ## on_error 使用约定
 
@@ -75,7 +75,7 @@ icon: "ri:home-4-fill"
 | 玩家对战                | `PVP.EnsureHome`                                  | —                                                                                              |
 | 体力信息                | `StaminaInfo.EnsureHome`                          | 自定义识别放弃后由枢纽接管，不再直接判任务失败                                                 |
 | 活动关卡 / 活动商店     | `EventStage.EventHub` / `EventStage.EventHubShop` | 门节点 `EnsureHome` / `EnsureHomeShop` 是内部路由目标，由 `CheckEventHub` 的 `other_next` 进入 |
-| 启动游戏                | 不接入                                            | 启动阶段游戏可能尚未进入游戏内，按返回键有退出游戏的风险                                       |
+| 启动游戏                | 不接入                                            | 启动阶段游戏可能尚未进入游戏内，枢纽的浮层处理与主页判定都不适用                               |
 
 ## 新增界面时
 

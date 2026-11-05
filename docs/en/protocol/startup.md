@@ -7,8 +7,8 @@ icon: ri:play-circle-line
 
 The startup task is the first step of the whole task chain: launch the game process, click through the start screen
 and the daily login reward, and stop on a recognizable home screen. It deliberately does **not** use the shared
-return-to-home hub `Common.EnsureHome` — during launch the game may not be in-game yet, and pressing the back key can
-quit the game.
+return-to-home hub `Common.EnsureHome` — during launch the game may not be in-game yet, so the hub's overlay handling
+and home check do not apply.
 
 ## Task entry
 
@@ -37,7 +37,7 @@ LaunchGame (StartApp launches the game process)
   → WaitGameLoading (wait for loading to finish)
   → ClickToStart (click start, up to 3 times)
   → DailyLoginReward (daily login reward popup, clicked twice)
-  → CheckHomePage (recognize the home marker main_option.png)
+  → CheckHomePage (recognize the home marker more.png)
        ├─ matched but a popup is still there → [JumpBack]DailyLoginReward, then re-check
        └─ not matched → ClickHomePage (click the screen center 5 times)
             → [JumpBack]DailyLoginReward → CheckHomePageStable (home is stable, leaf node)
@@ -51,9 +51,9 @@ LaunchGame (StartApp launches the game process)
 | `WaitGameLoading`     | TemplateMatch `game_loading.png` / DoNothing   | `roi [595,653,146,64]`, `post_wait_freezes: 500`, `post_delay: 4000`                     |
 | `ClickToStart`        | TemplateMatch `startgame1.png` / Click         | `repeat: 3`, `pre_delay: 1000`, `post_delay: 4000`, `timeout: 30000`                     |
 | `DailyLoginReward`    | TemplateMatch `daily_login_reward.png` / Click | `roi [405,115,103,106]`, `repeat: 2`, `post_delay: 500`                                  |
-| `CheckHomePage`       | TemplateMatch `main_option.png` / DoNothing    | `roi [1199,6,77,83]`, `threshold: 0.75`, `next` starts with `[JumpBack]DailyLoginReward` |
+| `CheckHomePage`       | TemplateMatch `more.png` / DoNothing           | `roi [1199,6,77,83]`, `threshold: 0.75`, `next` starts with `[JumpBack]DailyLoginReward` |
 | `ClickHomePage`       | DirectHit / Click                              | `target [588,369,9,11]`, `repeat: 5`, `repeat_delay: 500`                                |
-| `CheckHomePageStable` | TemplateMatch `main_option.png` / DoNothing    | Leaf node, the task's success exit                                                       |
+| `CheckHomePageStable` | TemplateMatch `more.png` / DoNothing           | Leaf node, the task's success exit                                                       |
 
 ## Templates
 
@@ -62,7 +62,7 @@ Templates live in the `resource/base/image/` root (startup images are shared acr
 - `game_loading.png` — loading screen
 - `startgame1.png` — start button
 - `daily_login_reward.png` — daily login reward popup
-- `main_option.png` — home-screen marker at the top right (also used by `Common.CheckHomePage` and others)
+- `more.png` — home-screen marker at the top right (also used by `Common.CheckHomePage` and others)
 
 ## Server overrides
 
@@ -82,7 +82,7 @@ entry or channel-specific art really differs.
 
 - Launch animation is long: use recognition nodes or `post_wait_freezes` instead of long fixed delays
 - Popup order may change: list popup nodes side by side in `next` and use `[JumpBack]` for re-entrant popups
-- Home detection always uses `main_option.png` (`roi [1199,6,77,83]`, threshold 0.75); do not invent another marker
+- Home detection always uses `more.png` (`roi [1199,6,77,83]`, threshold 0.75); do not invent another marker
 - The flow must end on a **leaf node** (`CheckHomePageStable`), otherwise the task never succeeds
 
 ## Files to touch when changing this flow

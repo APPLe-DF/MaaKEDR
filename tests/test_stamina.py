@@ -48,7 +48,7 @@ def test_stamina_page_routes_home_to_read() -> None:
 
     assert result is not None
     assert result.detail["status"] == "home"
-    assert context.templates == ["main_option.png"]
+    assert context.templates == ["more.png"]
     assert context.rois == [(1199, 6, 77, 83)]
     assert context.overridden == ["StaminaInfo.Read", "StaminaInfo.ReadRetry"]
 
