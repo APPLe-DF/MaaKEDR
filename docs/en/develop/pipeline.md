@@ -154,7 +154,7 @@ Besides `next` / `on_error`, `[Anchor]` may also appear in `roi` / `target` (`[A
 Template images live under `resource/base/image/`:
 
 - **Folders**: organize by pipeline module (e.g. `image/event_stage/`, `image/farm_resources/`); shared images used by multiple modules go directly in `image/`
-- **File names**: lowercase `snake_case`, e.g. `flare_title.png`, `no_stamina.png`, `main_option.png`
+- **File names**: lowercase `snake_case`, e.g. `flare_title.png`, `no_stamina.png`, `more.png`
 - **Server-specific differences**: `resource/bilibili/` and `resource/taptap/` are additive layers over the official resources (load order follows the `resource` field in `interface.json`); today both only override `pipeline/startup.json`, and server-specific templates should follow the same `image/` sub-folder layout
 - **Making templates**: crop from a 1280×720 screenshot at a moderate size (roughly 50×50 to 200×200); oversized templates are prone to false matches. See [Overview](../protocol/overview.md) for ROI and resolution baselines
 - **Paths**: in pipeline JSON, `template` is a path relative to the `image/` directory using **forward slashes** (e.g. `event_stage/flare_title.png`)
@@ -166,7 +166,7 @@ Template images live under `resource/base/image/`:
 - **`next` holds exits**: `next` answers "where can we go once this stage is done", not "the next line to execute"
 - **`[JumpBack]` holds interruptions**: pop-up dismissal, going back one level, returning home — all of these hang off `[JumpBack]` so they jump back after finishing and never pollute the main flow
 - **Keep coupling low**: highly reusable nodes (`Common.BackButton`, `Common.EnsureHome`) are `[JumpBack]` leaves referenced from many `next` lists
-- **Self-loop**: when an operation may not take effect, put the node into its own `next` (e.g. `Common.PressBackToHome` presses Back, re-checks the home screen and presses again if needed, converging via `max_hit`)
+- **Self-loop**: when an operation may not take effect, put the node into its own `next` (e.g. `FarmResources.ExitStageConfirm` clicks the stage-exit ✕, re-checks, and clicks again while the ✕ is still there, converging via `max_hit`)
 - **Page transitions**: after clicking into a new screen, add `post_wait_freezes` and continue only once the screen is stable
 - **Swipe operations**: follow a swipe with another recognition or click so the next decision is not made while the list is still coasting
 

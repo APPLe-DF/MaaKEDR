@@ -50,7 +50,7 @@ tasks/event_stage.json
 
 Entry routing is three-state: `EventStage.EventHub` / `EventStage.EventHubShop` use the `CheckEventHub` custom
 recognition to decide whether the current screen is the **activity home** (`flare_home.png`), the **game home**
-(`main_option.png`, ROI `[1199,6,77,83]`), or **another screen**, then route via `context.override_next()` to the
+(`more.png`, ROI `[1199,6,77,83]`), or **another screen**, then route via `context.override_next()` to the
 activity flow entry / `EventStage.Start` / the gate node `EventStage.EnsureHome` (the shop task uses
 `EventStage.EnsureHomeShop`). The gate hands over to the shared return-to-home hub `Common.EnsureHome` and retries once
 home is reached.
@@ -92,7 +92,7 @@ Key conventions:
   confirms with OCR that the map is back, then `ReturnMainFromStage` returns home.
 - `EventStage.CheckBattlePage` (OCR EP tabs, `max_hit: 3`) confirms "we really are back on the map" after an exit
   confirmation and retries itself on a miss.
-- The exit is always `EventStage.CheckReturnedHome` (matches `main_option.png`, leaf node); if the home screen is not
+- The exit is always `EventStage.CheckReturnedHome` (matches `more.png`, leaf node); if the home screen is not
   recognized, `on_error` → `EventStage.ReturnMain` clicks the HOME key again.
 
 > [!NOTE]

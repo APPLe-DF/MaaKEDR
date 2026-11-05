@@ -138,7 +138,7 @@ farm_category（刷取板块）
 
 ## 任务前置条件
 
-任务以 `FarmResources.EnsureHome` 为入口（恒命中门节点）：开始前通常应处于游戏主界面。未确认到主页时，由通用回主页枢纽 `Common.EnsureHome` 接管——依次尝试关闭「获得物品」弹窗、点击顶部主页按钮、点击通用返回按钮，最后发送系统返回键；回到主页后自动重试原流程，因此任务入口本身不会因为「不在主页」而失败。枢纽最多尝试 10 轮，仍无法回到主页时任务才会失败。
+任务以 `FarmResources.EnsureHome` 为入口（恒命中门节点）：开始前通常应处于游戏主界面。未确认到主页时，由通用回主页枢纽 `Common.EnsureHome` 接管——依次尝试关闭「获得物品」弹窗、点击顶部主页按钮、点击通用返回按钮；回到主页后自动重试原流程，因此任务入口本身不会因为「不在主页」而失败。枢纽最多尝试 10 轮，仍无法回到主页时任务才会失败。
 
 `FarmResources.Start`（从主页进作战界面）识别失败时，`on_error` 也指向 `FarmResources.EnsureHome`，即回主页后重跑整条列表。
 
@@ -147,7 +147,7 @@ farm_category（刷取板块）
 | 节点                                                   | 识别 / 动作                                                    | 说明                                                                    |
 | ------------------------------------------------------ | -------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | `FarmResources.EnsureHome`                             | DirectHit（`max_hit: 6`）                                      | 任务入口门节点，`next` 末位挂 `[JumpBack]Common.EnsureHome`             |
-| `FarmResources.CheckHomePage`                          | TemplateMatch `main_option.png` / Click                        | 确认主页并点屏幕中心，消除残留弹窗                                      |
+| `FarmResources.CheckHomePage`                          | TemplateMatch `more.png` / Click                               | 确认主页并点屏幕中心，消除残留弹窗                                      |
 | `FarmResources.Start`                                  | TemplateMatch `battle_entry.png` / Click                       | 从主页进作战界面；`on_error` → `EnsureHome`                             |
 | `FarmResources.ResourceCollect` / `SkillTraining`      | 页签模板 / Click                                               | 进入「资源收集」/「技能演练」板块                                       |
 | `FarmResources.SelectResourceType` / `SelectSkillType` | DirectHit                                                      | 纯路由节点，`next` 由选项改写                                           |

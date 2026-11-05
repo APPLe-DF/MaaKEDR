@@ -51,7 +51,7 @@ tasks/event_stage.json
 ```
 
 入口是三态路由：`EventStage.EventHub` / `EventStage.EventHubShop` 用自定义识别 `CheckEventHub` 判断当前在
-**活动首页**（`flare_home.png`）、**游戏主页**（`main_option.png`，ROI `[1199,6,77,83]`）还是**其他页面**，
+**活动首页**（`flare_home.png`）、**游戏主页**（`more.png`，ROI `[1199,6,77,83]`）还是**其他页面**，
 再用 `context.override_next()` 分别路由到活动流程入口 / `EventStage.Start` / 门节点 `EventStage.EnsureHome`
 （商店任务为 `EventStage.EnsureHomeShop`）；门节点把控制权交给通用回主页枢纽 `Common.EnsureHome`，
 回主页后重试。
@@ -92,7 +92,7 @@ EventStage.EventHub（三态路由）
 - `EventStage.BattleStage` 处理胜利画面、获得物品弹窗、下一轮快速战与退出；`EventStage.CheckBackOnMap`
   用 OCR 确认已回到活动地图，再经 `ReturnMainFromStage` 统一回主页。
 - `EventStage.CheckBattlePage`（OCR EP 标签、`max_hit: 3`）用于退出确认后确认「确实回到了地图」，未命中则重试自身。
-- 出口统一是 `EventStage.CheckReturnedHome`（识别 `main_option.png`，叶子节点）；未识别到主页时
+- 出口统一是 `EventStage.CheckReturnedHome`（识别 `more.png`，叶子节点）；未识别到主页时
   `on_error` → `EventStage.ReturnMain` 再点一次 HOME 键。
 
 > [!NOTE]

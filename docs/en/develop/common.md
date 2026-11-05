@@ -10,14 +10,13 @@ icon: "ri:home-4-fill"
 
 ## Node inventory
 
-| Node                       | Type          | Purpose                                                                                                                                                        |
-| -------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Common.EnsureHome`        | DirectHit     | Return-to-home hub: handles known overlays/sub-pages until the home marker hits                                                                                |
-| `Common.CheckHomePage`     | TemplateMatch | Global home marker (`main_option.png`, threshold 0.75). Leaf, the hub's exit                                                                                   |
-| `Common.ClickHomeButton`   | TemplateMatch | Clicks the top home button (`return_main.png`)                                                                                                                 |
-| `Common.PressBackToHome`   | DirectHit     | **Deliberate DirectHit fallback exception**: sits after `Common.CheckHomePage` and last in the hub's `next`; its nested `next` re-checks home after each press |
-| `Common.CheckItemObtained` | TemplateMatch | Full-screen "item obtained" overlay (defined in `claim_rewards.json`, cross-file)                                                                              |
-| `Common.BackButton`        | TemplateMatch | Generic back arrow (defined in `claim_rewards.json`)                                                                                                           |
+| Node                       | Type          | Purpose                                                                           |
+| -------------------------- | ------------- | --------------------------------------------------------------------------------- |
+| `Common.EnsureHome`        | DirectHit     | Return-to-home hub: handles known overlays/sub-pages until the home marker hits   |
+| `Common.CheckHomePage`     | TemplateMatch | Global home marker (`more.png`, threshold 0.75). Leaf, the hub's exit             |
+| `Common.ClickHomeButton`   | TemplateMatch | Clicks the top home button (`return_main.png`)                                    |
+| `Common.CheckItemObtained` | TemplateMatch | Full-screen "item obtained" overlay (defined in `claim_rewards.json`, cross-file) |
+| `Common.BackButton`        | TemplateMatch | Generic back arrow (defined in `claim_rewards.json`)                              |
 
 ## Hub definition
 
@@ -32,8 +31,7 @@ icon: "ri:home-4-fill"
         "[JumpBack]Common.ClickHomeButton",
         "[JumpBack]Common.BackButton",
         "[JumpBack]FarmResources.ExitStageConfirm",
-        "Common.CheckHomePage",
-        "Common.PressBackToHome"
+        "Common.CheckHomePage"
     ]
 }
 ```
@@ -53,14 +51,19 @@ Each task starts with an always-matching **gate node** that lists the task's mai
 }
 ```
 
-When the task entry cannot confirm the home screen, the task no longer fails outright: the hub dismisses the "item obtained" overlay, clicks the top home button, clicks the generic back button, and finally sends the system back key. Once home is reached it **jumps back to the caller** and retries the original list, so the normal flow continues.
+When the task entry cannot confirm the home screen, the task no longer fails outright: the hub dismisses the "item obtained" overlay, clicks the top home button, and clicks the generic back button. Once home is reached it **jumps back to the caller** and retries the original list, so the normal flow continues.
+
+The hub **never sends the system back key**: in this game BACK acts as ESC and opens the "are you sure you want to quit?" dialog, and that dialog covers the home marker — which turns into a "home not detected → press ESC again" dead loop. That fallback was removed: failing the task is better than quitting the game.
 
 ## Four rules
 
 1. **Always keep the `[JumpBack]` prefix**: the hub's exit `Common.CheckHomePage` is a leaf, and the jump-back is what hands control back to the caller. Without it the hub ends the flow and the task "succeeds" without doing anything.
 2. **Always place the hub last**: it is a `DirectHit` node, so anything after it would never be evaluated.
-3. **`[JumpBack]` handlers inside the hub must be leaves and must not be `DirectHit`**, otherwise they starve the convergence check. The single deliberate exception is the back-key fallback `Common.PressBackToHome`: it is `DirectHit` **by design** and is **not** a `[JumpBack]` handler; it must sit _after_ `Common.CheckHomePage` as the **last** entry of the hub's `next`, and its own nested `next` (`Common.CheckHomePage` → `Common.ClickHomeButton` → itself) re-checks home after every press so the retry chain stays bounded (`max_hit: 5`). Moving it before the convergence check, or turning it into a `[JumpBack]` child, breaks the hub.
-4. **List order**: `[JumpBack]` handlers first, the non-JumpBack convergence check next, an always-matching fallback last. A node's `next` and `on_error` are counted together, so the same target must not appear twice (`pnpm check:maa` reports `duplicate-next`).
+3. **`[JumpBack]` handlers inside the hub must be leaves and must not be `DirectHit`**, otherwise they starve the convergence check. The hub's `next` must also contain no `DirectHit` fallback at all (the system back key in particular), or the convergence check never gets a turn.
+4. **List order**: `[JumpBack]` handlers first, the non-JumpBack convergence check last. A node's `next` and `on_error` are counted together, so the same target must not appear twice (`pnpm check:maa` reports `duplicate-next`).
+
+> [!NOTE]
+> **`[JumpBack]` belongs on the caller only**: the hub's own `Common.CheckHomePage` carries no prefix — when it hits (a leaf with an empty `next`), the caller's `[JumpBack]Common.EnsureHome` hands control back to the caller's `next` list, which is what lets the main path continue. Adding `[JumpBack]` to a leaf inside the hub would retarget the jump-back at the hub's own `next` and spin: "home hit → jump back → home hit again".
 
 ## When to use on_error
 
@@ -75,7 +78,7 @@ Reserve `on_error` for genuine failure fallbacks, for example "the stage-exit bu
 | PVP battles                         | `PVP.EnsureHome`                                  | —                                                                                                                      |
 | Stamina info                        | `StaminaInfo.EnsureHome`                          | After the custom recognition gives up the hub takes over                                                               |
 | Event stage / event shop            | `EventStage.EventHub` / `EventStage.EventHubShop` | The gate nodes `EnsureHome` / `EnsureHomeShop` are internal routing targets reached via `CheckEventHub`'s `other_next` |
-| Game startup                        | Not wired                                         | The game may not be in-game yet; the back key could exit the app                                                       |
+| Game startup                        | Not wired                                         | The game may not be in-game yet; the hub's overlay handling and home check do not apply there                          |
 
 ## Adding a new screen
 

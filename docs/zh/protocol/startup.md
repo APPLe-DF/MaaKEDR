@@ -6,7 +6,7 @@ icon: ri:play-circle-line
 # 启动与登录协议
 
 启动任务是整条任务链的第一步：拉起游戏进程、点过开始界面与每日登录奖励，最终停在可识别的游戏主页。
-它**不接入**通用回主页枢纽 `Common.EnsureHome`——启动阶段游戏可能还没进入游戏内，按返回键有退出游戏的风险。
+它**不接入**通用回主页枢纽 `Common.EnsureHome`——启动阶段游戏可能还没进入游戏内，枢纽的浮层处理与主页判定都不适用。
 
 ## 任务入口
 
@@ -35,7 +35,7 @@ LaunchGame（StartApp 拉起游戏进程）
   → WaitGameLoading（等待加载完成）
   → ClickToStart（点开始游戏，最多 3 次）
   → DailyLoginReward（每日登录奖励弹窗，点 2 次）
-  → CheckHomePage（识别主页标记 main_option.png）
+  → CheckHomePage（识别主页标记 more.png）
        ├─ 命中且仍有弹窗 → [JumpBack]DailyLoginReward 清弹窗后重判
        └─ 未命中 → ClickHomePage（点屏幕中心 5 次）
             → [JumpBack]DailyLoginReward → CheckHomePageStable（主页稳定，叶子节点）
@@ -49,9 +49,9 @@ LaunchGame（StartApp 拉起游戏进程）
 | `WaitGameLoading`     | TemplateMatch `game_loading.png` / DoNothing   | `roi [595,653,146,64]`、`post_wait_freezes: 500`、`post_delay: 4000`                |
 | `ClickToStart`        | TemplateMatch `startgame1.png` / Click         | `repeat: 3`、`pre_delay: 1000`、`post_delay: 4000`、`timeout: 30000`                |
 | `DailyLoginReward`    | TemplateMatch `daily_login_reward.png` / Click | `roi [405,115,103,106]`、`repeat: 2`、`post_delay: 500`                             |
-| `CheckHomePage`       | TemplateMatch `main_option.png` / DoNothing    | `roi [1199,6,77,83]`、`threshold: 0.75`、`next` 首位是 `[JumpBack]DailyLoginReward` |
+| `CheckHomePage`       | TemplateMatch `more.png` / DoNothing           | `roi [1199,6,77,83]`、`threshold: 0.75`、`next` 首位是 `[JumpBack]DailyLoginReward` |
 | `ClickHomePage`       | DirectHit / Click                              | `target [588,369,9,11]`、`repeat: 5`、`repeat_delay: 500`                           |
-| `CheckHomePageStable` | TemplateMatch `main_option.png` / DoNothing    | 叶子节点，任务成功出口                                                              |
+| `CheckHomePageStable` | TemplateMatch `more.png` / DoNothing           | 叶子节点，任务成功出口                                                              |
 
 ## 资源与模板
 
@@ -60,7 +60,7 @@ LaunchGame（StartApp 拉起游戏进程）
 - `game_loading.png` — 加载中画面
 - `startgame1.png` — 开始游戏按钮
 - `daily_login_reward.png` — 每日登录奖励弹窗
-- `main_option.png` — 主页右上角特征（`Common.CheckHomePage` 等节点共用同一张）
+- `more.png` — 主页右上角特征（`Common.CheckHomePage` 等节点共用同一张）
 
 ## 区服覆盖
 
@@ -78,7 +78,7 @@ LaunchGame（StartApp 拉起游戏进程）
 
 - 启动后动画长：用识别节点或 `post_wait_freezes`，避免固定超长 delay
 - 弹窗顺序可能变化：`next` 中并列弹窗节点，并用 `[JumpBack]` 处理可重入弹窗
-- 主页判定统一用 `main_option.png`（`roi [1199,6,77,83]`、阈值 0.75），不要另造主页特征图
+- 主页判定统一用 `more.png`（`roi [1199,6,77,83]`、阈值 0.75），不要另造主页特征图
 - 结束条件必须落在**叶子节点**（`CheckHomePageStable`），否则任务不会成功收尾
 
 ## 改动这类流程要动哪些文件

@@ -70,7 +70,7 @@ MainHub.next (polled in order; a hit runs and jumps back)
 
 ### Exit mechanics (JumpBack stack)
 
-Every sub-module entry in `MainHub.next` is a `[JumpBack]` node: once hit and executed it pushes the caller and jumps back to `MainHub` to poll the next entry; an entry becomes unrecognizable after its reward is claimed, so the poll advances naturally. When no entry can be recognized anymore, `MainHubIdle` (a plain node at the end of `next`, matching `main_option.png`) is hit — the JumpBack stack is empty and the node has no `next`, so the task succeeds.
+Every sub-module entry in `MainHub.next` is a `[JumpBack]` node: once hit and executed it pushes the caller and jumps back to `MainHub` to poll the next entry; an entry becomes unrecognizable after its reward is claimed, so the poll advances naturally. When no entry can be recognized anymore, `MainHubIdle` (a plain node at the end of `next`, matching `more.png`) is hit — the JumpBack stack is empty and the node has no `next`, so the task succeeds.
 
 > [!NOTE]
 > Do not use `on_error` for normal branches such as "nothing to claim": `on_error` automatically saves a screenshot on trigger, which will bloat the log directory if fired often. Normal branches belong at the end of `next` as fallbacks.
@@ -79,7 +79,7 @@ Every sub-module entry in `MainHub.next` is a `[JumpBack]` node: once hit and ex
 
 ### Home check
 
-- `ClaimRewards.EnsureHome`: matches `main_option.png` (`timeout: 60000`); on a hit it goes to `CheckMainInterface`, otherwise `[JumpBack]Common.EnsureHome` returns home and retries.
+- `ClaimRewards.EnsureHome`: matches `more.png` (`timeout: 60000`); on a hit it goes to `CheckMainInterface`, otherwise `[JumpBack]Common.EnsureHome` returns home and retries.
 - `ClaimRewards.CheckMainInterface`: recognizes the home marker and **clicks once**, `next` → `MainHub` (no `[JumpBack]`, otherwise the JumpBack stack would prevent the task from ending).
 - `ClaimRewards.MainHubIdle`: recognizes the home marker; success exit when everything is claimed. Sits at the end of `MainHub.next`.
 

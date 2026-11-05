@@ -9,7 +9,7 @@ MaaKEDR automates daily tasks in _雪松 (KEDR)_ to save you time.
 
 ## General Notes
 
-- **Prerequisites**: apart from "Launch Game", every task expects the game to be running and interactive. Each task entry first checks whether the game is on the **home screen**; if not, the shared home-return hub tries, in order, closing the "item obtained" popup, tapping the top home button, tapping the common back button, and finally sending the system back key — then resumes the original flow. The hub retries up to 10 rounds before the task fails.
+- **Prerequisites**: apart from "Launch Game", every task expects the game to be running and interactive. Each task entry first checks whether the game is on the **home screen**; if not, the shared home-return hub tries, in order, closing the "item obtained" popup, tapping the top home button, tapping the common back button — then resumes the original flow. The hub retries up to 10 rounds before the task fails.
 - **Task order**: tasks run top to bottom in the list. The recommended order is "Game Launch → farming / event → Claim Rewards → Remaining Stamina → PVP → Claim Remaining Rewards → Stamina Info"; see [Task Presets](#task-presets) below.
 - **Options**: every task's options live under **Task Settings** in the GUI; see the matching section below for their meaning. Leave anything not mentioned at its default.
 
@@ -201,7 +201,7 @@ Reads the current stamina and cap on the home screen, then reports when it will 
 
 It automatically:
 
-1. Confirms it is on the home screen (returns home automatically if not: home button / generic back / system back key)
+1. Confirms it is on the home screen (returns home automatically if not: home button / generic back)
 2. Reads the home-screen stamina digits
 3. Computes and reports the refill time (once at the natural-recovery cap, stamina no longer refills over time and the task reports so)
 

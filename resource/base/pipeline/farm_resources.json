@@ -20,7 +20,7 @@
             77,
             83
         ],
-        "template": "main_option.png",
+        "template": "more.png",
         "threshold": 0.8,
         "pre_delay": 500,
         "action": {

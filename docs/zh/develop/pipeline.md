@@ -156,7 +156,7 @@ pre_wait_freezes → pre_delay → action → [repeat_wait_freezes → repeat_de
 模板图片统一放在 `resource/base/image/` 下：
 
 - **目录组织**：按 pipeline 模块分子目录（如 `image/event_stage/`、`image/farm_resources/`）；多模块共用的公共图直接放在 `image/` 根目录
-- **文件命名**：小写 `snake_case`，如 `flare_title.png`、`no_stamina.png`、`main_option.png`
+- **文件命名**：小写 `snake_case`，如 `flare_title.png`、`no_stamina.png`、`more.png`
 - **区服差异**：`resource/bilibili/`、`resource/taptap/` 是叠在官服之上的增量目录（加载顺序见 `interface.json` 的 `resource` 字段）；目前两处都只覆盖了 `pipeline/startup.json`，需要区服专属模板图时同样按 `image/` 子目录组织
 - **制作规范**：以 1280×720 截图裁剪，尺寸适中（约 50×50 到 200×200），过大容易误匹配；ROI 与分辨率基线见 [项目与资源约定](../protocol/overview.md)
 - **路径写法**：Pipeline JSON 中 `template` 写相对 `image/` 目录的路径，统一使用**正斜杠**（如 `event_stage/flare_title.png`）
@@ -168,7 +168,7 @@ pre_wait_freezes → pre_delay → action → [repeat_wait_freezes → repeat_de
 - **`next` 放出口节点**：`next` 表示"当前阶段做完了，接下来可能到哪"，不是"顺序执行的下一条"
 - **`[JumpBack]` 放临时打断**：弹窗关闭、返回上一级、回主页这类逻辑都挂 `[JumpBack]`，执行完自动回跳，不污染主流程
 - **降低耦合**：复用性高的节点（`Common.BackButton`、`Common.EnsureHome`）做成 `[JumpBack]` 叶子节点，供多处 `next` 引用
-- **自循环**：操作可能不生效时，把节点自身放进自己的 `next`（如 `Common.PressBackToHome` 按返回键后重新判定主页，没回去就再按一次，靠 `max_hit` 收敛）
+- **自循环**：操作可能不生效时，把节点自身放进自己的 `next`（如 `FarmResources.ExitStageConfirm` 点掉关卡退出 ✕ 后重新判定，✕ 仍在就再点一次，靠 `max_hit` 收敛）
 - **页面切换**：点击进入新界面后加 `post_wait_freezes`，等画面静止再继续识别
 - **滑动操作**：滑动后补一次识别或点击确认，避免画面还在惯性滚动就开始判断
 
