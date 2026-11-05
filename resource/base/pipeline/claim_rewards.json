@@ -905,8 +905,8 @@
         },
         "post_delay": 500,
         "next": [
-            "DispatchClaim.Exit",
             "[JumpBack]Common.CheckItemObtained",
+            "DispatchClaim.Exit",
             "DispatchClaim.ClaimButton"
         ]
     },
