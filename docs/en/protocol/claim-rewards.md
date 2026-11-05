@@ -102,6 +102,7 @@ Every sub-module entry in `MainHub.next` is a `[JumpBack]` node: once hit and ex
 
 - `DispatchClaim.Start` / `RetryClick`: dispatch entry — "claimable" decided by **ColorMatch** red-dot color match → `ClaimButton` → `RedeployConfirm` (optional) → `Exit`; `Start.next` also lists `Exit`, so a panel that opens straight into "Close" finishes cleanly
 - Both entry nodes set `post_wait_freezes.target` to the full screen `[0,0,1280,720]`: the default only watches the node's own target region (the tiny red dot), which does not change while the panel slides in, so the wait releases immediately and the retry candidate re-clicks the entry mid-animation, landing inside the panel (Issue #86)
+- `DispatchClaim.Start` carries `max_hit: 1`, so the dispatch branch is entered at most once per task run. Otherwise, if the red dot has not disappeared yet, `[JumpBack]DispatchClaim.Start` in `MainHub.next` would re-enter it right after `Exit` and loop "open panel → close panel", starving the remaining branches
 - With `dispatch_redeploy` off: `DispatchClaim.ClaimButton.next` becomes `[Common.CheckItemObtained, DispatchClaim.RedeployConfirm, DispatchClaim.Exit]`, and `DispatchClaim.RedeployConfirm` becomes an empty DirectHit + DoNothing node — still on the path, but it no longer clicks "redeploy"
 
 ### Mailbox
