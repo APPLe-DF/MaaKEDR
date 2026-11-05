@@ -868,7 +868,8 @@
         ]
     },
     "DispatchClaim.ClaimButton": {
-        "desc": "检测并点击一键领取按钮",
+        "desc": "检测并点击一键领取按钮；max_hit: 4 给「关闭未出现 → 回头再领一次」的兜底回路封顶",
+        "max_hit": 4,
         "recognition": "TemplateMatch",
         "roi": [
             976,
@@ -888,7 +889,7 @@
         ]
     },
     "DispatchClaim.RedeployConfirm": {
-        "desc": "检测并确认再次派遣编队",
+        "desc": "检测并确认再次派遣编队；确认后若「关闭」未出现，先关物品弹窗、再回头点一次一键领取（有界恢复）",
         "recognition": "TemplateMatch",
         "roi": [
             566,
@@ -903,7 +904,9 @@
         },
         "post_delay": 500,
         "next": [
-            "DispatchClaim.Exit"
+            "DispatchClaim.Exit",
+            "[JumpBack]Common.CheckItemObtained",
+            "DispatchClaim.ClaimButton"
         ]
     },
     "DispatchClaim.Exit": {

@@ -104,6 +104,7 @@ MainHub.next（按顺序轮询，命中即执行并回跳）
 - `DispatchClaim.Start`：派遣入口有可领取奖励的判定（**ColorMatch** 红点颜色匹配）→ `ClaimButton` → `RedeployConfirm`（可选）→ `Exit`；`Start.next` 同时挂 `Exit`，面板一打开就是「关闭」时直接收尾
 - 不保留入口「重试点击」节点：面板展开动画期间用同一红点判据再点一次会把点击落进面板、导致领取状态错位（Issue #86）。入口点击失败时由 `Start` 自身超时后判失败，不重复点击
 - `DispatchClaim.Start` 带 `max_hit: 1`：单次任务只进入一次。否则红点未及时消失时，`Exit` 回到 `MainHub` 后会被 `[JumpBack]DispatchClaim.Start` 反复重入，形成「开面板 → 关面板」循环并饿死后续分支
+- `DispatchClaim.RedeployConfirm.next` 带恢复兜底：`[DispatchClaim.Exit, [JumpBack]Common.CheckItemObtained, DispatchClaim.ClaimButton]`——确认再次派遣后若「关闭」没有出现，先关掉物品弹窗、再回头点一次「一键领取」；`DispatchClaim.ClaimButton.max_hit: 4` 给这条回路封顶
 - 关闭 `dispatch_redeploy` 时：`DispatchClaim.ClaimButton.next` 变为 `[[JumpBack]Common.CheckItemObtained, DispatchClaim.RedeployConfirm, DispatchClaim.Exit]`（弹窗处理必须带 `[JumpBack]`，否则命中叶子后链路直接结束、跳过 `Exit`），同时 `DispatchClaim.RedeployConfirm` 被改成 DirectHit + DoNothing 的空节点——保留在链路上但不再点「再次派遣」
 
 ### 邮箱
