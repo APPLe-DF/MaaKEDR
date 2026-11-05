@@ -103,7 +103,7 @@ Every sub-module entry in `MainHub.next` is a `[JumpBack]` node: once hit and ex
 - `DispatchClaim.Start`: dispatch entry — "claimable" decided by **ColorMatch** red-dot color match → `ClaimButton` → `RedeployConfirm` (optional) → `Exit`; `Start.next` also lists `Exit`, so a panel that opens straight into "Close" finishes cleanly
 - The entry "retry click" node was removed: re-clicking with the same red-dot criterion while the panel is animating lands inside the panel and desyncs the claim state (Issue #86). If the entry click fails, `Start` times out and fails instead of clicking again
 - `DispatchClaim.Start` carries `max_hit: 1`, so the dispatch branch is entered at most once per task run. Otherwise, if the red dot has not disappeared yet, `[JumpBack]DispatchClaim.Start` in `MainHub.next` would re-enter it right after `Exit` and loop "open panel → close panel", starving the remaining branches
-- With `dispatch_redeploy` off: `DispatchClaim.ClaimButton.next` becomes `[Common.CheckItemObtained, DispatchClaim.RedeployConfirm, DispatchClaim.Exit]`, and `DispatchClaim.RedeployConfirm` becomes an empty DirectHit + DoNothing node — still on the path, but it no longer clicks "redeploy"
+- With `dispatch_redeploy` off: `DispatchClaim.ClaimButton.next` becomes `[[JumpBack]Common.CheckItemObtained, DispatchClaim.RedeployConfirm, DispatchClaim.Exit]` (the popup handler must keep `[JumpBack]`, otherwise hitting that leaf ends the chain and skips `Exit`), and `DispatchClaim.RedeployConfirm` becomes an empty DirectHit + DoNothing node — still on the path, but it no longer clicks "redeploy"
 
 ### Mailbox
 
