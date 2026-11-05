@@ -62,6 +62,9 @@ icon: "ri:home-4-fill"
 3. **枢纽内的 `[JumpBack]` 处理节点必须是叶子且非 `DirectHit`**，否则会把收敛判定饿死；枢纽 `next` 里也不允许出现 `DirectHit` 兜底（尤其禁止系统返回键），否则收敛判定永远轮不到。
 4. **列表顺序**：`[JumpBack]` 处理项在前、非 JumpBack 的收敛判定垫底；同一节点的 `next` 与 `on_error` 合并计算，不能重复指向同一目标（`pnpm check:maa` 会报 `duplicate-next`）。
 
+> [!NOTE]
+> **`[JumpBack]` 只加在调用方**：枢纽内部的 `Common.CheckHomePage` 不加前缀——它命中（叶子走空）后，由调用方的 `[JumpBack]Common.EnsureHome` 把控制权交回调用方 `next` 列表继续轮询，后续主路径节点才会执行。若给枢纽内部的叶子再加 `[JumpBack]`，回跳目标会变成枢纽自己的 `next`，形成「命中主页 → 回跳 → 再命中主页」的死循环。
+
 ## on_error 使用约定
 
 `on_error` 只用于真正的失败兜底，例如「关卡退出键连点多次仍无效」「自定义识别等待超时后放弃」。**正常路径不要用 `on_error`**——每次都会写一条节点失败与 error-handling 日志，长期运行会明显放大日志体积，也让真正的失败难以辨认。

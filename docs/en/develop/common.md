@@ -62,6 +62,9 @@ The hub **never sends the system back key**: in this game BACK acts as ESC and o
 3. **`[JumpBack]` handlers inside the hub must be leaves and must not be `DirectHit`**, otherwise they starve the convergence check. The hub's `next` must also contain no `DirectHit` fallback at all (the system back key in particular), or the convergence check never gets a turn.
 4. **List order**: `[JumpBack]` handlers first, the non-JumpBack convergence check last. A node's `next` and `on_error` are counted together, so the same target must not appear twice (`pnpm check:maa` reports `duplicate-next`).
 
+> [!NOTE]
+> **`[JumpBack]` belongs on the caller only**: the hub's own `Common.CheckHomePage` carries no prefix — when it hits (a leaf with an empty `next`), the caller's `[JumpBack]Common.EnsureHome` hands control back to the caller's `next` list, which is what lets the main path continue. Adding `[JumpBack]` to a leaf inside the hub would retarget the jump-back at the hub's own `next` and spin: "home hit → jump back → home hit again".
+
 ## When to use on_error
 
 Reserve `on_error` for genuine failure fallbacks, for example "the stage-exit button did not respond after several clicks" or "a custom recognition gave up after waiting". **Do not route normal paths through `on_error`** — every hit writes a node-failure and error-handling entry to the log, which inflates log size over long runs and hides real failures.
