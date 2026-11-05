@@ -832,7 +832,7 @@
         ]
     },
     "DispatchClaim.Start": {
-        "desc": "检测派遣任务入口红点并点击；面板也可能一打开就是「关闭」（红点过期或已被领过），故 Exit 也在 next。max_hit: 1 —— 单次任务只进入一次，防止红点未及时消失时 Exit 回 MainHub 后又被反复重入、形成「开面板→关面板」循环。不保留重试点击：面板展开动画期间用同一红点判据再点一次会把点击落进面板（Issue #86）。timeout: 10000 —— 点击未生效、面板 10 秒仍未出现时由 Start 超时判任务失败，不会静默成功",
+        "desc": "检测派遣任务入口红点",
         "max_hit": 1,
         "recognition": {
             "type": "ColorMatch",
@@ -869,7 +869,7 @@
         ]
     },
     "DispatchClaim.ClaimButton": {
-        "desc": "检测并点击一键领取按钮；max_hit: 4 给「关闭未出现 → 回头再领一次」的兜底回路封顶",
+        "desc": "检测并点击一键领取按钮",
         "max_hit": 4,
         "recognition": "TemplateMatch",
         "roi": [
@@ -890,7 +890,7 @@
         ]
     },
     "DispatchClaim.RedeployConfirm": {
-        "desc": "检测并确认再次派遣编队；确认后若「关闭」未出现，先关物品弹窗、再回头点一次一键领取（有界恢复）",
+        "desc": "检测并确认再次派遣编队",
         "recognition": "TemplateMatch",
         "roi": [
             566,
