@@ -43,7 +43,7 @@ wheels = [
 
 [[package]]
 name = "maafw"
-version = "5.14.2"
+version = "5.16.0b2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "maaagentbinary" },
@@ -51,12 +51,12 @@ dependencies = [
     { name = "strenum" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/da/ca/0c0531703ddcdf9b9dab4f922dab11321676b154336891e55e8bc1659813/maafw-5.14.2-py3-none-macosx_13_0_arm64.whl", hash = "sha256:ca3a25a579a792b8bfab54c08d748cdcaee378466ada8bc8929ae4c9c369722b", size = 16598571, upload-time = "2026-09-29T06:21:30.24Z" },
-    { url = "https://files.pythonhosted.org/packages/0c/ab/3e38bbf84d617d60deec0c966d832416c39ea06fe6da4c1d18f7ffc63c9c/maafw-5.14.2-py3-none-macosx_13_0_x86_64.whl", hash = "sha256:97c24cefd3ec516dc5faf0a54bedaa72ba8e8727f9474576430899f3e17f9326", size = 18245477, upload-time = "2026-09-29T06:21:32.88Z" },
-    { url = "https://files.pythonhosted.org/packages/31/4a/7bbc9930a4d5d4ba88a348776575d4d7704a077d54d371d4b96aca9e2935/maafw-5.14.2-py3-none-manylinux2014_aarch64.whl", hash = "sha256:efd527505f2730cbec3f640fa3c261a9c3a375dbff61b139b582f1e43af9b0e8", size = 16742940, upload-time = "2026-09-29T06:21:35.036Z" },
-    { url = "https://files.pythonhosted.org/packages/0c/7e/860cd82f91ac466243b75873e990a5ebc18681eea927979e5fb50f9a1d68/maafw-5.14.2-py3-none-manylinux2014_x86_64.whl", hash = "sha256:88a79252721819601b54d03c4d0dba0e4c0428f281be557c83e127d7f3948952", size = 18682552, upload-time = "2026-09-29T06:21:38.156Z" },
-    { url = "https://files.pythonhosted.org/packages/1c/71/0b83a8c17a9f02b8fc476cbf8eca6c1690f563cd4c4b036f355700dff274/maafw-5.14.2-py3-none-win_amd64.whl", hash = "sha256:3688dcf544a59a8529ceaab60e2c0367974ae496fdaa7c4d620105a98f0edd44", size = 24897514, upload-time = "2026-09-29T06:21:40.579Z" },
-    { url = "https://files.pythonhosted.org/packages/89/fc/c20f1aae5c629bdbfeafbe1c4f73f8c3e29a040ab37e02d1a89eb32f3478/maafw-5.14.2-py3-none-win_arm64.whl", hash = "sha256:c803cd89f25132c81891f1c254325ec5f71e0a5f23a1eb1301904444b355eb3b", size = 24048375, upload-time = "2026-09-29T06:21:43.15Z" },
+    { url = "https://files.pythonhosted.org/packages/dc/72/f8ef7b41eb56611239439471873282ae2c66bf70509b14a7e1f5a02444b5/maafw-5.16.0b2-py3-none-macosx_13_0_arm64.whl", hash = "sha256:308576ef2bb751ff9a1827afc079047d9c9c5c42ffcad741dd0b0584638880fa", size = 19106770, upload-time = "2026-11-05T03:41:23.215Z" },
+    { url = "https://files.pythonhosted.org/packages/f6/e1/49185b422487c418284c055074575f998d2e406a96cacf641ed1f2f08aa7/maafw-5.16.0b2-py3-none-macosx_13_0_x86_64.whl", hash = "sha256:0016cc0d51e15088fd766dd4bc84977a9681cff075f7d4c95c47cb6c0281b006", size = 21266778, upload-time = "2026-11-05T03:41:25.938Z" },
+    { url = "https://files.pythonhosted.org/packages/84/0a/607af528a44d21ac02495bd33e5cda43a15d05b0675e7687fa418bad8574/maafw-5.16.0b2-py3-none-manylinux2014_aarch64.whl", hash = "sha256:b5d058402185b6fede7852e059bb9aa79452aa835f0a4fddc5ea1b11aa464393", size = 21418371, upload-time = "2026-11-05T03:41:28.425Z" },
+    { url = "https://files.pythonhosted.org/packages/80/e3/46d693912ffc1a4760c7561c2f0aa2a17b26afee577e4e2ef5d15f4d1e82/maafw-5.16.0b2-py3-none-manylinux2014_x86_64.whl", hash = "sha256:244707738d97b1bdbcc339538a3315fc1349a90646aed81a389b0a6608d2b048", size = 23733975, upload-time = "2026-11-05T03:41:30.922Z" },
+    { url = "https://files.pythonhosted.org/packages/3c/69/3d07b1a30c78d31f9cc5ab660be57d6bf5531dbc3fefd2a410275dd51546/maafw-5.16.0b2-py3-none-win_amd64.whl", hash = "sha256:153786d8751c16344aa3fce77f9391d103635ee09e71cbd868e8d68ad6e24646", size = 36706297, upload-time = "2026-11-05T03:41:33.463Z" },
+    { url = "https://files.pythonhosted.org/packages/04/e0/752140fca1e61a8e7ff0d857a2ff5d66f804e7193cfded1147684b3bb0b7/maafw-5.16.0b2-py3-none-win_arm64.whl", hash = "sha256:5d61e508a28ed1d0d844e33c4ef8437759474c2a5ceb2891d07b190dcc338aaa", size = 37277674, upload-time = "2026-11-05T03:41:36.109Z" },
 ]
 
 [[package]]
@@ -78,7 +78,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "loguru" },
-    { name = "maafw", specifier = "==5.14.2" },
+    { name = "maafw", specifier = ">=5.13.0b0" },
 ]
 
 [package.metadata.requires-dev]
