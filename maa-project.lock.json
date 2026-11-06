@@ -135,7 +135,7 @@
             "templateHash": "1c475f27cd91987b4a8e82a99ee2054f673fe5c344c2c2facc0c4c80778317bc"
         },
         ".github/dependabot.yml": {
-            "hash": "54dc740a86af3d119829d9e144700a1a6891d3a755a52132c66df05b1349076b",
+            "hash": "65acd4e5b31f02bda99cf7d9999a104b076739c2190aaaa5b9bdd3b189278da9",
             "templateHash": "146fc4a7e29026507034652f344d0f100f70fd1a61e2a9cfa74bbabe38281b43"
         },
         ".github/workflows/format.yml": {
