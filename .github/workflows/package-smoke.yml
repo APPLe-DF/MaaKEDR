@@ -86,14 +86,21 @@ jobs:
             throw "Expected package directories $($expected -join ', '), got $($actual -join ', ')"
           }
 
-           # maafw 的 wheel 可能把 METADATA 的 Version 写成带 v 前缀的非规范形式（5.14.2 即 v5.14.2），
-           # 而 requirements.txt 存的是规范化版本；比对前统一去掉前缀。
-           $expectedMaafwVersion = ((Get-Content -LiteralPath 'requirements.txt' |
-             Where-Object { $_ -match '^maafw==' } |
-             Select-Object -First 1) -replace '^maafw==', '') -replace '^v', ''
-           if ([string]::IsNullOrWhiteSpace($expectedMaafwVersion)) {
-             throw 'Could not determine expected maafw version from requirements.txt'
-           }
+          # maafw wheel 的 METADATA 版本可能是带 v 前缀或连字符预发布形式（如 v5.16.0-beta.2），
+          # 而 requirements.txt 存的是 PEP 440 规范形式（5.16.0b2）；比对前统一规范化。
+          function Normalize-MaafwVersion([string]$version) {
+            $normalized = $version.Trim() -replace '^v', ''
+            $normalized = $normalized -replace '[-_.]?(?:alpha|a)[-_.]?(\d+)', 'a$1'
+            $normalized = $normalized -replace '[-_.]?(?:beta|b)[-_.]?(\d+)', 'b$1'
+            $normalized = $normalized -replace '[-_.]?(?:rc)[-_.]?(\d+)', 'rc$1'
+            return $normalized
+          }
+          $expectedMaafwVersion = Normalize-MaafwVersion (((Get-Content -LiteralPath 'requirements.txt' |
+            Where-Object { $_ -match '^maafw==' } |
+            Select-Object -First 1) -replace '^maafw==', ''))
+          if ([string]::IsNullOrWhiteSpace($expectedMaafwVersion)) {
+            throw 'Could not determine expected maafw version from requirements.txt'
+          }
           foreach ($packageName in $expected) {
             $packageRoot = (Resolve-Path -LiteralPath (Join-Path dist $packageName)).Path
             $interface = Get-Content -LiteralPath (Join-Path $packageRoot 'interface.json') -Raw | ConvertFrom-Json
@@ -112,7 +119,7 @@ jobs:
             if (-not (Test-Path -LiteralPath $python -PathType Leaf)) {
               throw "Embedded Python is missing: $python"
             }
-            $actualMaafwVersion = ((& $python -I -c 'import importlib.metadata as metadata; print(metadata.version("maafw"))' | Out-String).Trim()) -replace '^v', ''
+            $actualMaafwVersion = Normalize-MaafwVersion ((& $python -I -c 'import importlib.metadata as metadata; print(metadata.version("maafw"))' | Out-String).Trim())
             if ($LASTEXITCODE -ne 0) {
               throw "Could not read embedded maafw version in $packageName"
             }
