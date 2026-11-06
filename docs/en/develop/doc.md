@@ -63,6 +63,12 @@ Cover every conditional branch: detection succeeded / failed / architecture unkn
 
 > The long-term fix is adding `vue-tsc --noEmit` for `.vue` files, which detects undefined bindings statically. It is not wired up yet: it needs a shim declaration for virtual modules such as `@theme/*` and a few pre-existing type errors fixed first. It guards against a low-frequency, low-severity class of bug, so it is not worth the cost today. Revisit if the custom components keep growing or this class of bug shows up a second time.
 
+## Navbar
+
+The site title (`SITE_TITLE` in `config/site.ts`) carries the “· 雪松自动化脚本” suffix for SEO and is wider than the navbar title slot on doc pages. Above 960px Plume pins that slot to the sidebar column (272px) and absolutely positions it above the content area, so overflowing title text lands on the search box sitting at the sidebar's right edge; `styles/navbar.css` makes the title end in an ellipsis when it does not fit, dropping the trailing descriptive suffix first. The homepage has no sidebar, where the title is an ordinary flex item that pushes the search box along and is always shown in full — the two layouts looking different is expected.
+
+After changing `SITE_TITLE` or the navbar styles, confirm on a doc page at ≥960px that the title no longer covers the search box.
+
 ## Frontmatter
 
 Common fields:

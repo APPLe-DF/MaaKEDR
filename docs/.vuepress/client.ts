@@ -5,6 +5,7 @@ import HomeFX from './components/HomeFX.vue'
 import HomePointerField from './components/HomePointerField.vue'
 import HomeStats from './components/HomeStats.vue'
 import './styles/palette.css'
+import './styles/navbar.css'
 import './styles/home-hero.css'
 
 export default defineClientConfig({
