@@ -85,45 +85,31 @@ icon: ri:guide-fill
 
 Windows 用户**必须安装 VCRedist x64**：这是运行 MaaKEDR（无论哪种启动方式）的基础需求。
 
-<details>
-  <summary>详细安装方式</summary>
-  <p></p>
-  <blockquote>
-    <ul>
-      <li>
-        直接下载：点击
-        <a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank">vc_redist.x64</a>
-        下载并安装
-      </li>
-      <li>
-        <code>winget</code> 安装（管理员终端）：
-        <pre><code>winget install Microsoft.VCRedist.2017.x64</code></pre>
-      </li>
-    </ul>
-  </blockquote>
-</details>
+::: details 详细安装方式
+
+- 直接下载：点击 [vc_redist.x64](https://aka.ms/vs/17/release/vc_redist.x64.exe) 下载并安装
+- `winget` 安装（管理员终端）：
+
+```powershell
+winget install Microsoft.VCRedist.2017.x64
+```
+
+:::
 
 #### .NET
 
 使用 **MFAA** 图形界面的用户需要自行安装 **.NET 10**。Windows 用户需要的是 **.NET 桌面运行时**；macOS 与 Linux 用户需要的是 **.NET 运行时**（不是桌面运行时），从同一个下载页面选择对应版本即可。
 
-<details>
-  <summary>详细安装方式</summary>
-  <p></p>
-  <blockquote>
-    <ul>
-      <li>
-        自行下载：点击
-        <a href="https://dotnet.microsoft.com/zh-cn/download/dotnet/10.0" target="_blank">.NET 官方下载页面</a>
-        ，选择您系统对应的 .NET 10 桌面运行时版本下载并安装。
-      </li>
-      <li>
-        （仅 Windows 用户）<code>winget</code> 安装（管理员终端）：
-        <pre><code>winget install Microsoft.DotNet.DesktopRuntime.10</code></pre>
-      </li>
-    </ul>
-  </blockquote>
-</details>
+::: details 详细安装方式
+
+- 自行下载：点击 [.NET 官方下载页面](https://dotnet.microsoft.com/zh-cn/download/dotnet/10.0)，选择您系统对应的 .NET 10 桌面运行时版本下载并安装。
+- （仅 Windows 用户）`winget` 安装（管理员终端）：
+
+```powershell
+winget install Microsoft.DotNet.DesktopRuntime.10
+```
+
+:::
 
 #### Python
 

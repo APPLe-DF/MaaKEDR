@@ -85,45 +85,31 @@ icon: ri:guide-fill
 
 Windows users **must install VCRedist x64**. This is required to run MaaKEDR (regardless of launcher choice).
 
-<details>
-  <summary>Installation details</summary>
-  <p></p>
-  <blockquote>
-    <ul>
-      <li>
-        Direct download: click
-        <a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank">vc_redist.x64</a>
-        and install
-      </li>
-      <li>
-        <code>winget</code> (admin terminal):
-        <pre><code>winget install Microsoft.VCRedist.2017.x64</code></pre>
-      </li>
-    </ul>
-  </blockquote>
-</details>
+::: details Installation details
+
+- Direct download: click [vc_redist.x64](https://aka.ms/vs/17/release/vc_redist.x64.exe) and install
+- `winget` (admin terminal):
+
+```powershell
+winget install Microsoft.VCRedist.2017.x64
+```
+
+:::
 
 #### .NET
 
 If you use the **MFAA** GUI, you need to install **.NET 10**. On Windows that means the **.NET Desktop Runtime**; on macOS and Linux it is the plain **.NET Runtime** (not the desktop one) — pick the matching build on the same download page.
 
-<details>
-  <summary>Installation details</summary>
-  <p></p>
-  <blockquote>
-    <ul>
-      <li>
-        Download from the
-        <a href="https://dotnet.microsoft.com/en-us/download/dotnet/10.0" target="_blank">.NET official download page</a>
-        — choose the .NET 10 Desktop Runtime for your system.
-      </li>
-      <li>
-        (Windows only) <code>winget</code> (admin terminal):
-        <pre><code>winget install Microsoft.DotNet.DesktopRuntime.10</code></pre>
-      </li>
-    </ul>
-  </blockquote>
-</details>
+::: details Installation details
+
+- Download from the [.NET official download page](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) — choose the .NET 10 Desktop Runtime for your system.
+- (Windows only) `winget` (admin terminal):
+
+```powershell
+winget install Microsoft.DotNet.DesktopRuntime.10
+```
+
+:::
 
 #### Python
 

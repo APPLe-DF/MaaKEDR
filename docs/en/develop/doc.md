@@ -147,7 +147,7 @@ The image plugin enables `figure` / `lazyload` / `mark` / `size`:
 
 - A standalone image renders as a `<figure>` with a caption taken from the alt text
 - Images are lazy-loaded by default
-- Use `=widthxheight` to control the display size: `![caption](/images/develop/a.png =640x360)`
+- Use `=widthxheight` to control the display size (at the end of the alt text): `![caption =640x360](/images/develop/a.png)`
 - When the URL ends with `#light` / `#dark`, the image is shown only in that color mode (useful for light/dark screenshot pairs)
 
 ::: warning
