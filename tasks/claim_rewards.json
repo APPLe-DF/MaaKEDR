@@ -66,7 +66,7 @@
                     "pipeline_override": {
                         "DispatchClaim.ClaimButton": {
                             "next": [
-                                "Common.CheckItemObtained",
+                                "[JumpBack]Common.CheckItemObtained",
                                 "DispatchClaim.RedeployConfirm",
                                 "DispatchClaim.Exit"
                             ]

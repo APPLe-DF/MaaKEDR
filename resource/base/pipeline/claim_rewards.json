@@ -833,6 +833,7 @@
     },
     "DispatchClaim.Start": {
         "desc": "检测派遣任务入口红点",
+        "max_hit": 1,
         "recognition": {
             "type": "ColorMatch",
             "param": {
@@ -860,48 +861,16 @@
             "type": "Click"
         },
         "post_wait_freezes": 500,
+        "timeout": 10000,
         "next": [
             "DispatchClaim.ClaimButton",
-            "DispatchClaim.RetryClick",
+            "DispatchClaim.Exit",
             "[JumpBack]Common.CheckItemObtained"
-        ]
-    },
-    "DispatchClaim.RetryClick": {
-        "desc": "重试点击派遣任务入口",
-        "recognition": {
-            "type": "ColorMatch",
-            "param": {
-                "roi": [
-                    896,
-                    285,
-                    41,
-                    51
-                ],
-                "lower": [
-                    200,
-                    60,
-                    20
-                ],
-                "upper": [
-                    255,
-                    150,
-                    100
-                ],
-                "connected": true,
-                "count": 50
-            }
-        },
-        "action": {
-            "type": "Click"
-        },
-        "post_wait_freezes": 500,
-        "next": [
-            "[JumpBack]Common.CheckItemObtained",
-            "DispatchClaim.ClaimButton"
         ]
     },
     "DispatchClaim.ClaimButton": {
         "desc": "检测并点击一键领取按钮",
+        "max_hit": 4,
         "recognition": "TemplateMatch",
         "roi": [
             976,
@@ -936,7 +905,9 @@
         },
         "post_delay": 500,
         "next": [
-            "DispatchClaim.Exit"
+            "[JumpBack]Common.CheckItemObtained",
+            "DispatchClaim.Exit",
+            "DispatchClaim.ClaimButton"
         ]
     },
     "DispatchClaim.Exit": {
