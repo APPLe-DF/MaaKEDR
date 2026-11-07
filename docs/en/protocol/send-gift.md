@@ -5,16 +5,18 @@ icon: ri:hand-heart-line
 
 # Send Gift Protocol
 
-The **Send Gift** task sends gifts to friends once per day: from the home screen it opens the friend list, then in each
-round it gifts the **topmost still giftable** friend and swipes up one screen, until the OCR reads the daily quota
-`20/20` or the round limit falls back. "Giftable" is decided by
+The **Send Gift** task is a standalone daily flow: from the home screen it opens the friend list, then in each round
+it gifts the **topmost still giftable** friend and swipes up one screen, until the OCR reads the daily quota `20/20`
+or the round limit falls back. "Giftable" is decided by
 [an intersection of two recognitions](../develop/custom.md): the template box must overlap the golden connected
 region, so already-gifted (grey) buttons are skipped naturally.
 
-The implementation is node-for-node identical to the `SendGift` task in MAK (`MaaAssistantKedrgame`); the only
-difference is **how the friend list is reached**: MAK jumps to `Friend_FriendList` with the `SceneJump` scene graph,
-while this project uses the return-to-home hub plus the home-screen friend icon plus an OCR confirmation. Flow logic,
-ROIs, templates, `max_hit` values and the swipe gesture all come from MAK unchanged.
+The implementation maps node-for-node to the `SendGift` task in MAK (`MaaAssistantKedrgame`); the differences are
+concentrated in **how the friend list is reached**: MAK jumps to `Friend_FriendList` with the `SceneJump` scene graph,
+while this project uses the return-to-home hub plus the home-screen friend icon plus an OCR confirmation. The main
+loop's flow logic, ROIs, templates, `max_hit` values and the swipe gesture follow MAK. Two further deviations are not
+listed in the table below: MAK's `Common_AllOfIntersect` is renamed to `AllOfIntersect` here, and MAK's
+"正在前往好友列表……" entry log is not kept.
 
 ## Task entry
 
@@ -32,8 +34,8 @@ tasks/send_gift.json (no options, no pipeline_override)
   → resource/base/pipeline/send_gift.json
        ├─ navigation: Common.EnsureHome hub + SendGift.ClickFriendEntry + SendGift.CheckFriendList
        └─ main loop: SendGift.Loop → SendGift.Step → SendGift.Do / SendGift.Swipe
-  → SendGift.Do uses the custom recognition AllOfIntersect (agent/custom/recognition/general.py,
-    registered through RECOGNITION_MODULES in agent/custom/recognition/__init__.py as `general`)
+  → SendGift.Do uses the custom recognition AllOfIntersect (`@AgentServer.custom_recognition("AllOfIntersect")` in
+    agent/custom/recognition/general.py; the `general` module is listed in `RECOGNITION_MODULES` in `__init__.py`)
   → templates resource/base/image/send_gift/homepage_friend.png, send_gift/gift_button.png
 ```
 
@@ -118,17 +120,20 @@ SendGift.Step (DirectHit, max_hit 50)
 
 ## Node map against MAK
 
-| MAK (`pipeline/Friend/SendGift.json`) | This project                                                                     | Note                                             |
-| ------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------ |
-| `SendGiftMain` (`SceneJump`)          | `SendGift.EnsureHome` + `CheckHomePage` + `ClickFriendEntry` + `CheckFriendList` | navigation uses the home hub                     |
-| `SendGiftLoop`                        | `SendGift.Loop`                                                                  | `next` order unchanged                           |
-| `SendGiftQuotaFull`                   | `SendGift.QuotaFull`                                                             | ROI / `expected` unchanged                       |
-| `SendGiftStep`                        | `SendGift.Step`                                                                  | `max_hit: 50` unchanged                          |
-| `SendGiftDo`                          | `SendGift.Do`                                                                    | recognition params and `action: Click` unchanged |
-| `SendGiftSwipe`                       | `SendGift.Swipe`                                                                 | gesture unchanged                                |
-| `SendGiftFinish`                      | `SendGift.Finish`                                                                | `focus` log text unchanged                       |
+| MAK (`assets/resource/pipeline/Friend/SendGift.json`) | This project                                                                                                                                   | Note                                             |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `SendGiftMain` (`SceneJump`)                          | `SendGift.EnsureHome` + `SendGift.CheckHomePage` + `SendGift.ClickFriendEntry` + `SendGift.RetryClickFriendEntry` + `SendGift.CheckFriendList` | navigation uses the home hub                     |
+| `SendGiftLoop`                                        | `SendGift.Loop`                                                                                                                                | `next` order unchanged                           |
+| `SendGiftQuotaFull`                                   | `SendGift.QuotaFull`                                                                                                                           | ROI / `expected` unchanged                       |
+| `SendGiftStep`                                        | `SendGift.Step`                                                                                                                                | `max_hit: 50` unchanged                          |
+| `SendGiftDo`                                          | `SendGift.Do`                                                                                                                                  | recognition params and `action: Click` unchanged |
+| `SendGiftSwipe`                                       | `SendGift.Swipe`                                                                                                                               | gesture unchanged                                |
+| `SendGiftFinish`                                      | `SendGift.Finish`                                                                                                                              | `focus` log text unchanged                       |
 
-## Conventions
+> Recognizer name: MAK's `Common_AllOfIntersect` is renamed to `AllOfIntersect` here; MAK's `SendGiftMain`
+> "正在前往好友列表……" log is not kept.
+
+## Key conventions
 
 - **`[JumpBack]SendGift.Step` is what makes the loop work**: the `SendGift.Step` subtree runs dry at `SendGift.Swipe`, and
   the jump-back hands control back to `SendGift.Loop`, so every round re-checks the quota and walks one more round.
@@ -139,8 +144,9 @@ SendGift.Step (DirectHit, max_hit 50)
   intersection stops working and `SendGift.Do` may click already-gifted friends.
 - **The daily quota is hard-coded in the recognition regex**: when the game changes the limit, update both numbers in
   `SendGift.QuotaFull.expected`.
-- **Thresholds and colour range follow MAK defaults**: template matching uses the framework default threshold 0.7
-  (`green_mask` removes the green background of the gift icon); `ColorMatch` uses the RGB method (default `method: 4`),
+- **Thresholds and colour range follow MAK defaults**: the template matching inside `SendGift.Do` uses the framework
+  default threshold 0.7 (`green_mask` removes the green background of the gift icon); `SendGift.CheckHomePage` keeps
+  `Common.CheckHomePage`'s `threshold: 0.75`; `ColorMatch` uses the RGB method (default `method: 4`),
   gold range `[235,235,80]`–`[255,255,115]`, `count: 600`.
 - **No new waiting was introduced**: navigation nodes settle the screen with `post_wait_freezes`; the main loop adds no
   `pre_delay` / `post_delay`.
@@ -150,8 +156,9 @@ SendGift.Step (DirectHit, max_hit 50)
 ## Files to touch when changing this flow
 
 1. Flow nodes: `resource/base/pipeline/send_gift.json` (do not rename `SendGift.*`; `tasks/send_gift.json` refers to `entry`)
-2. Intersection logic: `AllOfIntersect` in `agent/custom/recognition/general.py`; keep `RECOGNITION_MODULES` in
-   `__init__.py` in sync when renaming or adding
+2. Intersection logic: `AllOfIntersect` in `agent/custom/recognition/general.py`; the recognition name is registered by
+   `@AgentServer.custom_recognition("AllOfIntersect")`, and the module name is listed in `RECOGNITION_MODULES` in
+   `__init__.py`
 3. Templates: the two images under `resource/base/image/send_gift/` (cropped from a 720p screenshot)
 4. Navigation changes (e.g. a different entry icon): only the template and ROI of `SendGift.ClickFriendEntry` /
    `SendGift.RetryClickFriendEntry`

@@ -67,6 +67,7 @@
 - 清空体力循环模式
 - 活动关卡与活动商店（耀斑 EX 关卡刷取、商店商品清空）
 - 体力信息（读取主界面体力并提示回满时间）
+- 赠送礼物（好友列表送礼，每日额度用尽即结束）
 
 ---
 
@@ -162,6 +163,7 @@ MaaKEDR/
 │   ├── farm_resources.json      #   资源刷取
 │   ├── farm_remaining_stamina.json # 剩余体力刷取
 │   ├── event_stage.json         #   活动关卡与活动商店
+│   ├── send_gift.json           #   赠送礼物
 │   └── stamina_info.json        #   体力信息
 ├── resource/
 │   ├── base/                    # 核心资源（各服共用）

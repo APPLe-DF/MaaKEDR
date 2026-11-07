@@ -317,12 +317,16 @@ Pipeline 节点支持两类注释/占位字段（schema 已支持，不会报错
         "next": ["FarmResources.ResourceCollect"]
     },
     "FarmResources.ClickStage": {
-        "custom_recognition_param": "{\"stage_name\": \"1-1\", \"stage_index\": 1, \"resource_type\": \"特别军费行动\"}"
+        "custom_recognition_param": {
+            "stage_name": "1-1",
+            "stage_index": 1,
+            "resource_type": "特别军费行动"
+        }
     }
 }
 ```
 
-可以修改 `next`、`roi`、`threshold`、`custom_action_param` 等任意字段。
+可以修改 `next`、`roi`、`threshold`、`custom_action_param` 等任意字段。`custom_recognition_param` 与 `custom_action_param` 一样直接写对象即可；写成 JSON 字符串也兼容，但会被再序列化一次（详见 [自定义识别](custom.md)）。
 
 ### max_hit 防循环
 

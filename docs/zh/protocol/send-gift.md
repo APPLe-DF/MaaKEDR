@@ -5,13 +5,14 @@ icon: ri:hand-heart-line
 
 # 赠送礼物协议
 
-「赠送礼物」是每日向好友送礼的收尾流程：从主界面点好友入口进好友列表，每轮点**最靠上且可赠送**的那一个好友
+「赠送礼物」是每日向好友送礼的独立流程：从主界面点好友入口进好友列表，每轮点**最靠上且可赠送**的那一个好友
 送一次礼物，再上滑一屏，直到 OCR 读到今日额度「20/20」或轮数兜底用尽。「可赠送」由
 [组合识别取交集](../develop/custom.md) 判定——模板框必须与金色连通块重叠，已赠送的灰色按钮自然被跳过。
 
-本页的实现与 MAK（`MaaAssistantKedrgame`）的 `SendGift` 任务逐节点一致，唯一差异是**进好友列表的导航方式**：
-MAK 用 `SceneJump` 场景图跳到 `Friend_FriendList`，本项目换成「回主页枢纽 + 主页好友图标 + OCR 确认好友列表」，
-流程逻辑、ROI、模板、`max_hit` 与滑动手势完全沿用 MAK。
+本页的实现与 MAK（`MaaAssistantKedrgame`）的 `SendGift` 任务逐节点对应，差异集中在**进好友列表的导航方式**：
+MAK 用 `SceneJump` 场景图跳到 `Friend_FriendList`，本项目换成「回主页枢纽 + 主页好友图标 + OCR 确认好友列表」；
+主循环的流程逻辑、ROI、模板、`max_hit` 与滑动手势沿用 MAK。另外两处未列入对照表的差异：MAK 的
+`Common_AllOfIntersect` 在本项目改名为 `AllOfIntersect`，MAK 入口的「正在前往好友列表……」提示日志未保留。
 
 ## 任务入口
 
@@ -29,8 +30,8 @@ tasks/send_gift.json（无 option、无 pipeline_override）
   → resource/base/pipeline/send_gift.json
        ├─ 导航：Common.EnsureHome 枢纽 + SendGift.ClickFriendEntry + SendGift.CheckFriendList
        └─ 主循环：SendGift.Loop → SendGift.Step → SendGift.Do / SendGift.Swipe
-  → SendGift.Do 用 Custom 识别 AllOfIntersect（agent/custom/recognition/general.py，
-    在 agent/custom/recognition/__init__.py 的 RECOGNITION_MODULES 注册为 general）
+  → SendGift.Do 用 Custom 识别 AllOfIntersect（agent/custom/recognition/general.py 中的
+    @AgentServer.custom_recognition("AllOfIntersect")；general 模块已列入 __init__.py 的 RECOGNITION_MODULES）
   → 模板 resource/base/image/send_gift/homepage_friend.png、send_gift/gift_button.png
 ```
 
@@ -113,15 +114,18 @@ SendGift.Step（DirectHit，max_hit 50）
 
 ## 与 MAK 节点对照
 
-| MAK（`pipeline/Friend/SendGift.json`） | 本项目                                                                           | 说明                            |
-| -------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------- |
-| `SendGiftMain`（`SceneJump`）          | `SendGift.EnsureHome` + `CheckHomePage` + `ClickFriendEntry` + `CheckFriendList` | 导航范式换成回主页枢纽          |
-| `SendGiftLoop`                         | `SendGift.Loop`                                                                  | `next` 顺序不变                 |
-| `SendGiftQuotaFull`                    | `SendGift.QuotaFull`                                                             | ROI / `expected` 不变           |
-| `SendGiftStep`                         | `SendGift.Step`                                                                  | `max_hit: 50` 不变              |
-| `SendGiftDo`                           | `SendGift.Do`                                                                    | 识别参数与 `action: Click` 不变 |
-| `SendGiftSwipe`                        | `SendGift.Swipe`                                                                 | 手势参数不变                    |
-| `SendGiftFinish`                       | `SendGift.Finish`                                                                | `focus` 日志文案不变            |
+| MAK（`assets/resource/pipeline/Friend/SendGift.json`） | 本项目                                                                                                                                         | 说明                            |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| `SendGiftMain`（`SceneJump`）                          | `SendGift.EnsureHome` + `SendGift.CheckHomePage` + `SendGift.ClickFriendEntry` + `SendGift.RetryClickFriendEntry` + `SendGift.CheckFriendList` | 导航范式换成回主页枢纽          |
+| `SendGiftLoop`                                         | `SendGift.Loop`                                                                                                                                | `next` 顺序不变                 |
+| `SendGiftQuotaFull`                                    | `SendGift.QuotaFull`                                                                                                                           | ROI / `expected` 不变           |
+| `SendGiftStep`                                         | `SendGift.Step`                                                                                                                                | `max_hit: 50` 不变              |
+| `SendGiftDo`                                           | `SendGift.Do`                                                                                                                                  | 识别参数与 `action: Click` 不变 |
+| `SendGiftSwipe`                                        | `SendGift.Swipe`                                                                                                                               | 手势参数不变                    |
+| `SendGiftFinish`                                       | `SendGift.Finish`                                                                                                                              | `focus` 日志文案不变            |
+
+> 识别器名称：MAK 的 `Common_AllOfIntersect` 在本项目改名为 `AllOfIntersect`；MAK `SendGiftMain` 的
+> 「正在前往好友列表……」提示日志未保留。
 
 ## 关键约定
 
@@ -131,8 +135,9 @@ SendGift.Step（DirectHit，max_hit 50）
   `SendGift.Loop` 只可能命中 `SendGift.Finish`，即轮数兜底。
 - **`ColorMatch` 子识别必须 `connected: true`**：否则整条 ROI 会被当成一个结果，交集判定失效，`SendGift.Do` 会误点已赠送好友。
 - **每日上限写死在识别正则里**：游戏改上限时同步改 `SendGift.QuotaFull.expected` 的两个数字。
-- **阈值与颜色区间沿用 MAK 默认**：模板匹配走框架默认阈值 0.7（`green_mask` 去掉礼物图标的绿底），
-  `ColorMatch` 用 RGB 方法（`method` 默认 4）、金色区间 `[235,235,80]`–`[255,255,115]`、`count: 600`。
+- **阈值与颜色区间沿用 MAK 默认**：`SendGift.Do` 里的模板匹配走框架默认阈值 0.7（`green_mask` 去掉礼物图标的绿底），
+  `SendGift.CheckHomePage` 沿用 `Common.CheckHomePage` 的 `threshold: 0.75`；`ColorMatch` 用 RGB 方法
+  （`method` 默认 4）、金色区间 `[235,235,80]`–`[255,255,115]`、`count: 600`。
 - **没有新增等待**：导航节点用 `post_wait_freezes` 收敛界面，主循环内不引入 `pre_delay` / `post_delay`。
 - **未处理的边界（与 MAK 一致）**：赠送时若弹出二次确认或「获得物品」弹窗，当前流程不处理；
   需要时把 `[JumpBack]Common.CheckItemObtained` 挂进 `SendGift.Do.next` 或另补节点。
@@ -140,7 +145,7 @@ SendGift.Step（DirectHit，max_hit 50）
 ## 改动这类流程要动哪些文件
 
 1. 流程节点改 `resource/base/pipeline/send_gift.json`（节点名 `SendGift.*` 不要随便改，`tasks/send_gift.json` 的 `entry` 依赖它）
-2. 组合识别逻辑改 `agent/custom/recognition/general.py` 的 `AllOfIntersect`；新增/改名时同步 `__init__.py` 的 `RECOGNITION_MODULES`
+2. 组合识别逻辑改 `agent/custom/recognition/general.py` 的 `AllOfIntersect`；识别名由 `@AgentServer.custom_recognition("AllOfIntersect")` 注册，改模块名时同步 `__init__.py` 的 `RECOGNITION_MODULES`
 3. 模板图换 `resource/base/image/send_gift/` 下的两张图（720p 基准裁剪）
 4. 导航接入方式变化（例如换入口图标）时，只改 `SendGift.ClickFriendEntry` / `SendGift.RetryClickFriendEntry` 的模板与 ROI
 5. 任务名、分组、描述改 `tasks/send_gift.json`；新增任务文件要登记到 `interface.json` 的 `import`

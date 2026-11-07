@@ -194,6 +194,33 @@ class TestGeometryHelpers:
 
         assert sorted(shuffled) == sorted(candidates)
 
+    def test_boxes_falls_back_to_detail_box(self) -> None:
+        """DirectHit 等无 results 列表的算法，回退取节点自身命中框。"""
+        detail = SimpleNamespace(
+            hit=True,
+            box=SimpleNamespace(x=10, y=20, w=30, h=40),
+            all_results=[],
+            filtered_results=[],
+        )
+
+        assert general._boxes(cast(Any, detail)) == [[10, 20, 30, 40]]
+
+    def test_boxes_falls_back_when_results_have_no_box(self) -> None:
+        """And/Or 的结果是子识别数组（无 box 字段），同样回退到 detail.box。"""
+        detail = SimpleNamespace(
+            hit=True,
+            box=SimpleNamespace(x=1, y=2, w=3, h=4),
+            all_results=[SimpleNamespace(sub_results=[])],
+            filtered_results=[],
+        )
+
+        assert general._boxes(cast(Any, detail)) == [[1, 2, 3, 4]]
+
+    def test_boxes_prefers_all_results_over_detail_box(self) -> None:
+        detail = _Detail([[1, 2, 3, 4], [5, 6, 7, 8]])
+
+        assert general._boxes(cast(Any, detail)) == [[1, 2, 3, 4], [5, 6, 7, 8]]
+
 
 class TestSendGiftPipeline:
     def _pipeline(self) -> dict[str, Any]:
