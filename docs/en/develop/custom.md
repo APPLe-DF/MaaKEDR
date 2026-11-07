@@ -51,18 +51,22 @@ Pipeline usage:
 "NodeName": {
     "recognition": "Custom",
     "custom_recognition": "MyRecognizer",
-    "custom_recognition_param": "{\"key\": \"value\"}",
+    "custom_recognition_param": { "key": "value" },
     "action": { "type": "Click" }
 }
 ```
 
-> `custom_recognition_param` is a JSON **string** (serialized), not an object.
+> `custom_recognition_param` can be written as a plain JSON **object** (same as `custom_action_param`): MaaFW converts it
+> to a JSON string before calling the Python callback, so an object is serialized once. A JSON string still works, but it
+> is serialized a second time and arrives double-escaped as `"{\"key\": \"value\"}"`, which only `parse_params`'
+> multi-level unwrapping restores; prefer the object form for new nodes.
 
 **In-repo examples**:
 
 - `agent/custom/recognition/event_stage.py`: `CheckShopRefreshAfterPurchase` routes dynamically between "keep checking" and "perform one fallback refresh" based on shop OCR
 - `agent/custom/recognition/stamina.py`: `ReadStamina` rotates and straightens the ROI before OCR, and returns `None` when nothing readable is found
 - `agent/custom/recognition/farm_resources.py`: `CheckResourceStage` matches a stage name passed in through options
+- `agent/custom/recognition/general.py`: `AllOfIntersect` intersects the boxes of several sub-recognitions that hit at the same time, then picks one by `order_by`/`index` (the send-gift task uses it to find "template button ∩ golden blob" buttons)
 
 ### Custom Action
 

@@ -52,18 +52,21 @@ Pipeline 中调用：
 "NodeName": {
     "recognition": "Custom",
     "custom_recognition": "MyRecognizer",
-    "custom_recognition_param": "{\"key\": \"value\"}",
+    "custom_recognition_param": { "key": "value" },
     "action": { "type": "Click" }
 }
 ```
 
-> `custom_recognition_param` 是 JSON **字符串**（需序列化），不是 JSON 对象。
+> `custom_recognition_param` 直接写 JSON **对象**即可（与 `custom_action_param` 一致）：MaaFW 交给 Python
+> 回调时会统一转成 JSON 字符串，对象只序列化一次。写成 JSON 字符串也能用，但会被再序列化一次，回调收到的是
+> 双重转义的 `"{\"key\": \"value\"}"`，靠 `parse_params` 的多层解包才能还原；新增节点建议写对象。
 
 **项目实例**：
 
 - `agent/custom/recognition/event_stage.py`：`CheckShopRefreshAfterPurchase` 用商店 OCR 结果在"继续检查"和"一次性补点刷新"之间动态路由
 - `agent/custom/recognition/stamina.py`：`ReadStamina` 先旋转扶正 ROI 再 OCR，读不出时返回 `None`
 - `agent/custom/recognition/farm_resources.py`：`CheckResourceStage` 按选项传入的关卡名做 OCR 匹配
+- `agent/custom/recognition/general.py`：`AllOfIntersect` 把多个子识别「同时命中」的框取交集后按 `order_by`/`index` 选一个（赠送礼物用它把「模板按钮 ∩ 金色连通块」的按钮挑出来）
 
 ### 自定义动作
 
