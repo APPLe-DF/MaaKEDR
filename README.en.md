@@ -67,6 +67,7 @@ Powered by [MaaFramework](https://github.com/MaaXYZ/MaaFramework)!
 - Stamina-drain loop mode
 - Event stages and shop (Flare EX-stage farming and shop clearing)
 - Stamina info (reads home-screen stamina and reports refill time)
+- Send Gift (gifts friends in the friend list until the daily quota is used up)
 
 ---
 
@@ -162,6 +163,7 @@ MaaKEDR/
 │   ├── farm_resources.json  #   Resource farming
 │   ├── farm_remaining_stamina.json # Remaining stamina farming
 │   ├── event_stage.json     #   Event stages & shop
+│   ├── send_gift.json       #   Send gift
 │   └── stamina_info.json    #   Stamina info
 ├── resource/
 │   ├── base/                # Core resources (shared by all servers)

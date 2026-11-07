@@ -316,12 +316,16 @@ Battle won → click → jump back and re-check → fight again → exit when st
         "next": ["FarmResources.ResourceCollect"]
     },
     "FarmResources.ClickStage": {
-        "custom_recognition_param": "{\"stage_name\": \"1-1\", \"stage_index\": 1, \"resource_type\": \"特别军费行动\"}"
+        "custom_recognition_param": {
+            "stage_name": "1-1",
+            "stage_index": 1,
+            "resource_type": "特别军费行动"
+        }
     }
 }
 ```
 
-Can override `next`, `roi`, `threshold`, `custom_action_param`, etc.
+Can override `next`, `roi`, `threshold`, `custom_action_param`, etc. Like `custom_action_param`, `custom_recognition_param` can be written as a plain JSON object; the JSON-string form also works but is serialized a second time (see [Custom recognition](custom.md)).
 
 ### max_hit Anti-loop
 

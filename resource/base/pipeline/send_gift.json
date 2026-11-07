@@ -85,7 +85,6 @@
         "action": {
             "type": "DoNothing"
         },
-        "timeout": 5000,
         "next": [
             "SendGift.Loop"
         ]

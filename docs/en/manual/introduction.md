@@ -238,6 +238,28 @@ MaaKEDR will automatically:
 
 ---
 
+## Send Gift
+
+Each day, enters the friend list from the home screen and gifts the **topmost still giftable** friends one by one; each round gifts one friend and swipes up one screen until the daily quota `20/20` is used up or the round-limit fallback ends the task.
+
+**Prerequisites:** the game is on the home screen (the task returns there automatically); the friend list is on the "Friend List" tab.
+
+**Options:** none (fixed behaviour, checked by default; not part of the "Daily" preset — tick it manually when needed).
+
+It automatically:
+
+1. Confirms it is on the home screen (returns home automatically if not)
+2. Clicks the friend icon at the top-right of the home screen and confirms with OCR
+3. Uses the "gift-button template ∩ golden connected region" combined recognition to pick giftable buttons and clicks the topmost one
+4. Swipes up one screen and repeats until the daily quota is used up or the round-limit fallback triggers
+5. When the quota is used up, logs 「今日赠礼已达上限」 and 「赠送礼物完成！」 (Chinese log text)
+
+> [!NOTE]
+>
+> Task success only means the flow finished; it does not guarantee gifts were sent. A second confirmation dialog or an "item obtained" popup is not handled by the current flow.
+
+---
+
 ## Task Presets
 
 Presets check a set of common tasks in one click for different scenarios:

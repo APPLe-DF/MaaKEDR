@@ -200,6 +200,12 @@ def _boxes(detail: RecognitionDetail | None) -> list[list[int]]:
         box = _rect(getattr(result, "box", None))
         if box is not None:
             boxes.append(box)
+    if not boxes:
+        # DirectHit 没有 results 列表、And/Or 的结果是子识别数组（没有 box 字段），
+        # 这些算法的命中框只在 detail.box 上，回退取节点自身的命中框。
+        fallback = _rect(detail.box)
+        if fallback is not None:
+            boxes.append(fallback)
     return boxes
 
 
