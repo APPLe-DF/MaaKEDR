@@ -26,6 +26,7 @@ Imported tasks in `interface.json`:
 - `tasks/pvp.json` — PVP
 - `tasks/claim_rewards.json` — claim rewards and claim remaining rewards
 - `tasks/stamina_info.json` — stamina info (home-screen stamina and refill time)
+- `tasks/send_gift.json` — send gift (gift friends until the daily quota is used up)
 
 Task presets: `tasks/preset/Daily.json` (daily) and `tasks/preset/Activity.json` (activity). Selecting a preset in the GUI checks the matching task combo at once; the activity preset includes `活动关卡刷取` / `活动商店兑换`, which are enabled by default when chosen.
 

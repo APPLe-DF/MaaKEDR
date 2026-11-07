@@ -1,0 +1,233 @@
+{
+    "SendGift.EnsureHome": {
+        "desc": "任务入口：在主页则点好友入口；不在主页由通用枢纽回主页后重试",
+        "max_hit": 6,
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "SendGift.CheckHomePage",
+            "[JumpBack]Common.EnsureHome"
+        ]
+    },
+    "SendGift.CheckHomePage": {
+        "desc": "确认当前是否在游戏主页（全局主页标记 more.png）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1199,
+            6,
+            77,
+            83
+        ],
+        "template": "more.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "SendGift.ClickFriendEntry",
+            "[JumpBack]Common.EnsureHome"
+        ]
+    },
+    "SendGift.ClickFriendEntry": {
+        "desc": "点击主界面好友入口（右上角好友图标）",
+        "max_hit": 5,
+        "recognition": "TemplateMatch",
+        "roi": [
+            1080,
+            20,
+            60,
+            50
+        ],
+        "template": "send_gift/homepage_friend.png",
+        "green_mask": true,
+        "action": {
+            "type": "Click"
+        },
+        "post_wait_freezes": 500,
+        "next": [
+            "SendGift.CheckFriendList",
+            "SendGift.RetryClickFriendEntry",
+            "[JumpBack]Common.CheckItemObtained"
+        ]
+    },
+    "SendGift.RetryClickFriendEntry": {
+        "desc": "重试点击好友入口（点击丢失时）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1080,
+            20,
+            60,
+            50
+        ],
+        "template": "send_gift/homepage_friend.png",
+        "green_mask": true,
+        "action": {
+            "type": "Click"
+        },
+        "post_wait_freezes": 500,
+        "next": [
+            "SendGift.CheckFriendList",
+            "[JumpBack]Common.CheckItemObtained"
+        ]
+    },
+    "SendGift.CheckFriendList": {
+        "desc": "OCR 确认已进入好友列表（右侧页签「好友列表」）",
+        "recognition": "OCR",
+        "roi": [
+            1120,
+            195,
+            135,
+            30
+        ],
+        "expected": "好友列表",
+        "action": {
+            "type": "DoNothing"
+        },
+        "timeout": 5000,
+        "next": [
+            "SendGift.Loop"
+        ]
+    },
+    "SendGift.Loop": {
+        "desc": "赠送礼物主循环：先查今日额度，再走一轮（点一个 + 滑一屏），额度用尽或轮数用尽则收尾",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "SendGift.QuotaFull",
+            "[JumpBack]SendGift.Step",
+            "SendGift.Finish"
+        ]
+    },
+    "SendGift.QuotaFull": {
+        "desc": "今日赠礼额度已满（OCR 读好友列表右下角「20/20」）",
+        "recognition": "OCR",
+        "roi": [
+            1120,
+            665,
+            135,
+            25
+        ],
+        "expected": "20\\s*[/／]\\s*20",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "SendGift.Finish"
+        ],
+        "focus": {
+            "Node.Recognition.Succeeded": {
+                "content": "今日赠礼已达上限",
+                "display": [
+                    "log"
+                ]
+            }
+        }
+    },
+    "SendGift.Step": {
+        "desc": "赠送礼物一轮：点到就点、点不到直接滑，保证每轮必滑一次；max_hit 计轮数兜底",
+        "max_hit": 50,
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "SendGift.Do",
+            "SendGift.Swipe"
+        ]
+    },
+    "SendGift.Do": {
+        "desc": "点最靠上且可赠送的那一个（赠送图标模板 ∩ 金色连通块，逐按钮取交集，已赠送的灰色按钮自然被跳过）",
+        "max_hit": 20,
+        "recognition": "Custom",
+        "custom_recognition": "AllOfIntersect",
+        "custom_recognition_param": {
+            "all_of": [
+                {
+                    "type": "TemplateMatch",
+                    "param": {
+                        "template": "send_gift/gift_button.png",
+                        "roi": [
+                            970,
+                            110,
+                            125,
+                            595
+                        ],
+                        "green_mask": true
+                    }
+                },
+                {
+                    "type": "ColorMatch",
+                    "param": {
+                        "roi": [
+                            970,
+                            110,
+                            125,
+                            595
+                        ],
+                        "lower": [
+                            235,
+                            235,
+                            80
+                        ],
+                        "upper": [
+                            255,
+                            255,
+                            115
+                        ],
+                        "connected": true,
+                        "count": 600
+                    }
+                }
+            ],
+            "order_by": "Vertical",
+            "index": 0
+        },
+        "action": {
+            "type": "Click"
+        },
+        "next": [
+            "SendGift.Swipe"
+        ]
+    },
+    "SendGift.Swipe": {
+        "desc": "上滑一屏，把下面几行好友带进可视区（end_hold 让滑动稳定停住）",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "Swipe",
+            "param": {
+                "begin": [
+                    680,
+                    420,
+                    200,
+                    10
+                ],
+                "end": [
+                    680,
+                    270,
+                    200,
+                    10
+                ],
+                "end_hold": 1000
+            }
+        }
+    },
+    "SendGift.Finish": {
+        "desc": "赠送礼物完成",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "focus": {
+            "Node.Recognition.Starting": {
+                "content": "赠送礼物完成！",
+                "display": [
+                    "log"
+                ]
+            }
+        }
+    }
+}

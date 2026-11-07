@@ -23,6 +23,7 @@ dir:
 - [玩家对战](./pvp.md) — PVP 循环、赛季重置与结果识别
 - [活动关卡与活动商店](./event-stage.md) — 活动关卡刷取、次数耗尽与商店清空
 - [体力信息](./stamina-info.md) — 主界面体力读取与回满时间
+- [赠送礼物](./send-gift.md) — 好友列表送礼、额度判定与交集识别
 
 ## 相关代码位置
 
@@ -50,7 +51,7 @@ dir:
 
 1. 任务与选项写在 `tasks/<task>.json`：`task[]` 声明 `name` / `entry` / `option`，选项用 `cases[].pipeline_override`
    指向**已存在**的节点名
-2. 新增任务文件要登记到 `interface.json` 的 `import` 数组（当前为 7 个任务文件 + 2 个预设文件）
+2. 新增任务文件要登记到 `interface.json` 的 `import` 数组（当前为 8 个任务文件 + 2 个预设文件）
 3. 任务要进预设时同步 `tasks/preset/Daily.json` / `tasks/preset/Activity.json`（预设按**任务名**引用）
 4. 流程节点写进 `resource/base/pipeline/<task>.json`；跨任务复用的通用节点放 `common.json`
 5. 新增或改动 Custom 识别/动作时，同步 `agent/custom/recognition/`、`agent/custom/action/` 下的实现与对应
