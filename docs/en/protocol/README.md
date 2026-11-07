@@ -25,6 +25,7 @@ uses them.
 - [PVP](./pvp.md) — PVP loop, season reset and result reading
 - [Event stages and shop](./event-stage.md) — event stage farming, exhausted attempts and shop clearing
 - [Stamina info](./stamina-info.md) — home-screen stamina read and refill time
+- [Send gift](./send-gift.md) — gifting on the friend list, quota check and intersection recognition
 
 ## Code map
 
@@ -52,7 +53,7 @@ Every task protocol page follows the same order. Use it when adding a page so re
 
 1. Define the task and options in `tasks/<task>.json`: `task[]` declares `name` / `entry` / `option`, and options use
    `cases[].pipeline_override` pointing at **existing** node names
-2. Register a new task file in the `import` array of `interface.json` (currently 7 task files + 2 preset files)
+2. Register a new task file in the `import` array of `interface.json` (currently 8 task files + 2 preset files)
 3. Update `tasks/preset/Daily.json` / `tasks/preset/Activity.json` when the task belongs to a preset (presets reference
    tasks by **task name**)
 4. Put flow nodes in `resource/base/pipeline/<task>.json`; put cross-task shared nodes in `common.json`

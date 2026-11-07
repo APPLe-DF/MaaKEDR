@@ -70,6 +70,7 @@
         "./tasks/pvp.json",
         "./tasks/claim_rewards.json",
         "./tasks/stamina_info.json",
+        "./tasks/send_gift.json",
         "./tasks/preset/Daily.json",
         "./tasks/preset/Activity.json"
     ]

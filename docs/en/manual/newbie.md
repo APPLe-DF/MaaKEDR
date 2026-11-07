@@ -331,6 +331,7 @@ MaaKEDR provides these automation tasks:
 | Event Shop              | Auto-buy fixed-guarantee items in the event shop                                    |
 | PVP                     | Arena auto-battle                                                                   |
 | Stamina Info            | Read home-screen stamina and report refill time                                     |
+| Send Gift               | Gift friends in the friend list until the daily quota is used up                    |
 
 > [!IMPORTANT]
 >

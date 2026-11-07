@@ -38,11 +38,13 @@ MaaKEDR/
 │   │   ├── farm_resources.json     # Resource farming
 │   │   ├── pvp.json                # PVP battles
 │   │   ├── stamina.json            # Stamina info
+│   │   ├── send_gift.json          # Send gift
 │   │   └── event_stage.json        # Event stages and shop
 │   ├── image/                      # Template images
 │   │   ├── claim_rewards/          # Reward images
 │   │   ├── farm_resources/         # Farming images
 │   │   ├── pvp/                    # PVP images
+│   │   ├── send_gift/              # Send-gift images
 │   │   ├── event_stage/            # Event images
 │   │   └── ...                     # Shared images
 │   ├── model/ocr/                  # PP-OCRv6 models (copied from MaaCommonAssets, not committed)
@@ -60,6 +62,7 @@ MaaKEDR/
 │   ├── farm_remaining_stamina.json # Remaining-stamina farming
 │   ├── pvp.json                    # PVP battles
 │   ├── stamina_info.json           # Stamina info
+│   ├── send_gift.json              # Send gift
 │   ├── event_stage.json            # Event stages and shop
 │   └── preset/                     # Task presets (Daily / Activity)
 │
