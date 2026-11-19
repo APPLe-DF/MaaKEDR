@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@nekosu/maa-tools':
-        specifier: 1.3.0
-        version: 1.3.0
+        specifier: 1.3.1
+        version: 1.3.1
       '@nekosu/prettier-plugin-maafw-sort':
         specifier: 1.1.0
         version: 1.1.0
@@ -645,17 +645,17 @@ packages:
       '@emnapi/core': ^1.7.1
       '@emnapi/runtime': ^1.7.1
 
-  '@nekosu/maa-locale@1.2.0':
-    resolution: {integrity: sha512-fzuC4yeOhQAMJVMEC0SN6SePDvmtiKrsNIUubHrYfVJc9FHi/VooQy7Mx3y14+T7fX3thIo7cF3O1/2oV/yzKQ==}
+  '@nekosu/maa-locale@1.3.0':
+    resolution: {integrity: sha512-Y9KvXdPi9JyTlafg751++SftPyN0eYcsqg8E1OWmHLUE9HK3lX6UdDidO+Hu4idiCVK2BjYRsXHTfHbZ/qZgIg==}
 
-  '@nekosu/maa-pipeline-manager@1.1.0':
-    resolution: {integrity: sha512-JCB7gaHBnl2Iet5F9hb/ATiAukkyPIfSzlNmvc5O5j55qBZAxH6lqyK3rU0Etg/XMQVtCVnhGMFhPPxqrYAYXQ==}
+  '@nekosu/maa-pipeline-manager@1.2.0':
+    resolution: {integrity: sha512-kmzDA7tOh+Z9QDQ6CumSzMhkuMoGLtlV7yWf4QmI0jbkywEjfugcP+o4fyeubaZmeYDGfhu/ttRHBIrIKAcGdg==}
 
   '@nekosu/maa-tasker@1.0.0':
     resolution: {integrity: sha512-p5SaBJGvAMr5J2uk6imoiK7eIF7yA67HndWyfxddAHHdoyliai2dkHqBhTmDDuRmmAJ/ly4INg5Hnx8CI7Po3A==}
 
-  '@nekosu/maa-tools@1.3.0':
-    resolution: {integrity: sha512-EapP65M2jFh7i2LoJfuF0Pgm+vNTSl+C6RwlSseKsgVqA4Fc3vVoqcMSO8o2MfC8lNokTQ05wo5L0gZZoUESNA==}
+  '@nekosu/maa-tools@1.3.1':
+    resolution: {integrity: sha512-XOTLpJ1bnhN1qoZ9oOXXDtNpfpXMNPzZCR/Zxea1JrPfA2zptntdVHdNk3eUQ5Vuv9gKrkjmeyUKZ3gwbsdn0w==}
     hasBin: true
 
   '@nekosu/maa-version-manager@1.1.0':
@@ -1718,8 +1718,8 @@ packages:
   boolbase@1.0.0:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
 
-  brace-expansion@5.0.12:
-    resolution: {integrity: sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==}
+  brace-expansion@5.0.13:
+    resolution: {integrity: sha512-Vh3dmFbc4wZeox7M9I/0L9GfFd83Su4+yCck/OF9Gi/P/dAHn0RT7X4K9R7gMNMhDck3DvhR6QXsnQdjjgwNvQ==}
     engines: {node: 20 || >=22}
 
   browser-or-node@3.0.0:
@@ -2077,8 +2077,8 @@ packages:
   giscus@1.6.0:
     resolution: {integrity: sha512-Zrsi8r4t1LVW950keaWcsURuZUQwUaMKjvJgTCY125vkW6OiEBkatE7ScJDbpqKHdZwb///7FVC21SE3iFK3PQ==}
 
-  glob@13.0.6:
-    resolution: {integrity: sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw==}
+  glob@13.0.7:
+    resolution: {integrity: sha512-wfsFgXQ8A3SEI9XGf7Nl3Y9l7ffSrGh7SUCT7vU/2CzYPep9kjxAn1S40F9OPKxAMGCVl7HtNlJhrCJUeUq83g==}
     engines: {node: 18 || 20 || >=22}
 
   gopd@1.2.0:
@@ -2087,6 +2087,9 @@ packages:
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
+
+  graceful-fs@4.2.12:
+    resolution: {integrity: sha512-iuyGF2E4oafQfPsRrG2wtY2ILupMhvtdrhzrxB+0VcjsPpSPttpfYdjnGFGsTi5MaJFjI1jOKHPQ6UTbTj9TAw==}
 
   gray-matter@4.0.3:
     resolution: {integrity: sha512-5v6yZd4JK3eMI3FqqCouswVqwugaA9r4dNZB1wwcmrD02QkV5H0y7XBQW8QwQqEaZY1pM9aqORSORhJRdNK44Q==}
@@ -2200,8 +2203,8 @@ packages:
     resolution: {integrity: sha512-IBTdIkzZNOpqm7q3dRqJvMaldXjDHWkEDfrwGEQTs5eaQMWV+djAhR+wahyNNMAa+qpbDUhBMVt4ZKNwpPm7xQ==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  ip-address@10.7.5:
-    resolution: {integrity: sha512-t2v0rkILYv9WXmSL7TpAaU3HXgaFYOPUcH3QHgwQ++gpJuH3bqyMy4Fvt/DJCTKwzH3Cf+bAp5W/mFL39KPLzA==}
+  ip-address@10.7.6:
+    resolution: {integrity: sha512-00LYkM6byILa9eQIx6qoaXCM40xTLd56AZ4vyaPW3YTyb49VZYPo5xsiAq4tuQ54GH4R7gVdYScJ1B7B77PuTg==}
     engines: {node: '>= 12'}
 
   is-extendable@0.1.1:
@@ -2717,8 +2720,8 @@ packages:
   package-manager-detector@1.8.0:
     resolution: {integrity: sha512-yQA4H19AmPEoMUeavPMDIe1higySl/gH/yaQrkT/s07Qp+7pp2hYz30N3z2l5BkjVkF9Ow6o0wjJamm2y7Sn0A==}
 
-  pacote@21.5.2:
-    resolution: {integrity: sha512-rifBXawDMv3nLvABWr1kTpSk0UjeglTT4Vt9t8nU9xSnfdZcCTy+FOjO6TgXWAS77lIfbZlRkl2eKQcdY0++jA==}
+  pacote@21.5.3:
+    resolution: {integrity: sha512-XAHnxRzERPW/Y3sLaCgfUVdfP5Di1K0wiUWsDaK4reodu20Kl0pVZcw8Mdd2LaLsUpot6YLVOEgmIqMEL9Tjog==}
     engines: {node: ^20.17.0 || >=22.9.0}
     hasBin: true
 
@@ -3061,8 +3064,8 @@ packages:
   secure-compare@3.0.1:
     resolution: {integrity: sha512-AckIIV90rPDcBcglUwXPF3kg0P0qmPsPXAj6BBEENQE1p5yA1xfmDJzfi1Tappj37Pv2mVbKpL3Z1T+Nn7k1Qw==}
 
-  semver@7.8.5:
-    resolution: {integrity: sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==}
+  semver@7.8.6:
+    resolution: {integrity: sha512-9lpSSU4Mly3mrtruwLs1eLK6+gzbzqeBFwRNjIjE+9LuDpWdYctrQlQ3ej1Ilgi7gknpsTRnPoLP8DpCHqHIJw==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -3198,8 +3201,8 @@ packages:
     resolution: {integrity: sha512-yEFYrVhod+hdNyx7g5Bnkkb0G6si8HJurOoOEgC8B/O0uXLHlaey/65KRv6cuWBNhBgHKAROVpc7QyYqE5gFng==}
     engines: {node: '>=20'}
 
-  tar@7.5.22:
-    resolution: {integrity: sha512-MFO/QzvtAOmJbkhOaCTvbGcFN9L9b+JunIsDwaKljSOdcLMea3NJ1k9Usz/rjdfSXTq4dfzfeS7W4p4YOAAHeA==}
+  tar@7.5.23:
+    resolution: {integrity: sha512-lkukzdoGngZHJZXxW4S/E4Fp9ghTDlyZXrQGRNoJ/LXvDKcXUTq2sg5yQe74po7Voea6n/IN09+wE/QvJMiifA==}
     engines: {node: '>=18'}
 
   tinyexec@1.2.4:
@@ -4138,11 +4141,11 @@ snapshots:
       '@tybys/wasm-util': 0.10.3
     optional: true
 
-  '@nekosu/maa-locale@1.2.0': {}
+  '@nekosu/maa-locale@1.3.0': {}
 
-  '@nekosu/maa-pipeline-manager@1.1.0':
+  '@nekosu/maa-pipeline-manager@1.2.0':
     dependencies:
-      '@nekosu/maa-locale': 1.2.0
+      '@nekosu/maa-locale': 1.3.0
       '@nekosu/maa-tasker': 1.0.0
       chokidar: 5.0.0
       jsonc-parser: 3.3.1
@@ -4151,11 +4154,11 @@ snapshots:
     dependencies:
       '@nekosu/simple-parser': 1.0.0
 
-  '@nekosu/maa-tools@1.3.0':
+  '@nekosu/maa-tools@1.3.1':
     dependencies:
       '@actions/core': 3.0.1
-      '@nekosu/maa-locale': 1.2.0
-      '@nekosu/maa-pipeline-manager': 1.1.0
+      '@nekosu/maa-locale': 1.3.0
+      '@nekosu/maa-pipeline-manager': 1.2.0
       '@nekosu/maa-version-manager': 1.1.0
       chalk: 5.6.2
       jiti: 2.7.0
@@ -4166,9 +4169,9 @@ snapshots:
 
   '@nekosu/maa-version-manager@1.1.0':
     dependencies:
-      pacote: 21.5.2
+      pacote: 21.5.3
       proper-lockfile: 4.1.2
-      semver: 7.8.5
+      semver: 7.8.6
     transitivePeerDependencies:
       - supports-color
 
@@ -4192,7 +4195,7 @@ snapshots:
 
   '@npmcli/fs@5.0.0':
     dependencies:
-      semver: 7.8.5
+      semver: 7.8.6
 
   '@npmcli/git@7.0.2':
     dependencies:
@@ -4202,7 +4205,7 @@ snapshots:
       lru-cache: 11.5.3
       npm-pick-manifest: 11.0.3
       proc-log: 6.1.0
-      semver: 7.8.5
+      semver: 7.8.6
       which: 6.0.1
 
   '@npmcli/installed-package-contents@4.0.0':
@@ -4215,11 +4218,11 @@ snapshots:
   '@npmcli/package-json@7.0.5':
     dependencies:
       '@npmcli/git': 7.0.2
-      glob: 13.0.6
+      glob: 13.0.7
       hosted-git-info: 9.0.3
       json-parse-even-better-errors: 5.0.0
       proc-log: 6.1.0
-      semver: 7.8.5
+      semver: 7.8.6
       spdx-expression-parse: 4.0.0
 
   '@npmcli/promise-spawn@9.0.2':
@@ -5396,7 +5399,7 @@ snapshots:
 
   boolbase@1.0.0: {}
 
-  brace-expansion@5.0.12:
+  brace-expansion@5.0.13:
     dependencies:
       balanced-match: 4.0.4
 
@@ -5418,7 +5421,7 @@ snapshots:
     dependencies:
       '@npmcli/fs': 5.0.0
       fs-minipass: 3.0.3
-      glob: 13.0.6
+      glob: 13.0.7
       lru-cache: 11.5.3
       minipass: 7.1.3
       minipass-collect: 2.0.1
@@ -5733,7 +5736,7 @@ snapshots:
     dependencies:
       lit: 3.3.3
 
-  glob@13.0.6:
+  glob@13.0.7:
     dependencies:
       minimatch: 10.2.6
       minipass: 7.1.3
@@ -5742,6 +5745,8 @@ snapshots:
   gopd@1.2.0: {}
 
   graceful-fs@4.2.11: {}
+
+  graceful-fs@4.2.12: {}
 
   gray-matter@4.0.3:
     dependencies:
@@ -5903,7 +5908,7 @@ snapshots:
 
   ini@6.0.0: {}
 
-  ip-address@10.7.5: {}
+  ip-address@10.7.6: {}
 
   is-extendable@0.1.1: {}
 
@@ -5950,7 +5955,7 @@ snapshots:
     dependencies:
       universalify: 2.0.1
     optionalDependencies:
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.12
 
   jsonparse@1.3.1: {}
 
@@ -6307,7 +6312,7 @@ snapshots:
 
   minimatch@10.2.6:
     dependencies:
-      brace-expansion: 5.0.12
+      brace-expansion: 5.0.13
 
   minimist@1.2.8: {}
 
@@ -6377,11 +6382,11 @@ snapshots:
     dependencies:
       env-paths: 2.2.1
       exponential-backoff: 3.1.3
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.12
       nopt: 9.0.0
       proc-log: 6.1.0
-      semver: 7.8.5
-      tar: 7.5.22
+      semver: 7.8.6
+      tar: 7.5.23
       tinyglobby: 0.2.17
       undici: 6.29.1
       which: 6.0.1
@@ -6400,7 +6405,7 @@ snapshots:
 
   npm-install-checks@8.0.0:
     dependencies:
-      semver: 7.8.5
+      semver: 7.8.6
 
   npm-normalize-package-bin@5.0.0: {}
 
@@ -6408,7 +6413,7 @@ snapshots:
     dependencies:
       hosted-git-info: 9.0.3
       proc-log: 6.1.0
-      semver: 7.8.5
+      semver: 7.8.6
       validate-npm-package-name: 7.0.2
 
   npm-packlist@10.0.4:
@@ -6421,7 +6426,7 @@ snapshots:
       npm-install-checks: 8.0.0
       npm-normalize-package-bin: 5.0.0
       npm-package-arg: 13.0.2
-      semver: 7.8.5
+      semver: 7.8.6
 
   npm-registry-fetch@19.1.1:
     dependencies:
@@ -6485,7 +6490,7 @@ snapshots:
 
   package-manager-detector@1.8.0: {}
 
-  pacote@21.5.2:
+  pacote@21.5.3:
     dependencies:
       '@gar/promise-retry': 1.0.3
       '@npmcli/git': 7.0.2
@@ -6503,7 +6508,7 @@ snapshots:
       proc-log: 6.1.0
       sigstore: 4.1.1
       ssri: 13.0.1
-      tar: 7.5.22
+      tar: 7.5.23
     transitivePeerDependencies:
       - supports-color
 
@@ -6601,7 +6606,7 @@ snapshots:
 
   proper-lockfile@4.1.2:
     dependencies:
-      graceful-fs: 4.2.11
+      graceful-fs: 4.2.12
       retry: 0.12.0
       signal-exit: 3.0.7
 
@@ -6883,7 +6888,7 @@ snapshots:
 
   secure-compare@3.0.1: {}
 
-  semver@7.8.5: {}
+  semver@7.8.6: {}
 
   set-blocking@2.0.0: {}
 
@@ -6971,7 +6976,7 @@ snapshots:
 
   socks@2.8.10:
     dependencies:
-      ip-address: 10.7.5
+      ip-address: 10.7.6
       smart-buffer: 4.2.0
 
   source-map-js@1.2.2: {}
@@ -7043,7 +7048,7 @@ snapshots:
 
   tagged-tag@1.0.0: {}
 
-  tar@7.5.22:
+  tar@7.5.23:
     dependencies:
       '@isaacs/fs-minipass': 4.0.1
       chownr: 3.0.0
