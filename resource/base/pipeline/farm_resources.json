@@ -71,10 +71,10 @@
         "desc": "进入资源收集板块",
         "recognition": "TemplateMatch",
         "roi": [
-            561,
-            635,
-            72,
-            67
+            453,
+            618,
+            139,
+            98
         ],
         "template": "farm_resources/resource_collect_tab.png",
         "threshold": 0.8,
@@ -91,10 +91,10 @@
         "desc": "进入技能演练板块",
         "recognition": "TemplateMatch",
         "roi": [
-            755,
-            630,
-            71,
-            68
+            648,
+            618,
+            139,
+            98
         ],
         "template": "farm_resources/skill_training_tab.png",
         "threshold": 0.8,
