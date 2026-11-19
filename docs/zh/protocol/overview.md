@@ -26,6 +26,7 @@ icon: ri:book-open-line
 - `tasks/pvp.json` — 玩家对战
 - `tasks/claim_rewards.json` — 领取奖励与剩余奖励领取
 - `tasks/stamina_info.json` — 体力信息（主界面体力与回满时间）
+- `tasks/send_gift.json` — 赠送礼物（好友列表送礼，每日额度用尽即结束）
 
 任务预设：`tasks/preset/Daily.json`（日常）、`tasks/preset/Activity.json`（活动）——在 GUI 选择预设即可一键勾选对应任务组合；活动预设内含「活动关卡刷取 / 活动商店兑换」，选择即默认开启。
 

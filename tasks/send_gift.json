@@ -1,0 +1,11 @@
+{
+    "task": [
+        {
+            "name": "赠送礼物",
+            "entry": "SendGift.EnsureHome",
+            "default_check": true,
+            "description": "从主界面进入好友列表，每轮点最靠上且可赠送的好友送一次礼物并上滑一屏，直到今日赠礼额度用尽或轮数兜底；每日上限写死在识别正则里（20/20）",
+            "group": ["Daily"]
+        }
+    ]
+}

@@ -38,11 +38,13 @@ MaaKEDR/
 │   │   ├── farm_resources.json     # 资源刷取
 │   │   ├── pvp.json                # 玩家对战
 │   │   ├── stamina.json            # 体力信息
+│   │   ├── send_gift.json          # 赠送礼物
 │   │   └── event_stage.json        # 活动关卡与活动商店
 │   ├── image/                      # 模板图片
 │   │   ├── claim_rewards/          # 奖励相关图片
 │   │   ├── farm_resources/         # 刷取相关图片
 │   │   ├── pvp/                    # PVP 相关图片
+│   │   ├── send_gift/              # 赠送礼物相关图片
 │   │   ├── event_stage/            # 活动相关图片
 │   │   └── ...                     # 通用图片
 │   ├── model/ocr/                  # PP-OCRv6 模型（由 MaaCommonAssets 复制，不入库）
@@ -60,6 +62,7 @@ MaaKEDR/
 │   ├── farm_remaining_stamina.json # 剩余体力刷取
 │   ├── pvp.json                    # 玩家对战
 │   ├── stamina_info.json           # 体力信息
+│   ├── send_gift.json              # 赠送礼物
 │   ├── event_stage.json            # 活动关卡与商店
 │   └── preset/                     # 任务预设（Daily / Activity）
 │
