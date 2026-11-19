@@ -135,9 +135,9 @@ SendGift.Step（DirectHit，max_hit 50）
   `SendGift.Loop` 只可能命中 `SendGift.Finish`，即轮数兜底。
 - **`ColorMatch` 子识别必须 `connected: true`**：否则整条 ROI 会被当成一个结果，交集判定失效，`SendGift.Do` 会误点已赠送好友。
 - **每日上限写死在识别正则里**：游戏改上限时同步改 `SendGift.QuotaFull.expected` 的两个数字。
-- **阈值与颜色区间沿用 MAK 默认**：`SendGift.Do` 里的模板匹配走框架默认阈值 0.7（`green_mask` 去掉礼物图标的绿底），
+- **阈值与颜色区间按当前游戏实测校准**：`SendGift.Do` 里的模板匹配走框架默认阈值 0.7（`green_mask` 去掉礼物图标的绿底），
   `SendGift.CheckHomePage` 沿用 `Common.CheckHomePage` 的 `threshold: 0.75`；`ColorMatch` 用 RGB 方法
-  （`method` 默认 4）、金色区间 `[235,235,80]`–`[255,255,115]`、`count: 600`。
+  （`method` 默认 4）、金色区间 `[235,235,45]`–`[255,255,80]`、`count: 600`。
 - **没有新增等待**：导航节点用 `post_wait_freezes` 收敛界面，主循环内不引入 `pre_delay` / `post_delay`。
 - **未处理的边界（与 MAK 一致）**：赠送时若弹出二次确认或「获得物品」弹窗，当前流程不处理；
   需要时把 `[JumpBack]Common.CheckItemObtained` 挂进 `SendGift.Do.next` 或另补节点。

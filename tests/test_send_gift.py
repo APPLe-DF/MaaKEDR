@@ -70,8 +70,8 @@ SEND_GIFT_PARAM: dict[str, Any] = {
             "type": "ColorMatch",
             "param": {
                 "roi": [970, 110, 125, 595],
-                "lower": [235, 235, 80],
-                "upper": [255, 255, 115],
+                "lower": [235, 235, 45],
+                "upper": [255, 255, 80],
                 "connected": True,
                 "count": 600,
             },
@@ -273,8 +273,8 @@ class TestSendGiftPipeline:
         assert template["param"]["roi"] == [970, 110, 125, 595]
         assert template["param"]["green_mask"] is True
         assert color["type"] == "ColorMatch"
-        assert color["param"]["lower"] == [235, 235, 80]
-        assert color["param"]["upper"] == [255, 255, 115]
+        assert color["param"]["lower"] == [235, 235, 45]
+        assert color["param"]["upper"] == [255, 255, 80]
         assert color["param"]["connected"] is True
         assert color["param"]["count"] == 600
 
