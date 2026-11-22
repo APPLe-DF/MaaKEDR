@@ -48,6 +48,23 @@ def test_claim_rewards_dispatch_start_is_bounded_and_fails_loudly() -> None:
     ]
 
 
+def test_claim_rewards_dispatch_start_clicks_entry_icon() -> None:
+    """回归：红点 box 仅 18×18 且含外圈，Click 必须偏移到入口图标上，不能点在红点边缘。"""
+    start = _claim_rewards_pipeline()["DispatchClaim.Start"]
+    action = start["action"]
+
+    assert action["type"] == "Click"
+    assert action["param"]["target_offset"] == [24, 17, -5, -7]
+
+    # 实机 ColorMatch 命中框约 [908,303,18,18]；偏移后的点击矩形应落在白色入口图标内
+    box_x, box_y, box_w, box_h = 908, 303, 18, 18
+    offset_x, offset_y, offset_w, offset_h = action["param"]["target_offset"]
+    target = (box_x + offset_x, box_y + offset_y, box_w + offset_w, box_h + offset_h)
+    assert target == (932, 320, 13, 11)
+    assert target[0] >= 930 and target[0] + target[2] <= 1014
+    assert target[1] >= 312 and target[1] + target[3] <= 341
+
+
 def test_claim_rewards_dispatch_recovery_loop_is_bounded() -> None:
     """「关闭」未出现时先关物品弹窗、再回头领一次，并由 max_hit 封顶。"""
     pipeline = _claim_rewards_pipeline()

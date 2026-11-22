@@ -884,7 +884,15 @@
             }
         },
         "action": {
-            "type": "Click"
+            "type": "Click",
+            "param": {
+                "target_offset": [
+                    24,
+                    17,
+                    -5,
+                    -7
+                ]
+            }
         },
         "post_wait_freezes": 500,
         "timeout": 10000,

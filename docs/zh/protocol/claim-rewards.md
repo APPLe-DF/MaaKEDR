@@ -102,6 +102,7 @@ MainHub.next（按顺序轮询，命中即执行并回跳）
 ### 派遣
 
 - `DispatchClaim.Start`：派遣入口有可领取奖励的判定（**ColorMatch** 红点颜色匹配）→ `ClaimButton` → `RedeployConfirm`（可选）→ `Exit`；`Start.next` 同时挂 `Exit`，面板一打开就是「关闭」时直接收尾
+- `DispatchClaim.Start.action` 带 `target_offset: [24, 17, -5, -7]`：ColorMatch 命中框是 18×18（含红点外圈），默认点击会按正态分布在框内随机落点，常落在红点外圈/边缘导致入口点不开；偏移后点击矩形为 13×11，落在右侧白色入口图标上（与 `ClaimRewards.Start` 的 `[932,212,13,11]` 相对其红点框 `[908,195,18,18]` 的 +24/+17 相对位置一致）
 - 不保留入口「重试点击」节点：面板展开动画期间用同一红点判据再点一次会把点击落进面板、导致领取状态错位（Issue #86）。入口点击失败时由 `Start` 自身超时后判失败，不重复点击
 - `DispatchClaim.Start` 带 `max_hit: 1`：单次任务只进入一次。否则红点未及时消失时，`Exit` 回到 `MainHub` 后会被 `[JumpBack]DispatchClaim.Start` 反复重入，形成「开面板 → 关面板」循环并饿死后续分支
 - `DispatchClaim.Start.timeout: 10000`：入口点击未生效（面板 10 秒仍未出现）时 `Start` 超时、任务判失败——`[JumpBack]` 子链超时不会回跳，不会出现「跳过派遣却报成功」
