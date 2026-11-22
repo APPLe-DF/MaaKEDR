@@ -3,9 +3,16 @@ updates:
   - package-ecosystem: npm
     directory: /
     schedule:
-      interval: weekly
+      interval: daily
+    cooldown:
+      default-days: 1
     open-pull-requests-limit: 5
     ignore:
       # Major TypeScript bumps need a manual upgrade (tooling / vuepress ecosystem).
       - dependency-name: typescript
         update-types: ["version-update:semver-major"]
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: daily
+    versioning-strategy: lockfile-only

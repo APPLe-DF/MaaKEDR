@@ -106,10 +106,10 @@ class CheckEventHub(CustomRecognition):
 
         activity_next = str(params.get("activity_next", "EventStage.ClickJourney"))
         global_next = str(params.get("global_next", "EventStage.Start"))
-        other_next = str(params.get("other_next", "EventStage.ReturnToHome"))
+        other_next = str(params.get("other_next", "EventStage.EnsureHome"))
         activity_only = str(params.get("activity_only", "false")).lower() == "true"
         activity_template = str(params.get("activity_template", "flare_home.png"))
-        global_template = str(params.get("global_template", "main_option.png"))
+        global_template = str(params.get("global_template", "more.png"))
         template_roi = coerce_roi(params.get("template_roi"), [0, 0, 1280, 720], "CheckEventHub")
         # 全局主页模板是右上角小图标，默认限定在其常驻区域，避免全屏匹配误判。
         global_roi = template_roi

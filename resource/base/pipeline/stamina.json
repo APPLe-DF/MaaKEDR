@@ -1,4 +1,16 @@
 {
+    "StaminaInfo.EnsureHome": {
+        "desc": "任务入口：在主页则读取体力；不在主页先由自建路由点主页按钮，仍失败则交给通用枢纽",
+        "max_hit": 6,
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "StaminaInfo",
+            "[JumpBack]Common.EnsureHome"
+        ]
+    },
     "StaminaInfo": {
         "desc": "入口路由：确认在主界面后读取体力，读取识别最多尝试 3 次，仍失败则任务失败；不在主界面则点主页按钮自动返回（最多 3 次，避免循环）。静态 next 为 override_next 的兜底，运行时由 CheckStaminaPage 按分支覆盖",
         "recognition": "Custom",

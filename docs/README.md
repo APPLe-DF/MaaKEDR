@@ -1,6 +1,7 @@
 ---
 pageLayout: home
 title: 首页
+description: MaaKEDR（《雪松》小助手）文档站：中文与英文用户手册、开发指南、协议文档。
 config:
     - type: doc-hero
       hero:
@@ -15,18 +16,4 @@ config:
               - theme: alt
                 text: English
                 link: /en/
-    - type: features
-      features:
-          - title: 用户手册
-            icon: 📖
-            details: 完整的安装和使用说明
-            link: /zh/manual/newbie.md
-          - title: 开发指南
-            icon: 🛠️
-            details: 面向开发者的技术文档
-            link: /zh/develop/setup.md
-          - title: 常见问题
-            icon: 💡
-            details: 遇到问题？查看常见问题解答
-            link: /zh/manual/faq.md
 ---

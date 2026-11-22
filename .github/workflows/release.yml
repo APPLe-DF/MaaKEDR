@@ -73,6 +73,12 @@ jobs:
         if: hashFiles('pyproject.toml') != ''
       - run: pnpm release:dry-run
         if: github.event_name == 'workflow_dispatch'
+      # 依赖变更（Dependabot 的 uv 更新）只改 uv.lock，而 sync:runtime 与 APK 的
+      # build_agent_bundle.py 都从导出的 requirements.txt 装依赖。不重导就会拿旧钉版出包，
+      # 且不会有任何报错。--frozen 顺带校验 pyproject 与 lock 一致，不一致直接失败。
+      - name: Re-export requirements from the lock
+        if: hashFiles('pyproject.toml') != ''
+        run: uv export --frozen --format requirements-txt --no-hashes --no-emit-project --no-group dev --output-file requirements.txt
       - run: pnpm sync:runtime
         if: github.event_name != 'workflow_dispatch'
         env:
@@ -144,6 +150,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
+          # 必须拉全量历史与全部 tag：下面的发行说明要靠 `git tag --sort=-v:refname`
+          # 找出上一个正式版。改成 1 会让 tag 列表残缺，范围退化成「最近一个 tag..HEAD」，
+          # 正式版说明会静默丢掉 beta 期间的全部改动。
           fetch-depth: 0
       - name: Generate release notes
         shell: bash
@@ -161,16 +170,56 @@ jobs:
             echo "[ERR] git-cliff binary was not found after extraction"
             exit 1
           fi
-          "$git_cliff" --config .github/cliff.toml --latest --strip header --output CHANGES.md
+
+          tag="$GITHUB_REF_NAME"
+
+          # --latest 只回溯到「最近一个 tag」。正式版前面通常压着若干 beta/rc，那些标签会把
+          # 整段改动切碎：v1.5.7 若直接用 --latest，正文只剩 beta.2 之后的 4 个提交，
+          # beta 期间接入的 Android 客户端、发布包减重等全部消失。
+          # 所以正式版显式取「上个正式版..HEAD」，并忽略中间的预发布标签，让整段改动落进
+          # 同一个 x.y.z 小节；预发布版仍用 --latest（只关心相对上一个 tag 的增量）。
+          if [[ "$tag" == *-* ]]; then
+            echo "[INFO] prerelease $tag — using the latest tag as the lower bound"
+            args=(--latest)
+          else
+            # 只认不带连字符的正式版标签；没有历史正式版时退回全部历史
+            prev_stable="$(git tag --sort=-v:refname \
+              | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' \
+              | grep -vxF "$tag" \
+              | head -n 1 || true)"
+            if [[ -n "$prev_stable" ]]; then
+              echo "[INFO] stable $tag — collecting commits since $prev_stable"
+              args=("$prev_stable..HEAD")
+            else
+              echo "[WARN] stable $tag has no previous stable tag; collecting the full history"
+              args=()
+            fi
+            args+=(--tag "$tag" --ignore-tags '^v[0-9]+\.[0-9]+\.[0-9]+-')
+          fi
+
+          "$git_cliff" --config .github/cliff.toml --strip header "${args[@]}" --output CHANGES.md
+          echo "----- CHANGES.md (first 40 lines) -----"
+          head -n 40 CHANGES.md
       - name: Upload release notes
         uses: actions/upload-artifact@v7
         with:
           name: release-notes
           path: CHANGES.md
 
+  # Android 三包（universal + 双 ABI 单包）与桌面包并行构建；
+  # Release 等两边都完成后才创建，避免 Release 页面出现"桌面包已就位、APK 还在构建"的窗口期
+  android-apks:
+    if: startsWith(github.ref, 'refs/tags/')
+    uses: ./.github/workflows/android-build.yml
+    with:
+      assemble: release
+    secrets: inherit
+    permissions:
+      contents: read
+
   release:
     if: startsWith(github.ref, 'refs/tags/')
-    needs: [package, git_cliff]
+    needs: [package, git_cliff, android-apks]
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -186,6 +235,7 @@ jobs:
           files: |
             release-assets/*.zip
             release-assets/*.tar.gz
+            release-assets/*.apk
       - name: Dispatch post-release hooks
         env:
           GH_TOKEN: ${{ github.token }}
@@ -193,9 +243,11 @@ jobs:
           gh api --method POST "repos/$GITHUB_REPOSITORY/dispatches" \
             -f event_type=create-maa-project-release \
             -f client_payload[tag]="$GITHUB_REF_NAME"
+          # Android APK 使用独立的 MaaKEDR_exec RID，release 时一并触发上传。
           gh api --method POST "repos/$GITHUB_REPOSITORY/dispatches" \
             -f event_type=mirrorchyan-upload \
-            -f client_payload[tag]="$GITHUB_REF_NAME"
+            -f client_payload[tag]="$GITHUB_REF_NAME" \
+            -f client_payload[android]=true
           gh api --method POST "repos/$GITHUB_REPOSITORY/dispatches" \
             -f event_type=mirrorchyan-release-note \
             -f client_payload[tag]="$GITHUB_REF_NAME"

@@ -5,7 +5,7 @@ icon: ic:outline-fast-forward
 
 # Mirror酱使用说明
 
-Mirror酱（[官网](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-release)）是 MaaKEDR 的合作分发与更新平台，让开源应用的更新更简单，发布内容与官方渠道保持一致。用户付费使用，收益与开发者共享，Mirror酱本身也是开源的。
+Mirror酱（[MaaKEDR 直达链接](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-release)）是 MaaKEDR 的合作分发与更新平台，让开源应用的更新更简单，发布内容与官方渠道保持一致。用户付费使用，收益与开发者共享，Mirror酱本身也是开源的。
 
 当您访问或使用该服务时，便表示您同意接受[Mirror酱服务条款](https://mirrorchyan.com/disclaimer.html)所有条款的约束。
 
@@ -17,9 +17,9 @@ Mirror酱（[官网](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maak
 
 ## 在网页端使用
 
-1. 打开 [Mirror酱官网](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-release)
-2. 搜索 `MaaKEDR`
-3. 可执行安装、更新、历史版本下载与捐赠等操作
+打开 [MaaKEDR 的 Mirror酱 页面](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-release)即可。这是本项目的**直达链接**（`rid=MaaKEDR`），打开就是 MaaKEDR 项目页，不需要在项目列表里搜索。
+
+页面上可以完成安装、更新、历史版本下载与捐赠等操作。
 
 ## 常见问题
 

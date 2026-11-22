@@ -9,17 +9,22 @@ icon: ri:tools-fill
 
 This guide is for contributors who want to set up a development environment for MaaKEDR and build their first pipeline.
 
+::: tip First, decide what you need
+Just want to install and use MaaKEDR? See the [User Manual](../manual/newbie.md). Only changing a little JSON or docs and would rather not set up a full dev environment? Jump to "I don't program, I just want to change JSON or docs" under Contributing & Pull Requests below.
+:::
+
 ## Prerequisites
 
 ### System Requirements
 
-| Item             | Requirement                 |
-| ---------------- | --------------------------- |
-| OS               | Windows 10+ / macOS / Linux |
-| Python           | 3.13                        |
-| Node.js          | >= 24                       |
-| Package Managers | pnpm (via corepack) + uv    |
-| Version Control  | Git                         |
+| Item             | Requirement                                     |
+| ---------------- | ----------------------------------------------- |
+| OS               | Windows 10+ / macOS / Linux                     |
+| Python           | 3.13                                            |
+| Node.js          | >= 24                                           |
+| Package Managers | pnpm (via corepack) + uv                        |
+| Version Control  | Git                                             |
+| Editor           | VSCode (recommended, with Maa Pipeline Support) |
 
 ### Setup Steps
 
@@ -65,6 +70,10 @@ cd MaaKEDR
 ```
 
 OCR models (`resource/base/model/ocr/`) come from the `MaaCommonAssets` submodule. That directory is git-ignored and populated from the submodule at build time, so **the submodule must be initialized** — otherwise tasks fail because the models are missing.
+
+::: warning Never forget `--recurse-submodules`
+Without it you get an empty `MaaCommonAssets/`, and you only find out when you actually run a task — every OCR recognition fails. It is the most common cause of "the environment is set up but nothing is recognized".
+:::
 
 If you already cloned without the flag:
 
@@ -236,11 +245,31 @@ Each iteration:
 
 ## Contributing & Pull Requests
 
-1. Fork and clone your fork
-2. Branch from latest `main` (`feat/…`, `fix/…`, `docs/…`)
-3. Pass `pnpm check` (and `pnpm check:py` when touching Python)
-4. Open a focused PR (one concern per PR)
-5. Describe motivation, scope, and how you tested
+### I don't program, I just want to change JSON or docs
+
+Changing a number, fixing a typo or adding a sentence does not need a local dev environment — it can all be done on the GitHub web UI:
+
+1. Open the file and click the edit (pencil) button in the top-right corner. If you lack write access, GitHub offers to fork the repo — confirm it
+2. Edit in the web editor and switch to the preview to check the result
+3. Fill in a commit message at the bottom and choose to create a new branch and commit (GitHub then guides you into opening a pull request)
+4. Fill in the PR template and wait for review
+
+Before editing JSON, read the [Pipeline Guide](./pipeline.md) and the matching [Protocol docs](../protocol/) to confirm what the fields mean; running `pnpm check` locally is best, but CI will check it for you otherwise.
+
+### Full Flow
+
+1. If you forked a long time ago, delete the old fork at the bottom of `Settings` in your repo first, so you do not start from stale code
+2. On the [MaaKEDR repository](https://github.com/APPLe-DF/MaaKEDR) click `Fork`, then `Create fork`
+3. Clone your fork **with submodules**:
+
+    ```bash
+    git clone --recurse-submodules https://github.com/<your-username>/MaaKEDR.git
+    ```
+
+4. Branch from the latest `main`, e.g. `feat/add-task`, `fix/recognition-node`, `docs/update-guide`
+5. Pass `pnpm check` (and `pnpm check:py` when touching Python)
+6. Push and open a pull request; one concern per PR
+7. Describe motivation, scope and how you tested: link the issue (or explain where the need comes from), 2–5 summary bullets, the exact validation commands and results; attach screenshots or logs for recognition/flow changes
 
 See [CONTRIBUTING.md](https://github.com/APPLe-DF/MaaKEDR/blob/main/CONTRIBUTING.md) and [AGENTS.md](https://github.com/APPLe-DF/MaaKEDR/blob/main/AGENTS.md).
 

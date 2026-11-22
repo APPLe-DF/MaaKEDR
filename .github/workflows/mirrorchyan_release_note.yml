@@ -41,3 +41,18 @@ jobs:
           repo: MaaKEDR
           github_token: ${{ secrets.GITHUB_TOKEN }}
           upload_token: ${{ secrets.MirrorChyanUploadToken }}
+
+  mirrorchyan_android:
+    runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'APPLe-DF' }}
+    steps:
+      - id: uploading
+        uses: MirrorChyan/release-note-action@v1
+        with:
+          mirrorchyan_rid: MaaKEDR_exec
+          version_name: ${{ inputs.tag || github.event.client_payload.tag }}
+
+          owner: APPLe-DF
+          repo: MaaKEDR
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          upload_token: ${{ secrets.MirrorChyanUploadToken }}

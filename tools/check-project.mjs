@@ -341,7 +341,7 @@ function interfaceAgent(project) {
         "uv",
         "run",
         "python",
-        "agent/bootstrap.py",
+        "agent/main.py",
     ];
     return [
         {

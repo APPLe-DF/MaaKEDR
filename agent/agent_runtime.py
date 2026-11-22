@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.metadata
 import os
 import sys
 
@@ -18,6 +19,36 @@ PI_ENV_KEYS = (
 )
 
 
+def _log_maafw_version() -> None:
+    """报告 agent 进程实际加载的原生库版本。
+
+    pip 元数据不可信：客户端增量更新往 site-packages 写新版 dist-info 时不删旧版，两份并存时
+    importlib.metadata.version 返回哪份并无保证（本项目实测 runtimes/ 为 v5.11.1，而 pip 装的
+    maafw 是 5.13.1）。因此以原生库的 MaaVersion() 为准，元数据只在原生查询失败时兜底。
+
+    必须在导入 maa.agent 之后调用：version() 会首次触发 API 属性初始化，而 Library.open 撞上
+    已初始化标志就早退，提前调用会把 Library 钉死在非 agent 模式。
+
+    全部走 debug：版本是维护者排查用的诊断信息，不进用户看的 GUI 日志；agent 文件 sink 固定
+    DEBUG 级，debug/custom/*.log 里始终可查。
+    """
+    try:
+        from maa.library import Library
+
+        version = Library.version()
+        if not version:
+            raise RuntimeError("MaaVersion() 返回空值")
+    except Exception as error:
+        logger.debug("查询原生 MaaFW 版本失败，改用 binding 元数据: {}", error)
+        try:
+            logger.debug("maafw {}", importlib.metadata.version("maafw"))
+        except importlib.metadata.PackageNotFoundError:
+            pass
+        return
+
+    logger.debug("maafw {}", version)
+
+
 def run_agent(project_root_dir: str) -> int:
     configure_runtime_paths(project_root=project_root_dir, work_root=os.getcwd())
 
@@ -32,6 +63,9 @@ def run_agent(project_root_dir: str) -> int:
         logger.error("Failed to import MaaFW Agent runtime: {}", error)
         logger.error("Run `uv sync` for development or sync runtime before release.")
         return 1
+
+    # 必须在导入 maa.agent 之后调用，原因见 _log_maafw_version
+    _log_maafw_version()
 
     import custom
 

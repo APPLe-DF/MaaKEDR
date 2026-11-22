@@ -1,5 +1,6 @@
 ---
 title: User Manual
+description: MaaKEDR user manual overview — getting started, connection settings, feature guide, FAQ, choosing a UI and Mirror酱 updates, covering everything from installation to daily use.
 icon: mdi:user
 index: true
 dir:
@@ -19,7 +20,7 @@ Welcome to the MaaKEDR user manual. Here you'll find everything from getting sta
 ## Reference
 
 - [**FAQ**](./faq) — Solutions for common issues: installation, crashes, connection, task execution
-- [**Connection Settings**](./connection) — Detailed ADB connection guide with emulator port reference
+- [**Connection Settings**](./connection) — Filling in the ADB path and address, emulator port reference, multi-instance ports and touch input modes
 - [**Feature Introduction**](./introduction) — Task configuration details and usage instructions
 - [**Choosing a UI**](./choose-ui) — comparison between MFAA and MXU frontends
 - [**Mirror酱**](./mirror-chyan) — partner distribution and update platform

@@ -84,7 +84,7 @@
             77,
             83
         ],
-        "template": "main_option.png",
+        "template": "more.png",
         "threshold": 0.75,
         "action": {
             "type": "DoNothing"
@@ -124,7 +124,7 @@
             77,
             83
         ],
-        "template": "main_option.png",
+        "template": "more.png",
         "threshold": 0.75,
         "action": {
             "type": "DoNothing"

@@ -10,29 +10,241 @@ How to edit the MaaKEDR docs site (VuePress Theme Plume).
 ## Layout
 
 ```text
-docs/zh|en/{manual,develop,protocol}/
-docs/.vuepress/config/navigation.ts   # navbar + sidebar
+docs/
+├── README.md           # language-selection homepage
+├── zh/                 # Simplified Chinese
+│   ├── README.md
+│   ├── manual/         # user manual
+│   ├── develop/        # development docs
+│   └── protocol/       # task / resource protocols
+└── en/                 # English (mirrors zh)
 ```
 
-Add new pages to **both** locale sidebars when applicable.
+- Use forward slashes for paths and in-site links
+- The sidebar is maintained in `collections.sidebar` of `docs/.vuepress/config/navigation.ts`
+- After adding a page, update the sidebar for **both** locales (when an English counterpart exists)
+
+## Homepage
+
+Both homepages (`docs/zh/README.md`, `docs/en/README.md`) use Plume's `home` frontmatter; the order of the `config` entries is the order on the page.
+
+- Four custom blocks live in `docs/.vuepress/components/`: `HomeDownload`, `HomeStats`, `HomePointerField` (the drifting detection-box layer behind the content) and `HomeFX` (scroll progress bar + card pointer spotlight + scroll-in reveal). They must be registered in `client.ts` before `config` can reference them by `type:`
+- `HomeFX` is a pure enhancement layer: after mount it only sets markers on the DOM (`data-hp-reveal`, `data-hp-hero-away`, `is-revealed`) and appends a progress bar to `body`; every style keyed off those markers lives in `home-hero.css`. With JS disabled, reduced motion on, or a coarse pointer, the page merely loses the corresponding effect — content stays visible. Follow that contract when adding homepage motion: never make content visibility depend on JS
+- All homepage-only CSS sits in the single file `docs/.vuepress/styles/home-hero.css`. Every **rule selector** in it starts with `.vp-home` so it cannot leak into doc pages; the only exception is the `--vp-home-*` custom properties, which have to be declared on the global `:root` / `html[data-theme="dark"]` to be inherited at all — the prefix is what keeps them from colliding with the theme's own variables
+- After mount, `HomeDownload` detects the current device and shows only the matching build, collapsing the rest behind a small entry. **Architecture is only reported when there is hard evidence**: Chromium's high-entropy hints, an architecture literally spelled out in the UA (including the emulator's `sdk_gphone64_x86_64`), or the macOS WebGL renderer name. Without evidence it reports “unknown” instead of guessing — a wrong guess sends the visitor to a build that will not run. Three endings: an unknown Mac chip gets two buttons (“Apple silicon” / “Intel”); an unknown Android ABI falls back to arm64-v8a (or universal) for widest coverage with an “architecture not detected” note; and when a desktop platform has no build for the local architecture the card **explains why** rather than falling back across architectures (the full list is one click away). A separate “may not run” warning covers a mismatch between the local architecture and the suggested build (in practice only reachable through the Android coverage fallback — desktop never falls back across architectures). Detection only exists on the client — the SSR output always contains the full list, so there is no hydration mismatch
+- **The homepage version and download links are generated, never hand-written**: on every build `tools/gen-docs-downloads.mjs` calls the GitHub Release API for the latest **stable** release (`/releases/latest` skips prereleases) and takes the tag, publish time and asset list, parsing `MaaKEDR-<os>-<arch>-<tag>-<ui>.<ext>` into OS / architecture / interface. Freshness on the site is guaranteed by two triggers in `.github/workflows/deploy-docs.yml`: a change under `docs/**`, and an automatic rebuild **after the Release workflow succeeds** (`workflow_run`). A manual `workflow_dispatch` is available to force a refresh
+- The download section already reserves a slot for **Android APKs**: the script recognises `MaaKEDR-android-<universal|arm64-v8a|x86_64>-<tag>.apk` (matching the Rename Release APK step in `android-build.yml`), and an APK's `ui` field is always an empty string (the Android build ships a single shell, with no MFAA/MXU split). Whenever the current stable release carries APKs, the "Android" group shows up automatically and Android browsers get the matching ABI suggested; when the asset list has none (e.g. a release from before Android support), the whole group is skipped instead of rendering an empty one
+- Automatic updates depend on the API being reachable: the script reads `GH_TOKEN` / `GITHUB_TOKEN` to authenticate (CI passes it), because the anonymous quota is only 60 requests/hour and once it is exhausted the script silently keeps the previous data and the site keeps showing the old version. When it does pick up a new version the build log prints `wrote N assets for vX.Y.Z`; check that line when it looks stale
+- `docs/.vuepress/data/*.json` is generated at build time — `pnpm docs:build` / `docs:dev` run `tools/gen-docs-downloads.mjs` and `tools/gen-docs-stats.mjs` first. When the data cannot be fetched (a fresh clone with no network, for instance) the scripts write a placeholder (empty assets / zeroed figures) and both blocks degrade to a one-line notice instead of breaking the build; a previously generated file that no longer parses, or is missing a figure the homepage reads, is overwritten by that placeholder rather than kept. Never edit those files by hand
+- The node-name labels in `HomePointerField` are a static snapshot taken from `resource/base/pipeline/*.json`; renaming or dropping a pipeline node does not update the homepage
+
+### Acceptance checklist when changing the homepage
+
+The homepage's custom components (especially `HomeDownload`) mix SSR fallbacks, device detection and conditional rendering, and **some classes of defect slip through every existing gate**. After changing them, work through this table:
+
+| Defect class                                             | `pnpm check` | `docs:build` | Browser console | Output inspection |
+| -------------------------------------------------------- | ------------ | ------------ | --------------- | ----------------- |
+| Template references an undefined binding                 | ❌           | ❌           | ❌              | ❌                |
+| Control condition is always false (button never renders) | ❌           | ❌           | ❌              | ❌                |
+| Runtime exception                                        | ❌           | ❌           | ⚠️ dev only     | ❌                |
+
+The first two have actually happened in this project: a template referenced a variable that was never defined in `script`. That is not a compile error and the build succeeds; Vue's production build strips the “accessed but not defined” warning; and the detection card does not render during SSR because `detected === null`, so the output never shows it either. “Build passes + console is clean” therefore **cannot** cover these.
+
+So beyond checking _which build was recommended_, verify that **the controls themselves exist and respond**:
+
+```js
+// Run in the browser console: confirm the expected number of controls,
+// not just that the recommendation looks right
+document.querySelectorAll(".picked-ui-btn").length; // 2 on desktop (MFAA/MXU); 0 means something is wrong
+document.querySelector(".picked-dl")?.href; // should point at a real asset
+```
+
+Cover every conditional branch: detection succeeded / failed / architecture unknown / no build for this architecture. For each one ask: did the elements that should appear actually appear, and did the ones that should vanish actually vanish?
+
+> The long-term fix is adding `vue-tsc --noEmit` for `.vue` files, which detects undefined bindings statically. It is not wired up yet: it needs a shim declaration for virtual modules such as `@theme/*` and a few pre-existing type errors fixed first. It guards against a low-frequency, low-severity class of bug, so it is not worth the cost today. Revisit if the custom components keep growing or this class of bug shows up a second time.
+
+## Navbar
+
+The site title (`SITE_TITLE` in `config/site.ts`) carries the “· 雪松自动化脚本” suffix for SEO and is wider than the navbar title slot on doc pages. Above 960px Plume pins that slot to the sidebar column (272px) and absolutely positions it above the content area, so overflowing title text lands on the search box sitting at the sidebar's right edge; `styles/navbar.css` makes the title end in an ellipsis when it does not fit, dropping the trailing descriptive suffix first. The homepage has no sidebar, where the title is an ordinary flex item that pushes the search box along and is always shown in full — the two layouts looking different is expected.
+
+After changing `SITE_TITLE` or the navbar styles, confirm on a doc page at ≥960px that the title no longer covers the search box.
 
 ## Frontmatter
+
+Common fields:
 
 ```yaml
 ---
 order: 1
 icon: ri:tools-fill
+title: Optional title
+---
+```
+
+Directory index pages may use:
+
+```yaml
+---
+title: Development Docs
+icon: ph:code-bold
+dir:
+    order: 1
 ---
 ```
 
 ## Containers
 
+Plume supports the `::: <type>` container syntax. All of these types are enabled on this site. Markdown extensions are configured in `plumeTheme({ markdown })` inside `docs/.vuepress/config.ts` (putting them at the top level of `plume.config.ts` has no effect), so check that a dependency is installed before using new syntax:
+
+| Type        | Purpose        |
+| ----------- | -------------- |
+| `note`      | Note           |
+| `info`      | Information    |
+| `tip`       | Tip            |
+| `warning`   | Warning        |
+| `caution`   | Caution        |
+| `important` | Important      |
+| `details`   | Collapsed note |
+
 ::: tip
-Tip box
+A container accepts any Markdown (lists, code blocks, links). **Do not nest containers** — multiple levels may render incorrectly.
 :::
 
+::: details
+A details block is collapsed by default; click the title to expand it.
+:::
+
+### Custom Titles
+
+Add a space and a title after the type:
+
+```markdown
+::: tip Small tip
+Some tip content
+:::
+```
+
+### GitHub-style Alerts
+
+GitHub-style `> [!NOTE]` blocks are also supported and render as the same hint containers:
+
+```markdown
+> [!NOTE]
+> Explanatory text
+```
+
+`NOTE`, `TIP`, `IMPORTANT`, `WARNING` and `CAUTION` are available.
+
+## Images
+
+Put images under `docs/.vuepress/public/images/`, grouped into subdirectories and named with lowercase letters and hyphens (e.g. `pipeline-flow.png`), then reference them by site-absolute path:
+
+```markdown
+![Pipeline execution flow](/images/develop/pipeline-flow.png)
+```
+
+The image plugin enables `figure` / `lazyload` / `mark` / `size`:
+
+- A standalone image renders as a `<figure>` with a caption taken from the alt text
+- Images are lazy-loaded by default
+- Use `=widthxheight` to control the display size (at the end of the alt text): `![caption =640x360](/images/develop/a.png)`
+- When the URL ends with `#light` / `#dark`, the image is shown only in that color mode (useful for light/dark screenshot pairs)
+
 ::: warning
-Warning
+Images must live under `docs/.vuepress/public/` (or use a path relative to the page) and be committed with the docs. An image that points outside the repository never reaches the build output.
+:::
+
+## Code Blocks
+
+Wrap code in three backticks and specify the language. Line numbers are on by default.
+
+### Line Numbers and Highlighting
+
+Append `{line,line-range}` after the language to highlight lines; `{1,3-5}` means line 1 and lines 3 through 5:
+
+````markdown
+```json {2,5-7}
+{
+    "FarmResources.Start": {
+        "recognition": "DirectHit"
+    }
+}
+```
+````
+
+Add `:no-line-numbers` after the language for a block that should not show line numbers.
+
+### Code Block Titles
+
+Use `title="..."` to give a code block a title, usually a file name:
+
+````markdown
+```json title="tasks/farm_resources.json"
+{
+    "FarmResources.ExitStageConfirm": {}
+}
+```
+````
+
+## Tabs
+
+Use the `::: tabs` container for alternative approaches or examples; `@tab` starts a tab and its label follows:
+
+::: tabs
+@tab Option 1
+This is the content of option 1 — any Markdown such as lists and links works.
+
+@tab Option 2
+This is the content of option 2; the two tabs switch in place.
+:::
+
+To compare code only, use `::: code-tabs`: write the file name after `@tab` and the title automatically gets a file-type icon.
+
+## File Tree
+
+Use the `::: file-tree` container to show a directory layout; indent list items by 2 spaces per level:
+
+```text
+::: file-tree title="docs/"
+
+- docs/
+  - zh/
+    - develop/
+      - pipeline.md
+  - en/
+- resource/
+
+:::
+```
+
+## Math
+
+Math is rendered with KaTeX. Use `$...$` for inline formulas and `$$...$$` for block formulas:
+
+```markdown
+Inline: $E = mc^2$
+
+$$
+\Delta = b^2 - 4ac
+$$
+```
+
+## Other Containers
+
+`::: steps` renders a numbered step list:
+
+```markdown
+::: steps
+
+1. Capture a screenshot and measure the ROI
+2. Write the pipeline node
+3. Bind the task and run it
+
+:::
+```
+
+::: warning
+This site does **not** enable the chart (Mermaid / Chart.js / ECharts), timeline (`::: timeline`) or collapse (`::: collapse`) plugins. Ask the maintainers about the dependencies before using those effects.
 :::
 
 ## MarkdownLint
@@ -41,7 +253,16 @@ Docs must pass **MarkdownLint**. The config lives at `docs/.markdownlint.yaml` (
 
 - Rule reference: [MarkdownLint Rules](https://github.com/DavidAnson/markdownlint/blob/master/docs/RULES.md)
 - The [VSCode extension](https://github.com/DavidAnson/vscode-markdownlint) picks up `.markdownlint.yaml` automatically for live hints
+- MarkdownLint is **not** wired into `pnpm check` or CI, and no related package is installed — it only runs in your editor, so do not expect a failing CI job to point at your Markdown
 - Division of labor with Prettier: **Prettier handles formatting** (indentation, line breaks, table alignment); **MarkdownLint handles conventions** (heading levels, list correctness, link validity). They do not conflict: noisy rules unrelated to Prettier (e.g. MD013 line length) are disabled in `.markdownlint.yaml`
+
+## Writing Guidelines
+
+- User manual: steps must be actionable, and options must match `tasks/*.json`
+- Development docs: paths and commands must match the repository; every command must exist in `package.json`; do not document deprecated CLIs or tools
+- Protocol docs: describe conventions and node relationships; JSON is the source of truth, so link the file paths
+- Releases: `interface.json` `version` / `title` are updated by hand (see the Release Guidelines in `AGENTS.md`)
+- **Keep zh and en in sync**: `docs/zh/<path>.md` and `docs/en/<path>.md` are one-to-one; heading levels, code blocks and the amount of information must match — when you edit Chinese, edit English too
 
 ## Preview
 
@@ -50,4 +271,13 @@ pnpm docs:dev
 pnpm docs:build
 ```
 
-Keep user manuals aligned with `tasks/*.json`. Keep protocol pages aligned with pipelines. Release notes: update `interface.json` `version` / `title` manually (see `AGENTS.md`).
+Build output goes to `docs/.vuepress/dist` (git-ignored).
+
+- `pnpm docs:preview` does not match the site's `base: /MaaKEDR/` right now, so the root URL 404s — use `pnpm docs:dev` to look at your work
+- Running `vuepress dev docs` directly skips the data generators, and the homepage blocks fail to build when `docs/.vuepress/data/` is missing
+- `pnpm docs:build` passes `--clean-cache --clean-temp`, which also kills a dev server that is currently running — do not run both at once
+
+## References
+
+- [VuePress Theme Plume](https://theme-plume.vuejs.press/)
+- [MaaFramework Documentation](https://maafw.com/docs/1.1-QuickStarted)

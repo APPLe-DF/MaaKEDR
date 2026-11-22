@@ -1,0 +1,144 @@
+name: Package Smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "agent/**"
+      - "interface.json"
+      - "maa-project.json"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pyproject.toml"
+      - "requirements.txt"
+      - "uv.lock"
+      - "tools/build-release.mjs"
+      - "tools/sync-runtime.mjs"
+      - ".github/workflows/package-smoke.yml"
+      - ".github/workflows/release.yml"
+  pull_request:
+    paths:
+      - "agent/**"
+      - "interface.json"
+      - "maa-project.json"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pyproject.toml"
+      - "requirements.txt"
+      - "uv.lock"
+      - "tools/build-release.mjs"
+      - "tools/sync-runtime.mjs"
+      - ".github/workflows/package-smoke.yml"
+      - ".github/workflows/release.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: package-smoke-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  package:
+    name: windows-x64 package smoke
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+      - uses: actions/setup-python@v7
+        if: hashFiles('pyproject.toml') != ''
+        with:
+          python-version: "3.13"
+      - uses: astral-sh/setup-uv@v9.0.0
+        if: hashFiles('pyproject.toml') != ''
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm sync:runtime
+        env:
+          CREATE_MAA_PROJECT_MAX_EXTRACTED_BYTES: "2147483648"
+          CREATE_MAA_PROJECT_RUNTIME_PLATFORM: win-x64
+          GITHUB_TOKEN: ${{ github.token }}
+      - run: node tools/build-release.mjs --release-tag v0.0.0-package-smoke
+        env:
+          CREATE_MAA_PROJECT_RUNTIME_PLATFORM: win-x64
+      - name: Verify packaged agent
+        shell: pwsh
+        run: |
+          $project = Get-Content -LiteralPath 'maa-project.json' -Raw | ConvertFrom-Json
+          $expected = @()
+          if ($project.runtime.mfa.enabled -ne $false) { $expected += 'package-mfaa' }
+          if ($project.runtime.mxu.enabled -ne $false) { $expected += 'package-mxu' }
+
+          $actual = @(
+            Get-ChildItem -LiteralPath dist -Directory |
+              Where-Object Name -Like 'package-*' |
+              ForEach-Object Name |
+              Sort-Object
+          )
+          $difference = Compare-Object -ReferenceObject ($expected | Sort-Object) -DifferenceObject $actual
+          if ($difference) {
+            throw "Expected package directories $($expected -join ', '), got $($actual -join ', ')"
+          }
+
+          # maafw wheel 的 METADATA 版本可能是带 v 前缀或连字符预发布形式（如 v5.16.0-beta.2），
+          # 而 requirements.txt 存的是 PEP 440 规范形式（5.16.0b2）；比对前统一规范化。
+          function Normalize-MaafwVersion([string]$version) {
+            $normalized = $version.Trim() -replace '^v', ''
+            $normalized = $normalized -replace '[-_.]?(?:alpha|a)[-_.]?(\d+)', 'a$1'
+            $normalized = $normalized -replace '[-_.]?(?:beta|b)[-_.]?(\d+)', 'b$1'
+            $normalized = $normalized -replace '[-_.]?(?:rc)[-_.]?(\d+)', 'rc$1'
+            return $normalized
+          }
+          $expectedMaafwVersion = Normalize-MaafwVersion (((Get-Content -LiteralPath 'requirements.txt' |
+            Where-Object { $_ -match '^maafw==' } |
+            Select-Object -First 1) -replace '^maafw==', ''))
+          if ([string]::IsNullOrWhiteSpace($expectedMaafwVersion)) {
+            throw 'Could not determine expected maafw version from requirements.txt'
+          }
+          foreach ($packageName in $expected) {
+            $packageRoot = (Resolve-Path -LiteralPath (Join-Path dist $packageName)).Path
+            $interface = Get-Content -LiteralPath (Join-Path $packageRoot 'interface.json') -Raw | ConvertFrom-Json
+            $agent = $interface.agent[0]
+            $expectedChildExec = if ($packageName -eq 'package-mxu') { './python/python.exe' } else { 'python/python.exe' }
+            if ($agent.child_exec -ne $expectedChildExec) {
+              throw "Unexpected Agent child_exec in ${packageName}: $($agent.child_exec)"
+            }
+            # 两条 GUI 现在都用 agent/main.py，只有路径前缀不同（MXU 带 ./）
+            $expectedChildArgs = if ($packageName -eq 'package-mxu') { '-u ./agent/main.py' } else { '-u agent/main.py' }
+            if (($agent.child_args -join ' ') -ne $expectedChildArgs) {
+              throw "Unexpected Agent child_args in ${packageName}: $($agent.child_args -join ' ')"
+            }
+
+            $python = Join-Path $packageRoot 'python\python.exe'
+            if (-not (Test-Path -LiteralPath $python -PathType Leaf)) {
+              throw "Embedded Python is missing: $python"
+            }
+            $actualMaafwVersion = Normalize-MaafwVersion ((& $python -I -c 'import importlib.metadata as metadata; print(metadata.version("maafw"))' | Out-String).Trim())
+            if ($LASTEXITCODE -ne 0) {
+              throw "Could not read embedded maafw version in $packageName"
+            }
+            if ($actualMaafwVersion -ne $expectedMaafwVersion) {
+              throw "Embedded maafw version mismatch in ${packageName}: expected $expectedMaafwVersion, got $actualMaafwVersion"
+            }
+
+            Push-Location $packageRoot
+            try {
+              & $python -I -c 'import sys; sys.path.insert(0, "agent"); import maafw_paths; resolved = maafw_paths.ensure_maafw_binary_path(); assert resolved, "client MaaFramework runtime was not resolved"; import loguru, maa, numpy; import agent_runtime, custom; custom.register_all(); from maa.library import Library; print("embedded Python smoke passed:", Library.version(), Library.framework_libpath)'
+              if ($LASTEXITCODE -ne 0) {
+                throw "Embedded Python import smoke failed in $packageName"
+              }
+              & $python -I -m compileall -q agent
+              if ($LASTEXITCODE -ne 0) {
+                throw "Agent compile smoke failed in $packageName"
+              }
+            } finally {
+              Pop-Location
+            }
+            Write-Host "[OK] $packageName"
+          }

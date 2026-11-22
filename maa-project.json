@@ -48,7 +48,7 @@
         "spdx": "AGPL-3.0-or-later"
     },
     "maafw": {
-        "channel": "stable",
+        "channel": "beta",
         "version": ""
     },
     "network": {
@@ -75,10 +75,8 @@
         "devCommand": [
             "uv",
             "run",
-            "--frozen",
             "python",
-            "-u",
-            "./agent/bootstrap.py"
+            "agent/main.py"
         ],
         "recommendedPython": "3.13",
         "requiresPython": ">=3.13,<3.14"

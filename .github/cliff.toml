@@ -22,6 +22,16 @@ body = """
         {%- endif %}
 {% endmacro -%}
 
+{% if version == "v1.5.5" %}\
+> **建议完整更新 | Full update recommended**：本版本修复了 Agent 运行时依赖版本不一致问题，请下载完整安装包并替换旧目录，不建议直接覆盖旧版本目录。
+{% endif %}\
+{% if version == "v1.5.6" %}\
+> **建议完整更新 | Full update recommended**：请下载完整安装包并替换旧目录，不建议在旧版本目录上直接覆盖更新，以免残留旧资源文件。
+{% endif %}\
+{% if version == "v1.5.7" %}\
+> **建议完整更新 | Full update recommended**：本版本调整了发布包内部布局——`python/` 下不再携带第二份 MaaFramework 原生库（改用客户端那一份，包体约 379 MB → 324 MB），Agent 入口统一为 `agent/main.py`（`bootstrap.py` 已移除），`maafw` 升至 5.14.2。残留的旧文件不会导致 Agent 加载到错误版本（`agent/maafw_paths.py` 优先解析 `runtimes/<平台>/native`，会遮蔽 `python/` 下的旧副本），但旧 `resource/` 里被本版更新过的内容可能与新 pipeline 不匹配，因此仍建议解压到新目录后使用。
+{% endif %}\
+
 {% if version %}\
     ## {{ version | trim_start_matches(pat="v") }} ({{ timestamp | date(format="%Y-%m-%d") }})
 {% else %}\
@@ -61,11 +71,39 @@ footer = """
     {%- set_global latest_version = release.version -%}
   {%- endif -%}
 {%- endfor -%}
-
-{% if latest_version -%}
-**绝大部分用户请下载 [MaaKEDR-win-x86_64-{{ latest_version }}-MFAA.zip]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-win-x86_64-{{ latest_version }}-MFAA.zip) 或 [MaaKEDR-win-x86_64-{{ latest_version }}-MXU.zip]({{ self::remote_url() }}/releases/download/{{ latest_version }}/MaaKEDR-win-x86_64-{{ latest_version }}-MXU.zip)**
+{%- if latest_version -%}
+  {%- set_global ver = latest_version -%}
 {%- else -%}
-**绝大部分用户请下载 MaaKEDR-win-x86_64-vx.x.x-MFAA.zip 或 MaaKEDR-win-x86_64-vx.x.x-MXU.zip，没找到的请点 show all x assets**
+  {%- set_global ver = "v?.?.?" -%}
+{%- endif %}
+
+{%- macro asset(prefix, suffix, label, ver, tag) -%}
+  {%- set filename = prefix ~ ver ~ suffix -%}
+  {%- if tag -%}
+    [{{ label }}]({{ self::remote_url() }}/releases/download/{{ tag }}/{{ filename }})
+  {%- else -%}
+    {{ filename }}
+  {%- endif -%}
+{%- endmacro %}
+
+---
+
+### 下载哪个包
+
+| 包 | 适用 |
+| --- | --- |
+| {{ self::asset(prefix="MaaKEDR-win-x86_64-", suffix="-MFAA.zip", label="MaaKEDR-MFAA", ver=ver, tag=latest_version) }}（推荐） | Windows x64，绝大部分用户 |
+| {{ self::asset(prefix="MaaKEDR-win-x86_64-", suffix="-MXU.zip", label="MaaKEDR-MXU", ver=ver, tag=latest_version) }} | Windows x64（MaaEnd 同款界面） |
+| {{ self::asset(prefix="MaaKEDR-win-aarch64-", suffix="-MFAA.zip", label="MFAA", ver=ver, tag=latest_version) }} / {{ self::asset(prefix="MaaKEDR-win-aarch64-", suffix="-MXU.zip", label="MXU", ver=ver, tag=latest_version) }} | Windows on ARM |
+| {{ self::asset(prefix="MaaKEDR-linux-x86_64-", suffix="-MFAA.tar.gz", label="MaaKEDR-MFAA", ver=ver, tag=latest_version) }} / {{ self::asset(prefix="MaaKEDR-linux-x86_64-", suffix="-MXU.tar.gz", label="MaaKEDR-MXU", ver=ver, tag=latest_version) }} | Linux x64 |
+| {{ self::asset(prefix="MaaKEDR-linux-aarch64-", suffix="-MFAA.tar.gz", label="MaaKEDR-MFAA", ver=ver, tag=latest_version) }} /（无 MXU 包） | Linux ARM64 |
+| {{ self::asset(prefix="MaaKEDR-macos-x86_64-", suffix="-MFAA.tar.gz", label="MaaKEDR-MFAA", ver=ver, tag=latest_version) }} / {{ self::asset(prefix="MaaKEDR-macos-x86_64-", suffix="-MXU.tar.gz", label="MaaKEDR-MXU", ver=ver, tag=latest_version) }} | macOS（Intel 芯片） |
+| {{ self::asset(prefix="MaaKEDR-macos-aarch64-", suffix="-MFAA.tar.gz", label="MaaKEDR-MFAA", ver=ver, tag=latest_version) }} / {{ self::asset(prefix="MaaKEDR-macos-aarch64-", suffix="-MXU.tar.gz", label="MaaKEDR-MXU", ver=ver, tag=latest_version) }} | macOS（Apple Silicon） |
+| {{ self::asset(prefix="MaaKEDR-android-arm64-v8a-", suffix=".apk", label="MaaKEDR-android-arm64-v8a.apk", ver=ver, tag=latest_version) }}（推荐） | Android 真机（ARM64），体积约为 universal 的一半 |
+| {{ self::asset(prefix="MaaKEDR-android-universal-", suffix=".apk", label="MaaKEDR-android-universal.apk", ver=ver, tag=latest_version) }} | Android 双架构通用包，真机 / 模拟器都能装，不确定选这个 |
+| {{ self::asset(prefix="MaaKEDR-android-x86_64-", suffix=".apk", label="MaaKEDR-android-x86_64.apk", ver=ver, tag=latest_version) }} | Android 模拟器等 x86 环境（Windows 上的蓝叠 / MuMu / 雷电等） |
+{%- if not latest_version %}
+以上版本号为占位 v?.?.?，release 页没找到对应包请点 show all assets
 {%- endif %}
 
 > MFAA = 图形界面版（MFAAvalonia） | MXU = 图形界面版（MaaEnd同款）

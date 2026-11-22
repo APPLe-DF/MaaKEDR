@@ -1,6 +1,9 @@
 import os
 import sys
 
+if sys.version_info < (3, 13) or sys.version_info >= (3, 14):
+    raise SystemExit("Python >=3.13,<3.14 is required, got " + sys.version.split()[0])
+
 try:
     sys.stdout.reconfigure(encoding="utf-8")  # pyright: ignore[reportAttributeAccessIssue]
 except AttributeError:
@@ -15,6 +18,11 @@ if os.getcwd() != project_root_dir:
 
 if agent_dir not in sys.path:
     sys.path.insert(0, agent_dir)
+
+from maafw_paths import ensure_maafw_binary_path  # noqa: E402
+
+# 必须早于 agent_runtime：utils 包在导入时就连带 import maa，那之后库目录已经定死
+ensure_maafw_binary_path(project_root_dir)
 
 from agent_runtime import run_agent  # noqa: E402
 

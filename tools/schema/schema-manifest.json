@@ -9,25 +9,25 @@
             "path": "tools/schema/interface.schema.json",
             "upstreamPath": "tools/interface.schema.json",
             "url": "https://raw.githubusercontent.com/MaaXYZ/MaaFramework/main/tools/interface.schema.json",
-            "sha256": "d09965733a2c682af4e408e7092e7ea624a07209c79d5d5d6efe39ec865cc938"
+            "sha256": "f74d5b0c05ca2da9f6c607f30e5603e55b88cf3314461b07457f51967c55369d"
         },
         {
             "path": "tools/schema/interface_import.schema.json",
             "upstreamPath": "tools/interface_import.schema.json",
             "url": "https://raw.githubusercontent.com/MaaXYZ/MaaFramework/main/tools/interface_import.schema.json",
-            "sha256": "606ab104b9423b936ce1b5cd349e2d4653f446baac5b37e0b05eafda1243da5f"
+            "sha256": "ec1e39b94806a9cb9887b68c846319189c9ef220f37a1fa09a650e4a417ca57d"
         },
         {
             "path": "tools/schema/interface_config.schema.json",
             "upstreamPath": "tools/interface_config.schema.json",
             "url": "https://raw.githubusercontent.com/MaaXYZ/MaaFramework/main/tools/interface_config.schema.json",
-            "sha256": "a4092afe557c4904d78b2e2134c433a46706ef96e8965ff978715aa11fadfdde"
+            "sha256": "5b969b69da7eeb84d65be48ec383024c43df4e1025db0107c64141334b1958c2"
         },
         {
             "path": "tools/schema/pipeline.schema.json",
             "upstreamPath": "tools/pipeline.schema.json",
             "url": "https://raw.githubusercontent.com/MaaXYZ/MaaFramework/main/tools/pipeline.schema.json",
-            "sha256": "6c76b650603646ad3f05f8e87370fecb17c015e436f5e35c4d7c35397ba9d454"
+            "sha256": "9a5f9de1c4bc2223f8d7688fe42f63d6b7de83f14e47e3fc2929f332ae631c77"
         }
     ]
 }

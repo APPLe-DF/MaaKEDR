@@ -4,11 +4,11 @@
             "ClaimRewards.EnsureHome",
             "ClaimRewards.CheckMainInterface",
             "ClaimRewards.MainHub",
-            "[JumpBack]ClaimRewards.ReturnMain"
+            "[JumpBack]Common.EnsureHome"
         ]
     },
     "ClaimRewards.EnsureHome": {
-        "desc": "确认在游戏主页，不在主页则点主页按钮回到主页后再开始",
+        "desc": "确认在游戏主页；未确认到主页则由通用枢纽回主页后重试",
         "recognition": "TemplateMatch",
         "roi": [
             1199,
@@ -16,7 +16,7 @@
             77,
             83
         ],
-        "template": "main_option.png",
+        "template": "more.png",
         "threshold": 0.75,
         "action": {
             "type": "DoNothing"
@@ -24,39 +24,7 @@
         "timeout": 60000,
         "next": [
             "ClaimRewards.CheckMainInterface",
-            "ClaimRewards.ClickHome"
-        ]
-    },
-    "ClaimRewards.ClickHome": {
-        "desc": "点击主页按钮回到主界面",
-        "recognition": "TemplateMatch",
-        "roi": [
-            199,
-            26,
-            85,
-            52
-        ],
-        "template": "return_main.png",
-        "threshold": 0.75,
-        "pre_delay": 500,
-        "action": {
-            "type": "Click"
-        },
-        "post_delay": 1000,
-        "next": [
-            "ClaimRewards.EnsureHome"
-        ]
-    },
-    "ClaimRewards.ReturnMain": {
-        "desc": "返回主界面（任务开始前）",
-        "max_hit": 3,
-        "recognition": "DirectHit",
-        "action": {
-            "type": "DoNothing"
-        },
-        "next": [
-            "ClaimRewards.CheckMainInterface",
-            "[JumpBack]Common.BackButton"
+            "[JumpBack]Common.EnsureHome"
         ]
     },
     "ClaimRewards.MainHub": {
@@ -68,7 +36,7 @@
             77,
             83
         ],
-        "template": "main_option.png",
+        "template": "more.png",
         "threshold": 0.75,
         "action": {
             "type": "DoNothing"
@@ -93,7 +61,7 @@
             77,
             83
         ],
-        "template": "main_option.png",
+        "template": "more.png",
         "threshold": 0.75,
         "action": {
             "type": "DoNothing"
@@ -108,7 +76,7 @@
             77,
             83
         ],
-        "template": "main_option.png",
+        "template": "more.png",
         "threshold": 0.75,
         "action": {
             "type": "Click",
@@ -210,6 +178,7 @@
         },
         "post_wait_freezes": 500,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "ClaimRewards.ConfirmInterface"
         ]
     },
@@ -270,6 +239,7 @@
         },
         "timeout": 5000,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "ClaimRewards.ClaimButton",
             "[JumpBack]ClaimRewards.CheckWeekly"
         ]
@@ -305,6 +275,7 @@
         },
         "timeout": 5000,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "ClaimRewards.ClaimButton",
             "[JumpBack]ClaimRewards.CheckMilitary"
         ]
@@ -339,6 +310,7 @@
             "type": "Click"
         },
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "ClaimRewards.ClaimButton",
             "[JumpBack]ClaimRewards.ExitRewardInterface"
         ]
@@ -359,6 +331,7 @@
         },
         "post_wait_freezes": 500,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "ClaimRewards.MainHub",
             "[JumpBack]Common.BackButton"
         ]
@@ -400,6 +373,7 @@
         },
         "post_wait_freezes": 500,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "ClaimRewards.ConfirmInterface"
         ]
     },
@@ -516,6 +490,7 @@
         },
         "post_wait_freezes": 500,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "BattlePass.ConfirmInterface",
             "ClaimRewards.MainHub"
         ]
@@ -665,6 +640,7 @@
         },
         "timeout": 5000,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "BattlePass.ClaimRewardButton",
             "BattlePass.ConfirmInterface"
         ]
@@ -734,9 +710,8 @@
             "type": "Click"
         }
     },
-    "Mailbox.Start": {
-        "desc": "检测邮箱图标",
-        "max_hit": 5,
+    "Mailbox.EntryTemplate": {
+        "desc": "邮箱入口模板匹配（保留原模板，红点遮挡时可能失效）",
         "recognition": "TemplateMatch",
         "roi": [
             1140,
@@ -745,7 +720,42 @@
             45
         ],
         "template": "claim_rewards/mailbox/mailbox.png",
-        "threshold": 0.75,
+        "threshold": 0.75
+    },
+    "Mailbox.EntryRedDot": {
+        "desc": "邮箱入口红点匹配（模板被红点遮挡时的兜底）",
+        "recognition": {
+            "type": "ColorMatch",
+            "param": {
+                "roi": [
+                    1140,
+                    25,
+                    64,
+                    45
+                ],
+                "lower": [
+                    200,
+                    60,
+                    20
+                ],
+                "upper": [
+                    255,
+                    150,
+                    100
+                ],
+                "connected": true,
+                "count": 50
+            }
+        }
+    },
+    "Mailbox.Start": {
+        "desc": "检测邮箱图标（模板或红点）",
+        "max_hit": 5,
+        "recognition": "Or",
+        "any_of": [
+            "Mailbox.EntryTemplate",
+            "Mailbox.EntryRedDot"
+        ],
         "action": {
             "type": "DoNothing"
         },
@@ -754,17 +764,13 @@
         ]
     },
     "Mailbox.ClickEntry": {
-        "desc": "点击邮箱图标",
+        "desc": "点击邮箱图标（模板或红点）",
         "max_hit": 5,
-        "recognition": "TemplateMatch",
-        "roi": [
-            1140,
-            25,
-            64,
-            45
+        "recognition": "Or",
+        "any_of": [
+            "Mailbox.EntryTemplate",
+            "Mailbox.EntryRedDot"
         ],
-        "template": "claim_rewards/mailbox/mailbox.png",
-        "threshold": 0.75,
         "action": {
             "type": "Click"
         },
@@ -776,21 +782,18 @@
         ]
     },
     "Mailbox.RetryClick": {
-        "desc": "重试点击邮箱图标",
-        "recognition": "TemplateMatch",
-        "roi": [
-            1140,
-            25,
-            64,
-            45
+        "desc": "重试点击邮箱图标（模板或红点）",
+        "recognition": "Or",
+        "any_of": [
+            "Mailbox.EntryTemplate",
+            "Mailbox.EntryRedDot"
         ],
-        "template": "claim_rewards/mailbox/mailbox.png",
-        "threshold": 0.75,
         "action": {
             "type": "Click"
         },
         "post_wait_freezes": 500,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "Mailbox.ConfirmInterface"
         ]
     },
@@ -856,6 +859,7 @@
     },
     "DispatchClaim.Start": {
         "desc": "检测派遣任务入口红点",
+        "max_hit": 1,
         "recognition": {
             "type": "ColorMatch",
             "param": {
@@ -880,50 +884,27 @@
             }
         },
         "action": {
-            "type": "Click"
+            "type": "Click",
+            "param": {
+                "target_offset": [
+                    24,
+                    17,
+                    -5,
+                    -7
+                ]
+            }
         },
         "post_wait_freezes": 500,
+        "timeout": 10000,
         "next": [
             "DispatchClaim.ClaimButton",
-            "DispatchClaim.RetryClick",
+            "DispatchClaim.Exit",
             "[JumpBack]Common.CheckItemObtained"
-        ]
-    },
-    "DispatchClaim.RetryClick": {
-        "desc": "重试点击派遣任务入口",
-        "recognition": {
-            "type": "ColorMatch",
-            "param": {
-                "roi": [
-                    896,
-                    285,
-                    41,
-                    51
-                ],
-                "lower": [
-                    200,
-                    60,
-                    20
-                ],
-                "upper": [
-                    255,
-                    150,
-                    100
-                ],
-                "connected": true,
-                "count": 50
-            }
-        },
-        "action": {
-            "type": "Click"
-        },
-        "post_wait_freezes": 500,
-        "next": [
-            "DispatchClaim.ClaimButton"
         ]
     },
     "DispatchClaim.ClaimButton": {
         "desc": "检测并点击一键领取按钮",
+        "max_hit": 4,
         "recognition": "TemplateMatch",
         "roi": [
             976,
@@ -958,7 +939,9 @@
         },
         "post_delay": 500,
         "next": [
-            "DispatchClaim.Exit"
+            "[JumpBack]Common.CheckItemObtained",
+            "DispatchClaim.Exit",
+            "DispatchClaim.ClaimButton"
         ]
     },
     "DispatchClaim.Exit": {
@@ -1045,6 +1028,7 @@
             "type": "Click"
         },
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "PremiumShop.ConfirmShopInterface"
         ]
     },
@@ -1139,6 +1123,7 @@
         "post_wait_freezes": 500,
         "timeout": 5000,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "PremiumShop.ConfirmPremiumShop"
         ],
         "on_error": [
@@ -1210,6 +1195,7 @@
         "post_wait_freezes": 500,
         "timeout": 5000,
         "next": [
+            "[JumpBack]Common.CheckItemObtained",
             "PremiumShop.ConfirmPurchase"
         ]
     },

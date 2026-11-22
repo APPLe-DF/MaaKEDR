@@ -131,11 +131,11 @@
             "templateHash": "7a4b8e4c2efa2036473526e0e4de5c09327ff3df189c62b1a1f320a1f23c7692"
         },
         ".github/cliff.toml": {
-            "hash": "be48b8bfea9c1555f2ff1cf00a4f2cc150c3624ad97e3f1ec57a6a905de16aef",
+            "hash": "819a1ced0efd6aed3c0b04e01173e2cd044a1127c197b347262555edc784733b",
             "templateHash": "1c475f27cd91987b4a8e82a99ee2054f673fe5c344c2c2facc0c4c80778317bc"
         },
         ".github/dependabot.yml": {
-            "hash": "54dc740a86af3d119829d9e144700a1a6891d3a755a52132c66df05b1349076b",
+            "hash": "65acd4e5b31f02bda99cf7d9999a104b076739c2190aaaa5b9bdd3b189278da9",
             "templateHash": "146fc4a7e29026507034652f344d0f100f70fd1a61e2a9cfa74bbabe38281b43"
         },
         ".github/workflows/format.yml": {
@@ -147,7 +147,7 @@
             "templateHash": "73a7c9e794094326764331ef81841f10534d74e083609773d064cfbe2ce4b072"
         },
         ".github/workflows/release.yml": {
-            "hash": "17b023780326f61af3f416d16348f678d2619e3db9ec216705beb76b5d897218",
+            "hash": "1b8d145cb2400a7a0d9181bd0202087f55839e33ef7e61ebbbd9af61deabed8f",
             "templateHash": "1948c8135358e77ebb874e0b99952b6f592f093b50efe9c4fa515786f6074172"
         },
         ".github/workflows/schema-sync.yml": {
@@ -167,11 +167,11 @@
             "templateHash": "2cb187d1bc4a6a2ad18145adc161dc58c61545208e2e407087aa2570a4e01646"
         },
         "tools/build-release.mjs": {
-            "hash": "21b9b3282f13a8c6e5a2a6f3448ed0add96ceb64139db480b90d1e4fa2f167ea",
+            "hash": "aa4d715d96991ffe8f7b0cdd7e93f33655efdd0ca3cee74a78cff48dc3944db3",
             "templateHash": "7fd7683a60d650f1a3625faaa8a71010a18eba226a28ee6c4ccbbeab64a4b8a2"
         },
         "tools/check-project.mjs": {
-            "hash": "7b597295b6bdd2726e40d0baf7015c21ecc44d1b2cb3897df1a2bf3f549ee91b",
+            "hash": "0b9c445f581b71ac2be313757579512f9b50e37ed3a0eec0c1b1eb945724c501",
             "templateHash": "064d87915d7b877ca6ccfadb143f3e3d77a4cfcf29cf65952fb031f12a4cbe6d"
         },
         "tools/optimize-images.mjs": {
@@ -179,23 +179,23 @@
             "templateHash": "5c158bda7393675ec21f0fe0239400a8683cfbc7a509410dc3fd06cc556a766c"
         },
         "tools/schema/interface.schema.json": {
-            "hash": "d09965733a2c682af4e408e7092e7ea624a07209c79d5d5d6efe39ec865cc938",
+            "hash": "f74d5b0c05ca2da9f6c607f30e5603e55b88cf3314461b07457f51967c55369d",
             "templateHash": "4305d4cb804c1598feef224457d428a9b8acde58b868845c850eb124930d9ef5"
         },
         "tools/schema/interface_config.schema.json": {
-            "hash": "a4092afe557c4904d78b2e2134c433a46706ef96e8965ff978715aa11fadfdde",
+            "hash": "5b969b69da7eeb84d65be48ec383024c43df4e1025db0107c64141334b1958c2",
             "templateHash": "af6fcc7d76b5da0292e67b615e52edf98e541be75f9becbd3cbcdc7710b521b6"
         },
         "tools/schema/interface_import.schema.json": {
-            "hash": "606ab104b9423b936ce1b5cd349e2d4653f446baac5b37e0b05eafda1243da5f",
+            "hash": "ec1e39b94806a9cb9887b68c846319189c9ef220f37a1fa09a650e4a417ca57d",
             "templateHash": "3fccaa1a4a65832af3a57638bf2be8884e2fc732c7aa8b2c9aa537805bac809f"
         },
         "tools/schema/pipeline.schema.json": {
-            "hash": "6c76b650603646ad3f05f8e87370fecb17c015e436f5e35c4d7c35397ba9d454",
+            "hash": "9a5f9de1c4bc2223f8d7688fe42f63d6b7de83f14e47e3fc2929f332ae631c77",
             "templateHash": "022dbdb5b8030d8aa5802a40d59c46255546be13bda781d3fd1baba7a90f1bf8"
         },
         "tools/schema/schema-manifest.json": {
-            "hash": "499a7793284aa4c35cac372b849a5206d9d32d224a656842f416de0e1dbda87d",
+            "hash": "04c9fdf84313760830a5c8eb9c336b018a3480ee6824b7e9ced30748924bc013",
             "templateHash": "3d74d39a564dec1648a0aa1b945bc48ca5607e4a73e3ce7af433b362c7f63493"
         },
         "tools/sync-schema.mjs": {

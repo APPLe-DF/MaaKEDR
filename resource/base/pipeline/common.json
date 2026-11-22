@@ -1,0 +1,50 @@
+{
+    "Common.EnsureHome": {
+        "desc": "通用回主页枢纽（兜底用，须放调用方 next 末位：DirectHit 会压制其后候选）。禁止在此发送系统返回键：本游戏 BACK 等同 ESC，会弹出「是否确定退出游戏」，且弹窗会遮挡主页标记，导致「判定不到主页 → 再按 ESC」的死循环",
+        "max_hit": 10,
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "timeout": 30000,
+        "next": [
+            "[JumpBack]Common.CheckItemObtained",
+            "[JumpBack]Common.ClickHomeButton",
+            "[JumpBack]Common.BackButton",
+            "[JumpBack]FarmResources.ExitStageConfirm",
+            "Common.CheckHomePage"
+        ]
+    },
+    "Common.CheckHomePage": {
+        "desc": "全局主页标记（more.png）：命中即视为已回主页。叶子节点，是 EnsureHome 的循环出口",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1199,
+            6,
+            77,
+            83
+        ],
+        "template": "more.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        }
+    },
+    "Common.ClickHomeButton": {
+        "desc": "点击顶部主页按钮（return_main.png）",
+        "max_hit": 5,
+        "recognition": "TemplateMatch",
+        "roi": [
+            199,
+            26,
+            85,
+            52
+        ],
+        "template": "return_main.png",
+        "threshold": 0.8,
+        "action": {
+            "type": "Click"
+        },
+        "post_wait_freezes": 500
+    }
+}

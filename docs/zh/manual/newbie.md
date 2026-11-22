@@ -13,18 +13,19 @@ icon: ri:guide-fill
 
 <div align="center">
 
-|              |      Windows      |      macOS       |       Linux        | Android |
-| :----------: | :---------------: | :--------------: | :----------------: | :-----: |
-|   系统要求   | Windows 10 及以上 |     自行尝试     |      自行尝试      | 不推荐  |
-| 需要配置环境 |        是         |        是        |         是         |   是    |
-|  需要模拟器  |        是         |        是        | 模拟器或容器化安卓 |   否    |
-|   使用方式   | 图形界面或命令行  | 图形界面或命令行 |  图形界面或命令行  | 命令行  |
+|              |      Windows      |      macOS       |       Linux        |            Android            |
+| :----------: | :---------------: | :--------------: | :----------------: | :---------------------------: |
+|   系统要求   | Windows 10 及以上 |     自行尝试     |      自行尝试      |       Android 10 及以上       |
+| 需要配置环境 |        是         |        是        |         是         |              否               |
+|  需要模拟器  |        是         |        是        | 模拟器或容器化安卓 |              否               |
+|   使用方式   | 图形界面或命令行  | 图形界面或命令行 |  图形界面或命令行  |           图形界面            |
+|   额外要求   |        无         |        无        |         无         | Shizuku 或 root（见下方说明） |
 
-|              | 备注                                                                                                                                                                     |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Windows 用户 | 绝大部分情况请下载 x86_64 架构                                                                                                                                           |
-| Mac 用户     | MaaKEDR 同时支持搭载 Apple Silicon 和 Intel 芯片的 Mac 电脑<br>但更推荐搭载 Intel 芯片的 Mac 电脑使用 Mac 自带的多系统安装 Windows<br>并使用 Windows 版 MaaKEDR 和模拟器 |
-| Android 用户 | 请前往 [MaaFramework](https://github.com/MaaXYZ/MaaFramework/) 自行查看<br>此方法较为复杂且具有一定风险，不推荐入门玩家使用此方法                                        |
+|              | 备注                                                                                                                                                                                                                                                                                                                                       |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Windows 用户 | 绝大部分情况请下载 x86_64 架构                                                                                                                                                                                                                                                                                                             |
+| Mac 用户     | MaaKEDR 同时支持搭载 Apple Silicon 和 Intel 芯片的 Mac 电脑<br>但更推荐搭载 Intel 芯片的 Mac 电脑使用 Mac 自带的多系统安装 Windows<br>并使用 Windows 版 MaaKEDR 和模拟器                                                                                                                                                                   |
+| Android 用户 | MaaKEDR 提供 Android 客户端安装包（见 [Releases](https://github.com/APPLe-DF/MaaKEDR/releases)，真机推荐 `MaaKEDR-android-arm64-v8a-<版本>.apk`，模拟器等 x86 环境用 `MaaKEDR-android-x86_64-<版本>.apk`）<br>需要 Android 10 及以上（只提供后台模式，系统虚拟屏要求 API 29）；首次启动请授予通知与电池白名单，并选择 Shizuku 或 root 授权 |
 
 </div>
 
@@ -84,45 +85,31 @@ icon: ri:guide-fill
 
 Windows 用户**必须安装 VCRedist x64**：这是运行 MaaKEDR（无论哪种启动方式）的基础需求。
 
-<details>
-  <summary>详细安装方式</summary>
-  <p></p>
-  <blockquote>
-    <ul>
-      <li>
-        直接下载：点击
-        <a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank">vc_redist.x64</a>
-        下载并安装
-      </li>
-      <li>
-        <code>winget</code> 安装（管理员终端）：
-        <pre><code>winget install Microsoft.VCRedist.2017.x64</code></pre>
-      </li>
-    </ul>
-  </blockquote>
-</details>
+::: details 详细安装方式
+
+- 直接下载：点击 [vc_redist.x64](https://aka.ms/vs/17/release/vc_redist.x64.exe) 下载并安装
+- `winget` 安装（管理员终端）：
+
+```powershell
+winget install Microsoft.VCRedist.2017.x64
+```
+
+:::
 
 #### .NET
 
-使用 **MFAA** 图形界面的用户需要自行安装 **.NET 10** 桌面运行时。
+使用 **MFAA** 图形界面的用户需要自行安装 **.NET 10**。Windows 用户需要的是 **.NET 桌面运行时**；macOS 与 Linux 用户需要的是 **.NET 运行时**（不是桌面运行时），从同一个下载页面选择对应版本即可。
 
-<details>
-  <summary>详细安装方式</summary>
-  <p></p>
-  <blockquote>
-    <ul>
-      <li>
-        自行下载：点击
-        <a href="https://dotnet.microsoft.com/zh-cn/download/dotnet/10.0" target="_blank">.NET 官方下载页面</a>
-        ，选择您系统对应的 .NET 10 桌面运行时版本下载并安装。
-      </li>
-      <li>
-        （仅 Windows 用户）<code>winget</code> 安装（管理员终端）：
-        <pre><code>winget install Microsoft.DotNet.DesktopRuntime.10</code></pre>
-      </li>
-    </ul>
-  </blockquote>
-</details>
+::: details 详细安装方式
+
+- 自行下载：点击 [.NET 官方下载页面](https://dotnet.microsoft.com/zh-cn/download/dotnet/10.0)，选择您系统对应的 .NET 10 桌面运行时版本下载并安装。
+- （仅 Windows 用户）`winget` 安装（管理员终端）：
+
+```powershell
+winget install Microsoft.DotNet.DesktopRuntime.10
+```
+
+:::
 
 #### Python
 
@@ -132,7 +119,7 @@ Windows 与 macOS 压缩包已内置 Python 运行环境，无需单独安装。
 
 ### 3. 下载正确的版本
 
-MaaKEDR 下载地址：[GitHub 发布页](https://github.com/APPLe-DF/MaaKEDR/releases)。点击链接后，在 `Assets` 处选择适配您系统的最新版压缩包下载。
+MaaKEDR 下载地址：[GitHub 发布页](https://github.com/APPLe-DF/MaaKEDR/releases)。点击链接后，在 `Assets` 处选择适配您系统的最新版压缩包下载。已购买 Mirror酱 CDK 的用户也可以直接从 [Mirror酱 直达链接](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-release) 下载（内容与 GitHub 一致）。
 
 > [!TIP]
 >
@@ -145,7 +132,7 @@ MaaKEDR 下载地址：[GitHub 发布页](https://github.com/APPLe-DF/MaaKEDR/re
 |   前端   |  后缀   | 说明                                         |
 | :------: | :-----: | :------------------------------------------- |
 | **MFAA** | `-MFAA` | 图形界面，需安装 .NET 桌面运行时，界面更丰富 |
-| **MXU**  | `-MXU`  | 图形界面（Unity 版），无需额外依赖           |
+| **MXU**  | `-MXU`  | 图形界面（Tauri + React），无需额外依赖      |
 
 </div>
 
@@ -159,6 +146,9 @@ MaaKEDR 下载地址：[GitHub 发布页](https://github.com/APPLe-DF/MaaKEDR/re
 | macOS Apple Silicon | `MaaKEDR-macos-aarch64-v*-MFAA.tar.gz` 或 `-MXU.tar.gz` |
 |    Linux x86_64     | `MaaKEDR-linux-x86_64-v*-MFAA.tar.gz` 或 `-MXU.tar.gz`  |
 |     Linux ARM64     | `MaaKEDR-linux-aarch64-v*-MFAA.tar.gz` 或 `-MXU.tar.gz` |
+|   Android 通用包    | `MaaKEDR-android-universal-v*.apk`（不确定就选它）      |
+| Android ARM64 手机  | `MaaKEDR-android-arm64-v8a-v*.apk`（绝大多数手机）      |
+| Android x86 模拟器  | `MaaKEDR-android-x86_64-v*.apk`（电脑上的安卓模拟器）   |
 
 </div>
 
@@ -184,10 +174,11 @@ MaaKEDR 下载地址：[GitHub 发布页](https://github.com/APPLe-DF/MaaKEDR/re
 
 <div align="center">
 
-|            |    Windows     |     macOS      |  Linux   | Android |
-| :--------: | :------------: | :------------: | :------: | :-----: |
-| 模拟器支持 | 支持主流模拟器 | 支持主流模拟器 | 自行尝试 |    /    |
-|  需要 ADB  |       是       |       是       |    是    |   是    |
+|              |    Windows     |     macOS      |  Linux   | Android |
+| :----------: | :------------: | :------------: | :------: | :-----: |
+|  模拟器支持  | 支持主流模拟器 | 支持主流模拟器 | 自行尝试 |    /    |
+|   需要 ADB   |       是       |       是       |    是    |   否    |
+| 需要 Shizuku |       否       |       否       |    否    |   是    |
 
 </div>
 
@@ -198,7 +189,11 @@ MaaKEDR 通过 ADB 连接模拟器或设备。推荐使用以下模拟器：
 - LDPlayer 9
 - 夜神模拟器
 
-模拟器支持详情可参阅 [MAA 文档](https://maa.plus/docs/zh-cn/manual/device/windows.html)。
+模拟器与设备的支持详情可参阅 MAA 文档：
+
+- [Windows 模拟器](https://maa.plus/docs/zh-cn/manual/device/windows.html)
+- [macOS 模拟器](https://maa.plus/docs/zh-cn/manual/device/macos.html)
+- [Linux 模拟器与容器](https://maa.plus/docs/zh-cn/manual/device/linux.html)
 
 ---
 
@@ -231,7 +226,7 @@ MaaKEDR 支持主流模拟器，但您需要设置模拟器分辨率以达到运
   <p></p>
   <blockquote>
 
-1. 打开终端，解压压缩包：
+1. 打开终端，解压压缩包（推荐解压到用户目录，无需 `sudo`）：
 
     ```shell
     mkdir -p ~/MaaKEDR
@@ -245,12 +240,23 @@ MaaKEDR 支持主流模拟器，但您需要设置模拟器分辨率以达到运
     ./maakedr
     ```
 
+> [!TIP]
+>
+> 想安装到系统目录（如 `/usr/local/bin/MaaKEDR`）时，`mkdir` 与 `tar` 命令前需要加 `sudo`；此时下文命令中的路径也请一并替换，并同样加 `sudo`。
+
 **Gatekeeper 安全提示：**
 
-macOS 10.15（Catalina）及更高版本可能会阻止运行未签名的应用程序。如果遇到"无法打开，因为无法验证开发者"等错误：
+macOS 10.15（Catalina）及更高版本可能会阻止运行未签名的应用程序。如果遇到"无法打开，因为无法验证开发者"等错误，可用以下任一方式处理：
 
 ```shell
-sudo xattr -rd com.apple.quarantine ~/MaaKEDR/maakedr
+# 方案 1：移除隔离属性（推荐）
+xattr -rd com.apple.quarantine ~/MaaKEDR/maakedr
+
+# 方案 2：添加到 Gatekeeper 白名单
+spctl --add ~/MaaKEDR/maakedr
+
+# 方案 3：一次性处理整个目录
+xattr -rd com.apple.quarantine ~/MaaKEDR/*
 ```
 
   </blockquote>
@@ -260,13 +266,42 @@ sudo xattr -rd com.apple.quarantine ~/MaaKEDR/maakedr
 
 同 macOS，下载对应版本的压缩包，解压后运行 `maakedr` 即可。
 
+#### Android
+
+安卓版是**独立的一套**：不需要电脑、不需要模拟器、也不用解压，直接装 APK。
+
+从 [Releases](https://github.com/APPLe-DF/MaaKEDR/releases) 下载对应架构的 APK：真机选 `arm64-v8a`，x86 模拟器选 `x86_64`，不确定请选 `universal`。
+
+1. 首次启动时授予**通知权限**并加入**电池白名单**：后台挂机、定时触发与运行进度通知都依赖这些权限。
+2. 选择 **Shizuku 或 root** 完成授权，并等待服务连接。Shizuku 需另行安装并启动：
+    - Android 11 及以上：可在设备上通过**无线调试**直接启动，无需电脑
+    - 更低版本且没有 root 时：需要一台电脑通过 ADB 启动
+    - 详见 [Shizuku 官方文档](https://shizuku.rikka.app/zh-hans/)
+3. 首次启动会自动解包任务资源。
+4. 在应用内选择服务器、勾选任务后开始运行，**无需配置 ADB 连接**。
+
+> [!NOTE]
+>
+> 安卓端与桌面端的配置项基本一致，但**资源跟随 APK 打包**，因此不支持热更新，也不支持 Mirror酱 的增量更新——换版本需要重新下载安装 APK。设备上仍显示旧内容时，清除 MaaKEDR 的应用数据再重新打开即可。
+
+> [!WARNING]
+>
+> 没有 Shizuku 也没有 root 时，APK 可以安装但**无法执行任务**（拿不到截屏与点击权限）。这种情况下请改用桌面版。
+
 ---
 
 ### 7. 配置 MaaKEDR
 
 #### 首次启动
 
-首次启动 MaaKEDR 后，程序会自动初始化并创建 `config/` 配置目录。在 **日志** 板块显示"AgentServer 启动"后，直到看见"任务已全部完成"前，请不要点击停止任务。
+首次启动 MaaKEDR 后，程序会自动初始化并创建 `config/` 配置目录。主界面包含 **资源类型**、**任务列表**、**任务设置**、**任务说明**、**连接** 与 **日志** 等板块（MXU 的布局与命名略有不同）。在 **日志** 板块显示"AgentServer 启动"后，直到看见"任务已全部完成"前，请不要点击停止任务。
+
+#### 设置界面
+
+图形界面的 **设置** 中有两项与日常使用关系最大：
+
+- **更新设置**：指定检查更新时使用的下载源。使用 Mirror 酱 的用户填写 CDK（CDK 与下载入口见 [Mirror酱 直达链接](https://mirrorchyan.com/zh/projects?rid=MaaKEDR&source=maakedr-release)），使用 GitHub 的用户可填写 Token 以提高 API 访问速率上限。详见 [Mirror酱](./mirror-chyan)。
+- **启动设置**：指定模拟器的可执行文件路径与启动参数。`附加命令` 一般只用于填写模拟器多开号，配合「自启动游戏」使用；配置错误时 MaaKEDR 无法正确启动模拟器。用法见 [常见问题](./faq) 的「MFAA 使用技巧」。
 
 #### 资源类型
 
@@ -292,12 +327,14 @@ MaaKEDR 提供以下自动化任务：
 | ------------ | ------------------------------------------------ |
 | 启动游戏     | 从启动到登录至主界面                             |
 | 领取奖励     | 日常签到、周常奖励、战令奖励、邮件奖励、派遣奖励 |
+| 剩余奖励领取 | 任务链后段的补充领取（如 PVP 奖励通常进邮箱）    |
 | 资源刷取     | 指定关卡自动刷资源，支持体力管理                 |
 | 剩余体力刷取 | 固定清空体力模式，榨干剩余体力                   |
 | 活动关卡刷取 | 活动关卡扫荡（每日 3 次，不消耗体力）            |
 | 活动商店兑换 | 活动商店定额保障商品自动购买                     |
 | PVP          | 竞技场自动战斗                                   |
 | 体力信息     | 读取主界面体力并输出回满时间                     |
+| 赠送礼物     | 好友列表送礼，每日额度用尽即结束                 |
 
 > [!IMPORTANT]
 >
@@ -339,4 +376,4 @@ pip 安装相关设置。一般情况下，您无需修改此文件，除非您�
 
 - 确认游戏处于正确的界面（如在主菜单或对应功能页面）
 - 查看 `debug/` 目录下的截图，确认识别区域是否正确
-- 查看 `maafw.log` 日志文件（项目根目录）定位问题
+- 查看 `debug/maafw.log` 日志文件定位问题

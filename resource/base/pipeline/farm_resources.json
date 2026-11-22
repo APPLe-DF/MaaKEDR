@@ -1,45 +1,18 @@
 {
-    "ReturnMain": {
-        "desc": "返回游戏主页",
-        "recognition": "TemplateMatch",
-        "roi": [
-            199,
-            26,
-            85,
-            52
-        ],
-        "template": "return_main.png",
-        "threshold": 0.8,
-        "pre_delay": 500,
-        "action": {
-            "type": "Click"
-        },
-        "next": [
-            "ReturnMain.CheckHomePage"
-        ]
-    },
-    "ReturnMain.CheckHomePage": {
-        "desc": "确认是否已回到主页",
-        "recognition": "TemplateMatch",
-        "roi": [
-            1199,
-            6,
-            77,
-            83
-        ],
-        "template": "main_option.png",
-        "threshold": 0.8,
-        "pre_delay": 500,
+    "FarmResources.EnsureHome": {
+        "desc": "任务入口：在主页则确认后进入刷取流程；不在主页由通用枢纽回主页，恢复后重试本列表",
+        "max_hit": 6,
+        "recognition": "DirectHit",
         "action": {
             "type": "DoNothing"
         },
         "next": [
-            "FarmResources.Start",
-            "[JumpBack]ReturnMain"
+            "FarmResources.CheckHomePage",
+            "[JumpBack]Common.EnsureHome"
         ]
     },
     "FarmResources.CheckHomePage": {
-        "desc": "确认当前是否在游戏主页",
+        "desc": "确认在主页并点击屏幕中心（消除残留弹窗）",
         "recognition": "TemplateMatch",
         "roi": [
             1199,
@@ -47,7 +20,7 @@
             77,
             83
         ],
-        "template": "main_option.png",
+        "template": "more.png",
         "threshold": 0.8,
         "pre_delay": 500,
         "action": {
@@ -66,14 +39,11 @@
         "timeout": 5000,
         "next": [
             "FarmResources.Start",
-            "[JumpBack]ReturnMain"
-        ],
-        "on_error": [
-            "FarmResources.ReturnToHome"
+            "[JumpBack]Common.EnsureHome"
         ]
     },
     "FarmResources.Start": {
-        "desc": "从主页进入作战界面 [错误兜底: ReturnMain]",
+        "desc": "从主页进入作战界面 [错误兜底: FarmResources.EnsureHome]",
         "recognition": "TemplateMatch",
         "roi": [
             1052,
@@ -94,17 +64,17 @@
             "FarmResources.SkillTraining"
         ],
         "on_error": [
-            "ReturnMain"
+            "FarmResources.EnsureHome"
         ]
     },
     "FarmResources.ResourceCollect": {
         "desc": "进入资源收集板块",
         "recognition": "TemplateMatch",
         "roi": [
-            561,
-            635,
-            72,
-            67
+            453,
+            618,
+            139,
+            98
         ],
         "template": "farm_resources/resource_collect_tab.png",
         "threshold": 0.8,
@@ -121,10 +91,10 @@
         "desc": "进入技能演练板块",
         "recognition": "TemplateMatch",
         "roi": [
-            755,
-            630,
-            71,
-            68
+            648,
+            618,
+            139,
+            98
         ],
         "template": "farm_resources/skill_training_tab.png",
         "threshold": 0.8,
@@ -238,7 +208,8 @@
         ]
     },
     "FarmResources.SelectBasicSkill": {
-        "desc": "选择基础技能演练",
+        "desc": "选择基础技能演练（点击已生效但游戏未响应时，由 next 首位重试自身，最多 5 次）",
+        "max_hit": 5,
         "recognition": "TemplateMatch",
         "roi": [
             358,
@@ -254,11 +225,13 @@
         },
         "post_delay": 1000,
         "next": [
+            "FarmResources.SelectBasicSkill",
             "FarmResources.SelectSkillStage"
         ]
     },
     "FarmResources.SelectAdvancedSkill": {
-        "desc": "选择专业技能演练",
+        "desc": "选择专业技能演练（点击已生效但游戏未响应时，由 next 首位重试自身，最多 5 次）",
+        "max_hit": 5,
         "recognition": "TemplateMatch",
         "roi": [
             722,
@@ -274,6 +247,7 @@
         },
         "post_delay": 1000,
         "next": [
+            "FarmResources.SelectAdvancedSkill",
             "FarmResources.SelectSkillStage"
         ]
     },
@@ -627,7 +601,8 @@
         }
     },
     "FarmResources.ExitStageConfirm": {
-        "desc": "点击关卡界面退出键（等待界面冻结后再识别，规避加载/过渡动画期间的识别失败）",
+        "desc": "点击关卡界面退出键（点击范围收紧到 ✕ 中心；✕ 仍在即上次未生效，重试自身，上限 5 次；已回主页即视为本次刷取结束）",
+        "max_hit": 5,
         "recognition": "TemplateMatch",
         "roi": [
             1070,
@@ -645,10 +620,23 @@
             "timeout": 8000
         },
         "action": {
-            "type": "Click"
+            "type": "Click",
+            "param": {
+                "target_offset": [
+                    11,
+                    11,
+                    -22,
+                    -22
+                ]
+            }
         },
         "next": [
-            "FarmResources.ReturnMainFromFarm"
+            "FarmResources.ExitStageConfirm",
+            "FarmResources.ReturnMainFromFarm",
+            "Common.CheckHomePage"
+        ],
+        "on_error": [
+            "[JumpBack]Common.EnsureHome"
         ]
     },
     "FarmResources.ReturnMainFromFarm": {
@@ -748,25 +736,5 @@
                 ]
             }
         }
-    },
-    "FarmResources.ReturnToHome": {
-        "desc": "任务开始前不在主页时点击返回按钮回到主页",
-        "max_hit": 3,
-        "recognition": "TemplateMatch",
-        "roi": [
-            199,
-            26,
-            85,
-            52
-        ],
-        "template": "return_main.png",
-        "threshold": 0.8,
-        "pre_delay": 500,
-        "action": {
-            "type": "Click"
-        },
-        "next": [
-            "FarmResources.CheckHomePage"
-        ]
     }
 }

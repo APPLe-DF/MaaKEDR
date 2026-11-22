@@ -25,6 +25,7 @@ const zh: NavigationConfig = {
       sidebar: [
         'setup.md',
         'pipeline.md',
+        'common.md',
         'custom.md',
         'vibe-coding.md',
         'fix.md',
@@ -32,6 +33,7 @@ const zh: NavigationConfig = {
         'structure.md',
         'doc.md',
         'overseas-client-adaptation.md',
+        'android.md',
       ],
     },
     {
@@ -71,6 +73,7 @@ const en: NavigationConfig = {
       sidebar: [
         'setup.md',
         'pipeline.md',
+        'common.md',
         'custom.md',
         'vibe-coding.md',
         'fix.md',
@@ -78,6 +81,7 @@ const en: NavigationConfig = {
         'structure.md',
         'doc.md',
         'overseas-client-adaptation.md',
+        'android.md',
       ],
     },
     {

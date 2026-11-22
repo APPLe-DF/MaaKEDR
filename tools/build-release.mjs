@@ -37,7 +37,7 @@ if (!isReleaseVersion(sourceVersion)) {
     throw new Error("interface.json version must be a release tag such as v0.1.0");
 }
 
-const releaseTag = detectReleaseTag();
+const releaseTag = detectExplicitReleaseTag() ?? detectReleaseTag();
 if (!dryRun && !releaseTag) {
     throw new Error("release build requires a SemVer Git tag such as v0.1.0");
 }
@@ -142,6 +142,16 @@ for (const path of [
         throw new Error(`release referenced path does not exist: ${path}`);
     }
 }
+
+// MaaFramework names its libraries <name>.<dll|so|dylib> on every platform it ships, so the check
+// matches the naming convention instead of listing platforms: a new platform cannot be forgotten
+// here, and a rename fails the build instead of silently shipping a package without a runtime.
+// Declared before the top-level build loop below: this file runs that loop eagerly, so a `const`
+// placed next to its helper would still be in the temporal dead zone when the smoke check runs.
+const CLIENT_RUNTIME_PATTERNS = [
+    /^(lib)?maaframework\.(dll|so|dylib)$/i,
+    /^(lib)?maaagentserver\.(dll|so|dylib)$/i,
+];
 
 const artifacts = [];
 
@@ -332,12 +342,14 @@ function prepareReleasePackage(guiKey, gui, packagePaths, interfaceJson, runtime
     }
     if (packageHasAgent(interfaceJson) && hasEmbeddedPythonRuntime(runtimePlatform)) {
         copyPath(pythonRuntimePath(runtimePlatform), join(pkgDir, "python"));
+        stripAgentNativeRuntime(pkgDir);
     }
     // MXU expects flat DLLs under maafw/ (not runtimes/<platform>/native/).
     if (!gui.flatLayout) {
         prepareMxuMaafwRuntime(pkgDir, runtimePlatform);
         removeFiles(pkgDir, (name) => name.toLowerCase().endsWith(".pdb"));
     }
+    ensureClientNativePluginsDir(pkgDir, gui, runtimePlatform);
     ensureUnixExecutablePermissions(pkgDir, runtimePlatform);
 }
 
@@ -357,6 +369,50 @@ function prepareMxuMaafwRuntime(pkgDir, runtimePlatform) {
     if (existsSync("plugins")) {
         copyDirectoryContents("plugins", join(maafwDest, "plugins"));
     }
+}
+
+// The client packages already carry the same MaaFramework libraries (MFAA under
+// runtimes/<platform>/native, MXU under maafw/, CLI shells flat at the package root), and the
+// Agent reuses that copy through MAAFW_BINARY_PATH, so the bundled interpreter must not ship a
+// second one (tens of MiB per package).
+function stripAgentNativeRuntime(pkgDir) {
+    const stripped = [];
+    findAgentNativeRuntimes(join(pkgDir, "python"), (path) => {
+        rmSync(path, {recursive: true, force: true});
+        stripped.push(path);
+    });
+    if (stripped.length === 0) {
+        // The package always gets a fresh copy of the interpreter, which the Agent dependencies were
+        // installed into, so finding nothing means the wheel layout changed and the duplicate would
+        // ship again unnoticed.
+        throw new Error("release package path is missing: no bundled MaaFW native runtime under python/");
+    }
+}
+
+// MaaFramework's PluginMgr treats a missing plugin directory as a failed library load and logs
+// four ERR lines on every start; an existing but empty directory stays quiet. This is the load root
+// the Agent and the GUI share.
+function ensureClientNativePluginsDir(pkgDir, gui, runtimePlatform) {
+    mkdirSync(join(clientNativeRuntimePath(pkgDir, gui, runtimePlatform), "plugins"), {recursive: true});
+}
+
+function clientNativeRuntimePath(root, gui, runtimePlatform) {
+    return gui.flatLayout ? join(root, "runtimes", runtimePlatform, "native") : join(root, "maafw");
+}
+
+function isAgentNativeRuntimePath(path) {
+    return (
+        basename(path) === "bin" &&
+        basename(dirname(path)) === "maa" &&
+        basename(dirname(dirname(path))) === "site-packages"
+    );
+}
+
+function findAgentNativeRuntimes(root, visit) {
+    if (!existsSync(root)) return;
+    walkDirectories(root, (path) => {
+        if (isAgentNativeRuntimePath(path)) visit(path);
+    });
 }
 
 function smokeReleasePackage(gui, root, packagePaths, runtimePlatform) {
@@ -429,6 +485,9 @@ function smokeReleasePackage(gui, root, packagePaths, runtimePlatform) {
         }
     }
 
+    assertAgentNativeRuntimeStripped(root);
+    assertClientNativeRuntime(root, gui, runtimePlatform);
+
     const packagedInterface = readJson(join(root, "interface.json"));
     if (!isRecord(packagedInterface)) {
         throw new Error("release package smoke failed: interface.json must be an object");
@@ -444,8 +503,8 @@ function smokeReleasePackage(gui, root, packagePaths, runtimePlatform) {
         if (hasEmbeddedPythonRuntime(runtimePlatform) && !existsSync(join(root, ...childExec.split("/")))) {
             throw new Error(`release package smoke failed: Agent Python entrypoint is missing: ${childExec}`);
         }
-        if (!existsSync(join(root, "agent", "bootstrap.py"))) {
-            throw new Error("release package smoke failed: Agent bootstrap is missing");
+        if (!existsSync(join(root, "agent", "main.py"))) {
+            throw new Error("release package smoke failed: Agent entrypoint agent/main.py is missing");
         }
     }
     assertUnixExecutablePermissions(root, runtimePlatform);
@@ -460,6 +519,30 @@ function smokeReleasePackage(gui, root, packagePaths, runtimePlatform) {
         if (!existsSync(join(root, relativePath))) {
             throw new Error(`release package smoke failed: referenced path is missing: ${path}`);
         }
+    }
+}
+
+function assertAgentNativeRuntimeStripped(root) {
+    const found = [];
+    findAgentNativeRuntimes(join(root, "python"), (path) => found.push(path));
+    if (found.length > 0) {
+        throw new Error(
+            "release package smoke failed: Agent must reuse the client MaaFW runtime, " +
+                `but the bundled interpreter still ships one: ${found.join(", ")}`,
+        );
+    }
+}
+
+function assertClientNativeRuntime(root, gui, runtimePlatform) {
+    const nativeDir = clientNativeRuntimePath(root, gui, runtimePlatform);
+    const entries = existsSync(nativeDir) ? readdirSync(nativeDir) : [];
+    for (const pattern of CLIENT_RUNTIME_PATTERNS) {
+        if (!entries.some((name) => pattern.test(name))) {
+            throw new Error(`release package smoke failed: Agent native runtime is missing ${pattern} in ${nativeDir}`);
+        }
+    }
+    if (!existsSync(join(nativeDir, "plugins"))) {
+        throw new Error(`release package smoke failed: plugins directory is missing: ${join(nativeDir, "plugins")}`);
     }
 }
 
@@ -589,6 +672,16 @@ function walkFiles(root, visit) {
     }
 }
 
+function walkDirectories(root, visit) {
+    for (const entry of readdirSync(root, {withFileTypes: true})) {
+        if (!entry.isDirectory()) continue;
+        const path = join(root, entry.name);
+        visit(path, entry.name);
+        // visit may already have removed this directory (that is how the Agent native runtime is stripped)
+        if (existsSync(path)) walkDirectories(path, visit);
+    }
+}
+
 function releasePackagePath(path) {
     const normalized = path.split("\\").join("/");
     return normalized.startsWith(".create-maa-project/runtime/python-deps/") ? "deps" : path;
@@ -614,12 +707,23 @@ function guiEntrypointName(runtimePlatform) {
     return runtimePlatform.startsWith("win-") ? `${projectSlug}.exe` : projectSlug;
 }
 
+// MXU 2.10 moved the macOS build into mxu.app/Contents/MacOS/mxu. The release package keeps the
+// flat portable layout (a bare executable outside a bundle is still a supported MXU deployment),
+// so the binary is lifted out of the bundle and the bundle itself stays out of the package.
 function renameGuiEntrypoint(gui, root, runtimePlatform) {
     const target = join(root, guiEntrypointName(runtimePlatform));
     for (const candidate of gui.entrypointCandidates(runtimePlatform)) {
         const source = join(root, candidate);
         if (existsSync(source)) {
             renameSync(source, target);
+            return;
+        }
+        if (!runtimePlatform.startsWith("osx-")) continue;
+        const bundleDir = join(root, `${candidate}.app`);
+        const bundled = join(bundleDir, "Contents", "MacOS", candidate);
+        if (existsSync(bundled)) {
+            renameSync(bundled, target);
+            rmSync(bundleDir, {recursive: true, force: true});
             return;
         }
     }
@@ -674,12 +778,22 @@ function releaseAgentChildExec(runtimePlatform) {
 function releaseAgentChildArgs() {
     return [
         "-u",
-        "agent/bootstrap.py",
+        "agent/main.py",
     ];
 }
 
 function isRecord(value) {
     return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function detectExplicitReleaseTag() {
+    const index = process.argv.indexOf("--release-tag");
+    if (index === -1) return undefined;
+    const value = process.argv[index + 1];
+    if (!value || value.startsWith("--")) {
+        throw new Error("--release-tag requires a SemVer tag");
+    }
+    return value;
 }
 
 function detectReleaseTag() {

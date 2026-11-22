@@ -81,6 +81,17 @@
                     "title": "默认值",
                     "description": "输入字段的默认值。💡 v2.10.0 password 为 true 时禁止设置此字段"
                 },
+                "input_type": {
+                    "type": "string",
+                    "title": "输入控件类型",
+                    "description": "💡 v2.10.5 可选，默认 text。text 为普通文本框；file 为文件选择器，选中后值为文件路径；directory 为文件夹选择器，选中后值为文件夹路径。仅影响 UI，字段值始终为 string",
+                    "enum": [
+                        "text",
+                        "file",
+                        "directory"
+                    ],
+                    "default": "text"
+                },
                 "pipeline_type": {
                     "type": "string",
                     "title": "Pipeline 数据类型",
@@ -412,10 +423,23 @@
                         "default_case": {
                             "type": "array",
                             "title": "默认选中项",
-                            "description": "💡 v2.3.0 默认选中的选项名称数组，Client 使用该值作为多选框的初始选中值",
+                            "description": "💡 v2.3.0 默认选中的选项名称数组，Client 使用该值作为多选框的初始选中值。💡 v2.10.1 元素数量应满足 min_count / max_count（若已设置）",
                             "items": {
                                 "type": "string"
                             }
+                        },
+                        "min_count": {
+                            "type": "integer",
+                            "title": "最小选择数量",
+                            "description": "💡 v2.10.1 可选，默认 0。用户至少需要选中的 case 数量。为 0 时允许不选。不应大于 cases 长度；若同时设置 max_count，则不应大于 max_count",
+                            "minimum": 0,
+                            "default": 0
+                        },
+                        "max_count": {
+                            "type": "integer",
+                            "title": "最大选择数量",
+                            "description": "💡 v2.10.1 可选。用户最多可以选中的 case 数量。不设置表示不限制（最多可选中全部 case）。不应大于 cases 长度；若同时设置 min_count，则不应小于 min_count",
+                            "minimum": 0
                         }
                     },
                     "required": [
@@ -515,6 +539,7 @@
                     "title": "控制器类型",
                     "enum": [
                         "Adb",
+                        "IOS",
                         "Win32",
                         "MacOS",
                         "PlayCover",
@@ -531,7 +556,17 @@
                 "display_long_side": {
                     "type": "number",
                     "title": "长边分辨率",
-                    "description": "默认缩放分辨率的长边长度，用于屏幕适配。与 display_short_side 和 display_raw 互斥"
+                    "description": "默认缩放分辨率的长边长度，用于屏幕适配。与 display_short_side、display_expand 和 display_raw 互斥"
+                },
+                "display_expand": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    },
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "title": "Unity Expand 参考分辨率",
+                    "description": "按 Unity Canvas Scaler 的 Expand 语义缩放：scale = max(width / raw_width, height / raw_height)，保持源宽高比，输出两边均不小于参考。格式 [width, height]。与 display_short_side、display_long_side 和 display_raw 互斥"
                 },
                 "display_raw": {
                     "type": "boolean",
@@ -566,6 +601,63 @@
                     "title": "Adb 控制器配置",
                     "description": "Adb 控制器的具体配置。V2 协议中 input/screencap 由 MaaFramework 自动检测，无需手动配置",
                     "additionalProperties": true
+                },
+                "ios": {
+                    "type": "object",
+                    "title": "iOS 控制器配置",
+                    "properties": {
+                        "udid": {
+                            "type": "string"
+                        },
+                        "connection": {
+                            "type": "string",
+                            "enum": [
+                                "Auto",
+                                "USB",
+                                "WiFi"
+                            ]
+                        },
+                        "screencap": {
+                            "type": "string",
+                            "description": "Stream、ScreenshotService 或按 | 组合"
+                        },
+                        "config": {
+                            "type": "object",
+                            "properties": {
+                                "server_port": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 65535
+                                },
+                                "wifi_address": {
+                                    "type": "string"
+                                },
+                                "wifi_port": {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 65535
+                                },
+                                "shared_control": {
+                                    "type": "boolean"
+                                },
+                                "max_bitrate": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 18446744073709552000
+                                },
+                                "max_fps": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 240
+                                },
+                                "hardware_decode": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "additionalProperties": false
                 },
                 "win32": {
                     "type": "object",
@@ -611,7 +703,8 @@
                                 "SendMessageWithCursorPos",
                                 "PostMessageWithCursorPos",
                                 "SendMessageWithWindowPos",
-                                "PostMessageWithWindowPos"
+                                "PostMessageWithWindowPos",
+                                "Interception"
                             ]
                         },
                         "screencap": {
@@ -1191,9 +1284,22 @@
             "description": "显示在「关于」页面。支持文件路径、URL 或直接文本，内容支持 Markdown 格式"
         },
         "welcome": {
-            "$ref": "#/definitions/i18nString",
             "title": "欢迎消息",
-            "description": "在用户首次使用时弹窗显示，亦可作为公告使用。支持文件路径、URL 或直接文本，内容支持 Markdown 格式。系统会记录显示内容，当内容更新时会再次弹窗显示"
+            "description": "在用户首次使用时弹窗显示，亦可作为公告使用。💡 v2.10.0：支持字符串数组。系统会记录完整的有序内容，当内容更新时会再次弹窗显示",
+            "oneOf": [
+                {
+                    "$ref": "#/definitions/i18nString"
+                },
+                {
+                    "type": "array",
+                    "title": "公告列表",
+                    "description": "按数组顺序展示多条公告",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/i18nString"
+                    }
+                }
+            ]
         },
         "description": {
             "$ref": "#/definitions/i18nString",
@@ -1372,6 +1478,14 @@
                         "title": "图标路径",
                         "description": "预设图标文件路径，相对于项目根目录"
                     },
+                    "controller": {
+                        "type": "array",
+                        "title": "支持的控制器列表",
+                        "description": "💡 v2.10.4 可选。指定该预设支持的控制器名称列表，与 task.controller 语义一致。数组元素应与顶层 controller[].name 对应。未设置时不限制控制器。不满足当前控制器限制时，Client 可隐藏该预设或以不可用状态显示",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
                     "task": {
                         "type": "array",
                         "title": "预设任务配置",
@@ -1395,6 +1509,38 @@
                                     "type": "object",
                                     "title": "任务选项预设值",
                                     "description": "可选。该任务各配置项的预设值，键为顶层 option 中的键名。select/switch 类型填 case.name 字符串，checkbox 类型填 case.name 数组，input 类型填 record<string, string>。💡 v2.10.0 资源作者不要把 password 为 true 的输入字段写入预设值",
+                                    "additionalProperties": true
+                                }
+                            },
+                            "required": [
+                                "name"
+                            ],
+                            "additionalProperties": false
+                        }
+                    },
+                    "pretask": {
+                        "type": "array",
+                        "title": "预设预任务配置",
+                        "description": "💡 v2.10.3 可选。预设包含的预任务配置列表，用于设置顶层 pretask 中各预任务的勾选状态与选项值。未声明时 Client 保持当前预任务配置不变；声明时未列出的预任务视为不勾选。顺序不影响执行顺序",
+                        "items": {
+                            "type": "object",
+                            "title": "预设预任务项",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "title": "预任务名称",
+                                    "description": "必须。与顶层 pretask[].name 对应的预任务名称"
+                                },
+                                "enabled": {
+                                    "type": "boolean",
+                                    "title": "是否启用",
+                                    "description": "可选，默认 true。该预任务在预设中是否勾选",
+                                    "default": true
+                                },
+                                "option": {
+                                    "type": "object",
+                                    "title": "预任务选项预设值",
+                                    "description": "可选。该预任务 option 所引用配置项的预设值，格式同 preset.task[].option。不要写入 password 为 true 的输入字段",
                                     "additionalProperties": true
                                 }
                             },

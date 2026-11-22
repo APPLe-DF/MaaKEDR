@@ -1,0 +1,18 @@
+/* 文档页导航栏的标题区就是「侧边栏列」：≥960px 时 .vp-navbar.has-sidebar .title 绝对定位、
+   宽度锁死为 --vp-sidebar-width（272px）、z-index:2，而右侧内容区只有 z-index:1。
+   站点标题为 SEO 带上了「· 雪松自动化脚本」后缀，实测约 296px，标题区里留给文字的却只有
+   176px（272 - 左右各 32 内边距 - logo 24 + 8 间距），于是标题文字直接溢出到内容区，
+   压住紧贴侧栏右缘的搜索框。首页没有 has-sidebar，标题是普通 flex 项、会把搜索框往后推，
+   所以首页不会重叠。
+   这里让标题在放不下时用省略号收尾：品牌段优先保留，被省略的是排在后面的描述性后缀
+   （中文站实测「雪松小助手 MaaKEDR」刚好放得下）。min-width:0 是关键——flex 项默认
+   min-width:auto，不会收缩到内容宽度以下，省略号也就永远不会出现。
+   960px 以下标题不是绝对定位，空间不够时会把搜索框推开，不需要处理。 */
+@media (min-width: 960px) {
+    .vp-navbar.has-sidebar .vp-navbar-title .title > span {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

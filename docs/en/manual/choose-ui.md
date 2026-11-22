@@ -5,6 +5,10 @@ icon: mdi:monitor-dashboard
 
 # Choosing a UI
 
+> [!NOTE]
+>
+> **This section applies to the desktop build only.** The Android APK has a single interface — there is no MFAA / MXU choice to make when downloading it.
+
 MaaKEDR ships with two GUI frontends. Choose the one that fits your needs.
 
 | Aspect           | MFAA                              | MXU                           |

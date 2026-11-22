@@ -2,12 +2,12 @@
     "interface_version": 2,
     "name": "maakedr",
     "label": "MaaKEDR",
-    "version": "v1.5.3",
+    "title": "MaaKEDR v1.5.9",
     "icon": "logo.ico",
-    "github": "https://github.com/APPLe-DF/MaaKEDR",
     "mirrorchyan_rid": "MaaKEDR",
     "mirrorchyan_multiplatform": true,
-    "title": "MaaKEDR v1.5.3",
+    "github": "https://github.com/APPLe-DF/MaaKEDR",
+    "version": "v1.5.9",
     "contact": "CONTACT",
     "license": "LICENSE",
     "welcome": "./resource/announcement/1.简介.md",
@@ -45,23 +45,21 @@
             ]
         }
     ],
-    "group": [
-        {
-            "name": "Daily",
-            "label": "日常任务"
-        }
-    ],
     "agent": [
         {
             "child_exec": "uv",
             "child_args": [
                 "run",
-                "--frozen",
                 "python",
-                "-u",
-                "./agent/bootstrap.py"
+                "agent/main.py"
             ],
             "identifier": "maakedr_agent"
+        }
+    ],
+    "group": [
+        {
+            "name": "Daily",
+            "label": "日常任务"
         }
     ],
     "import": [
@@ -72,6 +70,7 @@
         "./tasks/pvp.json",
         "./tasks/claim_rewards.json",
         "./tasks/stamina_info.json",
+        "./tasks/send_gift.json",
         "./tasks/warehouse.json",
         "./tasks/warehouse_farm.json",
         "./tasks/preset/Daily.json",

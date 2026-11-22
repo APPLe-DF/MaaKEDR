@@ -1,0 +1,77 @@
+name: Build Android APK
+
+# 日常 debug 出包：push / PR 自动触发，手动 dispatch 可选 release（出 APK 工件，
+# 不建 Release、不上传 Mirror酱；缺 KEYSTORE_BASE64 时为未签名包）。正式发布统一
+# 由 release.yml 在 v* tag 上调 android-build.yml 出三包，并等桌面包就绪后一起
+# 建 Release、一起传 Mirror酱。
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "Android/**"
+      - "agent/**"
+      - "tasks/**"
+      - "resource/**"
+      - "config/**"
+      - "requirements.txt"
+      - "interface.json"
+      - "maa-project.json"
+      - "MaaCommonAssets"
+      - "logo.ico"
+      - "logo.png"
+      - "CONTACT"
+      - "LICENSE"
+      - "tools/android-packaging.mjs"
+      - "tools/trim_agent_bundle.py"
+      - "tools/make_android_icon.py"
+      - ".github/workflows/android.yml"
+      - ".github/workflows/android-build.yml"
+  pull_request:
+    paths:
+      - "Android/**"
+      - "agent/**"
+      - "tasks/**"
+      - "resource/**"
+      - "config/**"
+      - "requirements.txt"
+      - "interface.json"
+      - "maa-project.json"
+      - "MaaCommonAssets"
+      - "logo.ico"
+      - "logo.png"
+      - "CONTACT"
+      - "LICENSE"
+      - "tools/android-packaging.mjs"
+      - "tools/trim_agent_bundle.py"
+      - "tools/make_android_icon.py"
+      - ".github/workflows/android.yml"
+      - ".github/workflows/android-build.yml"
+  workflow_dispatch:
+    inputs:
+      assemble:
+        description: "debug 或 release（release 出 APK 工件、不发布；缺 KEYSTORE_BASE64 时为未签名包）"
+        type: choice
+        options:
+          - debug
+          - release
+        default: debug
+      maafw_tag:
+        description: "MaaFramework release tag；留空则按 requirements.txt / maa-project.json 固定的 maafw 版本解析（与桌面同源），填 latest 取 GitHub 最新正式版（会破坏 APK 内前后端同版本，一般不用）"
+        required: false
+        default: ""
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-android:
+    uses: ./.github/workflows/android-build.yml
+    with:
+      assemble: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.assemble || 'debug' }}
+      maafw_tag: ${{ github.event.inputs.maafw_tag }}
+    secrets: inherit

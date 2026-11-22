@@ -5,7 +5,7 @@ description = "MaaKEDR — MaaFramework KEDR automation project"
 requires-python = ">=3.13,<3.14"
 dependencies = [
     "loguru",
-    "maafw",
+    "maafw>=5.13.0b0",
 ]
 
 [dependency-groups]
@@ -22,7 +22,10 @@ build-backend = "hatchling.build"
 [tool.ruff]
 line-length = 120
 target-version = "py313"
-exclude = [".venv", "agent/__pycache__"]
+# Android/MaaFwApp 是上游 git 子模块，其脚本不属于本仓库的 lint 范围。
+# 用 extend-exclude 而不是 exclude：后者会覆盖 ruff 的默认排除列表（.git / node_modules
+# 等随之失效），这里只需要在默认之上追加。与 create-maa-project 的 --add android 同写法。
+extend-exclude = ["Android/MaaFwApp"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "SIM"]
@@ -41,6 +44,8 @@ ignore = [
 
 [tool.pyright]
 pythonVersion = "3.13"
+venvPath = "."
+venv = ".venv"
 typeCheckingMode = "strict"
 exclude = [".venv", "**/__pycache__"]
 extraPaths = ["agent"]
