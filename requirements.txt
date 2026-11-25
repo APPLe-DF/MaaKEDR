@@ -4,7 +4,7 @@ loguru==0.8.0
     # via -r requirements.in
 maaagentbinary==1.0.1
     # via maafw
-maafw==6.0.0a1
+maafw==6.0.0b3
     # via -r requirements.in
 numpy==2.5.1
     # via maafw
