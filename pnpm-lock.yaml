@@ -15,8 +15,8 @@ importers:
         specifier: 1.1.0
         version: 1.1.0
       '@vue/runtime-core':
-        specifier: ^3.5.45
-        version: 3.5.45
+        specifier: ^3.5.46
+        version: 3.5.46
       '@vuepress/bundler-vite':
         specifier: 2.0.0-rc.30
         version: 2.0.0-rc.30(@types/node@26.1.1)(@vue/compiler-sfc@3.5.46)(esbuild@0.28.1)(jiti@2.7.0)(rollup@4.62.2)(sass-embedded@1.108.2)(sass@1.108.2)(typescript@5.9.3)(yaml@2.9.0)
@@ -1348,14 +1348,8 @@ packages:
   '@vue/devtools-shared@8.1.5':
     resolution: {integrity: sha512-mhT4zcPFhF+Xk1O4BfhhrbXzpmfqY03fS6xGpcllbQG7lDjhQf8pQHcTIhqQIYx1hfwtHmk/6jM96ele0UxPqQ==}
 
-  '@vue/reactivity@3.5.45':
-    resolution: {integrity: sha512-WqkyubNWpI4OYBOipSrjIssMdJO8K1i9Zts/Wm8Er10/0msOEwCyWWWvZnAI7WW3kQsTong6DJp8Cbb+vd4cPA==}
-
   '@vue/reactivity@3.5.46':
     resolution: {integrity: sha512-+FHtYTvGxgFoX3oRs7soz6JHizGv50Q26WJN6PWtXuTLXRfkfUpDUTRuoTA/kiZVVt8NMeMpsPQLh9h++ReUjQ==}
-
-  '@vue/runtime-core@3.5.45':
-    resolution: {integrity: sha512-bzIO3+FABjpj85uIKSc+Qnj36/sxDNI3tcH9i6w6xKA1k6e0ejv0G0jMCfeJBvK3yGL5XbJ3DMZj+ClqyCHFYw==}
 
   '@vue/runtime-core@3.5.46':
     resolution: {integrity: sha512-eJUzKAUaHAmtnys/l9qduPzUnBrYMkmsCU7TN+vbSOSpm8kcETT7nacKxIO4MBej/XiOraVzq+lSeZv7o1//jQ==}
@@ -1365,9 +1359,6 @@ packages:
 
   '@vue/server-renderer@3.5.46':
     resolution: {integrity: sha512-4mc0YWREc6OZ5pDCigvKPDzIUV+aciiH92yvyTS6xaHHxW/80rMceQQn11pYe7OEEBt2YQgYWR9zF8QF30GJUQ==}
-
-  '@vue/shared@3.5.45':
-    resolution: {integrity: sha512-ue9fgHmVNPlP7iW3+cxoBX/Cnlw53dHlVSw0JKGY6z1lObg8pHoj928M2nzG4/yVsMZ3NaRZ2s2z61uC16NDwQ==}
 
   '@vue/shared@3.5.46':
     resolution: {integrity: sha512-P1WePbdzHrcIciWtmY2Im9EFhdakd3rZxYqvalOa3SfoxtF35Q8Uhmj1tKn6bWP4utcOpN8ao6BoJUItq0Uf+g==}
@@ -4756,18 +4747,9 @@ snapshots:
 
   '@vue/devtools-shared@8.1.5': {}
 
-  '@vue/reactivity@3.5.45':
-    dependencies:
-      '@vue/shared': 3.5.45
-
   '@vue/reactivity@3.5.46':
     dependencies:
       '@vue/shared': 3.5.46
-
-  '@vue/runtime-core@3.5.45':
-    dependencies:
-      '@vue/reactivity': 3.5.45
-      '@vue/shared': 3.5.45
 
   '@vue/runtime-core@3.5.46':
     dependencies:
@@ -4786,8 +4768,6 @@ snapshots:
       '@vue/compiler-ssr': 3.5.46
       '@vue/runtime-dom': 3.5.46
       '@vue/shared': 3.5.46
-
-  '@vue/shared@3.5.45': {}
 
   '@vue/shared@3.5.46': {}
 
