@@ -293,3 +293,13 @@ class TestSendGiftPipeline:
         assert pipeline["SendGift.EnsureHome"]["next"][0] == "SendGift.CheckHomePage"
         assert pipeline["SendGift.CheckFriendList"]["next"] == ["SendGift.Loop"]
         assert pipeline["SendGift.ClickFriendEntry"]["next"][0] == "SendGift.CheckFriendList"
+
+    def test_finish_returns_home(self) -> None:
+        pipeline = self._pipeline()
+
+        assert pipeline["SendGift.Finish"]["next"] == [
+            "SendGift.ReturnHome",
+            "[JumpBack]Common.EnsureHome",
+        ]
+        assert pipeline["SendGift.ReturnHome"]["next"] == ["SendGift.Done"]
+        assert pipeline["SendGift.ReturnHome"]["template"] == "more.png"

@@ -215,14 +215,51 @@
         }
     },
     "SendGift.Finish": {
-        "desc": "赠送礼物完成",
+        "desc": "赠送礼物完成，准备返回主页",
+        "recognition": "DirectHit",
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "SendGift.ReturnHome",
+            "[JumpBack]Common.EnsureHome"
+        ],
+        "focus": {
+            "Node.Recognition.Starting": {
+                "content": "赠送礼物完成，正在返回主页",
+                "display": [
+                    "log"
+                ]
+            }
+        }
+    },
+    "SendGift.ReturnHome": {
+        "desc": "确认已回到游戏主页（全局主页标记 more.png）",
+        "recognition": "TemplateMatch",
+        "roi": [
+            1199,
+            6,
+            77,
+            83
+        ],
+        "template": "more.png",
+        "threshold": 0.75,
+        "action": {
+            "type": "DoNothing"
+        },
+        "next": [
+            "SendGift.Done"
+        ]
+    },
+    "SendGift.Done": {
+        "desc": "赠送礼物流程结束（已回到主页）",
         "recognition": "DirectHit",
         "action": {
             "type": "DoNothing"
         },
         "focus": {
             "Node.Recognition.Starting": {
-                "content": "赠送礼物完成！",
+                "content": "已回到游戏主页",
                 "display": [
                     "log"
                 ]
